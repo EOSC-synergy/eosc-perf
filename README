@@ -1,0 +1,3 @@
+1. Spin up python
+2. Run exec(open('main.py').read())
+3. Fiddle around with objects and test relations
