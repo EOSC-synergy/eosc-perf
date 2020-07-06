@@ -12,8 +12,94 @@ class UUID(db.String):
 def new_uuid() -> str:
     return str(uuid.uuid4())
 
+# number of results to fetch from database at once
+BATCH_SIZE: int = 100
+
 class ResultIterator:
-    pass
+    # todo: session typing
+    def __init__(self, session, **kwargs):
+        # position within cached results
+        self._batch_count: int = 0
+        self._batch_offset: int = 0
+
+        # SQLAlchemy session
+        self._session = session
+
+        # filter by tags
+        self._tags = None
+        if 'tags' in kwargs:
+            # test if list
+            if type(kwargs['tags']) is list:
+                tags = kwargs['tags']
+                if not len(tags) <= 0:
+                    # test if list of Tag
+                    for tag in tags:
+                        if type(tag) is not Tag:
+                            raise TypeError('"[{}]" is not a Tag'.format(tag))
+                self._tags = tags
+        
+        # filter by site
+        self._site = None
+        if 'site' in kwargs:
+            if not type(kwargs['site']) is Site:
+                raise TypeError('"site" is not a Site')
+            self._site = kwargs['site']
+        
+        # filter by benchmark
+        self._benchmark = None
+        if 'benchmark' in kwargs:
+            if not type(kwargs['benchmark']) is Benchmark:
+                raise TypeError('"benchmark" is not a Benchmark')
+            self._benchmark = kwargs['benchmark']
+        
+        # filter by uploader
+        self._uploader = None
+        if 'uploader' in kwargs:
+            if not type(kwargs['uploader']) is Uploader:
+                raise TypeError('"uploader" is not a Uploader')
+            self._uploader = kwargs['uploader']
+        
+        self.fetch(self._batch_count)
+    
+    def __iter__(self):
+        return self
+    
+    def fetch(self, batch_number: int, batch_size: int = BATCH_SIZE):
+        results = self._session.query(Result)
+
+        # build query by filters
+        if not self._tags is None:
+            # this is the best way I found to do this, should work given not too many tags requested
+            # based on: https://stackoverflow.com/a/36975507
+
+            results = results.join(Tag, Result._tags)
+            # go through every single tag and check if it is present
+            for tag in self._tags:
+                results = results.filter(Result._tags.any(Tag._name == tag._name))
+        if not self._site is None:
+            results = results.filter(Result._site == self._site)
+        if not self._benchmark is None:
+            results = results.filter(Result._benchmark == self._benchmark)
+        if not self._uploader is None:
+            results = results.filter(Result._uploader == self._uploader)
+        
+        # get batch_number'th batch
+        self._cache = results.offset(batch_number * batch_size).limit(batch_size).all()
+    
+    def __next__(self):
+        # if current batch empty, fetch new batch
+        if self._batch_offset == BATCH_SIZE:
+            self._batch_count = self._batch_count + 1
+            self.fetch(self._batch_count)
+            self._batch_offset = 0
+
+        # if arrived at the very end, stop
+        if self._batch_offset >= len(self._cache):
+            raise StopIteration
+
+        result = self._cache[self._batch_offset]
+        self._batch_offset = self._batch_offset + 1
+        return result
 
 class Benchmark(db.Model):
     __tablename__ = 'benchmark'
@@ -40,7 +126,7 @@ class Benchmark(db.Model):
         pass
 
     def __repr__(self):
-        return '<Benchmark {}>'.format(self._docker_name)
+        return '<{} {}>'.format(self.__class__.__name__, self._docker_name)
 
 class Uploader(db.Model):
     """The Uploader class represents an authenticated user that has made usage
@@ -64,7 +150,7 @@ class Uploader(db.Model):
         return self._benchmarks
 
     def __repr__(self):
-        return '<User {}>'.format(self._email)
+        return '<{} {}>'.format(self.__class__.__name__, self._email)
 
 class Site(db.Model):
     """The Site class represents a location where a benchmark can be
@@ -110,7 +196,7 @@ class Site(db.Model):
         return self._short_name
 
     def __repr__(self):
-        return '<BenchmarkSite {}>'.format(self._short_name)
+        return '<{} {}>'.format(self.__class__.__name__, self._short_name)
 
 class Tag(db.Model):
     """The Tag class represents a user-created label that can be used for
@@ -141,12 +227,13 @@ class Tag(db.Model):
         return self._results
 
     def __repr__(self):
-        return '<Tag {}>'.format(self._name)
+        return '<{} {}>'.format(self.__class__.__name__, self._name)
 
 # todo: move elsewhere?
 tag_result_association = db.Table('tag_result_association', db.Model.metadata,
-    db.Column('left_id', db.Integer, db.ForeignKey('result._uuid')),
-    db.Column('right_id', db.Integer, db.ForeignKey('tag._name'))
+    db.Column('result_uuid', db.Integer, db.ForeignKey('result._uuid')),
+    db.Column('tag_name', db.Integer, db.ForeignKey('tag._name')),
+    db.PrimaryKeyConstraint('result_uuid', 'tag_name')
 )
 
 class Result(db.Model):
@@ -192,7 +279,7 @@ class Result(db.Model):
         return self._tags
 
     def __repr__(self):
-        return '<Result {}>'.format(self._uuid)
+        return '<{} {} ({} {} {} {})>\n'.format(self.__class__.__name__, self._uuid, self._uploader, self._benchmark, self._site, str(self._tags))
 
 class Report(db.Model):
     """The Report class represents a user’s report of a benchmark result."""
@@ -244,4 +331,4 @@ class Report(db.Model):
         return self._uuid
 
     def __repr__(self):
-        return '<Report {}>'.format(self._uuid)
+        return '<{} {}>'.format(self.__class__.__name__, self._uuid)
