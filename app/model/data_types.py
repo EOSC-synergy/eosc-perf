@@ -66,12 +66,12 @@ class ResultIterator:
                 raise TypeError('"uploader" is not a Uploader')
             self._uploader = kwargs['uploader']
         
-        self.fetch(self._batch_count)
+        self._fetch(self._batch_count)
     
     def __iter__(self):
         return self
     
-    def fetch(self, batch_number: int, batch_size: int = BATCH_SIZE):
+    def _fetch(self, batch_number: int, batch_size: int = BATCH_SIZE):
         results = self._session.query(Result)
 
         # build query by filters
@@ -97,7 +97,7 @@ class ResultIterator:
         # if current batch empty, fetch new batch
         if self._batch_offset == BATCH_SIZE:
             self._batch_count = self._batch_count + 1
-            self.fetch(self._batch_count)
+            self._fetch(self._batch_count)
             self._batch_offset = 0
 
         # if arrived at the very end, stop
