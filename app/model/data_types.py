@@ -130,7 +130,7 @@ class Benchmark(db.Model):
         return self._uploader
     
     def get_results(self) -> ResultIterator:
-        pass
+        return ResultIterator(Session.object_session(self), benchmark=self)
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self._docker_name)
@@ -151,7 +151,7 @@ class Uploader(db.Model):
         return self._email
     
     def get_results(self) -> ResultIterator:
-        pass
+        return ResultIterator(Session.object_session(self), uploader=self)
 
     def get_benchmarks(self) -> List[Benchmark]:
         return self._benchmarks
@@ -194,7 +194,7 @@ class Site(db.Model):
         self._description = desc
     
     def get_results(self) -> ResultIterator:
-        pass
+        return ResultIterator(Session.object_session(self), site=self)
 
     def get_name(self) -> str:
         return self._name
