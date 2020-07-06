@@ -1,8 +1,15 @@
 from __future__ import annotations 
 from .database import db
+
+from sqlalchemy.orm.session import Session
+
+# Result UUID generation
 import uuid
+
+# Report date
 from datetime import datetime
 
+# for type hints of lists
 from typing import List
 
 class UUID(db.String):
@@ -122,7 +129,7 @@ class Benchmark(db.Model):
     def get_uploader(self) -> Uploader:
         return self._uploader
     
-    def get_resuts(self) -> ResultIterator:
+    def get_results(self) -> ResultIterator:
         pass
 
     def __repr__(self):
