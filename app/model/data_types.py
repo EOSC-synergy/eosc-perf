@@ -294,10 +294,9 @@ class Tag(db.Model):
         """Get the name of the tag."""
         return self._name
     
-    # TODO: upgrade to ResultIterator
-    def get_results(self) -> List[Result]:
-        """Get all results associated with this tag."""
-        return self._results
+    def get_results(self) -> ResultIterator:
+        """Get an iterator for all the results associated with this tag."""
+        return ResultIterator(Session.object_session(self), tags=[self])
 
     def __repr__(self):
         """Get a human-readable representation string of the tag."""
