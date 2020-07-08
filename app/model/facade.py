@@ -139,7 +139,21 @@ class DatabaseFacade:
         pass
 
     def query_benchmarks(self, keywords: List[str]) -> List[Benchmark]:
-        pass
+        """Query all benchmarks containing all keywords in the name. Case insensitive."""
+        # prepare query
+        results = db.session.query(Benchmark)
+        # add filter for every keyword
+        for keyword in keywords:
+            results = results.filter(Benchmark._docker_name.ilike('%' + keyword + '%'))
+        
+        results = results.all()
+
+        # check number of results
+        if len(results) < 1:
+            raise self.NotFoundError("no benchmarks matching the keywords found")
+
+        #
+        return results
 
     def add_result(self, contentJSON: str, metadataJSON: str) -> bool:
         pass
