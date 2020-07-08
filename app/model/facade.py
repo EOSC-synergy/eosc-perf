@@ -1,6 +1,6 @@
 from __future__ import annotations
 from .database import db
-from app.model.data_types import Result, Tag, Benchmark, Uploader, Site
+from app.model.data_types import Result, Tag, Benchmark, Uploader, Site, Report
 
 class DatabaseFacade:
     def __init__(self):
@@ -168,7 +168,35 @@ class DatabaseFacade:
         pass
 
     def get_report(self, uuid: str) -> Report:
-        pass
+        """Fetch a single report by its UUID."""
+        # prepare query
+        results = db.session.query(Report)\
+            .filter(Report._uuid == uuid)\
+            .all()
+        
+        # check number of results
+        if len(results) < 1:
+            raise self.NotFoundError("report '{}' not found".format(uuid))
+        if len(results) > 1:
+            # TODO: test?
+            raise self.TooManyError("multiple reports with same uuid ({})".format(uuid))
 
-    def get_reports(self, only_unanswered: bool) -> List[Report]:
-        pass
+        #
+        return results[0]
+
+    def get_reports(self, only_unanswered: bool = False) -> List[Report]:
+        """Get all or only unanswered reports."""
+        # prepare query
+        results = db.session.query(Report)
+        
+        if only_unanswered:
+            results = results.filter(Report._verified == False)
+
+        results = results.all()
+
+        # check number of results
+        if len(results) < 1:
+            raise self.NotFoundError("no reports found")
+
+        #
+        return results
