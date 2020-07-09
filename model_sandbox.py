@@ -1,7 +1,8 @@
 from app import app
 from app.model.database import db
-
 from app.model.data_types import Uploader, Site, Benchmark, Result, Tag
+
+import code
 
 db.create_all()
 
@@ -40,3 +41,5 @@ for uploader in uploaders:
                 db.session.add(result)
 
 db.session.commit()
+
+code.interact(local=locals())
