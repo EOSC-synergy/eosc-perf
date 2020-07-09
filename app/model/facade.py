@@ -164,7 +164,7 @@ class DatabaseFacade:
         #
         return results
     
-    def _add_to_db(self, object) -> bool:
+    def _add_to_db(self, object: db.Model) -> bool:
         """Add a new model object to the database."""
         try:
             # try adding to session and committing it
