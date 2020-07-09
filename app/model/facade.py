@@ -12,9 +12,6 @@ import json
 class DatabaseFacade:
     """Facade class that acts as a middleman between View/Controller and Model classes."""
 
-    def __init__(self):
-        pass
-
     class NotFoundError(RuntimeError):
         """Helper exception type to represent queries with no results."""
         pass
