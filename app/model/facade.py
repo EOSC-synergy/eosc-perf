@@ -1,6 +1,6 @@
 from __future__ import annotations
 from .database import db
-from app.model.data_types import Result, Tag, Benchmark, Uploader, Site, Report
+from app.model.data_types import Result, Tag, Benchmark, Uploader, Site, Report, ResultIterator
 import json
 
 class DatabaseFacade:
@@ -15,9 +15,9 @@ class DatabaseFacade:
         """Helper exception type to represent queries with too many results."""
         pass
 
-    def _get_result_iterator(self):
-        # this method should stay unimplemented, the signature does not fit the needed constructor args
-        pass
+    def _get_result_iterator(self) -> ResultIterator:
+        """Get a result iterator that iterates through every result, unfiltered."""
+        return ResultIterator(db.session)
 
     def _get_result_filterer(self):
         pass
