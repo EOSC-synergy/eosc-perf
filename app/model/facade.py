@@ -343,3 +343,6 @@ class DatabaseFacade:
 
         #
         return results
+
+# single global instance
+facade = DatabaseFacade()

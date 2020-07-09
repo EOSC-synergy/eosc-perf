@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 import json
 from .type_aliases import JSON
-from ..model.facade import DatabaseFacade
+from ..model.facade import DatabaseFacade, facade
+from flask import request, Response
+from flask.blueprints import Blueprint
 
 class AJAXHandler(ABC):
     """Abstract class to represent any AJAX request endpoint."""
@@ -43,3 +45,12 @@ class ResultSearchAJAX(SearchAJAXHandler):
             results_dict["results"].append(result_dict)
         
         return json.dumps(results_dict)
+
+ajax_blueprint = Blueprint('ajax', __name__)
+@ajax_blueprint.route('/query_results')
+def query_results():
+    query_json = request.args.get('query_json')
+    if query_json is None:
+        query_json = "{}"
+    handler = ResultSearchAJAX(facade)
+    return Response(handler.fetch_data(query_json), mimetype='application/json')
