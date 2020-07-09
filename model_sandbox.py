@@ -1,3 +1,4 @@
+from __future__ import annotations
 from app import app
 from app.model.database import db
 from app.model.data_types import Uploader, Site, Benchmark, Result, Tag, ResultIterator
@@ -44,5 +45,17 @@ for uploader in uploaders:
 db.session.commit()
 
 facade = DatabaseFacade()
+
+# utility helpers for functions not part of design
+def get_uploaders() -> List[Uploader]:
+    """Get all uploaders."""
+    # prepare query
+    return db.session.query(Uploader).all()
+
+def get_benchmarks() -> List[Benchmark]:
+    """Get all benchmarks."""
+    # prepare query
+    return db.session.query(Benchmark).all()
+
 
 code.interact(local=locals())
