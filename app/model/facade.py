@@ -1,9 +1,17 @@
+""""This module the implementation of the Model facade..
+Provided are:
+  - DatabaseFacade
+And as helpers:
+  - DatabaseFacade.NotFoundError
+  - DatabaseFacade.ToomanyError"""
 from __future__ import annotations
 from .database import db
 from app.model.data_types import Result, Tag, Benchmark, Uploader, Site, Report, ResultIterator
 import json
 
 class DatabaseFacade:
+    """Facade class that acts as a middleman between View/Controller and Model classes."""
+
     def __init__(self):
         pass
 
@@ -23,6 +31,9 @@ class DatabaseFacade:
         pass
 
     def _add_uploader(self, email: str) -> bool:
+        """Add a new uploader.
+
+        This is a private methods, because uploaders should be added automatically as needed."""
         return self._add_to_db(Uploader(email))
 
     def get_result(self, uuid: str) -> Result:
@@ -157,6 +168,7 @@ class DatabaseFacade:
         return results
     
     def _add_to_db(self, object) -> bool:
+        """Add a new model object to the database."""
         try:
             # try adding to session and committing it
             db.session.add(object)
@@ -168,6 +180,7 @@ class DatabaseFacade:
             return False
     
     def _get_or_add_uploader(self, uploader_email: str) -> Uploader:
+        """Get a uploader, or add them if they don't exist."""
         uploader = None
         try:
             uploader = self.get_uploader(uploader_email)
@@ -274,12 +287,13 @@ class DatabaseFacade:
         return self._add_to_db(site)
 
     def add_tag(self, name: str) -> bool:
+        """Add a new tag."""
         if len(name) < 1:
             raise ValueError("tag name too short")
         return self._add_to_db(Tag(name=name))
 
     def add_benchmark(self, docker_name: str, uploader_email: str) -> bool:
-        """Add new benchmark."""
+        """Add a new benchmark."""
         # input validation
         # 3 because: 'user/container' => 'a/b'
         if len(docker_name) < 3:
