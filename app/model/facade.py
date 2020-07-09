@@ -299,6 +299,13 @@ class DatabaseFacade:
         if len(uploader_email) < 3:
             raise ValueError("benchmark uploader email impossibly short")
 
+        # check if benchmark already exists beforehand to not add new uploader if uploader does not exist
+        try:
+            benchmark = self.get_benchmark(docker_name)
+            return False
+        except:
+            pass
+
         uploader = self._get_or_add_uploader(uploader_email)
 
         return self._add_to_db(Benchmark(docker_name, uploader))
