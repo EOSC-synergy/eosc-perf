@@ -1,6 +1,7 @@
 from __future__ import annotations
 from .database import db
 from app.model.data_types import Result, Tag, Benchmark, Uploader, Site, Report
+import json
 
 class DatabaseFacade:
     def __init__(self):
@@ -22,7 +23,7 @@ class DatabaseFacade:
         pass
 
     def _add_uploader(self, email: str) -> bool:
-        pass
+        return self._add_to_db(Uploader(email))
 
     def get_result(self, uuid: str) -> Result:
         """Fetch a single result by UUID."""
@@ -154,18 +155,142 @@ class DatabaseFacade:
 
         #
         return results
+    
+    def _add_to_db(self, object) -> bool:
+        try:
+            # try adding to session and committing it
+            db.session.add(object)
+            db.session.commit()
+            return True
+        except:
+            # reset session to previous state without the object
+            db.session.rollback()
+            return False
+    
+    def _get_or_add_uploader(self, uploader_email: str) -> Uploader:
+        uploader = None
+        try:
+            uploader = self.get_uploader(uploader_email)
+        except:
+            self._add_uploader(uploader_email)
+            uploader = self.get_uploader(uploader_email)
+        return uploader
 
     def add_result(self, contentJSON: str, metadataJSON: str) -> bool:
-        pass
+        """Add new site using site metadata json."""
+
+        # contentJSON is assumed validated by the Controller
+        metadata = None
+        try:
+            metadata = json.loads(metadataJSON)
+        except json.JSONDecodeError as decode_error:
+            # forward exceptions
+            print("illegal result json submitted")
+            raise decode_error
+
+        # input validation
+        if 'uploader' not in metadata:
+            raise ValueError("uploader is missing from result metadata")
+        if type(metadata['uploader']) is not str:
+            raise TypeError("uploader email must be a string in result metadata")
+        if len(metadata['uploader']) < 1:
+            raise ValueError("result uploader empty")
+
+        if 'site' not in metadata:
+            raise ValueError("site is missing from result metadata")
+        if type(metadata['site']) is not str:
+            raise TypeError("site must be a string in result metadata")
+        if len(metadata['site']) < 1:
+            raise ValueError("result site is empty")
+
+        if 'benchmark' not in metadata:
+            raise ValueError("benchmark is missing from result metadata")
+        if type(metadata['benchmark']) is not str:
+            raise TypeError("benchmark must be a string in result metadata")
+        if len(metadata['benchmark']) < 1:
+            raise ValueError("result benchmark is empty")
+
+        uploader = self._get_or_add_uploader(metadata['uploader'])
+        site = None
+        try:
+            site = self.get_site(metadata['site'])
+        except:
+            raise ValueError("unknown result site")
+
+        benchmark = None
+        try:
+            benchmark = self.get_benchmark(metadata['benchmark'])
+        except:
+            raise ValueError("unknown result benchmark")
+
+        tags = []
+        if 'tags' in metadata:
+            if type(metadata['tags']) is not list:
+                raise TypeError("tags must be a list of strings in result metadata")
+            for tag_name in metadata['tags']:
+                if type(tag_name) is not str:
+                    raise TypeError("at least one tag in results metadata is not a string")
+                # TODO: fail if tag is unknown, what about auto-adding tags if they do not exist?
+                try:
+                    tags.append(self.get_tag(tag_name))
+                except:
+                    raise ValueError("unknown tag")
+
+        result = None
+        if len(tags) > 0:
+            result = Result(contentJSON, uploader, site, benchmark, tags=tags)
+        else:
+            result = Result(contentJSON, uploader, site, benchmark)
+        
+        return self._add_to_db(result)
 
     def add_site(self, metadataJSON: str) -> bool:
-        pass
+        """Add new site using site metadata json."""
+        metadata = None
+        try:
+            metadata = json.loads(metadataJSON)
+        except json.JSONDecodeError as decode_error:
+            # forward exceptions
+            print("illegal site json submitted")
+            raise decode_error
+
+        # input validation
+        if 'short_name' not in metadata:
+            raise ValueError("short_name is missing from site metadata")
+        if len(metadata['short_name']) < 1:
+            raise ValueError("short_name empty")
+        if 'address' not in metadata:
+            raise ValueError("address is missing from site metadata")
+        if len(metadata['address']) < 1:
+            raise ValueError("address is empty")
+
+        site = None
+        # TODO: descripiton
+        if 'name' in metadata and len(metadata['name']) > 0:
+            site = Site(metadata['short_name'], metadata['address'], name=metadata['name'])
+        else:
+            site = Site(metadata['short_name'], metadata['address'])
+        
+        return self._add_to_db(site)
 
     def add_tag(self, name: str) -> bool:
-        pass
+        if len(name) < 1:
+            raise ValueError("tag name too short")
+        return self._add_to_db(Tag(name=name))
 
-    def add_benchmark(self, docker_name: str, uploader: str) -> bool:
-        pass
+    def add_benchmark(self, docker_name: str, uploader_email: str) -> bool:
+        """Add new benchmark."""
+        # input validation
+        # 3 because: 'user/container' => 'a/b'
+        if len(docker_name) < 3:
+            raise ValueError("benchmark docker_name impossibly short")
+        # 3 because 'user@domain' => 'a@b'
+        if len(uploader_email) < 3:
+            raise ValueError("benchmark uploader email impossibly short")
+
+        uploader = self._get_or_add_uploader(uploader_email)
+
+        return self._add_to_db(Benchmark(docker_name, uploader))
 
     def get_report(self, uuid: str) -> Report:
         """Fetch a single report by its UUID."""
