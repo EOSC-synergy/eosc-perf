@@ -1,6 +1,7 @@
 from app import app
 from app.model.database import db
-from app.model.data_types import Uploader, Site, Benchmark, Result, Tag
+from app.model.data_types import Uploader, Site, Benchmark, Result, Tag, ResultIterator
+from app.model.facade import DatabaseFacade
 
 import code
 
@@ -41,5 +42,7 @@ for uploader in uploaders:
                 db.session.add(result)
 
 db.session.commit()
+
+facade = DatabaseFacade()
 
 code.interact(local=locals())
