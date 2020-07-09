@@ -1,3 +1,4 @@
-1. Spin up python
-2. Run exec(open('main.py').read())
-3. Fiddle around with objects and test relations
+
+To manually test around with the components
+1. Run `python model_sandbox.py`
+2. A working model is now established, you may interact with it through the interpreter
