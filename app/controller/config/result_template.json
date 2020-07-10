@@ -1,0 +1,74 @@
+{
+   "status": "ok",
+   "user_args": {
+     "dataset": "imagenet_mini",
+     "optimizer": "sgd",
+     "num_epochs": 1,
+     "use_fp16": false,
+     "weight_decay": 4e-05,
+     "model": "resnet50 (ImageNet)",
+     "num_gpus": 1,
+     "evaluation": true,
+     "batch_size_per_device": 128
+   },
+   "machine_config": {
+     "cpu_info": {
+       "num_cores": 20,
+       "cpu_info": "Intel(R) Xeon(R) Gold 5115 CPU @ 2.40GHz",
+       "mhz_per_cpu": 2400
+     },
+     "gpu_info": {
+       "count": 1,
+       "model": "Tesla V100-PCIE-32GB"
+     },
+     "memory_total": 201231572992,
+     "memory_available": 188877918208
+   },
+   "training": {
+     "batch_size": 128,
+     "model": "resnet50",
+     "num_gpus": 1,
+     "num_epochs": 1,
+     "optimizer": "sgd",
+     "use_fp16": false,
+     "weight_decay": 4e-05,
+     "local_parameter_device": "cpu",
+     "variable_update": "parameter_server",
+     "allow_growth": true,
+     "print_training_accuracy": true,
+     "display_every": 100,
+     "data_name": "imagenet",
+     "data_dir": "/mnt/onedata/datahpc/benchmarks_cnn/data/imagenet_mini",
+     "device": "gpu",
+     "data_format": "NCHW",
+     "train_dir": "/mnt/onedata/datahpc/benchmarks_cnn/models/1588785115",
+     "benchmark_log_dir":
+"/mnt/onedata/datahpc/benchmarks_cnn/models/1588785115",
+     "tf_version": "1.14.0",
+     "batch_size_per_device": 128,
+     "num_batches": 10010,
+     "result": {
+       "global_start_time": "2020-05-06T17:11:55.800494Z",
+       "global_end_time": "2020-05-06T21:49:35.852575Z",
+       "average_examples_per_sec": 78.46201374548563,
+       "execution_start_time": "2020-05-06T17:14:40.267842Z",
+       "execution_end_time": "2020-05-06T21:46:29.166073Z"
+     }
+   },
+   "evaluation": {
+     "device": "gpu",
+     "num_gpus": 1,
+     "batch_size": 64,
+     "batch_size_per_device": 64,
+     "data_format": "NCHW",
+     "model": "resnet50",
+     "num_batches": 100,
+     "result": {
+       "global_start_time": "2020-05-06T21:49:38.011716Z",
+       "global_end_time": "2020-05-06T21:50:43.729937Z",
+       "average_examples_per_sec": 215.2948641159953,
+       "top_1_accuracy": 0.04234375,
+       "top_5_accuracy": 0.115
+     }
+   }
+}
