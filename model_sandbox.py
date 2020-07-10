@@ -1,7 +1,7 @@
 from __future__ import annotations
 from app import create_app
 from app.model.database import db
-from app.model.sandbox import add_dummy_objects, results, benchmarks, sites, tags, uploaders
+from app.model.sandbox import add_dummies_if_not_exist, results, benchmarks, sites, tags, uploaders
 from app.model.data_types import Uploader, Tag, Result, Benchmark, Site, ResultIterator
 from app.model.facade import facade
 import code
@@ -17,8 +17,8 @@ def get_benchmarks() -> List[Benchmark]:
     # prepare query
     return db.session.query(Benchmark).all()
 
-app = create_app()
+app = create_app(True)
 
-add_dummy_objects(app)
+add_dummies_if_not_exist(app)
 
 code.interact(local=locals())
