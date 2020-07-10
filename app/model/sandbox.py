@@ -13,9 +13,8 @@ for uploader in uploaders:
                 result = Result(json="{}", uploader=uploader, site=site, benchmark=benchmark, tags=[tag])
                 results.append(result)
 
-def add_dummy_objects(app):
+def add_dummies_if_not_exist(app):
     app.app_context().push()
-    global uploaders
     for uploader in uploaders:
         db.session.add(uploader)
 
@@ -31,4 +30,8 @@ def add_dummy_objects(app):
     for result in results:
         db.session.add(result)
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        # things already exist, just roll back
+        db.session.rollback()

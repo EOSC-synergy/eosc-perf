@@ -5,3 +5,5 @@ To manually test around with the components
 
 To launch the webapp entirely:
 1. Run `python -m app`
+To launch the webapp in debug mode:
+1. Run `python -m app -d` or `python -m app --debug`
