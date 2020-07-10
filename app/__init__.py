@@ -2,21 +2,19 @@
 from flask import Flask, request
 from .model.database import db, DATABASE_PATH, configure_database
 from .model.facade import facade
-from .model.sandbox import add_dummy_objects
+from .model.sandbox import add_dummies_if_not_exist
 from .view.ajax import ajax_blueprint
 import os
 import code
 
-def create_app():
+def create_app(debug: bool):
     app = Flask(__name__)
-    app.config['DEBUG'] = True
+    if debug:
+        app.config['DEBUG'] = True
     configure_database(app)
 
-    # delete while developing
-    if os.path.exists(DATABASE_PATH):
-        os.remove(DATABASE_PATH)
-    
-    add_dummy_objects(app)
+    if debug:
+        add_dummies_if_not_exist(app)
 
     @app.route('/')
     def root():
@@ -25,7 +23,3 @@ def create_app():
     app.register_blueprint(ajax_blueprint)
 
     return app
-    
-def run_app():
-    app = create_app()
-    app.run()
