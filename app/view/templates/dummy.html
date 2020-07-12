@@ -1,0 +1,17 @@
+{% extends "base.html" %} {# inherits from base.html #}
+{# overrides the empty title from base.hrml #}
+{% block title %}Dummypage{% endblock %}
+{# uses the head from its parent, (super.super() would call from the grandparent etc.) #}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block info %}
+    <h1>FOO</h1>
+    <p class="Text">
+      {{ info }}
+        {# gets replaced by the info variable in template.render() #}
+    </p>
+{% endblock %}
+{% block content %}
+{% endblock %}
+{# doesn't include content block so it gets replaced with an empty string #}
