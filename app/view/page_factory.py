@@ -1,12 +1,11 @@
 """This module contains the factroyclasses generating the HTMLpages.
-    Provided are:
-        - Page Factory
-    
+Provided are:
+ - PageFactory
 """
-import jinja2 as jj
 from os.path import isfile
+from abc import abstractmethod
+import jinja2 as jj
 from .type_aliases import HTML, JSON
-from abc import ABC, abstractmethod
 
 class PageFactory:
 
@@ -19,11 +18,11 @@ class PageFactory:
         the template used for the combination of the final html file.
     content: str
         the content parsed into the final html file.
-        consisting of java script code. 
+        consisting of java script code.
     info: HTML
         the default information displayed of the final html page
     """
-    
+
     _environment: jj.Environment
 
     def __init__(self):
@@ -37,89 +36,88 @@ class PageFactory:
         self._info = None
 
     def generate_page(self, args: JSON, template: HTML = None, info: str = None) -> HTML:
-        """generate a HTML page from the inputparameters not using the template provided in the class.
-        Parameters
-        ------
-        args: JSON
-            Parameters used by some childclasses to generate the right content.
-        template: HTML
-            A template can be used instead of the default should contain variables for content and info,
-            doesn't change the template lasting,
-            can be left empty.
-        info: str
-            Information displayed on the returned HTML page # todo may contain extra html formating,
-            doesn't change the info lasting,
-            can be left empty.
-        Returns
-        ------
-        : HTML
-            The finished HTML page displaying the content and information.
+        """Generate a HTML page from the inputparameters not using the
+        template provided in the class.
+
+        Args:
+            args (JSON): Parameters used by some childclasses to generate
+                the right content.
+            template (HTML): A template can be used instead of the default
+                should contain variables for content and info,
+                doesn't change the template lasting,
+                can be left empty.
+            info (str): Information displayed on the returned HTML page
+                # todo may contain extra html formating,
+                doesn't change the info lasting,
+                can be left empty.
+        Returns:
+            HTML: The finished HTML page displaying the content and information.
         """
         template_tmp = self._template
         info_tmp = self._info
         if not template is None:
-           template_tmp = jj.Template(template)
+            template_tmp = jj.Template(template)
         if not info is None:
             info_tmp = info
         if self._content is None:
-            return template_tmp.render(info=info_tmp,content=self._generate_content(args))
-        return template_tmp.render(info=info_tmp,content=self._content)
-        
+            return template_tmp.render(
+                info=info_tmp,
+                content=self._generate_content(args))
+        return template_tmp.render(info=info_tmp, content=self._content)
+
     @abstractmethod
     def _generate_content(self, args: JSON) -> HTML:
-        """(abstract) patten function to generate the content of a given page.
-        Parameters
-        ------
-        args: JSON
-            Parameters used by some childclasses to generate the right content.
-        Returns
-        ------
-        : HTM
-            The Content part, consisting of java script.
+        """(abstract) Pattern function to generate the content of a given page.
+
+        Args:
+            args (JSON): Parameters used by some childclasses to generate the
+                right content.
+
+        Returns:
+            HTML: The Content part, consisting of java script.
         """
-        pass
 
     def set_template(self, template: HTML):
-        """change the default template to the input template.
-        Parameters
-        ------
-        template: HTML
-            The new template for this instance of PageFactory.
-            Eather template as String or the filepath in view/template/s.
-            doesn't check if it is in a valid format."""
+        """Change the default template to the input template.
+
+        Args:
+            template (HTML): The new template for this instance of PageFactory.
+                Eather template as String or the filepath in view/template/s.
+                doesn't check if it is in a valid format.
+        """
         if isfile("template/"+template):
             self._template = self._environment.get_template(template)
         else:
             self._template = self._environment.from_string(template)
 
     def set_content(self, content: str):
-        """set the content to the input content.
-        Parameters
-        ------
-        content: str 
-            New content for this instance of PageFactory.
-            """
-        self._content  = content
+        """Set the content to the input content.
+
+        Args:
+            content (str): New content for this instance of PageFactory.
+        """
+        self._content = content
 
     def set_info(self, info: str):
-        """(abstract) change the default info into the input info.
-        Parameters
-        ------
-        info: str
-            The new info of this instance of PageFactory, may contain HTML formating.
-            is not checking if it is valid html syntax"""
+        """(abstract) Change the default info into the input info.
+
+        Args:
+            info (str): The new info of this instance of PageFactory, may
+                contain HTML formating.
+                is not checking if it is valid html syntax
+        """
         self._info = info
 
-"""
-#Can be deletet but maby helpfulll constructor for concret Factory implementation
-class DummyFactory(PageFactory):
-    def __init__(self):
-        super().__init__()
-        self._template = self._environment.get_template("dummy.html")
-        self._info = "some nights i get up"
-        pass
-    def set_info(self, info;str) {
-        print("heureka it works")
-        super.set_info(info)
-    }
-"""
+
+#Can be deletet but maby helpfulll constructor for concret Factory
+# implementation
+#class DummyFactory(PageFactory):
+#    def __init__(self):
+#        super().__init__()
+#        self._template = self._environment.get_template("dummy.html")
+#        self._info = "some nights i get up"
+#        pass
+#    def set_info(self, info;str) {
+#        print("heureka it works")
+#        super.set_info(info)
+#    }
