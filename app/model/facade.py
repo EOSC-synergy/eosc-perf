@@ -1,24 +1,24 @@
-""""This module the implementation of the Model facade..
+""""This module the implementation of the Model facade.
 Provided are:
   - DatabaseFacade
 And as helpers:
   - DatabaseFacade.NotFoundError
   - DatabaseFacade.ToomanyError"""
-from __future__ import annotations
-from .database import db
-from app.model.data_types import Result, Tag, Benchmark, Uploader, Site, Report, ResultIterator
+#from __future__ import annotations
+from typing import List
 import json
+from app.model.data_types import Result, Tag, Benchmark, Uploader, Site, Report, ResultIterator
+from .database import db
+
 
 class DatabaseFacade:
     """Facade class that acts as a middleman between View/Controller and Model classes."""
 
     class NotFoundError(RuntimeError):
         """Helper exception type to represent queries with no results."""
-        pass
 
     class TooManyError(RuntimeError):
         """Helper exception type to represent queries with too many results."""
-        pass
 
     def _get_result_iterator(self) -> ResultIterator:
         """Get a result iterator that iterates through every result, unfiltered."""
@@ -39,13 +39,12 @@ class DatabaseFacade:
         results = db.session.query(Result)\
             .filter(Result._uuid == uuid)\
             .all()
-        
+
         # check number of results
         if len(results) < 1:
             raise self.NotFoundError("result '{}' not found".format(uuid))
         if len(results) > 1:
             # should never happen, UUIDs are famously unique
-            # TODO: test?
             raise self.TooManyError("multiple results with same UUID")
 
         #
@@ -57,14 +56,14 @@ class DatabaseFacade:
         results = db.session.query(Tag)\
             .filter(Tag._name == name)\
             .all()
-        
+
         # check number of results
         if len(results) < 1:
             raise self.NotFoundError("tag '{}' not found".format(name))
         if len(results) > 1:
             # should never happen, UUIDs are famously unique
-            # TODO: test?
-            raise self.TooManyError("multiple tags with same name ({})".format(name))
+            raise self.TooManyError(
+                "multiple tags with same name ({})".format(name))
 
         #
         return results[0]
@@ -75,13 +74,15 @@ class DatabaseFacade:
         results = db.session.query(Benchmark)\
             .filter(Benchmark._docker_name == docker_name)\
             .all()
-        
+
         # check number of results
         if len(results) < 1:
-            raise self.NotFoundError("benchmark '{}' not found".format(docker_name))
+            raise self.NotFoundError(
+                "benchmark '{}' not found".format(docker_name))
         if len(results) > 1:
-            # TODO: test?
-            raise self.TooManyError("multiple benchmarks with same docker hub name ({})".format(docker_name))
+            raise self.TooManyError(
+                ("multiple benchmarks with same"
+                 "docker hub name ({})".format(docker_name)))
 
         #
         return results[0]
@@ -92,13 +93,13 @@ class DatabaseFacade:
         results = db.session.query(Uploader)\
             .filter(Uploader._email == email)\
             .all()
-        
+
         # check number of results
         if len(results) < 1:
             raise self.NotFoundError("uploader '{}' not found".format(email))
         if len(results) > 1:
-            # TODO: test?
-            raise self.TooManyError("multiple uploaders with same email ({})".format(email))
+            raise self.TooManyError(
+                "multiple uploaders with same email ({})".format(email))
 
         #
         return results[0]
@@ -109,13 +110,13 @@ class DatabaseFacade:
         results = db.session.query(Site)\
             .filter(Site._short_name == short_name)\
             .all()
-        
+
         # check number of results
         if len(results) < 1:
             raise self.NotFoundError("site '{}' not found".format(short_name))
         if len(results) > 1:
-            # TODO: test?
-            raise self.TooManyError("multiple sites with same short name ({})".format(short_name))
+            raise self.TooManyError(
+                "multiple sites with same short name ({})".format(short_name))
 
         #
         return results[0]
@@ -153,29 +154,31 @@ class DatabaseFacade:
         results = db.session.query(Benchmark)
         # add filter for every keyword
         for keyword in keywords:
-            results = results.filter(Benchmark._docker_name.ilike('%' + keyword + '%'))
-        
+            results = results.filter(
+                Benchmark._docker_name.ilike('%' + keyword + '%'))
+
         results = results.all()
 
         # check number of results
         if len(results) < 1:
-            raise self.NotFoundError("no benchmarks matching the keywords found")
+            raise self.NotFoundError(
+                "no benchmarks matching the keywords found")
 
         #
         return results
-    
-    def _add_to_db(self, object: db.Model) -> bool:
+
+    def _add_to_db(self, obj: db.Model) -> bool:
         """Add a new model object to the database."""
         try:
             # try adding to session and committing it
-            db.session.add(object)
+            db.session.add(obj)
             db.session.commit()
             return True
         except:
             # reset session to previous state without the object
             db.session.rollback()
             return False
-    
+
     def _get_or_add_uploader(self, uploader_email: str) -> Uploader:
         """Get a uploader, or add them if they don't exist."""
         uploader = None
@@ -186,13 +189,13 @@ class DatabaseFacade:
             uploader = self.get_uploader(uploader_email)
         return uploader
 
-    def add_result(self, contentJSON: str, metadataJSON: str) -> bool:
+    def add_result(self, content_json: str, metadata_json: str) -> bool:
         """Add new site using site metadata json."""
 
-        # contentJSON is assumed validated by the Controller
+        # content_json is assumed validated by the Controller
         metadata = None
         try:
-            metadata = json.loads(metadataJSON)
+            metadata = json.loads(metadata_json)
         except json.JSONDecodeError as decode_error:
             # forward exceptions
             print("illegal result json submitted")
@@ -202,7 +205,8 @@ class DatabaseFacade:
         if 'uploader' not in metadata:
             raise ValueError("uploader is missing from result metadata")
         if type(metadata['uploader']) is not str:
-            raise TypeError("uploader email must be a string in result metadata")
+            raise TypeError(
+                "uploader email must be a string in result metadata")
         if len(metadata['uploader']) < 1:
             raise ValueError("result uploader empty")
 
@@ -236,10 +240,12 @@ class DatabaseFacade:
         tags = []
         if 'tags' in metadata:
             if type(metadata['tags']) is not list:
-                raise TypeError("tags must be a list of strings in result metadata")
+                raise TypeError(
+                    "tags must be a list of strings in result metadata")
             for tag_name in metadata['tags']:
                 if type(tag_name) is not str:
-                    raise TypeError("at least one tag in results metadata is not a string")
+                    raise TypeError(
+                        "at least one tag in results metadata is not a string")
                 # TODO: fail if tag is unknown, what about auto-adding tags if they do not exist?
                 try:
                     tags.append(self.get_tag(tag_name))
@@ -248,17 +254,17 @@ class DatabaseFacade:
 
         result = None
         if len(tags) > 0:
-            result = Result(contentJSON, uploader, site, benchmark, tags=tags)
+            result = Result(content_json, uploader, site, benchmark, tags=tags)
         else:
-            result = Result(contentJSON, uploader, site, benchmark)
-        
+            result = Result(content_json, uploader, site, benchmark)
+
         return self._add_to_db(result)
 
-    def add_site(self, metadataJSON: str) -> bool:
+    def add_site(self, metadata_json: str) -> bool:
         """Add new site using site metadata json."""
         metadata = None
         try:
-            metadata = json.loads(metadataJSON)
+            metadata = json.loads(metadata_json)
         except json.JSONDecodeError as decode_error:
             # forward exceptions
             print("illegal site json submitted")
@@ -275,12 +281,13 @@ class DatabaseFacade:
             raise ValueError("address is empty")
 
         site = None
-        # TODO: descripiton
+        # TODO: description
         if 'name' in metadata and len(metadata['name']) > 0:
-            site = Site(metadata['short_name'], metadata['address'], name=metadata['name'])
+            site = Site(metadata['short_name'],
+                        metadata['address'], name=metadata['name'])
         else:
             site = Site(metadata['short_name'], metadata['address'])
-        
+
         return self._add_to_db(site)
 
     def add_tag(self, name: str) -> bool:
@@ -299,9 +306,10 @@ class DatabaseFacade:
         if len(uploader_email) < 3:
             raise ValueError("benchmark uploader email impossibly short")
 
-        # check if benchmark already exists beforehand to not add new uploader if uploader does not exist
+        # check if benchmark already exists beforehand to not add new uploader
+        # if uploader does not exist
         try:
-            benchmark = self.get_benchmark(docker_name)
+            self.get_benchmark(docker_name)
             return False
         except:
             pass
@@ -316,13 +324,13 @@ class DatabaseFacade:
         results = db.session.query(Report)\
             .filter(Report._uuid == uuid)\
             .all()
-        
+
         # check number of results
         if len(results) < 1:
             raise self.NotFoundError("report '{}' not found".format(uuid))
         if len(results) > 1:
-            # TODO: test?
-            raise self.TooManyError("multiple reports with same uuid ({})".format(uuid))
+            raise self.TooManyError(
+                "multiple reports with same uuid ({})".format(uuid))
 
         #
         return results[0]
@@ -331,7 +339,7 @@ class DatabaseFacade:
         """Get all or only unanswered reports."""
         # prepare query
         results = db.session.query(Report)
-        
+
         if only_unanswered:
             results = results.filter(Report._verified == False)
 
@@ -343,6 +351,7 @@ class DatabaseFacade:
 
         #
         return results
+
 
 # single global instance
 facade = DatabaseFacade()

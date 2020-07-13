@@ -130,3 +130,5 @@ dmypy.json
 
 # Model testing database
 test.db
+
+.vscode/
