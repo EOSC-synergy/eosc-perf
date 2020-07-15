@@ -1,4 +1,4 @@
-'''This module acts as a fascade between the IOController
+'''This module acts as a facade between the IOController
 and the EGI Check-In authentication system'''
 
 DEFAULT_AUTH_URL = ""
@@ -8,7 +8,7 @@ class Authenticator:
     def __init__(self, auth_url=DEFAULT_AUTH_URL):
         self.auth_url = auth_url
         self.token = None
-     
+
     def authenticate_user(self):
         #TODO: implement
         return False
@@ -30,10 +30,8 @@ class Authenticator:
 
     def _set_token(self):
         #TODO: implement
-        self.token = None 
+        self.token = None
 
     def _val_token(self):
         #TODO: implement
         return False
-
-
