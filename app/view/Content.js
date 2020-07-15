@@ -1,4 +1,4 @@
-/*The Content class acts as a templateforthe client-side Java Script classes
+/*The Content class acts as a template for the client-side JavaScript classes
 */
 function Content() {
     //Update the appearance of the current page to match the state of the parameters.
