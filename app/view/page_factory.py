@@ -26,7 +26,7 @@ class PageFactory:
     _environment: jj.Environment
 
     def __init__(self):
-        """constructor initials the enviroment."""
+        """constructor initialises the environment."""
         self._environment = jj.Environment(
             loader=jj.FileSystemLoader('templates/'),
             autoescape=jj.select_autoescape(['html', 'xml'])
@@ -36,18 +36,18 @@ class PageFactory:
         self._info = None
 
     def generate_page(self, args: JSON, template: HTML = None, info: str = None) -> HTML:
-        """Generate a HTML page from the inputparameters not using the
+        """Generate a HTML page from the input parameters not using the
         template provided in the class.
 
         Args:
-            args (JSON): Parameters used by some childclasses to generate
+            args (JSON): Parameters used by some child classes to generate
                 the right content.
             template (HTML): A template can be used instead of the default
                 should contain variables for content and info,
                 doesn't change the template lasting,
                 can be left empty.
             info (str): Information displayed on the returned HTML page
-                # todo may contain extra html formating,
+                # todo may contain extra html formatting,
                 doesn't change the info lasting,
                 can be left empty.
         Returns:
@@ -74,7 +74,7 @@ class PageFactory:
                 right content.
 
         Returns:
-            HTML: The Content part, consisting of java script.
+            HTML: The Content part, consisting of JavaScript.
         """
 
     def set_template(self, template: HTML):
@@ -82,8 +82,8 @@ class PageFactory:
 
         Args:
             template (HTML): The new template for this instance of PageFactory.
-                Eather template as String or the filepath in view/template/s.
-                doesn't check if it is in a valid format.
+                Either template as String or the filepath in view/template/s.
+                doesn't validate format.
         """
         if isfile("template/"+template):
             self._template = self._environment.get_template(template)
@@ -103,13 +103,13 @@ class PageFactory:
 
         Args:
             info (str): The new info of this instance of PageFactory, may
-                contain HTML formating.
+                contain HTML formatting.
                 is not checking if it is valid html syntax
         """
         self._info = info
 
 
-#Can be deletet but maby helpfulll constructor for concret Factory
+#Can be deleted but maby helpful constructor for concrete Factory
 # implementation
 #class DummyFactory(PageFactory):
 #    def __init__(self):
