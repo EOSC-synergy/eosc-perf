@@ -1,5 +1,5 @@
-'''This module provides the service of syntactical 
-validation of JSON benchmark results strings'''
+'''This module provides the service of syntactical
+validation of JSON benchmark result strings'''
 
 import os
 import json
@@ -22,7 +22,7 @@ class JSONResultValidator:
             return False
         return self._has_mandatory_fields(result_json)
 
-    # Check wether the given json has the same keys as the template
+    # Check whether the given json has the same keys as the template
     def _has_mandatory_fields(self, result_json):
         return _same_keys(result_json, self.template_json)
 
