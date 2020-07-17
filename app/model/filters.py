@@ -5,7 +5,7 @@ Provided are:
   - UploaderFilter
   - TagFilter
   - JsonValueFilter"""
-from app.model.data_types import Result, Tag, Benchmark, Uploader, Site, Report, ResultIterator
+from app.model.data_types import Result
 from abc import abstractmethod
 from functools import reduce
 import json
