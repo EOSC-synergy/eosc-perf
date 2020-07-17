@@ -1,4 +1,4 @@
-""""This module the implementation of the Model facade.
+""""This module contains the implementation of the Model facade.
 Provided are:
   - DatabaseFacade
 And as helpers:
