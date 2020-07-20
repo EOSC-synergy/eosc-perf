@@ -108,17 +108,3 @@ class PageFactory:
                 is not checking if it is valid html syntax
         """
         self._info = info
-
-
-# Can be deleted but maby helpful constructor for concrete Factory
-# implementation
-# class DummyFactory(PageFactory):
-#    def __init__(self):
-#        super().__init__()
-#        self._template = self._environment.get_template("dummy.html")
-#        self._info = "some nights i get up"
-#        pass
-#    def set_info(self, info;str) {
-#        print("heureka it works")
-#        super.set_info(info)
-#    }
