@@ -58,10 +58,20 @@ class JsonValueFilter(Filter):
         """Helper to get element based on JSON template"""
         return reduce(lambda d, key: d.get(key, default) if isinstance(d, dict) else default, keys.split("."), dictionary)
 
-    def __init__(self, template: str, value: str):
+    def __init__(self, template: str, value: str, mode: str):
         self.template = template
         self.value = value
+        self.mode = mode
     
     def filter(self, result: Result) -> bool:
         """Returns whether the result has the property the filter was primed with."""
-        return self._deep_get(json.loads(result.get_json()), self.template) == self.value
+        val = self._deep_get(json.loads(result.get_json()), self.template)
+        if val is not None:
+            if self.mode == 'equals':
+                return val == self.value
+            elif self.mode == 'greater_than':
+                return float(val) > float(self.value)
+            elif self.mode == 'lesser_than':
+                return float(val) < float(self.value)
+        else:
+            return False
