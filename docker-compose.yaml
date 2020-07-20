@@ -1,0 +1,23 @@
+version: '3'
+services:
+  flask:
+    image: flask-pse
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # override app folder during development
+    volumes:
+      - .:/app
+
+  nginx:
+    image: nginx:1.14.2-alpine
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./scripts:/var/www/web/
+    #command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    depends_on:
+      - flask

@@ -1,9 +1,14 @@
 
 To manually test around with the components
-1. Run `python model_sandbox.py`
-2. A working model is now established, you may interact with it through the interpreter
+
+1. Go to docker/flask/
+2. Run `python model_sandbox.py`
+3. A working model is now established, you may interact with it through the interpreter
 
 To launch the webapp entirely:
-1. Run `python -m app`
+1. Run `docker-compose build`
+2. Run `docker-compose up`
+
 To launch the webapp in debug mode:
-1. Run `python -m app -d` or `python -m app --debug`
+TODO
+#1. Run `python -m app -d` or `python -m app --debug`
