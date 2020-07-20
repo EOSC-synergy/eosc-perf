@@ -33,7 +33,16 @@ class UploaderFilter(Filter):
     def filter(self, result: Result) -> bool:
         """Returns whether the result was uploaded by the user the filter was primed with."""
         return result.get_uploader().get_email() == self.email
-        
+
+class SiteFilter(Filter):
+    """Filter implementation that matches on site identifier."""
+    def __init__(self, site: str):
+        self.site = site
+    
+    def filter(self, result: Result) -> bool:
+        """Returns whether the result was uploaded by the user the filter was primed with."""
+        return result.get_site().get_short_name() == self.site
+
 class TagFilter(Filter):
     """Filter implementation that matches on tags."""
     def __init__(self, tag: str):
