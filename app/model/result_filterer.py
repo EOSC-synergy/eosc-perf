@@ -1,7 +1,7 @@
 """"This module contains the result filterer class used by the model.
 Provided are:
   - ResultFilterer"""
-from app.model.data_types import Result, Tag, Benchmark, Uploader, Site, Report, ResultIterator
+from app.model.data_types import Result, ResultIterator
 from app.model.filters import Filter
 from typing import List
 
