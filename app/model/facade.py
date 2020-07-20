@@ -1,4 +1,4 @@
-""""This module the implementation of the Model facade.
+""""This module contains the implementation of the Model facade.
 Provided are:
   - DatabaseFacade
 And as helpers:
@@ -9,6 +9,8 @@ from typing import List
 import json
 from app.model.data_types import Result, Tag, Benchmark, Uploader, Site, Report, ResultIterator
 from .database import db
+from app.model.result_filterer import ResultFilterer
+from app.model.filters import BenchmarkFilter, UploaderFilter, SiteFilter, TagFilter, JsonValueFilter
 
 
 class DatabaseFacade:
@@ -146,7 +148,21 @@ class DatabaseFacade:
         return results
 
     def query_results(self, filterJSON: str) -> List[Result]:
-        pass
+        filterer = ResultFilterer()
+        decodedFilters = json.loads(filterJSON)
+        filters = decodedFilters['filters']
+        for f in filters:
+            if f['type'] == 'benchmark':
+                filterer.add_filter(BenchmarkFilter(f['value']))
+            elif f['type'] == 'uploader':
+                filterer.add_filter(UploaderFilter(f['value']))
+            elif f['type'] == 'site':
+                filterer.add_filter(SiteFilter(f['value']))
+            elif f['type'] == 'tag':
+                filterer.add_filter(TagFilter(f['value']))
+            elif f['type'] == 'json':
+                filterer.add_filter(JsonValueFilter(f['key'], f['value'], f['mode']))
+        return filterer.filter(ResultIterator(db.session))
 
     def query_benchmarks(self, keywords: List[str]) -> List[Benchmark]:
         """Query all benchmarks containing all keywords in the name. Case insensitive."""
