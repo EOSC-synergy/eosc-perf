@@ -7,6 +7,7 @@ from .view.ajax import ajax_blueprint
 import os
 import code
 
+
 def create_app(debug: bool):
     app = Flask(__name__)
     if debug:
