@@ -7,6 +7,7 @@ from abc import abstractmethod
 import jinja2 as jj
 from .type_aliases import HTML, JSON
 
+
 class PageFactory:
 
     """The PageFactory abstract class serves as a generator for pages.
@@ -56,7 +57,7 @@ class PageFactory:
         template_tmp = self._template
         info_tmp = self._info
         if not template is None:
-            template_tmp = jj.Template(template)
+            template_tmp = self._environment.from_string(template)
         if not info is None:
             info_tmp = info
         if self._content is None:
@@ -109,9 +110,9 @@ class PageFactory:
         self._info = info
 
 
-#Can be deleted but maby helpful constructor for concrete Factory
+# Can be deleted but maby helpful constructor for concrete Factory
 # implementation
-#class DummyFactory(PageFactory):
+# class DummyFactory(PageFactory):
 #    def __init__(self):
 #        super().__init__()
 #        self._template = self._environment.get_template("dummy.html")
