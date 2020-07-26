@@ -10,7 +10,7 @@ from .json_result_validator import JSONResultValidator
 from .authenticator import Authenticator
 from .type_aliases import USER, JSON, AuthenticateError
 from ..model.facade import DatabaseFacade, facade
-from ..model.data_types import Benchmark, Site
+from ..model.data_types import Benchmark, Site, Report
 # The parent url of docker hub projects, first for private second for docker certified.
 docker_hub_url = {"certified": "https://hub.docker.com/r/",
                   "default": "https://hub.docker.com/_/"}
@@ -180,7 +180,7 @@ class IOController:
             "The users attempting to get teh unapproved sites isn't an an admin.")
 
     def approve_site(self, current_user: USER, site: Site = None, metadata_json: JSON = None) \
-                     -> bool:
+            -> bool:
         """If the current user is an admin, approve the given site.
         Args:
         current_user  (USER): The user attempting to approve the site.
@@ -208,10 +208,74 @@ class IOController:
                     for singel_site in self.__unapproved_sites:
                         # one of the attributes enough in case a admin corrected eg. the addres.
                         if singel_site.get_short_name() is site.get_short_name() or \
-                            singel_site.get_address() is site.get_address():
+                                singel_site.get_address() is site.get_address():
                             self.__unapproved_sites.remove(singel_site)
                             break
                     return True
+        return False
+
+    def report(self, current_user: USER, metadata: JSON) -> bool:
+        """Add a Report to the model, and notify an admin about it.
+        Args:
+        current_user (USER): The user reporting a result.
+        metadata     (JSON): The metadata in json format, containing the
+                             benchmark 'result_id' and the associated 'user_message'.
+        Returns:
+        bool: If the report was successfully added.
+        """
+        if self.authenticate(current_user):
+            # Add to database.
+            if self.__database_facade.add_report(metadata):
+                # TODO: notify admin, per email.
+                return True
+        return False
+
+    def get_report(self, current_user: USER, only_unanswered: bool = False) -> List[Report]:
+        """Provide a list of all reports, require the user to be an admin.
+        Args:
+        current_user    (USER): The user accessing the reports.
+        only_unanswered (bool): Whether all or only the unanswered, reports get provided.
+        Returns:
+        List[Reports]: List of all the requested reports, throws an AuthenticationError if
+                       the authentication failed."""
+        if Authenticator.is_admin(current_user):
+            return self.__database_facade.get_reports(only_unanswered=only_unanswered)
+        raise AuthenticateError(
+            "User trying to view the reports isn't an admin.")
+
+    def process_report(self, verdict: bool, current_user: USER, uuid: str = None,
+                       report: Report = None) -> bool:
+        """Add the verdict to the model, if the verdict consents the report the associated
+        benchmark gets deleted.
+        Args:
+        verdict      (bool): The verdict True when agreeing with the report False otherwise.
+        current_user (USER): The user jugging the report.
+        uuid          (str): The uuid of the jugged report, gets used if report is left empty.
+        report     (Report): The report jugged.
+        Returns:
+        bool: If the process was successful.
+        """
+        # Check if user is admin.
+        if Authenticator.is_admin(current_user):
+            # Search report from model, incase the input report somehow got copied.
+            # Select uuid if report is left empty.
+            uuid = [report.get_uuid, uuid][report is None]
+            # Ensure one of both isn't None.
+            if uuid is None:
+                return False
+            # Set the verdict.
+            try:
+                report_by_uuid = self.__database_facade.get_report(uuid)
+                # Set the verdict status.
+                report_by_uuid.set_verdict(verdict)
+                # Delete Benchmark if necessary
+                if verdict:
+                    # TODO: Delete Benchmark or mark somehow as invalid.
+                    pass
+            except AttributeError:
+                # There is no report with given uuid.
+                return False
+            return True
         return False
 
     def __valid_docker_hub_name(self, docker_name: str, check_for_page: bool) -> bool:
@@ -284,7 +348,7 @@ class IOController:
                             metadata['address'], name=metadata['name'])
             else:
                 site = Site(metadata['short_name'], metadata['address'])
-            #add description if contaiend in metadata.
+            # add description if contaiend in metadata.
             if contained('description'):
                 site.set_description(metadata['description'])
         return site
