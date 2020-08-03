@@ -9,7 +9,8 @@ import json
 from app.model.data_types import Result, Tag, Benchmark, Uploader, Site,\
     ResultIterator, Report, ResultReport, BenchmarkReport, SiteReport
 from app.model.result_filterer import ResultFilterer
-from app.model.filters import BenchmarkFilter, UploaderFilter, SiteFilter, TagFilter, JsonValueFilter
+from app.model.filters import BenchmarkFilter, UploaderFilter, SiteFilter, TagFilter,\
+    JsonValueFilter
 from .database import db
 
 
@@ -147,22 +148,22 @@ class DatabaseFacade:
         #
         return results
 
-    def query_results(self, filterJSON: str) -> List[Result]:
+    def query_results(self, filter_json: str) -> List[Result]:
         filterer = ResultFilterer()
-        decodedFilters = json.loads(filterJSON)
-        filters = decodedFilters['filters']
-        for f in filters:
-            if f['type'] == 'benchmark':
-                filterer.add_filter(BenchmarkFilter(f['value']))
-            elif f['type'] == 'uploader':
-                filterer.add_filter(UploaderFilter(f['value']))
-            elif f['type'] == 'site':
-                filterer.add_filter(SiteFilter(f['value']))
-            elif f['type'] == 'tag':
-                filterer.add_filter(TagFilter(f['value']))
-            elif f['type'] == 'json':
+        decoded_filters = json.loads(filter_json)
+        filters = decoded_filters['filters']
+        for filter_ in filters:
+            if filter_['type'] == 'benchmark':
+                filterer.add_filter(BenchmarkFilter(filter_['value']))
+            elif filter_['type'] == 'uploader':
+                filterer.add_filter(UploaderFilter(filter_['value']))
+            elif filter_['type'] == 'site':
+                filterer.add_filter(SiteFilter(filter_['value']))
+            elif filter_['type'] == 'tag':
+                filterer.add_filter(TagFilter(filter_['value']))
+            elif filter_['type'] == 'json':
                 filterer.add_filter(JsonValueFilter(
-                    f['key'], f['value'], f['mode']))
+                    filter_['key'], filter_['value'], filter_['mode']))
         return filterer.filter(ResultIterator(db.session))
 
     def query_benchmarks(self, keywords: List[str]) -> List[Benchmark]:
@@ -221,7 +222,7 @@ class DatabaseFacade:
         # input validation
         if 'uploader' not in metadata:
             raise ValueError("uploader is missing from result metadata")
-        if type(metadata['uploader']) is not str:
+        if not isinstance(metadata['uploader'], str):
             raise TypeError(
                 "uploader email must be a string in result metadata")
         if len(metadata['uploader']) < 1:
@@ -229,14 +230,14 @@ class DatabaseFacade:
 
         if 'site' not in metadata:
             raise ValueError("site is missing from result metadata")
-        if type(metadata['site']) is not str:
+        if not isinstance(metadata['site'], str):
             raise TypeError("site must be a string in result metadata")
         if len(metadata['site']) < 1:
             raise ValueError("result site is empty")
 
         if 'benchmark' not in metadata:
             raise ValueError("benchmark is missing from result metadata")
-        if type(metadata['benchmark']) is not str:
+        if not isinstance(metadata['benchmark'], str):
             raise TypeError("benchmark must be a string in result metadata")
         if len(metadata['benchmark']) < 1:
             raise ValueError("result benchmark is empty")
@@ -256,11 +257,11 @@ class DatabaseFacade:
 
         tags = []
         if 'tags' in metadata:
-            if type(metadata['tags']) is not list:
+            if not isinstance(metadata['tags'], list):
                 raise TypeError(
                     "tags must be a list of strings in result metadata")
             for tag_name in metadata['tags']:
-                if type(tag_name) is not str:
+                if not isinstance(tag_name, str):
                     raise TypeError(
                         "at least one tag in results metadata is not a string")
                 # TODO: fail if tag is unknown, what about auto-adding tags if they do not exist?
@@ -376,7 +377,7 @@ class DatabaseFacade:
         try:
             self.get_benchmark(docker_name)
             return False
-        except:
+        except self.NotFoundError:
             pass
 
         uploader = self._get_or_add_uploader(uploader_email)

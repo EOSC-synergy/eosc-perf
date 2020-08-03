@@ -57,33 +57,33 @@ class ResultIterator:
         self._tags = None
         if 'tags' in kwargs:
             # test if list
-            if type(kwargs['tags']) is list:
+            if isinstance(kwargs['tags'], list):
                 tags = kwargs['tags']
                 if not len(tags) <= 0:
                     # test if list of Tag
                     for tag in tags:
-                        if type(tag) is not Tag:
+                        if not isinstance(tag, Tag):
                             raise TypeError('"[{}]" is not a Tag'.format(tag))
                 self._tags = tags
 
         # filter by site
         self._site = None
         if 'site' in kwargs:
-            if not type(kwargs['site']) is Site:
+            if not isinstance(kwargs['site'], Site):
                 raise TypeError('"site" is not a Site')
             self._site = kwargs['site']
 
         # filter by benchmark
         self._benchmark = None
         if 'benchmark' in kwargs:
-            if not type(kwargs['benchmark']) is Benchmark:
+            if not isinstance(kwargs['benchmark'], Benchmark):
                 raise TypeError('"benchmark" is not a Benchmark')
             self._benchmark = kwargs['benchmark']
 
         # filter by uploader
         self._uploader = None
         if 'uploader' in kwargs:
-            if not type(kwargs['uploader']) is Uploader:
+            if not isinstance(kwargs['uploader'], Uploader):
                 raise TypeError('"uploader" is not a Uploader')
             self._uploader = kwargs['uploader']
 
@@ -473,7 +473,6 @@ class Report(db.Model):
     @abstractmethod
     def get_field_name(self) -> str:
         """Get the name of the reference field for the constructor."""
-        pass
 
     def __repr__(self):
         """Get a human-readable representation string of the report."""

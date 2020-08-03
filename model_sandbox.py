@@ -1,10 +1,11 @@
-from __future__ import annotations
+from typing import List
+import code
 from app import create_app
 from app.model.database import db
 from app.model.sandbox import add_dummies_if_not_exist, results, benchmarks, sites, tags, uploaders
-from app.model.data_types import Uploader, Tag, Result, Benchmark, Site, ResultIterator, Report, SiteReport, BenchmarkReport, ResultReport
+from app.model.data_types import Uploader, Tag, Result, Benchmark, Site, ResultIterator, Report, \
+    SiteReport, BenchmarkReport, ResultReport
 from app.model.facade import facade
-import code
 
 # utility helpers for functions not part of design
 
