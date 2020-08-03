@@ -4,13 +4,13 @@ Provided are:
 And as helpers:
   - DatabaseFacade.NotFoundError
   - DatabaseFacade.ToomanyError"""
-#from __future__ import annotations
 from typing import List
 import json
-from app.model.data_types import Result, Tag, Benchmark, Uploader, Site, Report, ResultIterator
-from .database import db
+from app.model.data_types import Result, Tag, Benchmark, Uploader, Site,\
+    ResultIterator, Report, ResultReport, BenchmarkReport, SiteReport
 from app.model.result_filterer import ResultFilterer
 from app.model.filters import BenchmarkFilter, UploaderFilter, SiteFilter, TagFilter, JsonValueFilter
+from .database import db
 
 
 class DatabaseFacade:
@@ -161,7 +161,8 @@ class DatabaseFacade:
             elif f['type'] == 'tag':
                 filterer.add_filter(TagFilter(f['value']))
             elif f['type'] == 'json':
-                filterer.add_filter(JsonValueFilter(f['key'], f['value'], f['mode']))
+                filterer.add_filter(JsonValueFilter(
+                    f['key'], f['value'], f['mode']))
         return filterer.filter(ResultIterator(db.session))
 
     def query_benchmarks(self, keywords: List[str]) -> List[Benchmark]:
@@ -200,7 +201,7 @@ class DatabaseFacade:
         uploader = None
         try:
             uploader = self.get_uploader(uploader_email)
-        except:
+        except self.self.NotFoundError:
             self._add_uploader(uploader_email)
             uploader = self.get_uploader(uploader_email)
         return uploader
@@ -312,6 +313,54 @@ class DatabaseFacade:
             raise ValueError("tag name too short")
         return self._add_to_db(Tag(name=name))
 
+    def add_report(self, metadata: str) -> bool:
+        """Add a new report."""
+        dic = json.loads(metadata)
+
+        # unpack optional message
+        message = None
+        if 'message' in dic:
+            message = dic['message']
+
+        # sanity checks
+        if not 'type' in dic:
+            raise ValueError("report missing type")
+        if not 'value' in dic:
+            raise ValueError("report missing value")
+        if 'uploader' not in dic:
+            raise ValueError("no uploader in report")
+
+        # check if specified report target exists
+        if dic['type'] == 'site':
+            try:
+                site = self.get_site(dic['value'])
+            except self.NotFoundError:
+                raise ValueError("unknown site for report")
+        elif dic['type'] == 'benchmark':
+            try:
+                benchmark = self.get_benchmark(dic['value'])
+            except self.NotFoundError:
+                raise ValueError("unknown benchmark for report")
+        elif dic['type'] == 'result':
+            try:
+                result = self.get_result(dic['value'])
+            except self.NotFoundError:
+                raise ValueError("unknown result for report")
+
+        # can now add report
+        uploader = self._get_or_add_uploader(dic['uploader'])
+        success = False
+        if dic['type'] == 'site':
+            success = self._add_to_db(SiteReport(
+                uploader=uploader, message=message, site=site))
+        elif dic['type'] == 'benchmark':
+            success = self._add_to_db(BenchmarkReport(
+                uploader=uploader, message=message, benchmark=benchmark))
+        elif dic['type'] == 'result':
+            success = self._add_to_db(ResultReport(
+                uploader=uploader, message=message, result=result))
+        return success
+
     def add_benchmark(self, docker_name: str, uploader_email: str) -> bool:
         """Add a new benchmark."""
         # input validation
@@ -336,10 +385,16 @@ class DatabaseFacade:
 
     def get_report(self, uuid: str) -> Report:
         """Fetch a single report by its UUID."""
-        # prepare query
-        results = db.session.query(Report)\
-            .filter(Report._uuid == uuid)\
-            .all()
+        # query for every type of report
+        report_classes = [ResultReport, BenchmarkReport, SiteReport]
+        results = []
+        for class_type in report_classes:
+            results = db.session.query(class_type)\
+                .filter(class_type._uuid == uuid)\
+                .all()
+            # quit if we found the report somewhere
+            if len(results) != 0:
+                break
 
         # check number of results
         if len(results) < 1:
@@ -354,19 +409,29 @@ class DatabaseFacade:
     def get_reports(self, only_unanswered: bool = False) -> List[Report]:
         """Get all or only unanswered reports."""
         # prepare query
-        results = db.session.query(Report)
-
+        results = db.session.query(ResultReport)
         if only_unanswered:
-            results = results.filter(Report._verified == False)
-
+            results = results.filter(ResultReport._verified == False)
         results = results.all()
 
+        benchmarks = db.session.query(BenchmarkReport)
+        if only_unanswered:
+            benchmarks = benchmarks.filter(BenchmarkReport._verified == False)
+        benchmarks = benchmarks.all()
+
+        sites = db.session.query(SiteReport)
+        if only_unanswered:
+            sites = sites.filter(SiteReport._verified == False)
+        sites = sites.all()
+
+        reports = results + benchmarks + sites
+
         # check number of results
-        if len(results) < 1:
+        if len(reports) < 1:
             raise self.NotFoundError("no reports found")
 
         #
-        return results
+        return reports
 
 
 # single global instance

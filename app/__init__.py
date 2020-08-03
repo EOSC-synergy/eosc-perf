@@ -10,9 +10,10 @@ import code
 
 
 def create_app(debug: bool):
-    app = Flask(__name__)    
+    app = Flask(__name__)
     if debug:
         app.config['DEBUG'] = True
+        app.config['SQLALCHEMY_ECHO'] = True
     configure_database(app)
 
     authenticator(app)

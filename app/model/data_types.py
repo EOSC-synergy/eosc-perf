@@ -12,6 +12,7 @@ from __future__ import annotations
 from typing import List
 import uuid
 from datetime import datetime
+from abc import abstractmethod
 from sqlalchemy.orm.session import Session
 from .database import db
 
@@ -139,6 +140,37 @@ class ResultIterator:
         return result
 
 
+class Uploader(db.Model):
+    """The Uploader class represents an authenticated user that has made usage
+    of the system. They may have uploaded benchmarks or benchmark results, or
+    added tags or sites."""
+
+    __tablename__ = 'uploader'
+
+    # value columns
+    _email = db.Column(db.Text, primary_key=True)
+
+    def __init__(self, email: str):
+        """Create a new uploader entry object."""
+        super(Uploader, self).__init__(_email=email)
+
+    def get_email(self) -> str:
+        """Get the email address associated with this uploader."""
+        return self._email
+
+    def get_results(self) -> ResultIterator:
+        """Get an iterator for all the results associated with this uploader."""
+        return ResultIterator(Session.object_session(self), uploader=self)
+
+    def get_benchmarks(self) -> List[Benchmark]:
+        """Get all benchmarks associated with this uploader."""
+        return self._benchmarks
+
+    def __repr__(self):
+        """Get a human-readable representation string of the uploader."""
+        return '<{} {}>'.format(self.__class__.__name__, self._email)
+
+
 class Benchmark(db.Model):
     """A specific benchmark that was run."""
 
@@ -173,37 +205,6 @@ class Benchmark(db.Model):
     def __repr__(self):
         """Get a human-readable representation string of the benchmark."""
         return '<{} {}>'.format(self.__class__.__name__, self._docker_name)
-
-
-class Uploader(db.Model):
-    """The Uploader class represents an authenticated user that has made usage
-    of the system. They may have uploaded benchmarks or benchmark results, or
-    added tags or sites."""
-
-    __tablename__ = 'uploader'
-
-    # value columns
-    _email = db.Column(db.Text, primary_key=True)
-
-    def __init__(self, email: str):
-        """Create a new uploader entry object."""
-        super(Uploader, self).__init__(_email=email)
-
-    def get_email(self) -> str:
-        """Get the email address associated with this uploader."""
-        return self._email
-
-    def get_results(self) -> ResultIterator:
-        """Get an iterator for all the results associated with this uploader."""
-        return ResultIterator(Session.object_session(self), uploader=self)
-
-    def get_benchmarks(self) -> List[Benchmark]:
-        """Get all benchmarks associated with this uploader."""
-        return self._benchmarks
-
-    def __repr__(self):
-        """Get a human-readable representation string of the uploader."""
-        return '<{} {}>'.format(self.__class__.__name__, self._email)
 
 
 class Site(db.Model):
@@ -264,6 +265,7 @@ class Site(db.Model):
         """Get the site's identifier."""
         return self._short_name
 
+    @abstractmethod
     def __repr__(self):
         """Get a human-readable representation string of the site."""
         return '<{} {}>'.format(self.__class__.__name__, self._short_name)
@@ -391,7 +393,7 @@ class Result(db.Model):
 
 
 class Report(db.Model):
-    """The Report class represents a user’s report of a benchmark result."""
+    """The Report class represents an automated or an user’s report."""
 
     # value columns
     _uuid = db.Column(UUID, primary_key=True, default=new_uuid)
@@ -399,27 +401,41 @@ class Report(db.Model):
     _verified = db.Column(db.Boolean(), nullable=False)
     _verdict = db.Column(db.Boolean(), nullable=False)
     _message = db.Column(db.Text(), nullable=True)
-
-    # relationship columns
-    _result_id = db.Column(db.Text, db.ForeignKey(
-        'result._uuid'), nullable=False)
-    _result = db.relationship('Result')
+    _type = db.Column(db.String(50))
 
     _uploader_id = db.Column(db.Text, db.ForeignKey(
         'uploader._email'), nullable=False)
     _uploader = db.relationship('Uploader')
 
-    def __init__(self, **kwargs):
+    # enum of report type
+    RESULT: int = 1
+    BENCHMARK: int = 2
+    SITE: int = 3
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'report',
+        'polymorphic_on': _type
+    }
+
+    def __init__(self, enum_type, **kwargs):
         """Create a new result report entry object."""
+        self._report_type = enum_type
         new_args = {}
+        # report message
         if 'message' in kwargs:
             new_args['_message'] = kwargs['message']
-        super(Report, self).__init__(
-            _verified=False, _veridct=False, **new_args)
+        # report uploader
+        if 'uploader' in kwargs:
+            new_args['_uploader'] = kwargs['uploader']
+        else:
+            raise ValueError("missing uploader in report")
+        # specific associations, respective members are added by children
+        if self.get_field_name() in kwargs:
+            new_args['_' + self.get_field_name()] = kwargs[self.get_field_name()]
 
-    def get_result(self) -> Result:
-        """Get the result associated with the report."""
-        return self._result
+        # pass to sqlalchemy constructor
+        super(Report, self).__init__(
+            _verified=False, _verdict=False, **new_args)
 
     def get_date(self) -> datetime.datetime:
         """Get the publication date of the report."""
@@ -450,6 +466,96 @@ class Report(db.Model):
         """Get the UUID of this report."""
         return self._uuid
 
+    def get_report_type(self) -> int:
+        """Get the enumerated type of the report."""
+        return self._report_type
+
+    @abstractmethod
+    def get_field_name(self) -> str:
+        """Get the name of the reference field for the constructor."""
+        pass
+
     def __repr__(self):
         """Get a human-readable representation string of the report."""
         return '<{} {}>'.format(self.__class__.__name__, self._uuid)
+
+
+class ResultReport(Report):
+    """The ResultReport class represents a report about a benchmark result."""
+
+    __tablename__ = 'result_report'
+
+    _uuid = db.Column(UUID, db.ForeignKey('report._uuid'), primary_key=True)
+
+    # relationship columns
+    _result_id = db.Column(db.Text, db.ForeignKey(
+        'result._uuid'), nullable=False)
+    _result = db.relationship('Result')
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'result_report',
+    }
+
+    def __init__(self, **kwargs):
+        super(ResultReport, self).__init__(Report.RESULT, **kwargs)
+
+    def get_result(self) -> Result:
+        """Get the result associated with the report."""
+        return self._result
+
+    def get_field_name(self) -> str:
+        return "result"
+
+
+class BenchmarkReport(Report):
+    """The BenchmarkReport class represents a report of a benchmark."""
+
+    __tablename__ = 'benchmark_report'
+
+    _uuid = db.Column(UUID, db.ForeignKey('report._uuid'), primary_key=True)
+
+    # relationship columns
+    _benchmark_name = db.Column(db.Text, db.ForeignKey(
+        'benchmark._docker_name'), nullable=False)
+    _benchmark = db.relationship('Benchmark')
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'benchmark_report',
+    }
+
+    def __init__(self, **kwargs):
+        super(BenchmarkReport, self).__init__(Report.BENCHMARK, **kwargs)
+
+    def get_benchmark(self) -> Benchmark:
+        """Get the benchmark associated with the report."""
+        return self._benchmark
+
+    def get_field_name(self) -> str:
+        return "benchmark"
+
+
+class SiteReport(Report):
+    """The SiteReport class represents a report of a site."""
+
+    __tablename__ = 'site_report'
+
+    _uuid = db.Column(UUID, db.ForeignKey('report._uuid'), primary_key=True)
+
+    # relationship columns
+    _site_name = db.Column(db.Text, db.ForeignKey(
+        'site._short_name'), nullable=False)
+    _site = db.relationship('Site')
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'site_report',
+    }
+
+    def __init__(self, **kwargs):
+        super(SiteReport, self).__init__(Report.SITE, **kwargs)
+
+    def get_site(self) -> Site:
+        """Get the site associated with the report."""
+        return self._site
+
+    def get_field_name(self) -> str:
+        return "site"
