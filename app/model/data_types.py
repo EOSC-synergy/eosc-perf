@@ -329,6 +329,7 @@ class Result(db.Model):
     # value columns
     _uuid = db.Column(UUID, primary_key=True, default=new_uuid)
     _json = db.Column(db.Text(), nullable=False)
+    _hidden = db.Column(db.Boolean, nullable=False, default=False)
 
     # relationship columns
     _uploader_id = db.Column(db.Text, db.ForeignKey(
@@ -384,6 +385,14 @@ class Result(db.Model):
     def get_tags(self) -> List[Tag]:
         """Get all the tags associated with this result."""
         return self._tags
+
+    def set_hidden(self, state: bool):
+        """Set the hide state of the result."""
+        self._hidden = state
+
+    def get_hidden(self) -> bool:
+        """Get the hide state of the result."""
+        return self._hidden
 
     def __repr__(self):
         """Get a human-readable representation string of the result."""
