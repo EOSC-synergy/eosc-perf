@@ -149,6 +149,7 @@ class DatabaseFacade:
         return results
 
     def query_results(self, filter_json: str) -> List[Result]:
+        """Fetch results based on given filters formatted in JSON."""
         filterer = ResultFilterer()
         decoded_filters = json.loads(filter_json)
         filters = decoded_filters['filters']
@@ -297,14 +298,15 @@ class DatabaseFacade:
             raise ValueError("address is missing from site metadata")
         if len(metadata['address']) < 1:
             raise ValueError("address is empty")
-
-        site = None
-        # TODO: description
+        description = None
+        if 'description' in metadata and len(metadata['description']) > 0:
+            description = metadata['description']
+        full_name = None
         if 'name' in metadata and len(metadata['name']) > 0:
-            site = Site(metadata['short_name'],
-                        metadata['address'], name=metadata['name'])
-        else:
-            site = Site(metadata['short_name'], metadata['address'])
+            full_name = metadata['name']
+
+        site = Site(metadata['short_name'], metadata['address'], description=description,
+                    name=full_name)
 
         return self._add_to_db(site)
 
