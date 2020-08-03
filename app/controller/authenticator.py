@@ -29,8 +29,8 @@ def authenticator(app):
 
     @app.route('/oidc-redirect')
     def is_authenticated():
-        token = oauth.eosc_perf.authorize_access_token()
-        user = oauth.eosc_perf.parse_id_token(token)
+        token = oauth._clients["eosc-perf"].authorize_access_token()
+        user = oauth._clients["eosc-perf"].parse_id_token(token)
         session['user'] = user
         return redirect('/')
 
