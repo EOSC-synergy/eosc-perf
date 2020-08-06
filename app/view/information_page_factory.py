@@ -5,7 +5,7 @@ Provided is:
 
 import json
 
-from flask import request, Response
+from flask import request, Response, redirect
 from flask.blueprints import Blueprint
 
 from .page_factory import PageFactory
@@ -33,8 +33,7 @@ def info():
     """HTTP endpoint for information page"""
     info = request.args.get('text')
     if info is None:
-        # TODO: error page
-        return None
+        return redirect("/error?text=Information%20page%20called%20with%20invalid%20arguments", code=302)
     else:
         factory = InformationPageFactory()
         factory.set_info(info)
