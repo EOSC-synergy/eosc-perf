@@ -9,6 +9,7 @@ from .model.facade import facade
 from .model.sandbox import add_dummies_if_not_exist
 from .view.ajax import ajax_blueprint
 from .view.diagram_factory import diagram_blueprint
+from .view.information_page_factory import info_blueprint
 import os
 import code
 
@@ -35,5 +36,6 @@ def create_app(debug: bool):
 
     app.register_blueprint(ajax_blueprint)
     app.register_blueprint(diagram_blueprint)
+    app.register_blueprint(info_blueprint)
 
     return app
