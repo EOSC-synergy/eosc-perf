@@ -177,13 +177,7 @@ class DatabaseFacade:
                 Benchmark._docker_name.ilike('%' + keyword + '%'))
 
         results = results.all()
-
-        # check number of results
-        if len(results) < 1:
-            raise self.NotFoundError(
-                "no benchmarks matching the keywords found")
-
-        #
+        
         return results
 
     def _add_to_db(self, obj: db.Model) -> bool:
