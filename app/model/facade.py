@@ -4,13 +4,14 @@ Provided are:
 And as helpers:
   - DatabaseFacade.NotFoundError
   - DatabaseFacade.ToomanyError"""
-#from __future__ import annotations
 from typing import List
 import json
-from app.model.data_types import Result, Tag, Benchmark, Uploader, Site, Report, ResultIterator
-from .database import db
+from app.model.data_types import Result, Tag, Benchmark, Uploader, Site,\
+    ResultIterator, Report, ResultReport, BenchmarkReport, SiteReport
 from app.model.result_filterer import ResultFilterer
-from app.model.filters import BenchmarkFilter, UploaderFilter, SiteFilter, TagFilter, JsonValueFilter
+from app.model.filters import BenchmarkFilter, UploaderFilter, SiteFilter, TagFilter,\
+    JsonValueFilter
+from .database import db
 
 
 class DatabaseFacade:
@@ -147,21 +148,23 @@ class DatabaseFacade:
         #
         return results
 
-    def query_results(self, filterJSON: str) -> List[Result]:
+    def query_results(self, filter_json: str) -> List[Result]:
+        """Fetch results based on given filters formatted in JSON."""
         filterer = ResultFilterer()
-        decodedFilters = json.loads(filterJSON)
-        filters = decodedFilters['filters']
-        for f in filters:
-            if f['type'] == 'benchmark':
-                filterer.add_filter(BenchmarkFilter(f['value']))
-            elif f['type'] == 'uploader':
-                filterer.add_filter(UploaderFilter(f['value']))
-            elif f['type'] == 'site':
-                filterer.add_filter(SiteFilter(f['value']))
-            elif f['type'] == 'tag':
-                filterer.add_filter(TagFilter(f['value']))
-            elif f['type'] == 'json':
-                filterer.add_filter(JsonValueFilter(f['key'], f['value'], f['mode']))
+        decoded_filters = json.loads(filter_json)
+        filters = decoded_filters['filters']
+        for filter_ in filters:
+            if filter_['type'] == 'benchmark':
+                filterer.add_filter(BenchmarkFilter(filter_['value']))
+            elif filter_['type'] == 'uploader':
+                filterer.add_filter(UploaderFilter(filter_['value']))
+            elif filter_['type'] == 'site':
+                filterer.add_filter(SiteFilter(filter_['value']))
+            elif filter_['type'] == 'tag':
+                filterer.add_filter(TagFilter(filter_['value']))
+            elif filter_['type'] == 'json':
+                filterer.add_filter(JsonValueFilter(
+                    filter_['key'], filter_['value'], filter_['mode']))
         return filterer.filter(ResultIterator(db.session))
 
     def query_benchmarks(self, keywords: List[str]) -> List[Benchmark]:
@@ -200,7 +203,7 @@ class DatabaseFacade:
         uploader = None
         try:
             uploader = self.get_uploader(uploader_email)
-        except:
+        except self.self.NotFoundError:
             self._add_uploader(uploader_email)
             uploader = self.get_uploader(uploader_email)
         return uploader
@@ -220,7 +223,7 @@ class DatabaseFacade:
         # input validation
         if 'uploader' not in metadata:
             raise ValueError("uploader is missing from result metadata")
-        if type(metadata['uploader']) is not str:
+        if not isinstance(metadata['uploader'], str):
             raise TypeError(
                 "uploader email must be a string in result metadata")
         if len(metadata['uploader']) < 1:
@@ -228,14 +231,14 @@ class DatabaseFacade:
 
         if 'site' not in metadata:
             raise ValueError("site is missing from result metadata")
-        if type(metadata['site']) is not str:
+        if not isinstance(metadata['site'], str):
             raise TypeError("site must be a string in result metadata")
         if len(metadata['site']) < 1:
             raise ValueError("result site is empty")
 
         if 'benchmark' not in metadata:
             raise ValueError("benchmark is missing from result metadata")
-        if type(metadata['benchmark']) is not str:
+        if not isinstance(metadata['benchmark'], str):
             raise TypeError("benchmark must be a string in result metadata")
         if len(metadata['benchmark']) < 1:
             raise ValueError("result benchmark is empty")
@@ -255,11 +258,11 @@ class DatabaseFacade:
 
         tags = []
         if 'tags' in metadata:
-            if type(metadata['tags']) is not list:
+            if not isinstance(metadata['tags'], list):
                 raise TypeError(
                     "tags must be a list of strings in result metadata")
             for tag_name in metadata['tags']:
-                if type(tag_name) is not str:
+                if not isinstance(tag_name, str):
                     raise TypeError(
                         "at least one tag in results metadata is not a string")
                 # TODO: fail if tag is unknown, what about auto-adding tags if they do not exist?
@@ -295,14 +298,15 @@ class DatabaseFacade:
             raise ValueError("address is missing from site metadata")
         if len(metadata['address']) < 1:
             raise ValueError("address is empty")
-
-        site = None
-        # TODO: description
+        description = None
+        if 'description' in metadata and len(metadata['description']) > 0:
+            description = metadata['description']
+        full_name = None
         if 'name' in metadata and len(metadata['name']) > 0:
-            site = Site(metadata['short_name'],
-                        metadata['address'], name=metadata['name'])
-        else:
-            site = Site(metadata['short_name'], metadata['address'])
+            full_name = metadata['name']
+
+        site = Site(metadata['short_name'], metadata['address'], description=description,
+                    name=full_name)
 
         return self._add_to_db(site)
 
@@ -311,6 +315,54 @@ class DatabaseFacade:
         if len(name) < 1:
             raise ValueError("tag name too short")
         return self._add_to_db(Tag(name=name))
+
+    def add_report(self, metadata: str) -> bool:
+        """Add a new report."""
+        dic = json.loads(metadata)
+
+        # unpack optional message
+        message = None
+        if 'message' in dic:
+            message = dic['message']
+
+        # sanity checks
+        if not 'type' in dic:
+            raise ValueError("report missing type")
+        if not 'value' in dic:
+            raise ValueError("report missing value")
+        if 'uploader' not in dic:
+            raise ValueError("no uploader in report")
+
+        # check if specified report target exists
+        if dic['type'] == 'site':
+            try:
+                site = self.get_site(dic['value'])
+            except self.NotFoundError:
+                raise ValueError("unknown site for report")
+        elif dic['type'] == 'benchmark':
+            try:
+                benchmark = self.get_benchmark(dic['value'])
+            except self.NotFoundError:
+                raise ValueError("unknown benchmark for report")
+        elif dic['type'] == 'result':
+            try:
+                result = self.get_result(dic['value'])
+            except self.NotFoundError:
+                raise ValueError("unknown result for report")
+
+        # can now add report
+        uploader = self._get_or_add_uploader(dic['uploader'])
+        success = False
+        if dic['type'] == 'site':
+            success = self._add_to_db(SiteReport(
+                uploader=uploader, message=message, site=site))
+        elif dic['type'] == 'benchmark':
+            success = self._add_to_db(BenchmarkReport(
+                uploader=uploader, message=message, benchmark=benchmark))
+        elif dic['type'] == 'result':
+            success = self._add_to_db(ResultReport(
+                uploader=uploader, message=message, result=result))
+        return success
 
     def add_benchmark(self, docker_name: str, uploader_email: str) -> bool:
         """Add a new benchmark."""
@@ -327,7 +379,7 @@ class DatabaseFacade:
         try:
             self.get_benchmark(docker_name)
             return False
-        except:
+        except self.NotFoundError:
             pass
 
         uploader = self._get_or_add_uploader(uploader_email)
@@ -336,10 +388,16 @@ class DatabaseFacade:
 
     def get_report(self, uuid: str) -> Report:
         """Fetch a single report by its UUID."""
-        # prepare query
-        results = db.session.query(Report)\
-            .filter(Report._uuid == uuid)\
-            .all()
+        # query for every type of report
+        report_classes = [ResultReport, BenchmarkReport, SiteReport]
+        results = []
+        for class_type in report_classes:
+            results = db.session.query(class_type)\
+                .filter(class_type._uuid == uuid)\
+                .all()
+            # quit if we found the report somewhere
+            if len(results) != 0:
+                break
 
         # check number of results
         if len(results) < 1:
@@ -354,19 +412,29 @@ class DatabaseFacade:
     def get_reports(self, only_unanswered: bool = False) -> List[Report]:
         """Get all or only unanswered reports."""
         # prepare query
-        results = db.session.query(Report)
-
+        results = db.session.query(ResultReport)
         if only_unanswered:
-            results = results.filter(Report._verified == False)
-
+            results = results.filter(ResultReport._verified == False)
         results = results.all()
 
+        benchmarks = db.session.query(BenchmarkReport)
+        if only_unanswered:
+            benchmarks = benchmarks.filter(BenchmarkReport._verified == False)
+        benchmarks = benchmarks.all()
+
+        sites = db.session.query(SiteReport)
+        if only_unanswered:
+            sites = sites.filter(SiteReport._verified == False)
+        sites = sites.all()
+
+        reports = results + benchmarks + sites
+
         # check number of results
-        if len(results) < 1:
+        if len(reports) < 1:
             raise self.NotFoundError("no reports found")
 
         #
-        return results
+        return reports
 
 
 # single global instance
