@@ -16,6 +16,7 @@ from ...model.facade import facade
 #from ...controller.io_controller import controller
 # mock class because the actual class doesn't work...
 class Controller():
+    """Mock class."""
     def report(self, email: str, metadata: JSON) -> bool:
         """Mock method."""
         return True
@@ -48,6 +49,7 @@ class ResultReportPageFactory(PageFactory):
         return string
 
     def result_exists(self, uuid: str) -> bool:
+        """Helper to determine whether a result exists."""
         try:
             facade.get_result(uuid)
             return True
@@ -59,9 +61,10 @@ result_report_blueprint = Blueprint('result-report-factory', __name__)
 
 # temporary helper function for testing
 from ...model.database import db
-from ...model.data_types import ResultIterator  
+from ...model.data_types import ResultIterator
 @result_report_blueprint.route('/get_some_result_id', methods=['GET'])
 def get_some_result_id():
+    """Mock helper."""
     iterator = ResultIterator(db.session)
     results = []
     for value in iterator:
@@ -78,11 +81,13 @@ def report_result():
 
     factory = ResultReportPageFactory()
     if not factory.result_exists(uuid):
-        return redirect('/error?' + url_encode({'text':
-            'Result does not exist'}), code=302)
+        return redirect('/error?' + url_encode({
+            'text': 'Result does not exist'}), code=302)
 
     with open('templates/report_result.html') as file:
-        page = factory.generate_page(args='{}', template=file.read(),
+        page = factory.generate_page(
+            args='{}',
+            template=file.read(),
             page_content=factory.generate_page_content(uuid),
             uuid=uuid)
     return Response(page, mimetype='text/html')
@@ -95,11 +100,13 @@ def report_result_submit():
     #uploader = request.args.get('uploader')
     # validate input
     if uuid is None:
-        return redirect('/error?' + url_encode({'text':
-            'Incomplete result report form submitted (missing UUID)'}), code=302)
+        return redirect(
+            '/error?' + url_encode({
+                'text': 'Incomplete report form submitted (missing UUID)'}),
+            code=302)
     if message is None:
-        return redirect('/error?' + url_encode({'text':
-            'Incomplete result report form submitted (missing message)'}), code=302)
+        return redirect('/error?' + url_encode({
+            'text': 'Incomplete report form submitted (missing message)'}), code=302)
 
     # parse input
     # TODO: this functionality is MISSING from IOController/Authenticator
@@ -117,7 +124,8 @@ def report_result_submit():
     # TODO: this is NOT FUNTIONAL in IOController/Authenticator
     # handle redirect in a special way because ajax
     if not controller.report(email, metadata):
-        return Response(json.dumps({'redirect': error_page}),
+        return Response(
+            json.dumps({'redirect': error_page}),
             mimetype='application/json', status=302)
 
     return Response(json.dumps({}), mimetype='application/json', status=200)
