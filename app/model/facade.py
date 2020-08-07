@@ -177,7 +177,7 @@ class DatabaseFacade:
                 Benchmark._docker_name.ilike('%' + keyword + '%'))
 
         results = results.all()
-        
+
         return results
 
     def _add_to_db(self, obj: db.Model) -> bool:
@@ -259,7 +259,6 @@ class DatabaseFacade:
                 if not isinstance(tag_name, str):
                     raise TypeError(
                         "at least one tag in results metadata is not a string")
-                # TODO: fail if tag is unknown, what about auto-adding tags if they do not exist?
                 try:
                     tags.append(self.get_tag(tag_name))
                 except:

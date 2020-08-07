@@ -120,8 +120,7 @@ class ResultIterator:
             results = results.filter(Result._uploader == self._uploader)
 
         # get batch_number'th batch
-        self._cache = results.offset(
-            batch_number * batch_size).limit(batch_size).all()
+        self._cache = results.offset(batch_number * batch_size).limit(batch_size).all()
 
     def __next__(self):
         """Fetch the next result from cache."""
@@ -180,15 +179,12 @@ class Benchmark(db.Model):
     _docker_name = db.Column(db.Text(), nullable=False, primary_key=True)
 
     # relationship columns
-    _uploader_id = db.Column(db.Text, db.ForeignKey('uploader._email'),
-                             nullable=False)
-    _uploader = db.relationship('Uploader', backref=db.backref('_benchmarks',
-                                                               lazy=True))
+    _uploader_id = db.Column(db.Text, db.ForeignKey('uploader._email'), nullable=False)
+    _uploader = db.relationship('Uploader', backref=db.backref('_benchmarks', lazy=True))
 
     def __init__(self, docker_name: str, uploader: Uploader):
         """Create a new benchmark entry object."""
-        super(Benchmark, self).__init__(
-            _docker_name=docker_name, _uploader=uploader)
+        super(Benchmark, self).__init__(_docker_name=docker_name, _uploader=uploader)
 
     def get_docker_name(self) -> str:
         """Get the docker hub identifier of the benchmark, formatted as \"user/image:tagname\"."""
@@ -234,8 +230,7 @@ class Site(db.Model):
         if 'description' in kwargs:
             new_args['_description'] = kwargs['description']
 
-        super(Site, self).__init__(
-            _short_name=short_name, _address=address, **new_args)
+        super(Site, self).__init__(_short_name=short_name, _address=address, **new_args)
 
     def get_address(self) -> str:
         """Get the network address of the site."""
@@ -332,22 +327,17 @@ class Result(db.Model):
     _hidden = db.Column(db.Boolean, nullable=False, default=False)
 
     # relationship columns
-    _uploader_id = db.Column(db.Text, db.ForeignKey(
-        'uploader._email'), nullable=False)
-    _uploader = db.relationship(
-        'Uploader', backref=db.backref('_results', lazy=True))
+    _uploader_id = db.Column(db.Text, db.ForeignKey('uploader._email'), nullable=False)
+    _uploader = db.relationship('Uploader', backref=db.backref('_results', lazy=True))
 
-    _site_short_name = db.Column(db.Text, db.ForeignKey(
-        'site._short_name'), nullable=False)
+    _site_short_name = db.Column(db.Text, db.ForeignKey('site._short_name'), nullable=False)
     _site = db.relationship('Site', backref=db.backref('_results', lazy=True))
 
-    _benchmark_docker_name = db.Column(db.Text, db.ForeignKey(
-        'benchmark._docker_name'), nullable=False)
-    _benchmark = db.relationship(
-        'Benchmark', backref=db.backref('_results', lazy=True))
+    _benchmark_docker_name = db.Column(db.Text, db.ForeignKey('benchmark._docker_name'),
+                                       nullable=False)
+    _benchmark = db.relationship('Benchmark', backref=db.backref('_results', lazy=True))
 
-    _tags = db.relationship(
-        'Tag', secondary=tag_result_association, backref="_results")
+    _tags = db.relationship('Tag', secondary=tag_result_association, backref="_results")
 
     def __init__(self, json: str, uploader: Uploader, site: Site, benchmark: Benchmark, **kwargs):
         """Create a new result entry object.
@@ -393,7 +383,7 @@ class Result(db.Model):
     def get_hidden(self) -> bool:
         """Get the hide state of the result."""
         return self._hidden
-    
+
     def get_uuid(self) -> str:
         """Get the result's UUID."""
         return self._uuid
@@ -416,8 +406,7 @@ class Report(db.Model):
     _message = db.Column(db.Text(), nullable=True)
     _type = db.Column(db.String(50))
 
-    _uploader_id = db.Column(db.Text, db.ForeignKey(
-        'uploader._email'), nullable=False)
+    _uploader_id = db.Column(db.Text, db.ForeignKey('uploader._email'), nullable=False)
     _uploader = db.relationship('Uploader')
 
     # enum of report type
@@ -447,8 +436,7 @@ class Report(db.Model):
             new_args['_' + self.get_field_name()] = kwargs[self.get_field_name()]
 
         # pass to sqlalchemy constructor
-        super(Report, self).__init__(
-            _verified=False, _verdict=False, **new_args)
+        super(Report, self).__init__(_verified=False, _verdict=False, **new_args)
 
     def get_date(self) -> datetime.datetime:
         """Get the publication date of the report."""
@@ -500,8 +488,7 @@ class ResultReport(Report):
     _uuid = db.Column(UUID, db.ForeignKey('report._uuid'), primary_key=True)
 
     # relationship columns
-    _result_id = db.Column(db.Text, db.ForeignKey(
-        'result._uuid'), nullable=False)
+    _result_id = db.Column(db.Text, db.ForeignKey('result._uuid'), nullable=False)
     _result = db.relationship('Result')
 
     __mapper_args__ = {
@@ -527,8 +514,7 @@ class BenchmarkReport(Report):
     _uuid = db.Column(UUID, db.ForeignKey('report._uuid'), primary_key=True)
 
     # relationship columns
-    _benchmark_name = db.Column(db.Text, db.ForeignKey(
-        'benchmark._docker_name'), nullable=False)
+    _benchmark_name = db.Column(db.Text, db.ForeignKey('benchmark._docker_name'), nullable=False)
     _benchmark = db.relationship('Benchmark')
 
     __mapper_args__ = {
@@ -554,8 +540,7 @@ class SiteReport(Report):
     _uuid = db.Column(UUID, db.ForeignKey('report._uuid'), primary_key=True)
 
     # relationship columns
-    _site_name = db.Column(db.Text, db.ForeignKey(
-        'site._short_name'), nullable=False)
+    _site_name = db.Column(db.Text, db.ForeignKey('site._short_name'), nullable=False)
     _site = db.relationship('Site')
 
     __mapper_args__ = {
