@@ -29,10 +29,10 @@ def query_results():
     uuids = request.args.getlist('result_uuids')
     if uuids is None:
         return redirect("/error?text=Diagram%20page%20called%20with%20invalid%20arguments", code=302)
-    else:
-        factory = DiagramFactory()
-        factory.set_info("benchmark x page y")
-        args = {'uuids': uuids}
-        with open('templates/diagram.html') as file:
-            page = factory.generate_page(json.dumps(args), file.read())
-        return Response(page, mimetype='text/html')
+
+    factory = DiagramFactory()
+    factory.set_info("benchmark x page y")
+    args = {'uuids': uuids}
+    with open('templates/diagram.html') as file:
+        page = factory.generate_page(json.dumps(args), file.read())
+    return Response(page, mimetype='text/html')

@@ -3,12 +3,9 @@ Provided is:
  - ErrorPageFactory
 """
 
-import json
-
 from flask import request, Response
 from flask.blueprints import Blueprint
 
-from ..page_factory import PageFactory
 from ..type_aliases import HTML, JSON
 from .information_page import InformationPageFactory
 
@@ -30,7 +27,7 @@ def error():
     if info is None:
         # TODO: error page
         info = "Unknown error"
-        
+    
     factory = ErrorPageFactory()
     factory.set_info(info)
     with open('templates/error.html') as file:
