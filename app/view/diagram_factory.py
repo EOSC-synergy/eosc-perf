@@ -6,7 +6,7 @@ Provided is:
 
 import json
 
-from flask import request, Response
+from flask import request, Response, redirect
 from flask.blueprints import Blueprint
 
 from .page_factory import PageFactory
