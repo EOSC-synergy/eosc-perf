@@ -36,7 +36,7 @@ class PageFactory:
         self._content = None
         self._info = None
 
-    def generate_page(self, args: JSON, template: HTML = None, info: str = None) -> HTML:
+    def generate_page(self, args: JSON, template: HTML = None, info: str = None, **jinja_args) -> HTML:
         """Generate a HTML page from the input parameters not using the
         template provided in the class.
 
@@ -51,6 +51,7 @@ class PageFactory:
                 # todo may contain extra html formatting,
                 doesn't change the info lasting,
                 can be left empty.
+            jinja_args (kwargs): Extra arguments for the jinja template.
         Returns:
             HTML: The finished HTML page displaying the content and information.
         """
@@ -63,8 +64,8 @@ class PageFactory:
         if self._content is None:
             return template_tmp.render(
                 info=info_tmp,
-                content=self._generate_content(args))
-        return template_tmp.render(info=info_tmp, content=self._content)
+                content=self._generate_content(args), **jinja_args)
+        return template_tmp.render(info=info_tmp, content=self._content, **jinja_args)
 
     @abstractmethod
     def _generate_content(self, args: JSON) -> HTML:
