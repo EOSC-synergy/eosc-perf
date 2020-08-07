@@ -15,14 +15,8 @@ from ..type_aliases import HTML, JSON
 class InformationPageFactory(PageFactory):
     """A factory to build information pages."""
 
-    def __init__(self):
-        super().__init__()
-
     def _generate_content(self, args: JSON) -> HTML:
         pass
-
-    # def set_info(self, info: str):
-    #    pass
 
 
 info_blueprint = Blueprint('information-page-factory', __name__)

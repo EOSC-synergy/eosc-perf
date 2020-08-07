@@ -16,14 +16,8 @@ from ..type_aliases import HTML, JSON
 class DiagramFactory(PageFactory):
     """A factory to build diagram pages."""
 
-    def __init__(self):
-        super().__init__()
-
     def _generate_content(self, args: JSON) -> HTML:
         pass
-
-    # def set_info(self, info: str):
-    #    pass
 
 
 diagram_blueprint = Blueprint('diagram-factory', __name__)
