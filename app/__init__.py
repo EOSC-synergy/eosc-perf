@@ -8,9 +8,9 @@ from .model.database import db, DATABASE_PATH, configure_database
 from .model.facade import facade
 from .model.sandbox import add_dummies_if_not_exist
 from .view.ajax import ajax_blueprint
-from .view.diagram_factory import diagram_blueprint
-from .view.information_page_factory import info_blueprint
-from .view.error_page_factory import error_blueprint
+from .view.pages.diagram import diagram_blueprint
+from .view.pages.information_page import info_blueprint
+from .view.pages.error_page import error_blueprint
 import os
 import code
 

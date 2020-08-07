@@ -8,9 +8,9 @@ import json
 from flask import request, Response
 from flask.blueprints import Blueprint
 
-from .page_factory import PageFactory
-from .information_page_factory import InformationPageFactory
-from .type_aliases import HTML, JSON
+from ..page_factory import PageFactory
+from ..type_aliases import HTML, JSON
+from .information_page import InformationPageFactory
 
 
 class ErrorPageFactory(InformationPageFactory):
