@@ -16,14 +16,8 @@ from .information_page import InformationPageFactory
 class ErrorPageFactory(InformationPageFactory):
     """A factory to build information pages."""
 
-    def __init__(self):
-        super().__init__()
-
     def _generate_content(self, args: JSON) -> HTML:
         pass
-
-    # def set_info(self, info: str):
-    #    pass
 
 
 error_blueprint = Blueprint('error-page-factory', __name__)
