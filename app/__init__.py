@@ -11,6 +11,7 @@ from .view.ajax import ajax_blueprint
 from .view.pages.diagram import diagram_blueprint
 from .view.pages.information_page import info_blueprint
 from .view.pages.error_page import error_blueprint
+from .view.pages.report_result import result_report_blueprint
 import os
 import code
 
@@ -39,5 +40,6 @@ def create_app(debug: bool):
     app.register_blueprint(diagram_blueprint)
     app.register_blueprint(info_blueprint)
     app.register_blueprint(error_blueprint)
+    app.register_blueprint(result_report_blueprint)
 
     return app
