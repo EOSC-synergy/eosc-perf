@@ -3,8 +3,6 @@ Provided is:
  - InformationPageFactory
 """
 
-import json
-
 from flask import request, Response, redirect
 from flask.blueprints import Blueprint
 
@@ -23,14 +21,14 @@ info_blueprint = Blueprint('information-page-factory', __name__)
 
 
 @info_blueprint.route('/info')
-def info():
+def info_page():
     """HTTP endpoint for information page"""
     info = request.args.get('text')
     if info is None:
         return redirect("/error?text=Information%20page%20called%20with%20invalid%20arguments", code=302)
-    else:
-        factory = InformationPageFactory()
-        factory.set_info(info)
-        with open('templates/information.html') as file:
-            page = factory.generate_page('{}', file.read())
-        return Response(page, mimetype='text/html')
+
+    factory = InformationPageFactory()
+    factory.set_info(info)
+    with open('templates/information.html') as file:
+        page = factory.generate_page('{}', file.read())
+    return Response(page, mimetype='text/html')
