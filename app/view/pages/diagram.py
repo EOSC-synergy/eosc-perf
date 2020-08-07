@@ -9,8 +9,8 @@ import json
 from flask import request, Response, redirect
 from flask.blueprints import Blueprint
 
-from .page_factory import PageFactory
-from .type_aliases import HTML, JSON
+from ..page_factory import PageFactory
+from ..type_aliases import HTML, JSON
 
 
 class DiagramFactory(PageFactory):
