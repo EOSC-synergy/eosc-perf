@@ -393,6 +393,10 @@ class Result(db.Model):
     def get_hidden(self) -> bool:
         """Get the hide state of the result."""
         return self._hidden
+    
+    def get_uuid(self) -> str:
+        """Get the result's UUID."""
+        return self._uuid
 
     def __repr__(self):
         """Get a human-readable representation string of the result."""
