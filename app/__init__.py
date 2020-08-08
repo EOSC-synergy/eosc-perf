@@ -2,6 +2,7 @@
 module."""
 import os
 import code
+import yaml
 from flask import Flask, request
 from .controller.authenticator import authenticator
 from .model.database import db, DATABASE_PATH, configure_database
@@ -12,34 +13,53 @@ from .view.pages.diagram import diagram_blueprint
 from .view.pages.information_page import info_blueprint
 from .view.pages.error_page import error_blueprint
 from .view.pages.report_result import result_report_blueprint
-import os
-import code
 
 
-def create_app(debug: bool):
+def create_app(config):
     """Create the flask app object.
 
     Args:
-            debug (bool): Whether to start in debug mode."""
-    app = Flask(__name__)
-    if debug:
-        app.config['DEBUG'] = True
+        config (dict): A dictionary containing the configuration values."""
+    flask_app = Flask(__name__)
+    if config['debug']:
+        flask_app.config['DEBUG'] = True
         #app.config['SQLALCHEMY_ECHO'] = True
-    configure_database(app)
+        print("Running in debug mode")
+    else:
+        print("Running in production mode")
 
-    authenticator(app)
+    configure_database(flask_app, config)
 
-    if debug:
-        add_dummies_if_not_exist(app)
+    authenticator(flask_app)
 
-    @app.route('/')
+    if config['debug']:
+        add_dummies_if_not_exist(flask_app)
+
+    @flask_app.route('/')
     def root():
-        return 'hello'
+        return 'Root page'
 
-    app.register_blueprint(ajax_blueprint)
-    app.register_blueprint(diagram_blueprint)
-    app.register_blueprint(info_blueprint)
-    app.register_blueprint(error_blueprint)
-    app.register_blueprint(result_report_blueprint)
+    flask_app.register_blueprint(ajax_blueprint)
+    flask_app.register_blueprint(diagram_blueprint)
+    flask_app.register_blueprint(info_blueprint)
+    flask_app.register_blueprint(error_blueprint)
+    flask_app.register_blueprint(result_report_blueprint)
 
-    return app
+    return flask_app
+
+def load_config():
+    """Load the config file from 'config.ini'."""
+    defaults = {
+        'debug': False
+    }
+    with open('config.yaml') as file:
+        config = yaml.safe_load(file.read())
+    
+    for key, value in defaults.items():
+        if key not in config:
+            config[key] = str(value)
+    
+    return config
+
+configuration = load_config()
+app: Flask = create_app(configuration)
