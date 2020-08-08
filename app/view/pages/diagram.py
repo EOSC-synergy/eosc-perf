@@ -62,6 +62,25 @@ class DiagramFactory(PageFactory):
 
 diagram_blueprint = Blueprint('diagram-factory', __name__)
 
+# temporary helper function for testing
+from ...model.database import db
+from ...model.data_types import ResultIterator
+@diagram_blueprint.route('/test_make_diagram', methods=['GET'])
+def make_diagram_example():
+    """Testing helper."""
+    results = facade.query_results(json.dumps({
+        'filters': [
+            {
+                'type': 'benchmark',
+                'value': 'user/bench:version'
+            },
+            {
+                'type': 'site',
+                'value': 'rpi'
+            }
+        ]
+    }))
+    return redirect('/make_diagram?' + url_encode({'result_uuids': [result.get_uuid() for result in results]}), code=302)
 
 @diagram_blueprint.route('/make_diagram')
 def query_results():
