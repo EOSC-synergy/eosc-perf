@@ -8,7 +8,7 @@ from time import time
 from flask import url_for, redirect, session
 from authlib.integrations.flask_client import OAuth
 
-CONF_URL = "https://aai-dev.egi.eu/oidc/.well-known/openid-configuration"
+CONF_URL = 'https://aai-dev.egi.eu/oidc/.well-known/openid-configuration'
 
 class Authenticator:
     """A fascade between IOController and the EGI Check-In authentication 
@@ -26,24 +26,26 @@ class Authenticator:
 
         self.oauth = OAuth(flask_app)
         self.oauth.register(
-            name="eosc-perf",
+            name='eosc-perf',
+            userinfo_endpoint='https://aai-dev.egi.eu/oidc/userinfo',
             server_metadata_url=CONF_URL,
             client_kwargs={
                 'scope': 'openid email profile'
             },
-            secret="UV0xI-uY9Hd-Z12Nc9gGNvajwpHdXtiYPAAbqASfsWqR9esSGj3jRZkLZO0-ndfoHAgYSEUD-OM5wivNwCIXyw"
+            secret='UV0xI-uY9Hd-Z12Nc9gGNvajwpHdXtiYPAAbqASfsWqR9esSGj3jRZkLZO0-ndfoHAgYSEUD-OM5wivNwCIXyw'
         )
 
-    def authenticate_user(self, redirect_uri):
+    def authenticate_user(self):
         """Redirects user to EGI Check-In for authentication"""
+        redirect_uri = 'https://localhost/oidc-redirect'
         return self.oauth._clients["eosc-perf"].authorize_redirect(redirect_uri)
 
     def authentication_redirect(self):
         """Validates user authentication after login through EGI Check-In"""
         if self.is_authenticated():
-            return "Logged in successfully"
+            return 'Logged in successfully'
         else:
-            return "Login failed"
+            return 'Login failed'
 
     def is_authenticated(self):
         """Checks if the current user is authenticated. Will return true
@@ -52,9 +54,12 @@ class Authenticator:
         if not self.__token_expired():
             return True
         try:
-            token = self.oauth._clients["eosc-perf"].authorize_access_token()
-            user = self.oauth._clients["eosc-perf"].parse_id_token(token)
+            token = self.oauth._clients['eosc-perf'].authorize_access_token()
+            user = self.oauth._clients['eosc-perf'].parse_id_token(token)
+            userinfo = self.oauth._clients['eosc-perf'].userinfo()
             session['user'] = user
+            session['mail'] = userinfo['email']
+            print(userinfo)
         except KeyError:
             return False
         return True
@@ -63,6 +68,10 @@ class Authenticator:
         """Signs out the current user"""
         session.pop('user', None)
         return redirect('/')
+
+    def get_email(self):
+        if not self.__token_expired():
+            return session['mail']
 
     def __token_expired(self):
         """Checks if the current user has a valid authentication token"""
@@ -84,12 +93,10 @@ authenticator = Authenticator()
 def configure_authenticator(app):
     authenticator.configure_authenticator(app)
 
-    @app.route("/login")
+    @app.route('/login')
     def authenticate_user():
-        redirect_uri = "https://localhost" \
-                       + url_for('authentication_redirect', _external=False)
-        return authenticator.authenticate_user(redirect_uri)
+        return authenticator.authenticate_user()
 
-    @app.route("/oidc-redirect")
+    @app.route('/oidc-redirect')
     def authentication_redirect():
         return authenticator.authentication_redirect()
