@@ -3,8 +3,8 @@ module."""
 import os
 import code
 import yaml
+from .controller.authenticator import configure_authenticator
 from flask import Flask, request
-from .controller.authenticator import authenticator
 from .model.database import db, configure_database
 from .model.facade import facade
 from .model.sandbox import add_dummies_if_not_exist
@@ -29,8 +29,7 @@ def create_app(config):
         print("Running in production mode")
 
     configure_database(flask_app, config)
-
-    authenticator(flask_app)
+    configure_authenticator(flask_app)
 
     if config['debug']:
         add_dummies_if_not_exist(flask_app)
