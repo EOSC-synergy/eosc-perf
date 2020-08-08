@@ -18,7 +18,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx:/etc/nginx/conf.d
-      - ./scripts:/var/www/web/
+      - ./static:/var/www/web/
       - ./certs:/etc/nginx/certs
     #command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
     depends_on:
