@@ -1,18 +1,22 @@
 <html lang="en">
-{# This comment describes the base.html document which is the base for the other html templates.#}
 <head>
-    {% block head %}
-    {# style sheet to be inserted here #}
+    <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" />
+    <script src="static/scripts/jquery-3.5.1.min.js"></script>
+    <script src="static/scripts/bootstrap.min.js"></script>
     <title>{% block title %}{% endblock %}</title>
-    {% endblock %}
-</head>
-<body>
-    {% block body %}
-    <div id="content">{% block info %}{% endblock %}</div>
-    {% endblock %}
-</body>
-<script>
+    <script>
+    {# this must come before the rest of head, due to dependency order #}
     {% block content %}
     {% endblock %}
-</script>
+    </script>
+    {% block head %}
+    {% endblock %}
+</head>
+
+<body>
+    <div class="container">
+    {% block info %}
+    {% endblock %}
+    </div>
+</body>
 </html>

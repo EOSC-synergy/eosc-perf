@@ -4,10 +4,7 @@
 
 {% block head %}
 {{ super() }}
-<link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" />
 <link rel="stylesheet" type="text/css" href="static/css/overlay.css" />
-<script src="static/scripts/jquery-3.5.1.min.js"></script>
-<script src="static/scripts/bootstrap.min.js"></script>
 <script src="static/scripts/view/report_result.js"></script>
 <style>
     #message-box {
@@ -17,20 +14,19 @@
 {% endblock %}
 
 {% block info %}
-<div class="container">
     <div id="overlay">
         <div id="overlay-text"></div>
     </div>
     <h1>Report result</h1>
     <h4>Result content:</h2>
-        <code>
+    <code>
     {{ page_content }}
     </code>
-        <form id="form" action="/report_result_submit" method="POST">
-            <input type="hidden" name="uuid" value="{{ uuid }}" />
-            <input type="text" id="message-box" name="message" value=""
-                placeholder="Enter an explanation for your report here." /> <br />
-            <input type="submit" name="submit" value="Submit report" />
-        </form>
-</div>
+    <form id="form" action="/report_result_submit" method="POST">
+        <input type="hidden" name="uuid" value="{{ uuid }}" />
+        <input type="text" id="message-box" name="message" value=""
+            placeholder="Enter an explanation for your report here." />
+        <br/>
+        <input type="submit" name="submit" value="Submit report" />
+    </form>
 {% endblock %}
