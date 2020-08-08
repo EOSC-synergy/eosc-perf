@@ -29,7 +29,7 @@ def create_app(config):
         print("Running in production mode")
 
     configure_database(flask_app, config)
-    configure_authenticator(flask_app)
+    configure_authenticator(flask_app, config)
 
     if config['debug']:
         add_dummies_if_not_exist(flask_app)
