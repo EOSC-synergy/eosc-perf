@@ -1,13 +1,10 @@
-{% extends "base.html" %} {# inherits from base.html #}
+{% extends "base.html" %}
 
 {% block title %}Error{% endblock %}
-{# uses the head from its parent, (super.super() would call from the grandparent etc.) #}
+
 {% block info %}
 <h1>Error</h1>
 <p class="Text">
     {{ info }}
 </p>
-{% endblock %}
-{% block content %}
-
 {% endblock %}
