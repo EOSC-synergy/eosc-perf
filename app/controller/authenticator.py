@@ -58,17 +58,11 @@ class Authenticator:
             user = self.oauth._clients['eosc-perf'].parse_id_token(token)
             userinfo = self.oauth._clients['eosc-perf'].userinfo()
             session['user'] = user
-            session['email'] = userinfo['email']
+            session['user']['info'] = userinfo
+            print(session['user'])
         except KeyError:
             return False
         return True
-
-    def get_email(self):
-        """Returns the email address of the current user.
-           If no user is logged in, an empty string is returned"""
-        if not _token_expired():
-            return session['email']
-        return ""
 
     def is_admin(self):
         """Checks wether the current user has admin rights"""
