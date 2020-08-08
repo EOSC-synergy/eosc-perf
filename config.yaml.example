@@ -1,0 +1,2 @@
+debug: true
+oidc_client_secret: Enter secret here

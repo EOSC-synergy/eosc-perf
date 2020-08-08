@@ -5,8 +5,9 @@ To manually test the model components
 3. A working model is now established, you may interact with it through the interpreter
 
 To launch the webapp entirely:
-1. Create a 'config.yaml' file
+1. Create a 'config.yaml' file from 'config.yaml.example'
 2. Move your SSL certificate and key to certs/
+3. Add OIDC client secret to config
 3. Run `docker-compose build`
 4. Run `docker-compose up`
 
