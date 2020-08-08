@@ -5,7 +5,7 @@ import code
 import yaml
 from flask import Flask, request
 from .controller.authenticator import authenticator
-from .model.database import db, DATABASE_PATH, configure_database
+from .model.database import db, configure_database
 from .model.facade import facade
 from .model.sandbox import add_dummies_if_not_exist
 from .view.ajax import ajax_blueprint
@@ -50,7 +50,8 @@ def create_app(config):
 def load_config():
     """Load the config file from 'config.ini'."""
     defaults = {
-        'debug': False
+        'debug': False,
+        'database-path': 'sqlite.db'
     }
     with open('config.yaml') as file:
         config = yaml.safe_load(file.read())
