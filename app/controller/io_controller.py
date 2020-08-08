@@ -2,12 +2,13 @@
 This module acts as a facade between view and model.
 """
 import json
+from flask import session
 from re import match
 from typing import List
 from requests import get
 from requests_html import HTMLSession
 from .json_result_validator import JSONResultValidator
-from .authenticator import Authenticator
+from .authenticator import Authenticator, authenticator
 from .type_aliases import USER, JSON, AuthenticateError
 from .. import app, configuration
 from ..model.facade import DatabaseFacade, facade
@@ -350,3 +351,12 @@ class IOController:
             if contained('description'):
                 site.set_description(metadata['description'])
         return site
+
+
+def get_user_id():
+    """Returns the current user's unique identifier, if logged in.
+       Otherwise returns None."""
+    try:
+        return session['user']['sub']
+    except: KeyError:
+        return None
