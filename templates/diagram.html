@@ -4,22 +4,25 @@
 {# uses the head from its parent, (super.super() would call from the grandparent etc.) #}
 {% block head %}
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js"></script>
-<script type="text/javascript" src="static/view/content.js"></script>
-<script type="text/javascript" src="static/view/diagram.js"></script>
+<script type="text/javascript" src="static/scripts/view/content.js"></script>
+<script>function getData() {
+return [
+[
+{{script_content|safe}}
+]
+];
+}</script>
+<script type="text/javascript" src="static/scripts/view/diagram.js"></script>
 
 {{ super() }}
 {% endblock %}
 {% block info %}
 <h1>Diagram test page</h1>
 <p class="Text">
-    {{ info }}
-    {# gets replaced by the info variable in template.render() #}
+    {{ page_content }}
 <div style="width: 80%">
     <canvas id="speedup">
     </canvas>
 </div>
 </p>
-{% endblock %}
-{% block content %}
-
 {% endblock %}
