@@ -51,7 +51,7 @@ class Authenticator:
         """Checks if the current user is authenticated. Will return true
            if the user just logged in through EGI Check-In or if the user
            still has a token that is not expired."""
-        if not self.__token_expired():
+        if not _token_expired():
             return True
         try:
             token = self.oauth._clients['eosc-perf'].authorize_access_token()
@@ -66,7 +66,7 @@ class Authenticator:
     def get_email(self):
         """Returns the email address of the current user.
            If no user is logged in, an empty string is returned"""
-        if not self.__token_expired():
+        if not _token_expired():
             return session['mail']
         return ""
 
@@ -76,7 +76,7 @@ class Authenticator:
         return False
 
 
-def __token_expired():
+def _token_expired():
     """Checks if the current user has a valid authentication token"""
     try:
         user = session['user']
