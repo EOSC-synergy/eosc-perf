@@ -6,7 +6,8 @@ To manually test the model components
 
 To launch the webapp entirely:
 1. Create a 'config.yaml' file
-2. Run `docker-compose build`
-3. Run `docker-compose up`
+2. Move your SSL certificate and key to certs/
+3. Run `docker-compose build`
+4. Run `docker-compose up`
 
 To enable debug mode, put 'debug: true' into config.yaml
