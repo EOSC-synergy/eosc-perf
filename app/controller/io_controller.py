@@ -8,7 +8,7 @@ from typing import List
 from requests import get
 from requests_html import HTMLSession
 from .json_result_validator import JSONResultValidator
-from .authenticator import Authenticator, authenticator
+from .authenticator import authenticator
 from .type_aliases import USER, JSON, AuthenticateError
 from .. import app, configuration
 from ..model.facade import DatabaseFacade, facade
@@ -44,37 +44,35 @@ class IOController:
         else:
             self.__database_facade = database_facade
 
-    def authenticate(self, current_user: USER) -> bool:
+    def authenticate(self) -> bool:
         """Authenticate the current user.
         Args:
-        current_user (USER): The current user to get authenticated.
         Returns:
         bool: True if the user is authenticated."""
         if configuration['debug']:
             return True
         # Using lazyevaluation of python.
-        return Authenticator.is_authenticated(current_user) or \
-            Authenticator.authenticate_user(current_user)
+        return authenticator.is_authenticated() or \
+            authenticator.authenticate_user()
 
-    def submit_result(self, result_json: str, metadata: str, current_user: USER) -> bool:
+    def submit_result(self, result_json: str, metadata: str) -> bool:
         """Submit a new benchmark result to the system if it is valid.
             Fails if the user isn't authenticated or the result json is in an invalid format.
         Args:
         result_json  (JSON): The benchmark result.
         metadata      (str): The metadata associated with the benchmark result.
-        current_user (USER): The user submitting the new result.
         Returns:
         bool: If the benchmark was successfully added.
         """
         # Check if user is authenticated
-        if self.authenticate(current_user):
+        if self.authenticate():
             # Check if the result is in the correct format.
             if self.__result_validator  .validate_json(result_json):
                 # Try to add the result to the data base.
                 return self.__database_facade.add_result(result_json, metadata)
         return False
 
-    def submit_benchmark(self, uploader_email: str, current_user: USER, docker_name: str,
+    def submit_benchmark(self, uploader_email: str, docker_name: str,
                          check_for_page: bool = False) -> bool:
         """Submit a new Benchmark to the system.
         Args:
@@ -82,7 +80,6 @@ class IOController:
         docker_name     (str): The name of the dockerhub reposetory and sub url.
                                So that https://hub.docker.com/_/[docker_name] or
                                https://hub.docker.com/_/[docker_name] results in a valid url.
-        current_user   (USER): The user who submits the Benchmark.
         check_for_page (bool): Determines whether to control if the url corresponds to
                                an existing image on docker hub. Can lead to problems if
                                chromium isn't installed
@@ -91,34 +88,32 @@ class IOController:
         bool: If the benchmark was successfully submitted.
         """
         # Check if user is authenticated.
-        if not self.authenticate(current_user):
+        if not self.authenticate():
             return False
         # Check for valid email address.
         if match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+\Z)", uploader_email) is None:
             return False
-        # Check valid docker_hub_name.
+        # Check valid docker_hub_name.uploader_emailuploader_email
         if self.__valid_docker_hub_name(docker_name, check_for_page):
             # Add to model.
             return facade.add_benchmark(
                 docker_name=docker_name, uploader_email=uploader_email)
         return False
 
-    def get_unapproved_benchmarks(self, current_user: USER) -> List[Benchmark]:
+    def get_unapproved_benchmarks(self) -> List[Benchmark]:
         """If the current user is an admin, get a list of all unapproved benchmarks.
         Args:
-        current_user (USER): The user trying to get the unaproved Benchmarks.
         Returns:
         List[Benchmark]: List of unaproved Benchmarks.
         """
-        if Authenticator.is_admin(current_user):
+        if authenticator.is_admin():
             return self.__unapproved_benchmarks
         raise AuthenticateError('The user isn\'t an admin.')
 
-    def approve_benchmark(self, current_user: USER, benchmark: Benchmark = None,
+    def approve_benchmark(self, benchmark: Benchmark = None,
                           benchmark_name: str = None) -> bool:
         """Approve a Benchmark, requires the current user to be an admin.
         Args:
-        current_user   (USER): The user trying to approve a benchmark.
         benchmark (Benchmark): The benchmark to be approved.
         benchmark_name  (str): The name of the previously unapproved benchamark to get approved.
                                Is only used if benchmark is left empty.
@@ -135,7 +130,7 @@ class IOController:
         if benchmark is None:
             return False
         # Add the benchmark to the model.
-        if Authenticator.is_admin(current_user):
+        if authenticator.is_admin():
             if facade.add_benchmark(benchmark.get_docker_name(), benchmark.get_uploader()):
                 # Was successfully added.
                 for single_benchmark in self.__unapproved_benchmarks:
@@ -146,16 +141,15 @@ class IOController:
                 return True
         return False
 
-    def submit_site(self, metadata_json: JSON, current_user: USER) -> bool:
+    def submit_site(self, metadata_json: JSON) -> bool:
         """Submit a new site, will be aviable after getting approved.
         Args:
         metadata_json (JSON): A json formated str containing a 'short_name' and 'address' parameter
                               ,as well as maybe a 'name' parameter.
-        current_user  (USER): The user submitting the side.
         Returns:
         bool: If the submission was successful.
         """
-        if self.authenticate(current_user):
+        if self.authenticate():
             # Crete new site.
             new_site = self.__parse_site(metadata_json)
             # Add to unaproved sites.
@@ -164,25 +158,23 @@ class IOController:
                 return True
         return False
 
-    def get_unapproved_sites(self, current_user: USER) -> List[Site]:
+    def get_unapproved_sites(self) -> List[Site]:
         """If the current user is an admin provide a list of all unaproved sites.
         Args:
-        current_user (USER): The user requesting the unapproved sites.
         Returns:
         List[Sites]: All unaproved sites, can be empty.
         """
         # Check if admin.
-        if Authenticator.is_admin(current_user):
+        if authenticator.is_admin():
             return self.__unapproved_sites
         # User isn't admin.
         raise AuthenticateError(
             "The users attempting to get teh unapproved sites isn't an an admin.")
 
-    def approve_site(self, current_user: USER, site: Site = None, metadata_json: JSON = None) \
+    def approve_site(self, site: Site = None, metadata_json: JSON = None) \
             -> bool:
         """If the current user is an admin, approve the given site.
         Args:
-        current_user  (USER): The user attempting to approve the site.
         site          (Site): The admin reviewed site getting add to the model.
         metadata_json (JSON): A json formated str containing a 'short_name' and 'address' parameter
                               ,as well as maybe a 'name' parameter. Gets used if site is left empty.
@@ -191,7 +183,7 @@ class IOController:
         """
 
         # Check if user is allowed to approve.
-        if Authenticator.is_admin(current_user):
+        if authenticator.is_admin():
             # Decide whether to use site or metadata_json.
             site = [site, self.__parse_site(metadata_json)][site is None]
             if not site is None:
@@ -213,49 +205,46 @@ class IOController:
                     return True
         return False
 
-    def report(self, current_user: USER, metadata: JSON) -> bool:
+    def report(self, metadata: JSON) -> bool:
         """Add a Report to the model, and notify an admin about it.
         Args:
-        current_user (USER): The user reporting a result.
         metadata     (JSON): The metadata in json format, containing the
                              benchmark 'result_id' and the associated 'user_message'.
         Returns:
         bool: If the report was successfully added.
         """
-        if self.authenticate(current_user):
+        if self.authenticate():
             # Add to database.
             if self.__database_facade.add_report(metadata):
                 # TODO: notify admin, per email.
                 return True
         return False
 
-    def get_report(self, current_user: USER, only_unanswered: bool = False) -> List[Report]:
+    def get_report(self, only_unanswered: bool = False) -> List[Report]:
         """Provide a list of all reports, require the user to be an admin.
         Args:
-        current_user    (USER): The user accessing the reports.
         only_unanswered (bool): Whether all or only the unanswered, reports get provided.
         Returns:
         List[Reports]: List of all the requested reports, throws an AuthenticationError if
                        the authentication failed."""
-        if Authenticator.is_admin(current_user):
+        if authenticator.is_admin():
             return self.__database_facade.get_reports(only_unanswered=only_unanswered)
         raise AuthenticateError(
             "User trying to view the reports isn't an admin.")
 
-    def process_report(self, verdict: bool, current_user: USER, uuid: str = None,
+    def process_report(self, verdict: bool, uuid: str = None,
                        report: Report = None) -> bool:
         """Add the verdict to the model, if the verdict consents the report the associated
         benchmark gets deleted.
         Args:
         verdict      (bool): The verdict True when agreeing with the report False otherwise.
-        current_user (USER): The user jugging the report.
         uuid          (str): The uuid of the jugged report, gets used if report is left empty.
         report     (Report): The report jugged.
         Returns:
         bool: If the process was successful.
         """
         # Check if user is admin.
-        if Authenticator.is_admin(current_user):
+        if authenticator.is_admin():
             # Search report from model, incase the input report somehow got copied.
             # Select uuid if report is left empty.
             uuid = [report.get_uuid, uuid][report is None]
@@ -353,10 +342,12 @@ class IOController:
         return site
 
 
-def get_user_id():
-    """Returns the current user's unique identifier, if logged in.
-       Otherwise returns None."""
+def get_user_id() -> str:
+    """Get current user's unique identifier, if logged in.
+       Returns:
+       Id: The urrent user's unique identifier,
+           is None if no user is logged in"""
     try:
         return session['user']['sub']
-    except: KeyError:
+    except KeyError:
         return None
