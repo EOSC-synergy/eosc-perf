@@ -136,3 +136,4 @@ test.db
 # webapp files
 *.db
 config.yaml
+certs/*
