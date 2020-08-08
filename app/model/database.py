@@ -6,13 +6,13 @@ DATABASE_PATH: str = 'test.db'
 
 db = SQLAlchemy()
 
-def configure_database(app):
+def configure_database(app, config):
     """Set up the database with the given flask app."""
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + DATABASE_PATH
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # delete database on debug launch
-    if app.config['DEBUG']:
+    if config['debug']:
         if os.path.exists(DATABASE_PATH):
             os.remove(DATABASE_PATH)
 

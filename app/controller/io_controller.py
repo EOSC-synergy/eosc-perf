@@ -9,14 +9,13 @@ from requests_html import HTMLSession
 from .json_result_validator import JSONResultValidator
 from .authenticator import Authenticator
 from .type_aliases import USER, JSON, AuthenticateError
+from .. import app, configuration
 from ..model.facade import DatabaseFacade, facade
 from ..model.data_types import Benchmark, Site, Report
 # The parent url of docker hub projects, first for private second for docker certified.
 docker_hub_url = {"certified": "https://hub.docker.com/r/",
                   "default": "https://hub.docker.com/_/"}
 # For debugging skips the authentication process
-DEBUG = True
-
 
 class IOController:
     """This class acts as a facade between view and model, and validate user input.
@@ -40,9 +39,9 @@ class IOController:
         self.__unapproved_sites = unapproved_sites
         self.__unapproved_benchmarks = unapproved_benchmarks
         if database_facade is None:
-            self.__database_facade = DatabaseFacade()
+            self.__database_facade = facade
         else:
-            self.__database_facade = DatabaseFacade
+            self.__database_facade = database_facade
 
     def authenticate(self, current_user: USER) -> bool:
         """Authenticate the current user.
@@ -50,8 +49,7 @@ class IOController:
         current_user (USER): The current user to get authenticated.
         Returns:
         bool: True if the user is authenticated."""
-        # TODO remove.
-        if DEBUG:
+        if configuration['debug']:
             return True
         # Using lazyevaluation of python.
         return Authenticator.is_authenticated(current_user) or \
