@@ -10,7 +10,7 @@ from requests_html import HTMLSession
 from .json_result_validator import JSONResultValidator
 from .authenticator import authenticator
 from .type_aliases import USER, JSON, AuthenticateError
-from .. import app, configuration
+from ..configuration import configuration
 from ..model.facade import DatabaseFacade, facade
 from ..model.data_types import Benchmark, Site, Report
 # The parent url of docker hub projects, first for private second for docker certified.
