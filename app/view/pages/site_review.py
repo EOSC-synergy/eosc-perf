@@ -61,6 +61,9 @@ def review_site():
             'text': 'Site review page opened with wrong report type'}), code=302)
 
     site_name = report.get_site().get_short_name()
+    reporter = report.get_reporter()
+    uploader_name = controller.get_full_name(reporter)
+    uploader_mail = controller.get_email(reporter)
 
     with open('templates/site_review.html') as file:
         page = factory.generate_page(
@@ -69,6 +72,8 @@ def review_site():
             site_name=site_name,
             site_description=report.get_site().get_description(),
             site_human_name=report.get_site().get_name(),
+            uploader_name=uploader_name,
+            uploader_mail=uploader_mail,
             uuid=uuid)
     return Response(page, mimetype='text/html')
 
