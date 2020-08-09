@@ -35,7 +35,7 @@ def create_app(config):
     configure_authenticator(flask_app, config)
 
     if config['debug']:
-        add_dummies_if_not_exist(flask_app)
+        add_dummies_if_not_exist()
 
     @flask_app.route('/')
     def root():

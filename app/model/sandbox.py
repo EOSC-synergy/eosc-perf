@@ -1,12 +1,26 @@
 import json
 from .data_types import *
 from .database import db
+from .facade import facade
 
-uploaders = [Uploader(email='user1@example.com'), Uploader(email='user@example.com')]
-sites = [Site(short_name='rpi', address='192.168.1.2', description="My cool raspberry pi"), Site(short_name="terrapc", address='127.0.0.1', description="My strong desktop PC")]
-benchmarks = [Benchmark(docker_name='user/bench:version', uploader=uploaders[0]), Benchmark(docker_name='user/otherbench:version', uploader=uploaders[0])]
-tags = [Tag(name='neato'), Tag(name='cpu')]
-results = []
+uploaders = [
+    Uploader(identifier='dead beef', email='user1@example.com', name='Max Mustermann'),
+    Uploader(identifier='do you believe in magic?', email='user@example.com', name='John Doe')
+]
+sites = [
+    Site(short_name='rpi', address='192.168.1.2', description="My cool raspberry pi"),
+    Site(short_name="terrapc", address='127.0.0.1', description="My strong desktop PC")
+]
+benchmarks = [
+    Benchmark(docker_name='user/bench:version', uploader=uploaders[0]),
+    Benchmark(docker_name='user/otherbench:version', uploader=uploaders[0])
+]
+tags = [
+    Tag(name='neato'),
+    Tag(name='cpu')
+]
+
+#results = []
 #for uploader in uploaders:
 #   for site in sites:
 #        for benchmark in benchmarks:
@@ -37,32 +51,54 @@ for i in range(1, 17):
     }
     data_results.append(Result(json=json.dumps(d), uploader=uploaders[0], site=sites[0], benchmark=benchmarks[0], tags=[tags[0]]))
 
-def add_dummies_if_not_exist(app):
-    app.app_context().push()
+def add_dummies_if_not_exist():
     for uploader in uploaders:
-        db.session.add(uploader)
+        facade.add_uploader(json.dumps({
+            'id': uploader.get_id(),
+            'email': uploader.get_email(),
+            'name': uploader.get_name()
+        }))
 
     for site in sites:
-        db.session.add(site)
+        facade.add_site(json.dumps({
+            'short_name': site.get_short_name(),
+            'address': site.get_address(),
+            'name': site.get_name(),
+            'description': site.get_description()
+        }))
+    
+    for tag in tags:
+        facade.add_tag(tag.get_name())
     
     for benchmark in benchmarks:
-        db.session.add(benchmark)
-
-    for tag in tags:
-        db.session.add(tag)
+        facade.add_benchmark(benchmark.get_docker_name(), benchmark.get_uploader().get_id())
 
     #for result in results:
-    #    db.session.add(result)
+    #    facade.add_result(result.get_json(), result.dumps({
+    #        'uploader': result.get_uploader().get_id(),
+    #        'site': result.get_site().get_short_name(),
+    #        'benchmark': result.get_benchmark().get_docker_name(),
+    #        'tags': [tag.get_name() for tag in result.get_tags()]
+    #    }))
     
     for result in data_results:
-        db.session.add(result)
+        facade.add_result(result.get_json(), json.dumps({
+            'uploader': result.get_uploader().get_id(),
+            'site': result.get_site().get_short_name(),
+            'benchmark': result.get_benchmark().get_docker_name(),
+            'tags': [tag.get_name() for tag in result.get_tags()]
+        }))
     
-    db.session.add(report_example_bench)
-    db.session.add(bench_report)
-    db.session.add(site_report)
-
-    try:
-        db.session.commit()
-    except:
-        # things already exist, just roll back
-        db.session.rollback()
+    facade.add_benchmark(report_example_bench.get_docker_name(), report_example_bench.get_uploader().get_id())
+    facade.add_report(json.dumps({
+        'message': 'Oopsie',
+        'type': 'benchmark',
+        'value': report_example_bench.get_docker_name(),
+        'uploader': bench_report.get_reporter().get_id()
+    }))
+    facade.add_report(json.dumps({
+        'message': 'Woopsie',
+        'type': 'site',
+        'value': site_report.get_site().get_short_name(),
+        'uploder': site_report.get_reporter().get_id()
+    }))
