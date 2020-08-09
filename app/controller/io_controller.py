@@ -215,7 +215,18 @@ class IOController:
                 return True
         return False
 
-    def get_report(self, only_unanswered: bool = False) -> List[Report]:
+    def get_report(self, uuid: str) -> Report:
+        """Get a report by UUID, require the user to be an admin.
+        Args:
+            uuid (str): The unique identifier for the report.
+        Returns:
+            List[Reports]: The report.
+        """
+        if authenticator.is_admin():
+            return facade.get_report(uuid)
+        raise AuthenticateError("User trying to view the reports isn't an admin.")
+
+    def get_reports(self, only_unanswered: bool = False) -> List[Report]:
         """Provide a list of all reports, require the user to be an admin.
         Args:
         only_unanswered (bool): Whether all or only the unanswered, reports get provided.
