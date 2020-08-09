@@ -100,8 +100,8 @@ def review_benchmark():
 
     docker_name = report.get_benchmark().get_docker_name()
     reporter = report.get_reporter()
-    uploader_name = controller.get_full_name(reporter)
-    uploader_mail = controller.get_email(reporter)
+    uploader_name = reporter.get_name()
+    uploader_mail = reporter.get_email()
 
     # link to the image on docker hub
     dockerhub_link = build_dockerhub_url(docker_name)

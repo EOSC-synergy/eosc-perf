@@ -62,8 +62,8 @@ def review_site():
 
     site_name = report.get_site().get_short_name()
     reporter = report.get_reporter()
-    uploader_name = controller.get_full_name(reporter)
-    uploader_mail = controller.get_email(reporter)
+    uploader_name = reporter.get_name()
+    uploader_mail = reporter.get_email()
 
     with open('templates/site_review.html') as file:
         page = factory.generate_page(
