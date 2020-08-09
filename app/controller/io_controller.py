@@ -339,6 +339,7 @@ class IOController:
                 site.set_description(metadata['description'])
         return site
 
+controller = IOController()
 
 def get_user_id() -> str:
     """Get current user's unique identifier, if logged in.
