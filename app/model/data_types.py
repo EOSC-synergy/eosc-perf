@@ -429,9 +429,8 @@ class Report(db.Model):
         'polymorphic_on': _type
     }
 
-    def __init__(self, enum_type, **kwargs):
+    def __init__(self, **kwargs):
         """Create a new result report entry object."""
-        self._report_type = enum_type
         new_args = {}
         # report message
         if 'message' in kwargs:
@@ -477,9 +476,9 @@ class Report(db.Model):
         """Get the UUID of this report."""
         return self._uuid
 
+    @abstractmethod
     def get_report_type(self) -> int:
         """Get the enumerated type of the report."""
-        return self._report_type
 
     @abstractmethod
     def get_field_name(self) -> str:
@@ -505,12 +504,12 @@ class ResultReport(Report):
         'polymorphic_identity': 'result_report',
     }
 
-    def __init__(self, **kwargs):
-        super(ResultReport, self).__init__(Report.RESULT, **kwargs)
-
     def get_result(self) -> Result:
         """Get the result associated with the report."""
         return self._result
+
+    def get_report_type(self) -> int:
+        return Report.RESULT
 
     def get_field_name(self) -> str:
         return "result"
@@ -531,12 +530,12 @@ class BenchmarkReport(Report):
         'polymorphic_identity': 'benchmark_report',
     }
 
-    def __init__(self, **kwargs):
-        super(BenchmarkReport, self).__init__(Report.BENCHMARK, **kwargs)
-
     def get_benchmark(self) -> Benchmark:
         """Get the benchmark associated with the report."""
         return self._benchmark
+
+    def get_report_type(self) -> int:
+        return Report.BENCHMARK
 
     def get_field_name(self) -> str:
         return "benchmark"
@@ -557,12 +556,12 @@ class SiteReport(Report):
         'polymorphic_identity': 'site_report',
     }
 
-    def __init__(self, **kwargs):
-        super(SiteReport, self).__init__(Report.SITE, **kwargs)
-
     def get_site(self) -> Site:
         """Get the site associated with the report."""
         return self._site
+
+    def get_report_type(self) -> int:
+        return Report.SITE
 
     def get_field_name(self) -> str:
         return "site"
