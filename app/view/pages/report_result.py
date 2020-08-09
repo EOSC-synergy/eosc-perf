@@ -13,7 +13,7 @@ from ..page_factory import PageFactory
 from ..type_aliases import HTML, JSON
 
 from ...model.facade import facade
-from ...controller.io_controller import controller, get_user_id
+from ...controller.io_controller import controller
 
 class ResultReportPageFactory(PageFactory):
     """A factory to build information pages."""
@@ -92,8 +92,8 @@ def report_result_submit():
             mimetype='application/json', status=302)
 
     # parse input
-    uploader = get_user_id()
-    if uploader is None or len(get_user_id()) == 0:
+    uploader = controller.get_user_id()
+    if uploader is None or len(controller.get_user_id()) == 0:
         return Response(json.dumps({'redirect': '/error?' + url_encode({
             'text': 'Could not submit report (not logged in?)'})}),
             mimetype='application/json', status=302)
