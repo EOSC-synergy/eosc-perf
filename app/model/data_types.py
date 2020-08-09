@@ -163,9 +163,17 @@ class Uploader(db.Model):
         """Get the email address associated with this uploader."""
         return self._email
     
+    def set_email(self, email: str):
+        """Update the email address associated with the uploader."""
+        self._email = email
+    
     def get_name(self) -> str:
         """Get a human-readable human name."""
         return self._name
+    
+    def set_name(self, name: str):
+        """Update the human-readable human human name."""
+        self._name = name
 
     def get_results(self) -> ResultIterator:
         """Get an iterator for all the results associated with this uploader."""
