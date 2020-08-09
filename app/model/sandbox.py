@@ -100,5 +100,5 @@ def add_dummies_if_not_exist():
         'message': 'Woopsie',
         'type': 'site',
         'value': site_report.get_site().get_short_name(),
-        'uploder': site_report.get_reporter().get_id()
+        'uploader': site_report.get_reporter().get_id()
     }))
