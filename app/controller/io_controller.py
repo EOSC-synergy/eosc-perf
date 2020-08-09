@@ -238,25 +238,17 @@ class IOController:
         raise AuthenticateError(
             "User trying to view the reports isn't an admin.")
 
-    def process_report(self, verdict: bool, uuid: str = None,
-                       report: Report = None) -> bool:
+    def process_report(self, verdict: bool, uuid: str) -> bool:
         """Add the verdict to the model, if the verdict consents the report the associated
         benchmark gets deleted.
         Args:
-        verdict      (bool): The verdict True when agreeing with the report False otherwise.
-        uuid          (str): The uuid of the jugged report, gets used if report is left empty.
-        report     (Report): The report jugged.
+            verdict (bool): The verdict; True when approving the reported item, False otherwise.
+            uuid (str): The uuid of the judged report.
         Returns:
-        bool: If the process was successful.
+            bool: If the process was successful.
         """
         # Check if user is admin.
         if authenticator.is_admin():
-            # Search report from model, incase the input report somehow got copied.
-            # Select uuid if report is left empty.
-            uuid = [report.get_uuid, uuid][report is None]
-            # Ensure one of both isn't None.
-            if uuid is None:
-                return False
             # Set the verdict.
             try:
                 report_by_uuid = facade.get_report(uuid)
