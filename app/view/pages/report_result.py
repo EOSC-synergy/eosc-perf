@@ -13,23 +13,7 @@ from ..page_factory import PageFactory
 from ..type_aliases import HTML, JSON
 
 from ...model.facade import facade
-#from ...controller.io_controller import controller
-# mock class because the actual class doesn't work...
-class Controller():
-    """Mock class."""
-    def report(self, email: str, metadata: JSON) -> bool:
-        """Mock method."""
-        return True
-
-    def get_current_email(self) -> str:
-        """Mock method."""
-        try:
-            email = session['user']
-            return email
-        except KeyError:
-            return 'nobody'
-
-controller = Controller()
+from ...controller.io_controller import controller, get_user_id
 
 class ResultReportPageFactory(PageFactory):
     """A factory to build information pages."""
@@ -57,7 +41,6 @@ class ResultReportPageFactory(PageFactory):
             return False
 
 result_report_blueprint = Blueprint('result-report-factory', __name__)
-
 
 # temporary helper function for testing
 from ...model.database import db
@@ -97,33 +80,35 @@ def report_result_submit():
     """HTTP endpoint to take in the reports"""
     uuid = request.form['uuid']
     message = request.form['message']
-    #uploader = request.args.get('uploader')
     # validate input
     if uuid is None:
-        return redirect(
-            '/error?' + url_encode({
-                'text': 'Incomplete report form submitted (missing UUID)'}),
-            code=302)
+        return Response(json.dumps({'redirect': '/error?' + url_encode({
+            'text': 'Incomplete report form submitted (missing UUID)'})}),
+            mimetype='application/json', status=302)
+
     if message is None:
-        return redirect('/error?' + url_encode({
-            'text': 'Incomplete report form submitted (missing message)'}), code=302)
+        return Response(json.dumps({'redirect': '/error?' + url_encode({
+            'text': 'Incomplete report form submitted (missing message)'})}),
+            mimetype='application/json', status=302)
 
     # parse input
-    # TODO: this functionality is MISSING from IOController/Authenticator
-    email = controller.get_current_email()
+    uploader = get_user_id()
+    if uploader is None or len(get_user_id()) == 0:
+        return Response(json.dumps({'redirect': '/error?' + url_encode({
+            'text': 'Could not submit report (not logged in?)'})}),
+            mimetype='application/json', status=302)
 
     metadata = {
         'type': 'result',
         'value': uuid,
         'message': message,
-        'uploader': email
+        'uploader': uploader
     }
 
     error_page = '/error?' + url_encode({'text': 'Failed to submit report'})
 
-    # TODO: this is NOT FUNTIONAL in IOController/Authenticator
     # handle redirect in a special way because ajax
-    if not controller.report(email, metadata):
+    if not controller.report(json.dumps(metadata)):
         return Response(
             json.dumps({'redirect': error_page}),
             mimetype='application/json', status=302)
