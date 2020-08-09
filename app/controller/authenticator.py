@@ -6,6 +6,7 @@ Provided is:
 from time import time
 
 from flask import redirect, session
+from flask.blueprints import Blueprint
 from authlib.integrations.flask_client import OAuth
 
 from ..configuration import configuration
@@ -67,7 +68,6 @@ class Authenticator:
             userinfo = self.oauth._clients['eosc-perf'].userinfo()
             session['user'] = user
             session['user']['info'] = userinfo
-            print(session['user'])
         except KeyError:
             return False
         return True
@@ -95,14 +95,18 @@ def sign_out():
 
 # single global instance
 authenticator = Authenticator()
+authenticator_blueprint = Blueprint('authenticator', __name__)
 
 def configure_authenticator(app, config):
+    """Configures the authenticator for given app and config"""
     authenticator.configure_authenticator(app, config)
 
-    @app.route('/login')
-    def authenticate_user():
-        return authenticator.authenticate_user()
+@authenticator_blueprint.route('/login')
+def authenticate_user():
+    """"Authenticates user through authenticator singleton"""
+    return authenticator.authenticate_user()
 
-    @app.route('/oidc-redirect')
-    def authentication_redirect():
-        return authenticator.authentication_redirect()
+@authenticator_blueprint.route('/oidc-redirect')
+def authentication_redirect():
+    """"OIDC-Authentication redirect through authenticator singleton"""
+    return authenticator.authentication_redirect()
