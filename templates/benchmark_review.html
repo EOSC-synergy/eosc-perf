@@ -13,8 +13,10 @@
         <div id="overlay-text"></div>
     </div>
     <h1>Benchmark review</h1>
-    <h4>Docker page embed for '{{docker_name}}'</h4>
-    <iframe id="iframe" title="DockerHub Benchmark Page" width="60%" height="40%" src="{{ dockerhub_link }}"></iframe>
+    <h4>Dockerhub description for <a href="{{docker_link}}">'{{docker_name}}'</a></h4>
+    <div id="docker_desc" class="jumbotron" style="overflow:scroll;height:60%">
+        {{docker_desc|safe}}
+    </div>
     <form id="form" action="/benchmark_review_submit" method="POST">
         <input type="hidden" name="uuid" value="{{ uuid }}" />
         <input type="submit" class="btn btn-danger" name="remove" value="Remove benchmark" />

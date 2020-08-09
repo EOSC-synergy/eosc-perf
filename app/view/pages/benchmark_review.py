@@ -4,10 +4,12 @@ Provided is:
 """
 
 import json
+import urllib.request
 
 from flask import request, Response, redirect, session
 from flask.blueprints import Blueprint
 from werkzeug.urls import url_encode
+import markdown2
 
 from ..page_factory import PageFactory
 from ..type_aliases import HTML, JSON
@@ -51,8 +53,8 @@ class BenchmarkReviewPageFactory(PageFactory):
         except facade.NotFoundError:
             return False
 
-def build_dockerhub_url(docker_name):
-    """Helper function to build a link to a docker hub page."""
+def decompose_dockername(docker_name):
+    """Helper to break a model-docker_name into a tuple."""
     slash = docker_name.find('/')
     if slash == -1:
         # this should not have passed input validation
@@ -65,8 +67,21 @@ def build_dockerhub_url(docker_name):
     else:
         image = docker_name[slash + 1:colon]
         tag = docker_name[colon + 1:]
+    
+    return (username, image, tag)
+
+def build_dockerhub_url(docker_name):
+    """Helper function to build a link to a docker hub page."""
+    (username, image, tag) = decompose_dockername(docker_name)
 
     docker_hub_url = 'https://hub.docker.com/r/{}/{}'.format(username, image)
+    return docker_hub_url
+
+def build_dockerregistry_url(docker_name):
+    """Helper function to build a link to the docker hub registry api."""
+    (username, image, tag) = decompose_dockername(docker_name)
+
+    docker_hub_url = 'https://registry.hub.docker.com/v2/repositories/{}/{}/'.format(username, image)
     return docker_hub_url
 
 benchmark_review_blueprint = Blueprint('benchmark-review', __name__)
@@ -100,12 +115,25 @@ def review_benchmark():
 
     docker_name = report.get_benchmark().get_docker_name()
 
+    # link to the image on docker hub
+    dockerhub_link = build_dockerhub_url(docker_name)
+
+    # sneaky call to their secret terribly documented API
+    try:
+        dockerhub_content = urllib.request.urlopen(build_dockerregistry_url(docker_name)).read()
+        content = json.loads(dockerhub_content)
+        dockerhub_desc = content['full_description']
+        dockerhub_desc_formatted = markdown2.markdown(dockerhub_desc, extras=["fenced-code-blocks", "tables"])
+    except:
+        dockerhub_desc_formatted = "Could not load description"
+
     with open('templates/benchmark_review.html') as file:
         page = factory.generate_page(
             args='{}',
             template=file.read(),
             docker_name=docker_name,
-            dockerhub_link=build_dockerhub_url(docker_name),
+            docker_link=dockerhub_link,
+            docker_desc=dockerhub_desc_formatted,
             uuid=uuid)
     return Response(page, mimetype='text/html')
 
