@@ -17,6 +17,9 @@
     <div id="docker_desc" class="jumbotron" style="overflow:scroll;height:60%">
         {{docker_desc|safe}}
     </div>
+    <p>
+    Uploader: {{uploader_name}} ({{uploader_mail}})
+    </p>
     <form id="form" action="/benchmark_review_submit" method="POST">
         <input type="hidden" name="uuid" value="{{ uuid }}" />
         <input type="submit" class="btn btn-danger" name="remove" value="Remove benchmark" />
