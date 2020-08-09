@@ -23,6 +23,8 @@ class Authenticator:
 
     def configure_authenticator(self, flask_app, config):
         """Sets up OIDC authentication functionality for the web app"""
+        if len(config['oidc_client_secret']) == 0:
+            raise ValueError("missing openID client secret in configuration")
         client_secret = config['oidc_client_secret']
 
         flask_app.secret_key = '!secret'
