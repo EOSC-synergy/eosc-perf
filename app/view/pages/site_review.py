@@ -89,10 +89,8 @@ def review_site_submit():
     
     remove = None
     if request.form['action'] == 'remove':
-        # something
         remove = True
     elif request.form['action'] == 'approve':
-        # something else
         remove = False
     
     if remove is None:
@@ -100,15 +98,10 @@ def review_site_submit():
             'text': 'Incomplete report form submitted (empty verdict)'})}),
             mimetype='application/json', status=302)
 
-    # parse input
-    # TODO: this functionality is MISSING from IOController/Authenticator
-    email = controller.get_current_email()
-
     error_page = '/error?' + url_encode({'text': 'Error while reviewing report'})
 
-    # TODO: this is NOT FUNCTIONAL in IOController/Authenticator
     # handle redirect in a special way because ajax
-    if not controller.process_report(not remove, email, uuid):
+    if not controller.process_report(not remove, uuid):
         return Response(
             json.dumps({'redirect': error_page}),
             mimetype='application/json', status=302)
