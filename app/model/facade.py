@@ -197,7 +197,7 @@ class DatabaseFacade:
         uploader = None
         try:
             uploader = self.get_uploader(uploader_email)
-        except self.self.NotFoundError:
+        except self.NotFoundError:
             self._add_uploader(uploader_email)
             uploader = self.get_uploader(uploader_email)
         return uploader
