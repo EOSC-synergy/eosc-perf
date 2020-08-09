@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Review report on inaccurate result{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="static/css/overlay.css" />
+<script src="static/scripts/view/site_review.js"></script>
+{% endblock %}
+
+{% block info %}
+    <div id="overlay">
+        <div id="overlay-text"></div>
+    </div>
+    <h1>Inaccurate result report</h1>
+    <p>
+    Reported by: {{reporter_name}} ({{reporter_mail}})
+    <br>
+    Message: {{report_message}}
+    <br>
+    Site: {{site}}
+    <br>
+    Benchmark: {{benchmark}}
+    <br>
+    Uploader: {{uploader_name}} ({{uploader_mail}})
+    <br>
+    Tags: {{tags}}
+    <br>
+    JSON: <pre>{{JSON|safe}}</pre>
+    </p>
+    <form id="form" action="/site_review_submit" method="POST">
+        <input type="hidden" name="uuid" value="{{ uuid }}" />
+        <input type="submit" class="btn btn-danger" name="remove" value="Remove result" />
+        <input type="submit" class="btn btn-success" name="approve" value="Approve result" />
+    </form>
+{% endblock %}
