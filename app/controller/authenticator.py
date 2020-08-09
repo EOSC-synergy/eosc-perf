@@ -84,6 +84,7 @@ class Authenticator:
 
     @staticmethod
     def __update_user_info():
+        """If current user is in db, saved email and name are updated"""
         uid = session['user']['sub']
         try:
             uploader = facade.get_uploader(uid)
