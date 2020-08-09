@@ -8,6 +8,7 @@ from time import time
 from flask import redirect, session
 from flask.blueprints import Blueprint
 from authlib.integrations.flask_client import OAuth
+from ..model.facade import facade
 
 from ..configuration import configuration
 
@@ -68,6 +69,8 @@ class Authenticator:
             userinfo = self.oauth._clients['eosc-perf'].userinfo()
             session['user'] = user
             session['user']['info'] = userinfo
+            self.__update_user_info()
+            print(session['user'])
         except KeyError:
             return False
         return True
@@ -78,6 +81,17 @@ class Authenticator:
         if configuration['debug']:
             return True
         return False
+
+    @staticmethod
+    def __update_user_info(self):
+        try:
+            uploader = facade.get_uploader
+        except facade.NotFoundError:
+            pass
+        email = session['user']['info']['email']
+        name = session['user']['info']['name']
+        uploader.set_email(email)
+        uploader.set_name(name)
 
 def _token_expired():
     """Checks if the current user has a valid authentication token"""
