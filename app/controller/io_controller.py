@@ -338,7 +338,7 @@ class IOController:
             if contained('description'):
                 site.set_description(metadata['description'])
         return site
-        
+
     @staticmethod
     def get_email():
         """Get current user's unique identifier, if logged in.
@@ -349,7 +349,7 @@ class IOController:
             return session['user']['email']
         except KeyError:
             return None
-    
+
     @staticmethod
     def get_full_name():
         """Get current user's full name, if logged in.
@@ -357,7 +357,7 @@ class IOController:
            Name: The urrent user's full name.
                  Is None if no user is logged in."""
         try:
-            return session['user']['full_name']
+            return session['user']['name']
         except KeyError:
             return None
 
@@ -373,4 +373,3 @@ class IOController:
             return None
 
 controller = IOController()
-
