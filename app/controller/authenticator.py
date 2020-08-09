@@ -83,11 +83,12 @@ class Authenticator:
         return False
 
     @staticmethod
-    def __update_user_info(self):
+    def __update_user_info():
+        uid = session['user']['sub']
         try:
-            uploader = facade.get_uploader
+            uploader = facade.get_uploader(uid)
         except facade.NotFoundError:
-            pass
+            return
         email = session['user']['info']['email']
         name = session['user']['info']['name']
         uploader.set_email(email)
