@@ -21,9 +21,9 @@ docker_hub_url = {"certified": "https://hub.docker.com/r/",
 class IOController:
     """This class acts as a facade between view and model, and validate user input.
     Attributes:
-    __result_validator  (JSONResultValidator): The validator for an uploaded benchmark result.
-    __unapproved_benchmarks (List[Benchmark]): The user suggested unaproved benchmarks.
-    __unapproved_sites           (List[Site]): The user suggested unaproved sites."""
+    _result_validator  (JSONResultValidator): The validator for an uploaded benchmark result.
+    _unapproved_benchmarks (List[Benchmark]): The user suggested unaproved benchmarks.
+    _unapproved_sites           (List[Site]): The user suggested unaproved sites."""
 
     def __init__(self, unapproved_sites: List[Site] = [],
                  unapproved_benchmarks: List[Benchmark] = []):
@@ -35,9 +35,9 @@ class IOController:
         unapproved_benchmarks (List[Benchmark]): A list of unaproved Benchmarks can be left empty.
         """
         # TODO: Find better solution for database_facade since it is supposed to be Singelton.
-        self.__result_validator = JSONResultValidator()
-        self.__unapproved_sites = unapproved_sites
-        self.__unapproved_benchmarks = unapproved_benchmarks
+        self._result_validator = JSONResultValidator()
+        self._unapproved_sites = unapproved_sites
+        self._unapproved_benchmarks = unapproved_benchmarks
 
     def authenticate(self) -> bool:
         """Authenticate the current user.
@@ -62,7 +62,7 @@ class IOController:
         # Check if user is authenticated
         if self.authenticate():
             # Check if the result is in the correct format.
-            if self.__result_validator  .validate_json(result_json):
+            if self._result_validator  .validate_json(result_json):
                 # Try to add the result to the data base.
                 return facade.add_result(result_json, metadata)
         return False
@@ -89,7 +89,7 @@ class IOController:
         if match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+\Z)", uploader_email) is None:
             return False
         # Check valid docker_hub_name.uploader_emailuploader_email
-        if self.__valid_docker_hub_name(docker_name, check_for_page):
+        if self._valid_docker_hub_name(docker_name, check_for_page):
             # Add to model.
             return facade.add_benchmark(
                 docker_name=docker_name, uploader_email=uploader_email)
@@ -102,7 +102,7 @@ class IOController:
         List[Benchmark]: List of unaproved Benchmarks.
         """
         if authenticator.is_admin():
-            return self.__unapproved_benchmarks
+            return self._unapproved_benchmarks
         raise AuthenticateError('The user isn\'t an admin.')
 
     def approve_benchmark(self, benchmark: Benchmark = None,
@@ -117,7 +117,7 @@ class IOController:
         """
         # Select the right benchmark.
         if benchmark is None:
-            for single_benchmark in self.__unapproved_benchmarks:
+            for single_benchmark in self._unapproved_benchmarks:
                 if single_benchmark.get_docker_name() is benchmark_name:
                     benchmark = single_benchmark
                     break
@@ -128,10 +128,10 @@ class IOController:
         if authenticator.is_admin():
             if facade.add_benchmark(benchmark.get_docker_name(), benchmark.get_uploader()):
                 # Was successfully added.
-                for single_benchmark in self.__unapproved_benchmarks:
-                    # Remove from __unaproved_benchmarks.
+                for single_benchmark in self._unapproved_benchmarks:
+                    # Remove from _unaproved_benchmarks.
                     if single_benchmark.get_docker_name() is benchmark.get_docker_name():
-                        self.__unapproved_benchmarks.remove(single_benchmark)
+                        self._unapproved_benchmarks.remove(single_benchmark)
                         break
                 return True
         return False
@@ -146,10 +146,10 @@ class IOController:
         """
         if self.authenticate():
             # Crete new site.
-            new_site = self.__parse_site(metadata_json)
+            new_site = self._parse_site(metadata_json)
             # Add to unaproved sites.
             if not new_site is None:
-                self.__unapproved_sites.append(new_site)
+                self._unapproved_sites.append(new_site)
                 return True
         return False
 
@@ -161,7 +161,7 @@ class IOController:
         """
         # Check if admin.
         if authenticator.is_admin():
-            return self.__unapproved_sites
+            return self._unapproved_sites
         # User isn't admin.
         raise AuthenticateError(
             "The users attempting to get teh unapproved sites isn't an an admin.")
@@ -180,7 +180,7 @@ class IOController:
         # Check if user is allowed to approve.
         if authenticator.is_admin():
             # Decide whether to use site or metadata_json.
-            site = [site, self.__parse_site(metadata_json)][site is None]
+            site = [site, self._parse_site(metadata_json)][site is None]
             if not site is None:
                 # Atm unnecessary step, but usefull in case the site got created not in
                 # IOController or DatabaseFacade.
@@ -190,12 +190,12 @@ class IOController:
                            '" , "description" : "' + site.get_description() + '" ' + '}'
                 # Try to add to database.
                 if facade.add_site(json_str):
-                    # Successfully added, remove from __unapproved_sites.
-                    for singel_site in self.__unapproved_sites:
+                    # Successfully added, remove from _unapproved_sites.
+                    for singel_site in self._unapproved_sites:
                         # one of the attributes enough in case a admin corrected eg. the addres.
                         if singel_site.get_short_name() is site.get_short_name() or \
                                 singel_site.get_address() is site.get_address():
-                            self.__unapproved_sites.remove(singel_site)
+                            self._unapproved_sites.remove(singel_site)
                             break
                     return True
         return False
@@ -261,7 +261,7 @@ class IOController:
             return True
         return False
 
-    def __valid_docker_hub_name(self, docker_name: str, check_for_page: bool) -> bool:
+    def _valid_docker_hub_name(self, docker_name: str, check_for_page: bool) -> bool:
         """Check if it is a valid docker hub name.
         Therefore controll the naming convention and if the corrensponding docker hub page,
         is existing.
@@ -305,7 +305,7 @@ class IOController:
                                    in x, rendered_contend))
         return False
 
-    def __parse_site(self, metadata_json: JSON) -> Site:
+    def _parse_site(self, metadata_json: JSON) -> Site:
         """Create a new site using a metadata json formated object.
         Args:
         metadata_json (JSON): A json formated str containing a 'short_name' and 'address' parameter
