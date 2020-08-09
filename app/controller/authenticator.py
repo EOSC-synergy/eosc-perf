@@ -8,6 +8,8 @@ from time import time
 from flask import redirect, session
 from authlib.integrations.flask_client import OAuth
 
+from ..configuration import configuration
+
 CONF_URL = 'https://aai-dev.egi.eu/oidc/.well-known/openid-configuration'
 
 class AuthenticateError(Exception):
@@ -73,8 +75,9 @@ class Authenticator:
     def is_admin(self):
         """Checks wether the current user has admin rights"""
         # TODO: implement
+        if configuration['debug']:
+            return True
         return False
-
 
 def _token_expired():
     """Checks if the current user has a valid authentication token"""
