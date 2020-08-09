@@ -19,6 +19,8 @@
     </div>
     <p>
     Uploader: {{uploader_name}} ({{uploader_mail}})
+    <br>
+    Date: {{date}}
     </p>
     <form id="form" action="/benchmark_review_submit" method="POST">
         <input type="hidden" name="uuid" value="{{ uuid }}" />
