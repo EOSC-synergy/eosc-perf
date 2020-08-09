@@ -30,12 +30,6 @@ class DatabaseFacade:
     def _get_result_filterer(self):
         pass
 
-    def _add_uploader(self, email: str) -> bool:
-        """Add a new uploader.
-
-        This is a private methods, because uploaders should be added automatically as needed."""
-        return self._add_to_db(Uploader(email))
-
     def get_result(self, uuid: str) -> Result:
         """Fetch a single result by UUID."""
         # prepare query
@@ -90,19 +84,19 @@ class DatabaseFacade:
         #
         return results[0]
 
-    def get_uploader(self, email: str) -> Uploader:
-        """Fetch a single uploader by their email."""
+    def get_uploader(self, iddentifier: str) -> Uploader:
+        """Fetch a single uploader by their unique identifier."""
         # prepare query
         results = db.session.query(Uploader)\
-            .filter(Uploader._email == email)\
+            .filter(Uploader._identifier == iddentifier)\
             .all()
 
         # check number of results
         if len(results) < 1:
-            raise self.NotFoundError("uploader '{}' not found".format(email))
+            raise self.NotFoundError("uploader '{}' not found".format(iddentifier))
         if len(results) > 1:
             raise self.TooManyError(
-                "multiple uploaders with same email ({})".format(email))
+                "multiple uploaders with same iddentifier ({})".format(iddentifier))
 
         #
         return results[0]
@@ -192,15 +186,33 @@ class DatabaseFacade:
             db.session.rollback()
             return False
 
-    def _get_or_add_uploader(self, uploader_email: str) -> Uploader:
-        """Get a uploader, or add them if they don't exist."""
-        uploader = None
+    def add_uploader(self, metadata_json: str) -> bool:
+        """Add new uploader using uploader metadata json."""
+        metadata = None
         try:
-            uploader = self.get_uploader(uploader_email)
-        except self.NotFoundError:
-            self._add_uploader(uploader_email)
-            uploader = self.get_uploader(uploader_email)
-        return uploader
+            metadata = json.loads(metadata_json)
+        except json.JSONDecodeError as decode_error:
+            # forward exceptions
+            print("illegal uploader json submitted")
+            raise decode_error
+
+        # input validation
+        if 'id' not in metadata:
+            raise ValueError("id is missing from site metadata")
+        if len(metadata['id']) < 1:
+            raise ValueError("id empty")
+        if 'name' not in metadata:
+            raise ValueError("name is missing from site metadata")
+        if len(metadata['name']) < 1:
+            raise ValueError("name is empty")
+        if 'email' not in metadata:
+            raise ValueError("email is missing from site metadata")
+        if len(metadata['email']) < 1:
+            raise ValueError("email is empty")
+
+        uploader = Uploader(metadata['id'], metadata['email'], metadata['name'])
+
+        return self._add_to_db(uploader)
 
     def add_result(self, content_json: str, metadata_json: str) -> bool:
         """Add new site using site metadata json."""
@@ -218,8 +230,7 @@ class DatabaseFacade:
         if 'uploader' not in metadata:
             raise ValueError("uploader is missing from result metadata")
         if not isinstance(metadata['uploader'], str):
-            raise TypeError(
-                "uploader email must be a string in result metadata")
+            raise TypeError("uploader email must be a string in result metadata")
         if len(metadata['uploader']) < 1:
             raise ValueError("result uploader empty")
 
@@ -237,7 +248,11 @@ class DatabaseFacade:
         if len(metadata['benchmark']) < 1:
             raise ValueError("result benchmark is empty")
 
-        uploader = self._get_or_add_uploader(metadata['uploader'])
+        try:
+            uploader = self.get_uploader(metadata['uploader'])
+        except self.NotFoundError:
+            raise ValueError("unknown uploader")
+
         site = None
         try:
             site = self.get_site(metadata['site'])
@@ -344,28 +359,31 @@ class DatabaseFacade:
                 raise ValueError("unknown result for report")
 
         # can now add report
-        uploader = self._get_or_add_uploader(dic['uploader'])
+        try:
+            uploader = self.get_uploader(dic['uploader'])
+        except self.NotFoundError:
+            raise ValueError("unknown uploader")
+
         success = False
         if dic['type'] == 'site':
-            success = self._add_to_db(SiteReport(
-                uploader=uploader, message=message, site=site))
+            success = self._add_to_db(SiteReport(uploader=uploader, message=message, site=site))
         elif dic['type'] == 'benchmark':
             success = self._add_to_db(BenchmarkReport(
                 uploader=uploader, message=message, benchmark=benchmark))
         elif dic['type'] == 'result':
-            success = self._add_to_db(ResultReport(
-                uploader=uploader, message=message, result=result))
+            success = self._add_to_db(
+                ResultReport(uploader=uploader, message=message, result=result))
         return success
 
-    def add_benchmark(self, docker_name: str, uploader_email: str) -> bool:
+    def add_benchmark(self, docker_name: str, uploader_id: str) -> bool:
         """Add a new benchmark."""
         # input validation
         # 3 because: 'user/container' => 'a/b'
         if len(docker_name) < 3:
             raise ValueError("benchmark docker_name impossibly short")
         # 3 because 'user@domain' => 'a@b'
-        if len(uploader_email) < 3:
-            raise ValueError("benchmark uploader email impossibly short")
+        if len(uploader_id) == 0:
+            raise ValueError("benchmark uploader id impossibly short")
 
         # check if benchmark already exists beforehand to not add new uploader
         # if uploader does not exist
@@ -375,7 +393,10 @@ class DatabaseFacade:
         except self.NotFoundError:
             pass
 
-        uploader = self._get_or_add_uploader(uploader_email)
+        try:
+            uploader = self.get_uploader(uploader_id)
+        except self.NotFoundError:
+            raise ValueError("unknown uploader")
 
         return self._add_to_db(Benchmark(docker_name, uploader))
 
