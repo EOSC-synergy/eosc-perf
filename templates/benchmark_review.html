@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Report Result{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="static/css/overlay.css" />
+<script src="static/scripts/view/benchmark_review.js"></script>
+{% endblock %}
+
+{% block info %}
+    <div id="overlay">
+        <div id="overlay-text"></div>
+    </div>
+    <h1>Benchmark review</h1>
+    <h4>Docker page embed for '{{docker_name}}'</h4>
+    <iframe id="iframe" title="DockerHub Benchmark Page" width="60%" height="40%" src="{{ dockerhub_link }}"></iframe>
+    <form id="form" action="/benchmark_review_submit" method="POST">
+        <input type="hidden" name="uuid" value="{{ uuid }}" />
+        <input type="submit" class="btn btn-danger" name="remove" value="Remove benchmark" />
+        <input type="submit" class="btn btn-success" name="approve" value="Approve benchmark" />
+    </form>
+{% endblock %}
