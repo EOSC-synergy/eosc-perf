@@ -4,7 +4,8 @@ import os
 import code
 from flask import Flask, request
 from .configuration import configuration
-from .controller.authenticator import configure_authenticator
+from .controller.authenticator import (configure_authenticator,
+                                       authenticator_blueprint)
 from .model.database import db, configure_database
 from .model.facade import facade
 from .model.sandbox import add_dummies_if_not_exist
@@ -45,6 +46,7 @@ def create_app(config):
     flask_app.register_blueprint(error_blueprint)
     flask_app.register_blueprint(result_report_blueprint)
     flask_app.register_blueprint(benchmark_review_blueprint)
+    flask_app.register_blueprint(authenticator_blueprint)
 
     return flask_app
 
