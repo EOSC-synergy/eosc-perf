@@ -16,27 +16,8 @@ from ..type_aliases import HTML, JSON
 
 from ...model.facade import facade
 from ...model.data_types import Report, BenchmarkReport
-#from ...controller.io_controller import controller
-# mock class because the actual class doesn't work...
-class Controller():
-    """Mock class."""
-    def get_report(self, uuid) -> Report:
-        """Mock method."""
-        return facade.get_report(uuid)
-
-    def process_report(self, verdict: bool, user: str, uuid: str) -> bool:
-        """Mock method."""
-        return True
-
-    def get_current_email(self) -> str:
-        """Mock method."""
-        try:
-            email = session['user']
-            return email
-        except KeyError:
-            return 'nobody'
-
-controller = Controller()
+from ...controller.io_controller import controller, get_user_id
+from ...controller.authenticator import AuthenticateError
 
 class BenchmarkReviewPageFactory(PageFactory):
     """A factory to build benchmark report view pages."""
@@ -107,7 +88,11 @@ def review_benchmark():
         return redirect('/error?' + url_encode({
             'text': 'Report given to review page does not exist'}), code=302)
 
-    report: BenchmarkReport = controller.get_report(uuid)
+    try:
+        report: BenchmarkReport = controller.get_report(uuid)
+    except AuthenticateError:
+        return redirect('/error?' + url_encode({
+            'text': 'You are not authenticated'}), code=302)
 
     if report.get_report_type() != Report.BENCHMARK:
         return redirect('/error?' + url_encode({
@@ -154,10 +139,8 @@ def review_benchmark_submit():
     
     remove = None
     if request.form['action'] == 'remove':
-        # something
         remove = True
     elif request.form['action'] == 'approve':
-        # something else
         remove = False
     
     if remove is None:
@@ -165,15 +148,10 @@ def review_benchmark_submit():
             'text': 'Incomplete report form submitted (empty verdict)'})}),
             mimetype='application/json', status=302)
 
-    # parse input
-    # TODO: this functionality is MISSING from IOController/Authenticator
-    email = controller.get_current_email()
-
     error_page = '/error?' + url_encode({'text': 'Error while reviewing report'})
 
-    # TODO: this is NOT FUNCTIONAL in IOController/Authenticator
     # handle redirect in a special way because ajax
-    if not controller.process_report(not remove, email, uuid):
+    if not controller.process_report(not remove, uuid):
         return Response(
             json.dumps({'redirect': error_page}),
             mimetype='application/json', status=302)
