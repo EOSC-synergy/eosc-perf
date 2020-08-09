@@ -28,11 +28,6 @@ tags = [
 #                result = Result(json="{}", uploader=uploader, site=site, benchmark=benchmark, tags=[tag])
 #                results.append(result)
 
-report_example_bench = Benchmark(docker_name='pihole/pihole:dev', uploader=uploaders[0])
-bench_report = BenchmarkReport(benchmark=report_example_bench, uploader=uploaders[0])
-
-site_report = SiteReport(site=sites[0], uploader=uploaders[0])
-
 # generate a series of results with values for testing the diagram
 data_results = []
 for i in range(1, 17):
@@ -49,7 +44,7 @@ for i in range(1, 17):
             }
         }
     }
-    data_results.append(Result(json=json.dumps(d), uploader=uploaders[0], site=sites[0], benchmark=benchmarks[0], tags=[tags[0]]))
+    data_results.append(Result(json=json.dumps(d), uploader=uploaders[0], site=sites[0], benchmark=benchmarks[0], tags=[tags[0], tags[1]]))
 
 def add_dummies_if_not_exist():
     for uploader in uploaders:
@@ -89,7 +84,16 @@ def add_dummies_if_not_exist():
             'tags': [tag.get_name() for tag in result.get_tags()]
         }))
     
+    report_example_bench = Benchmark(docker_name='pihole/pihole:dev', uploader=uploaders[0])
+    bench_report = BenchmarkReport(benchmark=report_example_bench, uploader=uploaders[0])
+    
+    site_report = SiteReport(site=sites[0], uploader=uploaders[0])
+    
+    test_results = facade.query_results(json.dumps({"filters": []}))
+    result_report = ResultReport(result=test_results[0], uploader=uploaders[1])
+    
     facade.add_benchmark(report_example_bench.get_docker_name(), report_example_bench.get_uploader().get_id())
+    
     facade.add_report(json.dumps({
         'message': 'Oopsie',
         'type': 'benchmark',
@@ -101,4 +105,10 @@ def add_dummies_if_not_exist():
         'type': 'site',
         'value': site_report.get_site().get_short_name(),
         'uploader': site_report.get_reporter().get_id()
+    }))
+    facade.add_report(json.dumps({
+        'message': 'FAKE!',
+        'type': 'result',
+        'value': result_report.get_result().get_uuid(),
+        'uploader': result_report.get_reporter().get_id()
     }))
