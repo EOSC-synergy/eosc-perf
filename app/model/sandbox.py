@@ -15,7 +15,9 @@ results = []
 #                results.append(result)
 
 report_example_bench = Benchmark(docker_name='pihole/pihole:dev', uploader=uploaders[0])
-report = BenchmarkReport(benchmark=report_example_bench, uploader=uploaders[0])
+bench_report = BenchmarkReport(benchmark=report_example_bench, uploader=uploaders[0])
+
+site_report = SiteReport(site=sites[0], uploader=uploaders[0])
 
 # generate a series of results with values for testing the diagram
 data_results = []
@@ -56,7 +58,8 @@ def add_dummies_if_not_exist(app):
         db.session.add(result)
     
     db.session.add(report_example_bench)
-    db.session.add(report)
+    db.session.add(bench_report)
+    db.session.add(site_report)
 
     try:
         db.session.commit()

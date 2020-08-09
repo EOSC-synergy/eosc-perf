@@ -15,6 +15,7 @@ from .view.pages.information_page import info_blueprint
 from .view.pages.error_page import error_blueprint
 from .view.pages.report_result import result_report_blueprint
 from .view.pages.benchmark_review import benchmark_review_blueprint
+from .view.pages.site_review import site_review_blueprint
 
 
 def create_app(config):
@@ -46,6 +47,7 @@ def create_app(config):
     flask_app.register_blueprint(error_blueprint)
     flask_app.register_blueprint(result_report_blueprint)
     flask_app.register_blueprint(benchmark_review_blueprint)
+    flask_app.register_blueprint(site_review_blueprint)
     flask_app.register_blueprint(authenticator_blueprint)
 
     return flask_app
