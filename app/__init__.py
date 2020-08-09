@@ -2,9 +2,9 @@
 module."""
 import os
 import code
-import yaml
-from .controller.authenticator import configure_authenticator
 from flask import Flask, request
+from .configuration import configuration
+from .controller.authenticator import configure_authenticator
 from .model.database import db, configure_database
 from .model.facade import facade
 from .model.sandbox import add_dummies_if_not_exist
@@ -48,20 +48,4 @@ def create_app(config):
 
     return flask_app
 
-def load_config():
-    """Load the config file from 'config.ini'."""
-    defaults = {
-        'debug': False,
-        'database-path': 'sqlite.db'
-    }
-    with open('config.yaml') as file:
-        config = yaml.safe_load(file.read())
-    
-    for key, value in defaults.items():
-        if key not in config:
-            config[key] = str(value)
-    
-    return config
-
-configuration = load_config()
 app: Flask = create_app(configuration)
