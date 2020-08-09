@@ -7,7 +7,6 @@ from .configuration import configuration
 from .controller.authenticator import (configure_authenticator,
                                        authenticator_blueprint)
 from .model.database import db, configure_database
-from .model.facade import facade
 from .model.sandbox import add_dummies_if_not_exist
 from .view.ajax import ajax_blueprint
 from .view.pages.diagram import diagram_blueprint
@@ -31,6 +30,7 @@ def create_app(config):
     else:
         print("Running in production mode")
 
+    flask_app.app_context().push()
     configure_database(flask_app, config)
     configure_authenticator(flask_app, config)
 
