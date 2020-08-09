@@ -339,20 +339,38 @@ class IOController:
                 site.set_description(metadata['description'])
         return site
         
-    def get_email(self, egi_id):
-        return "out.of@my.cage"
+    @staticmethod
+    def get_email():
+        """Get current user's unique identifier, if logged in.
+           Returns:
+           Id: The urrent user's email.
+               Is None if no user is logged in."""
+        try:
+            return session['user']['email']
+        except KeyError:
+            return None
     
-    def get_full_name(self, egi_id):
-        return "Mr. Brightside"
+    @staticmethod
+    def get_full_name():
+        """Get current user's full name, if logged in.
+           Returns:
+           Name: The urrent user's full name.
+                 Is None if no user is logged in."""
+        try:
+            return session['user']['full_name']
+        except KeyError:
+            return None
+
+    @staticmethod
+    def get_user_id() -> str:
+        """Get current user's unique identifier, if logged in.
+           Returns:
+           Id: The urrent user's unique identifier.
+               Is None if no user is logged in."""
+        try:
+            return session['user']['sub']
+        except KeyError:
+            return None
 
 controller = IOController()
 
-def get_user_id() -> str:
-    """Get current user's unique identifier, if logged in.
-       Returns:
-       Id: The urrent user's unique identifier,
-           is None if no user is logged in"""
-    try:
-        return session['user']['sub']
-    except KeyError:
-        return None
