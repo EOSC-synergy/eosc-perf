@@ -147,15 +147,25 @@ class Uploader(db.Model):
     __tablename__ = 'uploader'
 
     # value columns
-    _email = db.Column(db.Text, primary_key=True)
+    _identifier = db.Column(db.Text, primary_key=True)
+    _email = db.Column(db.Text, nullable=False)
+    _name = db.Column(db.Text, nullable=False)
 
-    def __init__(self, email: str):
+    def __init__(self, identifier: str, email: str, name: str):
         """Create a new uploader entry object."""
-        super(Uploader, self).__init__(_email=email)
+        super(Uploader, self).__init__(_identifier=identifier, _email=email, _name=name)
+    
+    def get_id(self) -> str:
+        """Get the unique identifier for this uploader."""
+        return self._identifier
 
     def get_email(self) -> str:
         """Get the email address associated with this uploader."""
         return self._email
+    
+    def get_name(self) -> str:
+        """Get a human-readable human name."""
+        return self._name
 
     def get_results(self) -> ResultIterator:
         """Get an iterator for all the results associated with this uploader."""
