@@ -10,6 +10,10 @@ from authlib.integrations.flask_client import OAuth
 
 CONF_URL = 'https://aai-dev.egi.eu/oidc/.well-known/openid-configuration'
 
+class AuthenticateError(Exception):
+    """Exception to signal a user isn't authenticated correctly."""
+    pass
+
 class Authenticator:
     """A fascade between IOController and the EGI Check-In authentication
        system. It integrates Open ID Connect into the web app."""
