@@ -13,6 +13,7 @@ from .view.pages.diagram import diagram_blueprint
 from .view.pages.information_page import info_blueprint
 from .view.pages.error_page import error_blueprint
 from .view.pages.report_result import result_report_blueprint
+from .view.pages.benchmark_review import benchmark_review_blueprint
 
 
 def create_app(config):
@@ -43,6 +44,7 @@ def create_app(config):
     flask_app.register_blueprint(info_blueprint)
     flask_app.register_blueprint(error_blueprint)
     flask_app.register_blueprint(result_report_blueprint)
+    flask_app.register_blueprint(benchmark_review_blueprint)
 
     return flask_app
 
