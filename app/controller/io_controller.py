@@ -338,12 +338,6 @@ class IOController:
             if contained('description'):
                 site.set_description(metadata['description'])
         return site
-        
-    def get_email(self, egi_id):
-        return "out.of@my.cage"
-    
-    def get_full_name(self, egi_id):
-        return "Mr. Brightside"
 
 controller = IOController()
 
