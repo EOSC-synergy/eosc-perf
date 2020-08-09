@@ -67,11 +67,11 @@ class IOController:
                 return facade.add_result(result_json, metadata)
         return False
 
-    def submit_benchmark(self, uploader_email: str, docker_name: str,
+    def submit_benchmark(self, uploader_id: str, docker_name: str,
                          check_for_page: bool = False) -> bool:
         """Submit a new Benchmark to the system.
         Args:
-        uploader_email  (str): The email address of the uploader.
+        uploader_id  (str): The id of the uploader.
         docker_name     (str): The name of the dockerhub reposetory and sub url.
                                So that https://hub.docker.com/_/[docker_name] or
                                https://hub.docker.com/_/[docker_name] results in a valid url.
@@ -86,13 +86,13 @@ class IOController:
         if not self.authenticate():
             return False
         # Check for valid email address.
-        if match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+\Z)", uploader_email) is None:
+        if match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+\Z)", uploader_id) is None:
             return False
         # Check valid docker_hub_name.uploader_emailuploader_email
         if self._valid_docker_hub_name(docker_name, check_for_page):
             # Add to model.
             return facade.add_benchmark(
-                docker_name=docker_name, uploader_email=uploader_email)
+                docker_name=docker_name, uploader_id=uploader_id)
         return False
 
     def get_unapproved_benchmarks(self) -> List[Benchmark]:
