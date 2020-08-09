@@ -22,11 +22,10 @@ class IOController:
     """This class acts as a facade between view and model, and validate user input.
     Attributes:
     __result_validator  (JSONResultValidator): The validator for an uploaded benchmark result.
-    __database_facade        (DatabaseFacade): The facade to interact with the model.
     __unapproved_benchmarks (List[Benchmark]): The user suggested unaproved benchmarks.
     __unapproved_sites           (List[Site]): The user suggested unaproved sites."""
 
-    def __init__(self, database_facade: DatabaseFacade = None, unapproved_sites: List[Site] = [],
+    def __init__(self, unapproved_sites: List[Site] = [],
                  unapproved_benchmarks: List[Benchmark] = []):
         """Constructor generat a new instance of IOController.
         Args:
@@ -39,10 +38,6 @@ class IOController:
         self.__result_validator = JSONResultValidator()
         self.__unapproved_sites = unapproved_sites
         self.__unapproved_benchmarks = unapproved_benchmarks
-        if database_facade is None:
-            self.__database_facade = facade
-        else:
-            self.__database_facade = database_facade
 
     def authenticate(self) -> bool:
         """Authenticate the current user.
@@ -69,7 +64,7 @@ class IOController:
             # Check if the result is in the correct format.
             if self.__result_validator  .validate_json(result_json):
                 # Try to add the result to the data base.
-                return self.__database_facade.add_result(result_json, metadata)
+                return facade.add_result(result_json, metadata)
         return False
 
     def submit_benchmark(self, uploader_email: str, docker_name: str,
@@ -194,7 +189,7 @@ class IOController:
                            '" , "name" : "' + site.get_name() + \
                            '" , "description" : "' + site.get_description() + '" ' + '}'
                 # Try to add to database.
-                if self.__database_facade.add_site(json_str):
+                if facade.add_site(json_str):
                     # Successfully added, remove from __unapproved_sites.
                     for singel_site in self.__unapproved_sites:
                         # one of the attributes enough in case a admin corrected eg. the addres.
@@ -215,7 +210,7 @@ class IOController:
         """
         if self.authenticate():
             # Add to database.
-            if self.__database_facade.add_report(metadata):
+            if facade.add_report(metadata):
                 # TODO: notify admin, per email.
                 return True
         return False
@@ -228,7 +223,7 @@ class IOController:
         List[Reports]: List of all the requested reports, throws an AuthenticationError if
                        the authentication failed."""
         if authenticator.is_admin():
-            return self.__database_facade.get_reports(only_unanswered=only_unanswered)
+            return facade.get_reports(only_unanswered=only_unanswered)
         raise AuthenticateError(
             "User trying to view the reports isn't an admin.")
 
@@ -253,7 +248,7 @@ class IOController:
                 return False
             # Set the verdict.
             try:
-                report_by_uuid = self.__database_facade.get_report(uuid)
+                report_by_uuid = facade.get_report(uuid)
                 # Set the verdict status.
                 report_by_uuid.set_verdict(verdict)
                 # Delete Benchmark if necessary
