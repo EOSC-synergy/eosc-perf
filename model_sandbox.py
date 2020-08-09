@@ -1,6 +1,6 @@
 from typing import List
 import code
-from app import create_app
+from app import app
 from app.model.database import db
 from app.model.sandbox import add_dummies_if_not_exist, results, benchmarks, sites, tags, uploaders
 from app.model.data_types import Uploader, Tag, Result, Benchmark, Site, ResultIterator, Report, \
@@ -22,8 +22,6 @@ def get_benchmarks() -> List[Benchmark]:
     return db.session.query(Benchmark).all()
 
 
-app = create_app(True)
-
-add_dummies_if_not_exist(app)
+#add_dummies_if_not_exist(app)
 
 code.interact(local=locals())
