@@ -102,6 +102,8 @@ def review_benchmark():
     reporter = report.get_reporter()
     uploader_name = reporter.get_name()
     uploader_mail = reporter.get_email()
+    
+    date = report.get_date()
 
     # link to the image on docker hub
     dockerhub_link = build_dockerhub_url(docker_name)
@@ -124,6 +126,7 @@ def review_benchmark():
             docker_desc=dockerhub_desc_formatted,
             uploader_name=uploader_name,
             uploader_mail=uploader_mail,
+            date=date,
             uuid=uuid)
     return Response(page, mimetype='text/html')
 

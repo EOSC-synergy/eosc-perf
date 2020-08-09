@@ -65,6 +65,8 @@ def review_site():
     uploader_name = reporter.get_name()
     uploader_mail = reporter.get_email()
 
+    date = report.get_date()
+
     with open('templates/site_review.html') as file:
         page = factory.generate_page(
             args='{}',
@@ -74,6 +76,7 @@ def review_site():
             site_human_name=report.get_site().get_name(),
             uploader_name=uploader_name,
             uploader_mail=uploader_mail,
+            date=date,
             uuid=uuid)
     return Response(page, mimetype='text/html')
 

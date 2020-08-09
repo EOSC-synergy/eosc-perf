@@ -64,6 +64,7 @@ def view_report():
     reporter = report.get_reporter()
     reporter_name = reporter.get_name()
     reporter_mail = reporter.get_email()
+    date = report.get_date()
     
     result = report.get_result()
     uploader = result.get_uploader()
@@ -90,6 +91,7 @@ def view_report():
             uploader_mail=uploader_mail,
             tags=tag_str,
             JSON=JSON,
+            date=date,
             uuid=uuid)
     return Response(page, mimetype='text/html')
 
