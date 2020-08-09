@@ -346,7 +346,7 @@ class IOController:
            Id: The urrent user's email.
                Is None if no user is logged in."""
         try:
-            return session['user']['email']
+            return session['user']['info']['email']
         except KeyError:
             return None
 
@@ -357,7 +357,7 @@ class IOController:
            Name: The urrent user's full name.
                  Is None if no user is logged in."""
         try:
-            return session['user']['name']
+            return session['user']['info']['name']
         except KeyError:
             return None
 
