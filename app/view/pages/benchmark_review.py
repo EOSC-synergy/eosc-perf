@@ -22,6 +22,11 @@ from ...controller.authenticator import AuthenticateError
 class BenchmarkReviewPageFactory(PageFactory):
     """A factory to build benchmark report view pages."""
 
+    def __init__(self):
+        super(BenchmarkReviewPageFactory, self).__init__()
+        with open('templates/benchmark_review.html') as file:
+            self.set_template(file.read())
+
     def _generate_content(self, args: JSON) -> HTML:
         pass
 
@@ -123,17 +128,15 @@ def review_benchmark():
     except:
         dockerhub_desc_formatted = "Could not load description"
 
-    with open('templates/benchmark_review.html') as file:
-        page = factory.generate_page(
-            args='{}',
-            template=file.read(),
-            docker_name=docker_name,
-            docker_link=dockerhub_link,
-            docker_desc=dockerhub_desc_formatted,
-            uploader_name=uploader_name,
-            uploader_mail=uploader_mail,
-            date=date,
-            uuid=uuid)
+    page = factory.generate_page(
+        args='{}',
+        docker_name=docker_name,
+        docker_link=dockerhub_link,
+        docker_desc=dockerhub_desc_formatted,
+        uploader_name=uploader_name,
+        uploader_mail=uploader_mail,
+        date=date,
+        uuid=uuid)
     return Response(page, mimetype='text/html')
 
 @benchmark_review_blueprint.route('/benchmark_review_submit', methods=['POST'])
