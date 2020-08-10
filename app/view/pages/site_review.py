@@ -16,6 +16,8 @@ from ...model.facade import facade
 from ...model.data_types import Report, SiteReport
 from ...controller.io_controller import controller
 
+from .helpers import error_json_redirect, error_redirect
+
 class SiteReviewPageFactory(PageFactory):
     """A factory to build site report view pages."""
 
@@ -46,25 +48,20 @@ def review_site():
     """HTTP endpoint for the site review page"""
 
     if not controller.authenticate():
-        return Response(json.dumps({'redirect': '/error?' + url_encode({
-            'text': 'Not logged in'})}),
-            mimetype='application/json', status=302)
+        return error_redirect('Not logged in')
 
     uuid = request.args.get('uuid')
     if uuid is None:
-        return redirect('/error?' + url_encode({
-            'text': 'Site review page opened with no uuid'}), code=302)
+        return error_redirect('Site review page opened with no uuid')
 
     factory = SiteReviewPageFactory()
     if not factory.report_exists(uuid):
-        return redirect('/error?' + url_encode({
-            'text': 'Report given to review page does not exist'}), code=302)
+        return error_redirect('Report given to review page does not exist')
 
     report: SiteReport = controller.get_report(uuid)
 
     if report.get_report_type() != Report.SITE:
-        return redirect('/error?' + url_encode({
-            'text': 'Site review page opened with wrong report type'}), code=302)
+        return error_redirect('Site review page opened with wrong report type')
 
     site_name = report.get_site().get_short_name()
     reporter = report.get_reporter()
@@ -91,21 +88,15 @@ def review_site_submit():
     """HTTP endpoint to take in the reports"""
 
     if not controller.authenticate():
-        return Response(json.dumps({'redirect': '/error?' + url_encode({
-            'text': 'Not logged in'})}),
-            mimetype='application/json', status=302)
+        return error_json_redirect('Not logged in')
 
     uuid = request.form['uuid']
 
     # validate input
     if uuid is None:
-        return Response(json.dumps({'redirect': '/error?' + url_encode({
-            'text': 'Incomplete review form submitted (missing UUID)'})}),
-            mimetype='application/json', status=302)
+        return error_json_redirect('Incomplete review form submitted (missing UUID)')
     if not 'action' in request.form:
-        return Response(json.dumps({'redirect': '/error?' + url_encode({
-            'text': 'Incomplete report form submitted (missing verdict)'})}),
-            mimetype='application/json', status=302)
+        return error_json_redirect('Incomplete report form submitted (missing verdict)')
     
     remove = None
     if request.form['action'] == 'remove':
@@ -114,16 +105,10 @@ def review_site_submit():
         remove = False
     
     if remove is None:
-        return Response(json.dumps({'redirect': '/error?' + url_encode({
-            'text': 'Incomplete report form submitted (empty verdict)'})}),
-            mimetype='application/json', status=302)
-
-    error_page = '/error?' + url_encode({'text': 'Error while reviewing report'})
+        return error_json_redirect('Incomplete report form submitted (empty verdict)')
 
     # handle redirect in a special way because ajax
     if not controller.process_report(not remove, uuid):
-        return Response(
-            json.dumps({'redirect': error_page}),
-            mimetype='application/json', status=302)
+        return error_json_redirect('Error while reviewing report')
 
-    return Response(json.dumps({}), mimetype='application/json', status=200)
+    return Response('{}', mimetype='application/json', status=200)

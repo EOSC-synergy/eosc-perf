@@ -6,10 +6,10 @@ Provided is:
 import json
 import urllib.request
 
-from flask import request, Response, redirect, session
+from flask import request, Response, redirect
 from flask.blueprints import Blueprint
-from werkzeug.urls import url_encode
 import markdown2
+from werkzeug.urls import url_encode
 
 from ..page_factory import PageFactory
 from ..type_aliases import HTML, JSON
@@ -18,6 +18,8 @@ from ...model.facade import facade
 from ...model.data_types import Report, BenchmarkReport
 from ...controller.io_controller import controller
 from ...controller.authenticator import AuthenticateError
+
+from .helpers import error_json_redirect, error_redirect
 
 class BenchmarkReviewPageFactory(PageFactory):
     """A factory to build benchmark report view pages."""
@@ -53,22 +55,22 @@ def decompose_dockername(docker_name):
     else:
         image = docker_name[slash + 1:colon]
         tag = docker_name[colon + 1:]
-    
+
     return (username, image, tag)
 
 def build_dockerhub_url(docker_name):
     """Helper function to build a link to a docker hub page."""
     (username, image, tag) = decompose_dockername(docker_name)
 
-    docker_hub_url = 'https://hub.docker.com/r/{}/{}'.format(username, image)
-    return docker_hub_url
+    url = 'https://hub.docker.com/r/{}/{}'.format(username, image)
+    return url
 
 def build_dockerregistry_url(docker_name):
     """Helper function to build a link to the docker hub registry api."""
     (username, image, tag) = decompose_dockername(docker_name)
 
-    docker_hub_url = 'https://registry.hub.docker.com/v2/repositories/{}/{}/'.format(username, image)
-    return docker_hub_url
+    url = 'https://registry.hub.docker.com/v2/repositories/{}/{}/'.format(username, image)
+    return url
 
 benchmark_review_blueprint = Blueprint('benchmark-review', __name__)
 
@@ -76,44 +78,40 @@ benchmark_review_blueprint = Blueprint('benchmark-review', __name__)
 def test_benchmark_review():
     """Testing helper."""
     reports = facade.get_reports(only_unanswered=False)
+    # use first benchmark report we can find
     for report in reports:
         if report.get_report_type() == Report.BENCHMARK:
-            return redirect('/benchmark_review?' + url_encode({'uuid': report.get_uuid()}), code=302)
+            return redirect(
+                '/benchmark_review?' + url_encode({'uuid': report.get_uuid()}), code=302)
 
 @benchmark_review_blueprint.route('/benchmark_review', methods=['GET'])
 def review_benchmark():
     """HTTP endpoint for the benchmark review page"""
-    
+
     if not controller.authenticate():
-        return Response(json.dumps({'redirect': '/error?' + url_encode({
-            'text': 'Not logged in'})}),
-            mimetype='application/json', status=302)
+        return error_redirect('Not logged in')
 
     uuid = request.args.get('uuid')
     if uuid is None:
-        return redirect('/error?' + url_encode({
-            'text': 'Benchmark review page opened with no uuid'}), code=302)
+        return error_redirect('Benchmark review page opened with no uuid')
 
     factory = BenchmarkReviewPageFactory()
     if not factory.report_exists(uuid):
-        return redirect('/error?' + url_encode({
-            'text': 'Report given to review page does not exist'}), code=302)
+        return error_redirect('Report given to review page does not exist')
 
     try:
         report: BenchmarkReport = controller.get_report(uuid)
     except AuthenticateError:
-        return redirect('/error?' + url_encode({
-            'text': 'You are not authenticated'}), code=302)
+        return error_redirect('You are not authenticated')
 
     if report.get_report_type() != Report.BENCHMARK:
-        return redirect('/error?' + url_encode({
-            'text': 'Benchmark review page opened with wrong report type'}), code=302)
+        return error_redirect('Benchmark review page opened with wrong report type')
 
     docker_name = report.get_benchmark().get_docker_name()
     reporter = report.get_reporter()
     uploader_name = reporter.get_name()
     uploader_mail = reporter.get_email()
-    
+
     date = report.get_date()
 
     # link to the image on docker hub
@@ -124,7 +122,8 @@ def review_benchmark():
         dockerhub_content = urllib.request.urlopen(build_dockerregistry_url(docker_name)).read()
         content = json.loads(dockerhub_content)
         dockerhub_desc = content['full_description']
-        dockerhub_desc_formatted = markdown2.markdown(dockerhub_desc, extras=["fenced-code-blocks", "tables"])
+        dockerhub_desc_formatted = markdown2.markdown(
+            dockerhub_desc, extras=["fenced-code-blocks", "tables"])
     except:
         dockerhub_desc_formatted = "Could not load description"
 
@@ -144,39 +143,27 @@ def review_benchmark_submit():
     """HTTP endpoint to take in the reports"""
 
     if not controller.authenticate():
-        return Response(json.dumps({'redirect': '/error?' + url_encode({
-            'text': 'Not logged in'})}),
-            mimetype='application/json', status=302)
+        return error_json_redirect('Not logged in')
 
     uuid = request.form['uuid']
 
     # validate input
     if uuid is None:
-        return Response(json.dumps({'redirect': '/error?' + url_encode({
-            'text': 'Incomplete review form submitted (missing UUID)'})}),
-            mimetype='application/json', status=302)
+        return error_json_redirect('Incomplete review form submitted (missing UUID)')
     if not 'action' in request.form:
-        return Response(json.dumps({'redirect': '/error?' + url_encode({
-            'text': 'Incomplete report form submitted (missing verdict)'})}),
-            mimetype='application/json', status=302)
-    
+        return error_json_redirect('Incomplete report form submitted (missing verdict)')
+
     remove = None
     if request.form['action'] == 'remove':
         remove = True
     elif request.form['action'] == 'approve':
         remove = False
-    
-    if remove is None:
-        return Response(json.dumps({'redirect': '/error?' + url_encode({
-            'text': 'Incomplete report form submitted (empty verdict)'})}),
-            mimetype='application/json', status=302)
 
-    error_page = '/error?' + url_encode({'text': 'Error while reviewing report'})
+    if remove is None:
+        return error_json_redirect('Incomplete report form submitted (empty verdict)')
 
     # handle redirect in a special way because ajax
     if not controller.process_report(not remove, uuid):
-        return Response(
-            json.dumps({'redirect': error_page}),
-            mimetype='application/json', status=302)
+        return error_json_redirect('Error while reviewing report')
 
-    return Response(json.dumps({}), mimetype='application/json', status=200)
+    return Response('{}', mimetype='application/json', status=200)

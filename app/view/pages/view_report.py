@@ -5,7 +5,7 @@ Provided is:
 
 import json
 
-from flask import request, Response, redirect, session
+from flask import request, Response, redirect
 from flask.blueprints import Blueprint
 from werkzeug.urls import url_encode
 
@@ -13,8 +13,10 @@ from ..page_factory import PageFactory
 from ..type_aliases import HTML, JSON
 
 from ...model.facade import facade
-from ...model.data_types import Report
+from ...model.data_types import Report, ResultReport
 from ...controller.io_controller import controller
+
+from .helpers import error_json_redirect, error_redirect
 
 class ViewReportPageFactory(PageFactory):
     """A factory to build result report view pages."""
@@ -44,27 +46,22 @@ def test_view_report():
 @view_report_blueprint.route('/view_report', methods=['GET'])
 def view_report():
     """HTTP endpoint for the view report page"""
-    
+
     if not controller.authenticate():
-        return Response(json.dumps({'redirect': '/error?' + url_encode({
-            'text': 'Not logged in'})}),
-            mimetype='application/json', status=302)
+        return error_redirect('Not logged in')
 
     uuid = request.args.get('uuid')
     if uuid is None:
-        return redirect('/error?' + url_encode({
-            'text': 'View report page opened with no uuid'}), code=302)
+        return error_redirect('View report page opened with no uuid')
 
     factory = ViewReportPageFactory()
     if not factory.report_exists(uuid):
-        return redirect('/error?' + url_encode({
-            'text': 'Report given to view page does not exist'}), code=302)
+        return error_redirect('Report given to view page does not exist')
 
     report: ResultReport = controller.get_report(uuid)
 
     if report.get_report_type() != Report.RESULT:
-        return redirect('/error?' + url_encode({
-            'text': 'View report page opened with wrong report type'}), code=302)
+        return error_redirect('View report page opened with wrong report type')
 
     message = report.get_message()
     reporter = report.get_reporter()
@@ -106,21 +103,15 @@ def view_report_submit():
     """HTTP endpoint to take in the reports"""
     
     if not controller.authenticate():
-        return Response(json.dumps({'redirect': '/error?' + url_encode({
-            'text': 'Not logged in'})}),
-            mimetype='application/json', status=302)
+        return error_json_redirect('Not logged in')
 
     uuid = request.form['uuid']
 
     # validate input
     if uuid is None:
-        return Response(json.dumps({'redirect': '/error?' + url_encode({
-            'text': 'Incomplete report form submitted (missing UUID)'})}),
-            mimetype='application/json', status=302)
+        return error_json_redirect('Incomplete report form submitted (missing UUID)')
     if not 'action' in request.form:
-        return Response(json.dumps({'redirect': '/error?' + url_encode({
-            'text': 'Incomplete report form submitted (missing verdict)'})}),
-            mimetype='application/json', status=302)
+        return error_json_redirect('Incomplete report form submitted (missing verdict)')
     
     remove = None
     if request.form['action'] == 'remove':
@@ -129,16 +120,10 @@ def view_report_submit():
         remove = False
     
     if remove is None:
-        return Response(json.dumps({'redirect': '/error?' + url_encode({
-            'text': 'Incomplete report form submitted (empty verdict)'})}),
-            mimetype='application/json', status=302)
-
-    error_page = '/error?' + url_encode({'text': 'Error while reviewing report'})
+        return error_json_redirect('Incomplete report form submitted (empty verdict)')
 
     # handle redirect in a special way because ajax
     if not controller.process_report(not remove, uuid):
-        return Response(
-            json.dumps({'redirect': error_page}),
-            mimetype='application/json', status=302)
+        return error_json_redirect('Error while reviewing report')
 
     return Response(json.dumps({}), mimetype='application/json', status=200)
