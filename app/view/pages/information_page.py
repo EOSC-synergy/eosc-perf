@@ -3,13 +3,13 @@ Provided is:
  - InformationPageFactory
 """
 
-from flask import request, Response, redirect
+from flask import request, Response
 from flask.blueprints import Blueprint
-from werkzeug.urls import url_encode
 
 from ..page_factory import PageFactory
 from ..type_aliases import HTML, JSON
 
+from .helpers import error_redirect
 
 class InformationPageFactory(PageFactory):
     """A factory to build information pages."""
@@ -26,9 +26,7 @@ def info_page():
     """HTTP endpoint for information page"""
     info = request.args.get('text')
     if info is None:
-        return redirect('/error?' + url_encode({
-            'text': 'Information page called with invalid arguments'}),
-            code=302)
+        return error_redirect('Information page called with invalid arguments')
 
     factory = InformationPageFactory()
     factory.set_info(info)

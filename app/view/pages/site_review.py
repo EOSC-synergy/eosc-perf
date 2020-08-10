@@ -3,9 +3,7 @@ Provided is:
  - SiteReviewPageFactory
 """
 
-import json
-
-from flask import request, Response, redirect, session
+from flask import request, Response, redirect
 from flask.blueprints import Blueprint
 from werkzeug.urls import url_encode
 
@@ -100,13 +98,13 @@ def review_site_submit():
         return error_json_redirect('Incomplete review form submitted (missing UUID)')
     if not 'action' in request.form:
         return error_json_redirect('Incomplete report form submitted (missing verdict)')
-    
+
     remove = None
     if request.form['action'] == 'remove':
         remove = True
     elif request.form['action'] == 'approve':
         remove = False
-    
+
     if remove is None:
         return error_json_redirect('Incomplete report form submitted (empty verdict)')
 

@@ -37,7 +37,8 @@ class PageFactory:
         self._content = None
         self._info = None
 
-    def generate_page(self, args: JSON, template: HTML = None, info: str = None, **jinja_args) -> HTML:
+    def generate_page(
+            self, args: JSON, template: HTML = None, info: str = None, **jinja_args) -> HTML:
         """Generate a HTML page from the input parameters not using the
         template provided in the class.
 
@@ -65,7 +66,7 @@ class PageFactory:
         if self._content is None:
             return template_tmp.render(
                 info=info_tmp,
-                content=self._generate_content(args), 
+                content=self._generate_content(args),
                 admin=controller.is_admin(),
                 debug=configuration['debug'],
                 user_name=controller.get_full_name(),
