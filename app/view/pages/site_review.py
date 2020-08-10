@@ -15,6 +15,7 @@ from ..type_aliases import HTML, JSON
 from ...model.facade import facade
 from ...model.data_types import Report, SiteReport
 from ...controller.io_controller import controller
+from ...configuration import configuration
 
 from .helpers import error_json_redirect, error_redirect
 
@@ -38,6 +39,8 @@ site_review_blueprint = Blueprint('site-review', __name__)
 @site_review_blueprint.route('/test_site_review', methods=['GET'])
 def test_site_review():
     """Testing helper."""
+    if not configuration['debug']:
+        return error_redirect('This endpoint is not available in production')
     reports = facade.get_reports(only_unanswered=False)
     for report in reports:
         if report.get_report_type() == Report.SITE:

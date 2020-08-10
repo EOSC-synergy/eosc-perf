@@ -15,6 +15,7 @@ from ..type_aliases import HTML, JSON
 from ...model.facade import facade
 from ...model.data_types import Report, ResultReport
 from ...controller.io_controller import controller
+from ...configuration import configuration
 
 from .helpers import error_json_redirect, error_redirect
 
@@ -38,6 +39,8 @@ view_report_blueprint = Blueprint('view-report', __name__)
 @view_report_blueprint.route('/test_view_report', methods=['GET'])
 def test_view_report():
     """Testing helper."""
+    if not configuration['debug']:
+        return error_redirect('This endpoint is not available in production')
     reports = facade.get_reports(only_unanswered=False)
     for report in reports:
         if report.get_report_type() == Report.RESULT:
