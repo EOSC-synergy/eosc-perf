@@ -16,7 +16,7 @@ from ..type_aliases import HTML, JSON
 
 from ...model.facade import facade
 from ...model.data_types import Report, BenchmarkReport
-from ...controller.io_controller import controller, get_user_id
+from ...controller.io_controller import controller
 from ...controller.authenticator import AuthenticateError
 
 class BenchmarkReviewPageFactory(PageFactory):
