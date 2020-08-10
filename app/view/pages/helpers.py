@@ -14,3 +14,8 @@ def error_redirect(message: str) -> Response:
     """Builder for redirect responses."""
     args = {'text': message}
     return redirect('/error?' + url_encode(args), code=302)
+
+def info_redirect(message: str) -> Response:
+    """Builder for redirect responses."""
+    args = {'text': message}
+    return redirect('/info?' + url_encode(args), code=302)

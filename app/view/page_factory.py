@@ -70,6 +70,7 @@ class PageFactory:
                 admin=controller.is_admin(),
                 debug=configuration['debug'],
                 user_name=controller.get_full_name(),
+                logged_in=controller.is_authenticated(),
                 **jinja_args)
         return template_tmp.render(info=info_tmp, content=self._content, **jinja_args)
 

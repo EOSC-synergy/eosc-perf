@@ -377,5 +377,10 @@ class IOController:
         """Checks if current user has admin right, if one is logged on.
            Returns: True if current user is admin, otherwise False."""
         return authenticator.is_admin()
+    
+    @staticmethod
+    def is_authenticated() -> bool:
+        """Check if the current user is authenticated."""
+        return authenticator.is_authenticated()
 
 controller = IOController()
