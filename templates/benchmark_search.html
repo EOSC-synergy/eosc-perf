@@ -6,16 +6,22 @@
 {{ super() }}
 <link rel="stylesheet" type="text/css" href="static/css/overlay.css" />
 <script src="static/scripts/view/benchmark_search.js"></script>
+<style>
+    #message-box {
+        width: 80%
+    }
+</style>
 {% endblock %}
 
 {% block info %}
     <div id="overlay">
         <div id="overlay-text"></div>
     </div>
-    <h1>Benchmark Search</h1>
-
+    <h1>Benchmark search</h1>
     <form id="form" action="/benchmark_search_submit" method="POST">
-        <input type="hidden" name="uuid" value="{{ uuid }}" />
+        <input type="text" id="message-box" name="message" value=""
+            placeholder="Enter your search query here." />
+        <br/>
         <input type="submit" class="btn btn-default" name="search" value="Search" />
     </form>
 {% endblock %}
