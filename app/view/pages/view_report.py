@@ -44,6 +44,12 @@ def test_view_report():
 @view_report_blueprint.route('/view_report', methods=['GET'])
 def view_report():
     """HTTP endpoint for the view report page"""
+    
+    if not controller.authenticate():
+        return Response(json.dumps({'redirect': '/error?' + url_encode({
+            'text': 'Not logged in'})}),
+            mimetype='application/json', status=302)
+
     uuid = request.args.get('uuid')
     if uuid is None:
         return redirect('/error?' + url_encode({
@@ -98,6 +104,12 @@ def view_report():
 @view_report_blueprint.route('/view_report_submit', methods=['POST'])
 def view_report_submit():
     """HTTP endpoint to take in the reports"""
+    
+    if not controller.authenticate():
+        return Response(json.dumps({'redirect': '/error?' + url_encode({
+            'text': 'Not logged in'})}),
+            mimetype='application/json', status=302)
+
     uuid = request.form['uuid']
 
     # validate input

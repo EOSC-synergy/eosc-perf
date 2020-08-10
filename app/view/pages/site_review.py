@@ -44,6 +44,12 @@ def test_site_review():
 @site_review_blueprint.route('/site_review', methods=['GET'])
 def review_site():
     """HTTP endpoint for the site review page"""
+
+    if not controller.authenticate():
+        return Response(json.dumps({'redirect': '/error?' + url_encode({
+            'text': 'Not logged in'})}),
+            mimetype='application/json', status=302)
+
     uuid = request.args.get('uuid')
     if uuid is None:
         return redirect('/error?' + url_encode({
@@ -83,6 +89,12 @@ def review_site():
 @site_review_blueprint.route('/site_review_submit', methods=['POST'])
 def review_site_submit():
     """HTTP endpoint to take in the reports"""
+
+    if not controller.authenticate():
+        return Response(json.dumps({'redirect': '/error?' + url_encode({
+            'text': 'Not logged in'})}),
+            mimetype='application/json', status=302)
+
     uuid = request.form['uuid']
 
     # validate input

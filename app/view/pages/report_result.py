@@ -57,6 +57,12 @@ def get_some_result_id():
 @result_report_blueprint.route('/report_result', methods=['GET'])
 def report_result():
     """HTTP endpoint for the result report submission page"""
+
+    if not controller.authenticate():
+        return Response(json.dumps({'redirect': '/error?' + url_encode({
+            'text': 'Not logged in'})}),
+            mimetype='application/json', status=302)
+
     uuid = request.args.get('uuid')
     if uuid is None:
         return redirect('/error?' + url_encode({
@@ -78,6 +84,12 @@ def report_result():
 @result_report_blueprint.route('/report_result_submit', methods=['POST'])
 def report_result_submit():
     """HTTP endpoint to take in the reports"""
+
+    if not controller.authenticate():
+        return Response(json.dumps({'redirect': '/error?' + url_encode({
+            'text': 'Not logged in'})}),
+            mimetype='application/json', status=302)
+
     uuid = request.form['uuid']
     message = request.form['message']
     # validate input
