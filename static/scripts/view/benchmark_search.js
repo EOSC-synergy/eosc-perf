@@ -1,7 +1,7 @@
 $(function () {
     form = $('#form');
     form.submit(function (e) {
-        consolelog("test");
+        alert('Search button clicked.');
         return false;
     });
 });
