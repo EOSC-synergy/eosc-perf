@@ -48,6 +48,7 @@ class ResultSearchAJAX(SearchAJAXHandler):
             result_dict = {}
             # decode and add to structure to avoid dealing with storing json within jsonj
             result_dict["data"] = json.loads(result.get_json())
+            result_dict["uuid"] = result.get_uuid()
             result_dict["site"] = result.get_site().get_short_name()
             result_dict["benchmark"] = result.get_benchmark().get_docker_name()
             result_dict["uploader"] = result.get_uploader().get_email()
