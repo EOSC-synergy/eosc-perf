@@ -9,6 +9,7 @@ from flask import redirect, session
 from flask.blueprints import Blueprint
 from authlib.integrations.flask_client import OAuth
 from ..model.facade import facade
+from ..view.pages.helpers import info_redirect, error_redirect
 
 CONF_URL = 'https://aai-dev.egi.eu/oidc/.well-known/openid-configuration'
 
@@ -57,8 +58,8 @@ class Authenticator:
     def authentication_redirect(self):
         """Validates user authentication after login through EGI Check-In"""
         if self.is_authenticated():
-            return 'Logged in successfully'
-        return 'Login failed'
+            return info_redirect('Logged in successfully')
+        return error_redirect('Login failed')
 
     def is_authenticated(self):
         """Checks if the current user is authenticated. Will return true
