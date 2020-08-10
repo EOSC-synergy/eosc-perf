@@ -78,6 +78,12 @@ def test_benchmark_review():
 @benchmark_review_blueprint.route('/benchmark_review', methods=['GET'])
 def review_benchmark():
     """HTTP endpoint for the benchmark review page"""
+    
+    if not controller.authenticate():
+        return Response(json.dumps({'redirect': '/error?' + url_encode({
+            'text': 'Not logged in'})}),
+            mimetype='application/json', status=302)
+
     uuid = request.args.get('uuid')
     if uuid is None:
         return redirect('/error?' + url_encode({
@@ -133,6 +139,12 @@ def review_benchmark():
 @benchmark_review_blueprint.route('/benchmark_review_submit', methods=['POST'])
 def review_benchmark_submit():
     """HTTP endpoint to take in the reports"""
+
+    if not controller.authenticate():
+        return Response(json.dumps({'redirect': '/error?' + url_encode({
+            'text': 'Not logged in'})}),
+            mimetype='application/json', status=302)
+
     uuid = request.form['uuid']
 
     # validate input
