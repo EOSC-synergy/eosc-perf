@@ -16,9 +16,13 @@ from ..type_aliases import HTML, JSON
 from ...model.facade import facade
 from ...configuration import configuration
 
+from .helpers import error_redirect
 
 class DiagramFactory(PageFactory):
     """A factory to build diagram pages."""
+
+    def _generate_content(self, args: JSON) -> HTML:
+        pass
 
     def generate_script_content(self, uuids) -> HTML:
         """Generate script data for the diagram."""
@@ -30,7 +34,7 @@ class DiagramFactory(PageFactory):
             core_count = result['user_args']['num_gpus']
             score = result['evaluation']['result']['average_examples_per_sec']
             results.append({'core_count': core_count, 'score': score})
-        
+
         # sort them by core_count
         results.sort(key=lambda result: result['core_count'])
         script_content = ', '.join([json.dumps(result) for result in results])
@@ -51,8 +55,9 @@ class DiagramFactory(PageFactory):
                 result.get_benchmark().get_docker_name(),
                 core_count))
         return list_start + ', '.join(list_elements)
-    
+
     def check_if_results_exist(self, uuids) -> bool:
+        """Helper method."""
         for uuid in uuids:
             try:
                 facade.get_result(uuid)
@@ -63,9 +68,6 @@ class DiagramFactory(PageFactory):
 
 diagram_blueprint = Blueprint('diagram-factory', __name__)
 
-# temporary helper function for testing
-from ...model.database import db
-from ...model.data_types import ResultIterator
 @diagram_blueprint.route('/test_make_diagram', methods=['GET'])
 def make_diagram_example():
     """Testing helper."""
@@ -83,7 +85,9 @@ def make_diagram_example():
             }
         ]
     }))
-    return redirect('/make_diagram?' + url_encode({'result_uuids': [result.get_uuid() for result in results]}), code=302)
+    return redirect(
+        '/make_diagram?' + url_encode({
+            'result_uuids': [result.get_uuid() for result in results]}), code=302)
 
 @diagram_blueprint.route('/make_diagram')
 def query_results():
@@ -92,14 +96,13 @@ def query_results():
     if len(uuids) == 0:
         return redirect('/error?' + url_encode({
             'text': 'Diagram page called with invalid arguments'}), code=302)
-    
+
     factory = DiagramFactory()
 
     if not factory.check_if_results_exist(uuids):
         return redirect('/error?' + url_encode({
             'text': 'At least one result given to diagram does not exist'}), code=302)
-    
-    
+
     args = {'uuids': uuids}
 
     with open('templates/diagram.html') as file:

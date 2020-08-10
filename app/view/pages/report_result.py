@@ -5,9 +5,8 @@ Provided is:
 
 import json
 
-from flask import request, Response, redirect, session
+from flask import request, Response, redirect
 from flask.blueprints import Blueprint
-from werkzeug.urls import url_encode
 
 from ..page_factory import PageFactory
 from ..type_aliases import HTML, JSON
@@ -15,6 +14,8 @@ from ..type_aliases import HTML, JSON
 from ...model.facade import facade
 from ...controller.io_controller import controller
 from ...configuration import configuration
+from ...model.database import db
+from ...model.data_types import ResultIterator
 
 from .helpers import error_json_redirect, error_redirect
 
@@ -46,8 +47,6 @@ class ResultReportPageFactory(PageFactory):
 result_report_blueprint = Blueprint('result-report-factory', __name__)
 
 # temporary helper function for testing
-from ...model.database import db
-from ...model.data_types import ResultIterator
 @result_report_blueprint.route('/test_report_result', methods=['GET'])
 def test_report_result():
     """Mock helper."""

@@ -71,18 +71,18 @@ def view_report():
     reporter_name = reporter.get_name()
     reporter_mail = reporter.get_email()
     date = report.get_date()
-    
+
     result = report.get_result()
     uploader = result.get_uploader()
     uploader_name = uploader.get_name()
     uploader_mail = uploader.get_email()
-    
+
     site = result.get_site().get_name()
     benchmark = result.get_benchmark().get_docker_name()
-    
-    tags = [ t.get_name() for t in result.get_tags()]
+
+    tags = [t.get_name() for t in result.get_tags()]
     tag_str = ', '.join(tags)
-    JSON = json.dumps(json.loads(result.get_json()), indent=4)
+    json_data = json.dumps(json.loads(result.get_json()), indent=4)
 
     with open('templates/view_report.html') as file:
         page = factory.generate_page(
@@ -96,7 +96,7 @@ def view_report():
             uploader_name=uploader_name,
             uploader_mail=uploader_mail,
             tags=tag_str,
-            JSON=JSON,
+            JSON=json_data,
             date=date,
             uuid=uuid)
     return Response(page, mimetype='text/html')
@@ -104,7 +104,7 @@ def view_report():
 @view_report_blueprint.route('/view_report_submit', methods=['POST'])
 def view_report_submit():
     """HTTP endpoint to take in the reports"""
-    
+
     if not controller.authenticate():
         return error_json_redirect('Not logged in')
 
@@ -115,13 +115,13 @@ def view_report_submit():
         return error_json_redirect('Incomplete report form submitted (missing UUID)')
     if not 'action' in request.form:
         return error_json_redirect('Incomplete report form submitted (missing verdict)')
-    
+
     remove = None
     if request.form['action'] == 'remove':
         remove = True
     elif request.form['action'] == 'approve':
         remove = False
-    
+
     if remove is None:
         return error_json_redirect('Incomplete report form submitted (empty verdict)')
 

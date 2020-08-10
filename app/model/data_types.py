@@ -154,7 +154,7 @@ class Uploader(db.Model):
     def __init__(self, identifier: str, email: str, name: str):
         """Create a new uploader entry object."""
         super(Uploader, self).__init__(_identifier=identifier, _email=email, _name=name)
-    
+
     def get_id(self) -> str:
         """Get the unique identifier for this uploader."""
         return self._identifier
@@ -162,15 +162,15 @@ class Uploader(db.Model):
     def get_email(self) -> str:
         """Get the email address associated with this uploader."""
         return self._email
-    
+
     def set_email(self, email: str):
         """Update the email address associated with the uploader."""
         self._email = email
-    
+
     def get_name(self) -> str:
         """Get a human-readable human name."""
         return self._name
-    
+
     def set_name(self, name: str):
         """Update the human-readable human human name."""
         self._name = name

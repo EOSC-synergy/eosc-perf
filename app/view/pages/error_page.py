@@ -27,7 +27,7 @@ def error():
     if info is None:
         # TODO: error page
         info = "Unknown error"
-    
+
     factory = ErrorPageFactory()
     factory.set_info(info)
     with open('templates/error.html') as file:
