@@ -37,16 +37,11 @@
 <div class="container">
     <h1>Benchmark Search</h1>
     <form id="form" action="/benchmark_search" method="POST">
-        <input type="text" placeholder="Enter your query here" size=100>
+        <input type="text" name="query" placeholder="Enter your query here" size=100>
         <input type="submit" class="btn btn-info" name="submit" value="Search" />
         <table id=result_table>
             <tr>
                 <th>Docker Name</th>
-            </tr>
-                <td>Benchmark One</td>
-            </tr>
-            </tr>
-                <td>Benchmark Two</td>
             </tr>
         </table>
     </form>
