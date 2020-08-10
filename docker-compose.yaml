@@ -8,7 +8,12 @@ services:
       dockerfile: Dockerfile
     # override app folder during development
     volumes:
-      - .:/app
+      # development mounts, if these do not change, they should be copied in the dockerfile
+      - ${PWD}/app:/app/app
+      - ${PWD}/templates:/app/templates
+      - ${PWD}/uwsgi.ini:/app/uwsgi.ini
+      # production config
+      - ${PWD}/config.yaml:/app/config.yaml
 
   nginx:
     image: nginx:1.14.2-alpine
@@ -17,9 +22,9 @@ services:
       - "8080:80"
       - "443:443"
     volumes:
-      - ./nginx:/etc/nginx/conf.d
-      - ./static:/var/www/web/
-      - ./certs:/etc/nginx/certs
+      - ${PWD}/certs:/etc/nginx/certs
+      - ${PWD}/nginx:/etc/nginx/conf.d
+      - ${PWD}/static:/var/www/web/
     #command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
     depends_on:
       - flask

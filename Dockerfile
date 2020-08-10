@@ -14,7 +14,8 @@ RUN pip install -r requirements.txt
 # copy the whole webapp
 COPY ./app/. .
 COPY ./templates/. .
-COPY ./config.yaml .
 COPY ./uwsgi.ini .
+# TODO: keep the config here?
+COPY ./config.yaml .
 # set launch command
 CMD [ "uwsgi", "--ini", "uwsgi.ini" ]
