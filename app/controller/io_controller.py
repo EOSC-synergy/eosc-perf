@@ -345,6 +345,8 @@ class IOController:
            Returns:
            Id: The urrent user's email.
                Is None if no user is logged in."""
+        if configuration['debug']:
+            return 'fake_email'
         try:
             return session['user']['info']['email']
         except KeyError:
@@ -356,6 +358,8 @@ class IOController:
            Returns:
            Name: The urrent user's full name.
                  Is None if no user is logged in."""
+        if configuration['debug']:
+            return 'fake_user'
         try:
             return session['user']['info']['name']
         except KeyError:
@@ -367,6 +371,8 @@ class IOController:
            Returns:
            Id: The urrent user's unique identifier.
                Is None if no user is logged in."""
+        if configuration['debug']:
+            return 'horrendous amounts of pain'
         try:
             return session['user']['sub']
         except KeyError:

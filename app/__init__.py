@@ -2,7 +2,7 @@
 module."""
 import os
 import code
-from flask import Flask, request
+from flask import Flask, redirect
 from .configuration import configuration
 from .controller.authenticator import (configure_authenticator,
                                        authenticator_blueprint)
@@ -40,7 +40,9 @@ def create_app(config):
 
     @flask_app.route('/')
     def root():
-        return 'Root page'
+        # redirect to an info page until benchmark search exists
+        # this is to have some page inheriting from base which carries the navbar
+        return redirect('/info?text=Home-Page')
 
     flask_app.register_blueprint(ajax_blueprint)
     flask_app.register_blueprint(diagram_blueprint)

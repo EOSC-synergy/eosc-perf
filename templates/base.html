@@ -1,13 +1,14 @@
 <html lang="en">
+
 <head>
     <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" />
     <script src="static/scripts/jquery-3.5.1.min.js"></script>
     <script src="static/scripts/bootstrap.min.js"></script>
     <title>{% block title %}{% endblock %}</title>
     <script>
-    {# this must come before the rest of head, due to dependency order #}
-    {% block content %}
-    {% endblock %}
+        {# this must come before the rest of head, due to dependency order #}
+        {% block content %}
+        {% endblock %}
     </script>
     {% block head %}
     {% endblock %}
@@ -15,8 +16,51 @@
 
 <body>
     <div class="container">
-    {% block info %}
-    {% endblock %}
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="/">EOSC-PSE</a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Search</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/upload">Upload</a>
+                    </li>
+                    {% if admin %}
+                    <li class="nav-item">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Secret admin menu
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="#">View reports</a>
+                                {% if debug %}
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/test_benchmark_review">Test benchmark review</a>
+                                {% endif %}
+                             </div>
+                        </li>
+                    </li>
+                    {% endif %}
+                </ul>
+                <!-- second nav bar -->
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ user_name }}
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="#">Logout</a>
+                            </div>
+                        </li>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        {% block info %}
+        {% endblock %}
     </div>
 </body>
+
 </html>
