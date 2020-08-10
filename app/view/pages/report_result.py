@@ -15,6 +15,8 @@ from ..type_aliases import HTML, JSON
 from ...model.facade import facade
 from ...controller.io_controller import controller
 
+from .helpers import error_json_redirect, error_redirect
+
 class ResultReportPageFactory(PageFactory):
     """A factory to build information pages."""
 
@@ -59,19 +61,15 @@ def report_result():
     """HTTP endpoint for the result report submission page"""
 
     if not controller.authenticate():
-        return Response(json.dumps({'redirect': '/error?' + url_encode({
-            'text': 'Not logged in'})}),
-            mimetype='application/json', status=302)
+        return error_redirect('Not logged in')
 
     uuid = request.args.get('uuid')
     if uuid is None:
-        return redirect('/error?' + url_encode({
-            'text': 'Report result page called with no result'}), code=302)
+        return error_redirect('Report result page called with no result')
 
     factory = ResultReportPageFactory()
     if not factory.result_exists(uuid):
-        return redirect('/error?' + url_encode({
-            'text': 'Result does not exist'}), code=302)
+        return error_redirect('Result does not exist')
 
     with open('templates/report_result.html') as file:
         page = factory.generate_page(
@@ -86,43 +84,31 @@ def report_result_submit():
     """HTTP endpoint to take in the reports"""
 
     if not controller.authenticate():
-        return Response(json.dumps({'redirect': '/error?' + url_encode({
-            'text': 'Not logged in'})}),
-            mimetype='application/json', status=302)
+        return error_json_redirect('Not logged in')
 
     uuid = request.form['uuid']
     message = request.form['message']
     # validate input
     if uuid is None:
-        return Response(json.dumps({'redirect': '/error?' + url_encode({
-            'text': 'Incomplete report form submitted (missing UUID)'})}),
-            mimetype='application/json', status=302)
+        return error_json_redirect('Incomplete report form submitted (missing UUID)')
 
     if message is None:
-        return Response(json.dumps({'redirect': '/error?' + url_encode({
-            'text': 'Incomplete report form submitted (missing message)'})}),
-            mimetype='application/json', status=302)
+        return error_json_redirect('Incomplete report form submitted (missing message)')
 
     # parse input
-    uploader = controller.get_user_id()
-    if uploader is None or len(controller.get_user_id()) == 0:
-        return Response(json.dumps({'redirect': '/error?' + url_encode({
-            'text': 'Could not submit report (not logged in?)'})}),
-            mimetype='application/json', status=302)
+    uid = controller.get_user_id()
+    if uid is None or len(uid) == 0:
+        return error_json_redirect('Could not submit report (not logged in?)')
 
     metadata = {
         'type': 'result',
         'value': uuid,
         'message': message,
-        'uploader': uploader
+        'uploader': uid
     }
-
-    error_page = '/error?' + url_encode({'text': 'Failed to submit report'})
 
     # handle redirect in a special way because ajax
     if not controller.report(json.dumps(metadata)):
-        return Response(
-            json.dumps({'redirect': error_page}),
-            mimetype='application/json', status=302)
+        return error_json_redirect('Failed to submit report')
 
-    return Response(json.dumps({}), mimetype='application/json', status=200)
+    return Response('{}', mimetype='application/json', status=200)
