@@ -7,21 +7,48 @@
 <link rel="stylesheet" type="text/css" href="static/css/overlay.css" />
 <script src="static/scripts/view/benchmark_search.js"></script>
 <style>
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+      width: 100%;
+    }
+
+    tr {
+        border-collapse: collapse;
+    }
+
+    
     #message-box {
         width: 80%
+    }
+
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 3px solid #000;
+    }
+    td {
+        border-bottom: 1px solid #ddd; 
     }
 </style>
 {% endblock %}
 
 {% block info %}
-    <div id="overlay">
-        <div id="overlay-text"></div>
-    </div>
-    <h1>Benchmark search</h1>
-    <form id="form" action="/benchmark_search_submit" method="POST">
-        <input type="text" id="message-box" name="message" value=""
-            placeholder="Enter your search query here." />
-        <br/>
-        <input type="submit" class="btn btn-default" name="search" value="Search" />
+<div class="container">
+    <h1>Benchmark Search</h1>
+    <form id="form" action="/benchmark_search" method="POST">
+        <input type="text" placeholder="Enter your query here" size=100>
+        <input type="submit" class="btn btn-info" name="submit" value="Search" />
+        <table id=result_table>
+            <tr>
+                <th>Docker Name</th>
+            </tr>
+                <td>Benchmark One</td>
+            </tr>
+            </tr>
+                <td>Benchmark Two</td>
+            </tr>
+        </table>
     </form>
+</div>
 {% endblock %}
