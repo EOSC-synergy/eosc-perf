@@ -1,2 +1,4 @@
 debug: true
+admin_affiliations: ["example@kit.edu"]
+debug_admin_affiliations: ["example2@kit.edu"]
 oidc_client_secret: Enter secret here
