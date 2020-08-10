@@ -10,8 +10,6 @@ from flask.blueprints import Blueprint
 from authlib.integrations.flask_client import OAuth
 from ..model.facade import facade
 
-from ..configuration import configuration
-
 CONF_URL = 'https://aai-dev.egi.eu/oidc/.well-known/openid-configuration'
 
 class AuthenticateError(Exception):
@@ -24,6 +22,7 @@ class Authenticator:
 
     def __init__(self):
         self.oauth = None
+        self.admin_affiliations = []
 
     def configure_authenticator(self, flask_app, config):
         """Sets up OIDC authentication functionality for the web app"""
@@ -41,10 +40,14 @@ class Authenticator:
             userinfo_endpoint='https://aai-dev.egi.eu/oidc/userinfo',
             server_metadata_url=CONF_URL,
             client_kwargs={
-                'scope': 'openid email profile'
+                'scope': 'openid email profile eduperson_scoped_affiliation'
             },
             secret=client_secret
         )
+        if config['debug']:
+            self.admin_affiliations = config['debug_admin_affiliations']
+        else:
+            self.admin_affiliations = config['admin_affiliations']
 
     def authenticate_user(self):
         """Redirects user to EGI Check-In for authentication"""
@@ -62,7 +65,6 @@ class Authenticator:
            if the user just logged in through EGI Check-In or if the user
            still has a token that is not expired."""
         if not self._token_expired():
-            print(session['user'])
             return True
         try:
             token = self.oauth._clients['eosc-perf'].authorize_access_token()
@@ -71,17 +73,17 @@ class Authenticator:
             session['user'] = user
             session['user']['info'] = userinfo
             self.__update_user_info()
-            print(session['user'])
         except KeyError:
             return False
         return True
 
     def is_admin(self):
         """Checks wether the current user has admin rights"""
-        # TODO: implement
-        if configuration['debug']:
-            return True
-        return False
+        try:
+            affiliations = session['user']['info']['edu_person_scoped_affiliations']
+        except KeyError:
+            return False
+        return any(aff in affiliations for aff in self.admin_affiliations)
 
     @staticmethod
     def __update_user_info():
