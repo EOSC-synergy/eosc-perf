@@ -61,7 +61,8 @@ class Authenticator:
         """Checks if the current user is authenticated. Will return true
            if the user just logged in through EGI Check-In or if the user
            still has a token that is not expired."""
-        if not _token_expired():
+        if not self._token_expired():
+            print(session['user'])
             return True
         try:
             token = self.oauth._clients['eosc-perf'].authorize_access_token()
@@ -95,19 +96,20 @@ class Authenticator:
         uploader.set_email(email)
         uploader.set_name(name)
 
-def _token_expired():
-    """Checks if the current user has a valid authentication token"""
-    try:
-        user = session['user']
-    except KeyError:
-        return True
-    return user['exp'] < time()
+    @staticmethod
+    def _token_expired():
+        """Checks if the current user has a valid authentication token"""
+        try:
+            user = session['user']
+        except KeyError:
+            return True
+        return user['exp'] < time()
 
-
-def sign_out():
-    """Signs out the current user"""
-    session.pop('user', None)
-    return redirect('/')
+    @staticmethod
+    def sign_out():
+        """Signs out the current user"""
+        session.pop('user', None)
+        return redirect('/')
 
 # single global instance
 authenticator = Authenticator()
