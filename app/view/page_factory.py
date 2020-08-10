@@ -7,8 +7,6 @@ from abc import abstractmethod
 import jinja2 as jj
 from .type_aliases import HTML, JSON
 from ..configuration import configuration
-# TODO: go through controller instead of going directly to authenticator
-from ..controller.authenticator import authenticator
 from ..controller.io_controller import controller
 
 class PageFactory:
@@ -68,7 +66,7 @@ class PageFactory:
             return template_tmp.render(
                 info=info_tmp,
                 content=self._generate_content(args), 
-                admin=authenticator.is_admin(),
+                admin=controller.is_admin(),
                 debug=configuration['debug'],
                 user_name=controller.get_full_name(),
                 **jinja_args)
