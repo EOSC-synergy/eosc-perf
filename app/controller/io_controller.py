@@ -378,4 +378,10 @@ class IOController:
         except KeyError:
             return None
 
+    @staticmethod
+    def is_admin() -> bool:
+        """Checks if current user has admin right, if one is logged on.
+           Returns: True if current user is admin, otherwise False."""
+        return authenticator.is_admin()
+
 controller = IOController()
