@@ -1,0 +1,54 @@
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" />
+    <script src="static/scripts/jquery-3.5.1.min.js"></script>
+    <script src="static/scripts/bootstrap.min.js"></script>
+    <script src="search_results.js"></script>
+    <script src="static/scripts/view/content.js"></script>
+    <title>Search Page</title>
+    <style>
+        table {
+          border-collapse: collapse;
+          width: 100%;
+        }
+        
+        th, td {
+          padding: 8px;
+          text-align: left;
+          border-bottom: 1px solid #ddd;
+        }
+        </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Search for Results</h1>
+        <input type="text" placeholder="Search">
+        <input type="button" value="Find Results">
+        <select name="filters">
+            <option value="f1">name</option>
+            <option value="f2">date</option>
+        </select>
+        <input type="button" value="+ Add Filter">
+        <table id=result_table>
+            <tr>
+                <th>Select</th>
+                <th>Location</th>
+                <th>Description</th>
+                <th>Uploader</th>
+                <th>Json</th>
+                <th>Delete</th>
+                <th>Tags</th>
+            </tr>
+                <td><input type="checkbox" id = "r1"></td>
+                <td>paris</td>
+                <td>Cpu only</td>
+                <td>John Doe</td>
+                <td>json</td>
+                <td>Delete</td>
+                <td>CPU</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
