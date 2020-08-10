@@ -47,14 +47,14 @@ result_report_blueprint = Blueprint('result-report-factory', __name__)
 # temporary helper function for testing
 from ...model.database import db
 from ...model.data_types import ResultIterator
-@result_report_blueprint.route('/get_some_result_id', methods=['GET'])
-def get_some_result_id():
+@result_report_blueprint.route('/test_report_result', methods=['GET'])
+def test_report_result():
     """Mock helper."""
     iterator = ResultIterator(db.session)
     results = []
     for value in iterator:
         results.append(value)
-    return Response(', '.join([result.get_uuid() for result in results]))
+    return redirect('/report_result?uuid=' + results[0].get_uuid())
 
 @result_report_blueprint.route('/report_result', methods=['GET'])
 def report_result():
