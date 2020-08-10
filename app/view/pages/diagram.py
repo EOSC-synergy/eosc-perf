@@ -14,6 +14,7 @@ from ..page_factory import PageFactory
 from ..type_aliases import HTML, JSON
 
 from ...model.facade import facade
+from ...configuration import configuration
 
 
 class DiagramFactory(PageFactory):
@@ -68,6 +69,8 @@ from ...model.data_types import ResultIterator
 @diagram_blueprint.route('/test_make_diagram', methods=['GET'])
 def make_diagram_example():
     """Testing helper."""
+    if not configuration['debug']:
+        return error_redirect('This endpoint is not available in production')
     results = facade.query_results(json.dumps({
         'filters': [
             {

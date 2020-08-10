@@ -18,6 +18,7 @@ from ...model.facade import facade
 from ...model.data_types import Report, BenchmarkReport
 from ...controller.io_controller import controller
 from ...controller.authenticator import AuthenticateError
+from ...configuration import configuration
 
 from .helpers import error_json_redirect, error_redirect
 
@@ -77,6 +78,8 @@ benchmark_review_blueprint = Blueprint('benchmark-review', __name__)
 @benchmark_review_blueprint.route('/test_benchmark_review', methods=['GET'])
 def test_benchmark_review():
     """Testing helper."""
+    if not configuration['debug']:
+        return error_redirect('This endpoint is not available in production')
     reports = facade.get_reports(only_unanswered=False)
     # use first benchmark report we can find
     for report in reports:
