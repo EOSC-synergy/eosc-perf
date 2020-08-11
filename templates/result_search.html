@@ -1,9 +1,9 @@
 <html lang="en">
 <head>
-    <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" />
+    <link type="text/css" href="static/css/bootstrap.min.css" />
     <script src="static/scripts/jquery-3.5.1.min.js"></script>
     <script src="static/scripts/bootstrap.min.js"></script>
-    <script src="search_results.js"></script>
+    <script src="static/scripts/view/search_results.js"></script>
     <script src="static/scripts/view/content.js"></script>
     <title>Search Page</title>
     <style>
@@ -30,7 +30,7 @@
             <option value="f2">date</option>
         </select>
         <input type="button" value="+ Add Filter">
-        <table id=result_table>
+        <table id="result_table">
             <tr>
                 <th>Select</th>
                 <th>Location</th>
@@ -40,7 +40,7 @@
                 <th>Delete</th>
                 <th>Tags</th>
             </tr>
-                <td><input type="checkbox" id = "r1"></td>
+                <td><input type="checkbox" id = "r1" checked></td>
                 <td>paris</td>
                 <td>Cpu only</td>
                 <td>John Doe</td>
