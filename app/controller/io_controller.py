@@ -211,14 +211,17 @@ class IOController:
         if authenticator.is_admin():
             # Set the verdict.
             try:
-                report_by_uuid = facade.get_report(uuid)
+                report = facade.get_report(uuid)
                 # Set the verdict status.
-                report_by_uuid.set_verdict(verdict)
-                # Delete Benchmark if necessary
+                report.set_verdict(verdict)
+                # for benchmarks and sites: hidden only when added,
+                # visible after 'review' == report
                 if verdict:
-                    # TODO: Delete Benchmark or mark somehow as invalid.
-                    pass
-            except AttributeError:
+                    if report.get_report_type() == Report.BENCHMARK:
+                        report.get_benchmark().set_hidden(False)
+                    elif report.get_report_type() == Report.SITE:
+                        report.get_site().set_hidden(False)
+            except DatabaseFacade.NotFoundError:
                 # There is no report with given uuid.
                 return False
             return True
