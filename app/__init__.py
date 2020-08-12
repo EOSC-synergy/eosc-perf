@@ -40,12 +40,6 @@ def create_app(config):
     if config['debug']:
         add_dummies_if_not_exist()
 
-    @flask_app.route('/')
-    def root():
-        # redirect to an info page until benchmark search exists
-        # this is to have some page inheriting from base which carries the navbar
-        return redirect('/info?text=Home-Page')
-
     flask_app.register_blueprint(ajax_blueprint)
     flask_app.register_blueprint(diagram_blueprint)
     flask_app.register_blueprint(info_blueprint)
