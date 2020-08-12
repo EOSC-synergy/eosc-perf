@@ -1,56 +1,31 @@
-<html lang="en">
-<head>
-    <link type="text/css" href="static/css/bootstrap.min.css" />
-    <script src="static/scripts/jquery-3.5.1.min.js"></script>
-    <script src="static/scripts/bootstrap.min.js"></script>
-    <script src="static/scripts/view/search_results.js"></script>
-    <script src="static/scripts/view/content.js"></script>
-    <title>Search Page</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
+{% extends "base.html" %}
 
-        th,
-        td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-            overflow: hidden;
-            max-width: 30vw;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+{% block title %}Result Search and Selection{% endblock %}
 
-        td:hover {
-            overflow: visible;
-        }
-    </style>
-</head>
+{% block head %}
+{{ super() }}
+<script type="text/javascript" src="static/scripts/view/content.js"></script>
+<script type="text/javascript" src="static/scripts/view/search_results.js"></script>
+{% endblock %}
 
-<body onload="onload()">
-    <div class="container">
-        <h1>Search for Results</h1>
-        <input type="button" value="Find Results">
-        <ul id="filters">
-        </ul>
-        <input type="button" id="add_filter" value="+ Add Filter" onclick="ResultSearch.add_filter_field()">
-        <table id="result_table">
-        </table>
-        <h4></h4>
-        <select id="pages" onchange="ResultSearch.set_page()">
-        </select>
-        <h4>Results on page:</h4>
-        <select id="results_on_page" onchange="ResultSearch.set_results_per_page()">
-            <option value="1">1</option>
-            <option value="10" selected>10</option>
-            <option value="15">15</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-        </select>
-    </div>
-</body>
-
-</html>
+{% block info %}
+<h1>Search for Results</h1>
+<input type="button" value="Find Results">
+<ul id="filters">
+</ul>
+<input type="button" id="add_filter" value="+ Add Filter" onclick="ResultSearch.add_filter_field()">
+<input type="button" id="diagram" value="Visualize" onclick="ResultSearch.make_diagram()">
+<table id="result_table">
+</table>
+<select id="pages" onchange="ResultSearch.set_page()">
+</select>
+<h4>Results on page:</h4>
+<select id="results_on_page" onchange="ResultSearch.set_results_per_page()">
+    <option value="1">1</option>
+    <option value="10" selected>10</option>
+    <option value="15">15</option>
+    <option value="20">20</option>
+    <option value="50">50</option>
+    <option value="100">100</option>
+</select>
+{% endblock %}
