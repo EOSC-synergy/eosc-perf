@@ -18,6 +18,7 @@ from .view.pages.benchmark_search import benchmark_search_blueprint
 from .view.pages.site_review import site_review_blueprint
 from .view.pages.view_report import view_report_blueprint
 from .view.pages.add_benchmark import add_benchmark_blueprint
+from .view.pages.upload_json import upload_json_blueprint
 
 
 def create_app(config):
@@ -51,6 +52,7 @@ def create_app(config):
     flask_app.register_blueprint(add_benchmark_blueprint)
     flask_app.register_blueprint(benchmark_search_blueprint)
     flask_app.register_blueprint(authenticator_blueprint)
+    flask_app.register_blueprint(upload_json_blueprint)
 
     return flask_app
 
