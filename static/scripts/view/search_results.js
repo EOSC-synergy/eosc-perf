@@ -4,7 +4,7 @@ function onload() {
     results = []
     current_page = 1
     selected_results = []
-    admin = false
+    admin = true
     filters = []
     results_per_page = 10
     ordered_by = null
@@ -99,9 +99,9 @@ class ResultSearch extends Content {
                         var select = document.createElement("input");
                         select.setAttribute("type", "checkbox");
                         select.setAttribute("id", "selected" + i);
-                        if (results["selected"]) {
+                        if (res["selected"]) {
                             // 
-                            selected.setAttribute("checked", "");
+                            select.setAttribute("checked", "");
                         }
                         // Event Listener to keep presentation and data in sync.
                         let num = i;// bc js.
@@ -133,14 +133,17 @@ class ResultSearch extends Content {
             }
             // Add report col
             if (columns.includes("Report")) {
+                let cell = document.createElement("TD");
                 var report_result = document.createElement("A");
                 report_result.textContent = "Report";
                 let href = "./report_result" + "?uuid=" + res["json"]["uuid"];
                 report_result.setAttribute("href", href);
-                row.appendChild(report_result);
+                cell.appendChild(report_result);
+                row.appendChild(cell);
             }
             // Add delete col
             if (columns.includes("Delete")) {
+                let cell = document.createElement("TD");
                 var delete_result = document.createElement("FORM");
                 delete_result.setAttribute("method", "post");
                 delete_result.setAttribute("id", ("delete" + i));
@@ -151,7 +154,8 @@ class ResultSearch extends Content {
                 let href = "./report_result" + "?uuid=" + res["json"]["uuid"];
                 delete_btn.setAttribute("href", href);
                 delete_result.appendChild(delete_btn);
-                row.appendChild(report_result);
+                cell.appendChild(delete_result);
+                row.appendChild(cell);
             }
             table.appendChild(row);
         }
@@ -265,9 +269,6 @@ class ResultSearch extends Content {
         results[result_number]["selected"] = !(results[result_number]["selected"]);
     }
 
-    static unselect_result(result) {
-        select_result = select_result.filter(function (item) { item !== filter })
-    }
 
     static make_diagram() {
         // Store data in href
