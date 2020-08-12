@@ -8,47 +8,49 @@
     <title>Search Page</title>
     <style>
         table {
-          border-collapse: collapse;
-          width: 100%;
+            border-collapse: collapse;
+            width: 100%;
         }
-        
-        th, td {
-          padding: 8px;
-          text-align: left;
-          border-bottom: 1px solid #ddd;
+
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            overflow: hidden;
+            max-width: 30vw;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
-        </style>
+
+        td:hover {
+            overflow: visible;
+        }
+    </style>
 </head>
 
-<body>
+<body onload="onload()">
     <div class="container">
         <h1>Search for Results</h1>
-        <input type="text" placeholder="Search">
         <input type="button" value="Find Results">
-        <select name="filters">
-            <option value="f1">name</option>
-            <option value="f2">date</option>
-        </select>
-        <input type="button" value="+ Add Filter">
+        <ul id="filters">
+        </ul>
+        <input type="button" id="add_filter" value="+ Add Filter" onclick="ResultSearch.add_filter_field()">
         <table id="result_table">
-            <tr>
-                <th>Select</th>
-                <th>Location</th>
-                <th>Description</th>
-                <th>Uploader</th>
-                <th>Json</th>
-                <th>Delete</th>
-                <th>Tags</th>
-            </tr>
-                <td><input type="checkbox" id = "r1" checked></td>
-                <td>paris</td>
-                <td>Cpu only</td>
-                <td>John Doe</td>
-                <td>json</td>
-                <td>Delete</td>
-                <td>CPU</td>
-            </tr>
         </table>
+        <h4></h4>
+        <select id="pages" onchange="ResultSearch.set_page()">
+        </select>
+        <h4>Results on page:</h4>
+        <select id="results_on_page" onchange="ResultSearch.set_results_per_page()">
+            <option value="1">1</option>
+            <option value="10" selected>10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
     </div>
 </body>
+
 </html>
