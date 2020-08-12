@@ -91,7 +91,7 @@ def test_benchmark_review():
 def review_benchmark():
     """HTTP endpoint for the benchmark review page"""
 
-    if not controller.authenticate():
+    if not controller.is_authenticated():
         return error_redirect('Not logged in')
 
     uuid = request.args.get('uuid')
@@ -145,7 +145,7 @@ def review_benchmark():
 def review_benchmark_submit():
     """HTTP endpoint to take in the reports"""
 
-    if not controller.authenticate():
+    if not controller.is_authenticated():
         return error_json_redirect('Not logged in')
 
     uuid = request.form['uuid']

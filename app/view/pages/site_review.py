@@ -48,7 +48,7 @@ def test_site_review():
 def review_site():
     """HTTP endpoint for the site review page"""
 
-    if not controller.authenticate():
+    if not controller.is_authenticated():
         return error_redirect('Not logged in')
 
     uuid = request.args.get('uuid')
@@ -88,7 +88,7 @@ def review_site():
 def review_site_submit():
     """HTTP endpoint to take in the reports"""
 
-    if not controller.authenticate():
+    if not controller.is_authenticated():
         return error_json_redirect('Not logged in')
 
     uuid = request.form['uuid']

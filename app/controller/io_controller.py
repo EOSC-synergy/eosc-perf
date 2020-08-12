@@ -2,7 +2,7 @@
 This module acts as a facade between view and model.
 """
 import json
-from flask import session
+from flask import session, redirect
 from re import match
 from typing import List
 from requests import get
@@ -38,14 +38,11 @@ class IOController:
         self._result_validator = JSONResultValidator()
         self._unapproved_sites = unapproved_sites
 
-    def authenticate(self) -> bool:
-        """Authenticate the current user.
-        Args:
-        Returns:
-        bool: True if the user is authenticated."""
-        # Using lazyevaluation of python.
-        return authenticator.is_authenticated() or \
-            authenticator.authenticate_user()
+    def authenticate(self):
+        """Authenticate the current user."""
+        return redirect('/login')
+
+
 
     def submit_result(self, result_json: str, metadata: str) -> bool:
         """Submit a new benchmark result to the system if it is valid.
