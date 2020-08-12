@@ -40,7 +40,8 @@ class IOController:
 
     def authenticate(self):
         """Authenticate the current user."""
-        return redirect('/login')
+        if not (self.is_authenticated()):
+            return redirect('/login')
 
 
 
