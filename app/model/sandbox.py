@@ -15,6 +15,11 @@ benchmarks = [
     Benchmark(docker_name='user/bench:version', uploader=uploaders[0]),
     Benchmark(docker_name='user/otherbench:version', uploader=uploaders[0])
 ]
+for i in range(1, 101):
+    docker_name = "user{}/bench{}:version".format(i, i)
+    uploader = uploaders[i%2]
+    benchmarks.append(Benchmark(docker_name=docker_name, uploader=uploader))
+
 tags = [
     Tag(name='neato'),
     Tag(name='cpu')

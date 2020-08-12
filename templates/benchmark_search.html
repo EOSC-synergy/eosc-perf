@@ -4,18 +4,51 @@
 
 {% block head %}
 {{ super() }}
-<link rel="stylesheet" type="text/css" href="static/css/overlay.css" />
+<link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" />
 <script src="static/scripts/view/benchmark_search.js"></script>
+
+<style>
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+      width: 100%;
+    }
+
+    tr {
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 3px solid #000;
+    }
+    td {
+        border-bottom: 1px solid #ddd; 
+    }
+</style>
 {% endblock %}
 
 {% block info %}
-    <div id="overlay">
-        <div id="overlay-text"></div>
-    </div>
+<div class="container">
     <h1>Benchmark Search</h1>
-
-    <form id="form" action="/benchmark_search_submit" method="POST">
-        <input type="hidden" name="uuid" value="{{ uuid }}" />
-        <input type="submit" class="btn btn-default" name="search" value="Search" />
+    <form id="form" action="/benchmark_search" method="POST">
+        <input type="text" name="query" placeholder="Enter your query here" size=100/> 
+        <input type="submit" class="btn btn-info" name="submit" value="Search"/>
+        <table id="result_table">
+            <thead>
+                <tr>
+                    <th>Docker Name</th>
+                </tr>
+            </thead>
+            <tbody id="result_table_body">
+            </tbody>
+        </table>
     </form>
+    <br />
+    <p id="page_info" class="text-right"></p>
+    <button type="button" onclick="next_page()" class="btn btn-info float-right mr-1" id="next_button">Next</button>
+    <button type="button"  onclick="prev_page()" class="btn btn-info float-right mr-1" id="previous_button">Previous</button>
+</div>
+
 {% endblock %}
