@@ -196,6 +196,8 @@ class Benchmark(db.Model):
     # value columns
     _docker_name = db.Column(db.Text(), nullable=False, primary_key=True)
 
+    _hidden = db.Column(db.Boolean, nullable=False, default=True)
+
     # relationship columns
     _uploader_id = db.Column(db.Text, db.ForeignKey('uploader._email'), nullable=False)
     _uploader = db.relationship('Uploader', backref=db.backref('_benchmarks', lazy=True))
@@ -215,6 +217,14 @@ class Benchmark(db.Model):
     def get_results(self) -> ResultIterator:
         """Get an iterator for all the results associated to this benchmark."""
         return ResultIterator(Session.object_session(self), benchmark=self)
+    
+    def set_hidden(self, state: bool):
+        """Set the hide state of the benchmark."""
+        self._hidden = state
+
+    def get_hidden(self) -> bool:
+        """Get the hide state of the benchmark."""
+        return self._hidden
 
     def __repr__(self):
         """Get a human-readable representation string of the benchmark."""
@@ -230,6 +240,7 @@ class Site(db.Model):
     _address = db.Column(db.Text(), nullable=False)
     _name = db.Column(db.Text(), nullable=True)
     _description = db.Column(db.Text(), nullable=True)
+    _hidden = db.Column(db.Boolean, nullable=False, default=True)
 
     def __init__(self, short_name: str, address: str, **kwargs):
         """Create a new site entry object.
@@ -277,6 +288,14 @@ class Site(db.Model):
     def get_short_name(self) -> str:
         """Get the site's identifier."""
         return self._short_name
+    
+    def set_hidden(self, state: bool):
+        """Set the hide state of the site."""
+        self._hidden = state
+
+    def get_hidden(self) -> bool:
+        """Get the hide state of the site."""
+        return self._hidden
 
     @abstractmethod
     def __repr__(self):

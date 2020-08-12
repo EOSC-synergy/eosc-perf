@@ -73,6 +73,9 @@ class BenchmarkSearchAJAX(SearchAJAXHandler):
         
         for benchmark in benchmarks:
             result_dict = {}
+            # do not display hidden benchmarks (= new ones)
+            if benchmark.get_hidden():
+                continue
             # decode and add to structure to avoid dealing with storing json within jsonj
             result_dict["docker_name"] = benchmark.get_docker_name()
             result_dict["uploader"] = benchmark.get_uploader().get_email()
