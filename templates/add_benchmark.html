@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Submit new benchmark{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="static/css/overlay.css" />
+<script src="static/scripts/view/add_benchmark.js"></script>
+<style>
+    #message-box {
+        width: 80%
+    }
+</style>
+{% endblock %}
+
+{% block info %}
+    <div id="overlay">
+        <div id="overlay-text"></div>
+    </div>
+    <h1>Add benchmark</h1>
+    <form id="form" action="/add_benchmark_submit" method="POST">
+        <input type="text" name="docker_name" placeholder="user/image:tag" />
+        <input type="text" id="message-box" name="message" value=""
+            placeholder="Enter a description of the new benchmark here." />
+        <br/>
+        <input type="submit" name="submit" value="Submit benchmark" />
+    </form>
+{% endblock %}
