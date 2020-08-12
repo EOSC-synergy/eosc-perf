@@ -84,13 +84,13 @@ class IOController:
         if not self.authenticate():
             return False
         # Check for valid email address.
-        if match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+\Z)", uploader_id) is None:
-            return False
         # Check valid docker_hub_name.uploader_emailuploader_email
         if self._valid_docker_hub_name(docker_name, check_for_page):
+            print("noerr")
             # Add to model.
             return facade.add_benchmark(
                 docker_name=docker_name, uploader_id=uploader_id)
+        print("noname")
         return False
 
     def get_unapproved_benchmarks(self) -> List[Benchmark]:
@@ -261,6 +261,21 @@ class IOController:
                 return False
             return True
         return False
+        
+    def add_current_user_if_missing(self):
+        if authenticator.is_authenticated():
+            uid = self.get_user_id()
+            try:
+                facade.get_uploader(uid)
+                return
+            except facade.NotFoundError:
+                email = self.get_email()
+                name = self.get_full_name()
+                facade.add_uploader(json.dumps({
+                    'id': uid,
+                    'email': email,
+                    'name': name
+                }))
 
     def _valid_docker_hub_name(self, docker_name: str, check_for_page: bool) -> bool:
         """Check if it is a valid docker hub name.
