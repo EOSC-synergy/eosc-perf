@@ -33,6 +33,10 @@ function update_result_table() {
     table_body.innerHTML = '';
     var start_index = results_per_page * page;
     var limit = Math.min(result_amount, start_index + 25);
+    if (result_amount === 0) {
+        table_body.innerHTML = '<p class="text-center">No benchmarks found.</p>';
+
+    }
     for (index = start_index; index < limit; ++index) {
         var result_row = table_body.insertRow(-1);
         var docker_name_cell = result_row.insertCell(0);
