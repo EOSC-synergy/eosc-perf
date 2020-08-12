@@ -37,7 +37,6 @@ class IOController:
         # TODO: Find better solution for database_facade since it is supposed to be Singelton.
         self._result_validator = JSONResultValidator()
         self._unapproved_sites = unapproved_sites
-        self._unapproved_benchmarks = unapproved_benchmarks
 
     def authenticate(self) -> bool:
         """Authenticate the current user.
@@ -65,7 +64,7 @@ class IOController:
                 return facade.add_result(result_json, metadata)
         return False
 
-    def submit_benchmark(self, uploader_id: str, docker_name: str,
+    def submit_benchmark(self, uploader_id: str, docker_name: str, comment: str,
                          check_for_page: bool = False) -> bool:
         """Submit a new Benchmark to the system.
         Args:
@@ -86,52 +85,15 @@ class IOController:
         # Check for valid email address.
         # Check valid docker_hub_name.uploader_emailuploader_email
         if self._valid_docker_hub_name(docker_name, check_for_page):
-            print("noerr")
             # Add to model.
-            return facade.add_benchmark(
-                docker_name=docker_name, uploader_id=uploader_id)
-        print("noname")
-        return False
-
-    def get_unapproved_benchmarks(self) -> List[Benchmark]:
-        """If the current user is an admin, get a list of all unapproved benchmarks.
-        Args:
-        Returns:
-        List[Benchmark]: List of unaproved Benchmarks.
-        """
-        if authenticator.is_admin():
-            return self._unapproved_benchmarks
-        raise AuthenticateError('The user isn\'t an admin.')
-
-    def approve_benchmark(self, benchmark: Benchmark = None,
-                          benchmark_name: str = None) -> bool:
-        """Approve a Benchmark, requires the current user to be an admin.
-        Args:
-        benchmark (Benchmark): The benchmark to be approved.
-        benchmark_name  (str): The name of the previously unapproved benchamark to get approved.
-                               Is only used if benchmark is left empty.
-        Returns:
-        bool: If the benchmark was successfully approved.
-        """
-        # Select the right benchmark.
-        if benchmark is None:
-            for single_benchmark in self._unapproved_benchmarks:
-                if single_benchmark.get_docker_name() is benchmark_name:
-                    benchmark = single_benchmark
-                    break
-        # Ensure there is a benchmark to add.
-        if benchmark is None:
-            return False
-        # Add the benchmark to the model.
-        if authenticator.is_admin():
-            if facade.add_benchmark(benchmark.get_docker_name(), benchmark.get_uploader()):
-                # Was successfully added.
-                for single_benchmark in self._unapproved_benchmarks:
-                    # Remove from _unaproved_benchmarks.
-                    if single_benchmark.get_docker_name() is benchmark.get_docker_name():
-                        self._unapproved_benchmarks.remove(single_benchmark)
-                        break
-                return True
+            if facade.add_benchmark(
+                docker_name=docker_name, uploader_id=uploader_id):
+                return self.report(json.dumps({
+                    'message': comment,
+                    'type': 'benchmark',
+                    'value': docker_name,
+                    'uploader': uploader_id
+                }))
         return False
 
     def submit_site(self, metadata_json: JSON) -> bool:
