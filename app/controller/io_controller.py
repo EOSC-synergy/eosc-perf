@@ -342,8 +342,6 @@ class IOController:
            Returns:
            Id: The urrent user's unique identifier.
                Is None if no user is logged in."""
-        if configuration['debug']:
-            return 'horrendous amounts of pain'
         try:
             return session['user']['sub']
         except KeyError:
