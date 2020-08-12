@@ -50,7 +50,7 @@ def test_view_report():
 def view_report():
     """HTTP endpoint for the view report page"""
 
-    if not controller.authenticate():
+    if not controller.is_authenticated():
         return error_redirect('Not logged in')
 
     uuid = request.args.get('uuid')
@@ -105,7 +105,7 @@ def view_report():
 def view_report_submit():
     """HTTP endpoint to take in the reports"""
 
-    if not controller.authenticate():
+    if not controller.is_authenticated():
         return error_json_redirect('Not logged in')
 
     uuid = request.form['uuid']

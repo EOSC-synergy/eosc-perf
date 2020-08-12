@@ -31,7 +31,7 @@ add_benchmark_blueprint = Blueprint('add-benchmark-factory', __name__)
 def add_benchmark():
     """HTTP endpoint for the benchmark submission page"""
 
-    if not controller.authenticate():
+    if not controller.is_authenticated():
         return error_redirect('Not logged in')
 
     factory = AddBenchmarkPageFactory()
@@ -46,7 +46,7 @@ def add_benchmark():
 def add_benchmark_submit():
     """HTTP endpoint to take in the reports"""
 
-    if not controller.authenticate():
+    if not controller.is_authenticated():
         return error_json_redirect('Not logged in')
 
     docker_name = request.form['docker_name']

@@ -62,7 +62,7 @@ def test_report_result():
 def report_result():
     """HTTP endpoint for the result report submission page"""
 
-    if not controller.authenticate():
+    if not controller.is_authenticated():
         return error_redirect('Not logged in')
 
     uuid = request.args.get('uuid')
@@ -85,7 +85,7 @@ def report_result():
 def report_result_submit():
     """HTTP endpoint to take in the reports"""
 
-    if not controller.authenticate():
+    if not controller.is_authenticated():
         return error_json_redirect('Not logged in')
 
     uuid = request.form['uuid']
