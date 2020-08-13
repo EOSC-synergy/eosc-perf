@@ -59,6 +59,9 @@ class IOController:
             # Check if the result is in the correct format.
             if not self._result_validator.validate_json(result_json):
                 raise ValueError("no valid result JSON")
+
+            # if the user is not in the database, we must add them
+            self.add_current_user_if_missing()
             # Try to add the result to the data base.
             return facade.add_result(result_json, metadata)
         return False
