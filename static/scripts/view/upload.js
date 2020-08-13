@@ -1,11 +1,16 @@
 $(function () {
     form = $('#form');
     form.submit(function (e) {
+        var selection = document.getElementById('site_selection');
+        var site_id = selection.options[selection.selectedIndex].id;
+        selection.options[selection.selectedIndex].innerHTML = site_id;
+
         $.ajax({
             type: form.attr('method'),
             url: form.attr('action'),
             data: new FormData(this),
-            dataType: "json",
+            processData: false,
+            contentType: false,
             success: function (data, textStatus) {
                 // display success message and disable form
                 $('#overlay-text').text('Submission successful');
@@ -71,12 +76,4 @@ window.onload = function () {
     prepare_sites()
     prepare_tags()
     prepare_benchmarks()
-}
-
-function before_submit() {
-    // Switch human readable long name of site with unique short name
-    var selection = document.getElementById('site_selection');
-    var site_id = selection.options[selection.selectedIndex].id;
-    selection.options[selection.selectedIndex].innerHTML = site_id
-    return true;
 }
