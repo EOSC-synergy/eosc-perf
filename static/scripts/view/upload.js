@@ -1,3 +1,6 @@
+var SITES_EMPTY = true
+var BENCHMARKS_EMPTY = true
+
 $(function () {
     form = $('#form');
     form.submit(function (e) {
@@ -36,7 +39,7 @@ $(function () {
 });
 
 function license_checkbox_click(cb) {
-    if (cb.checked) {
+    if (cb.checked && !(SITES_EMPTY || BENCHMARKS_EMPTY)) {
         document.getElementById("submit_button").removeAttribute("disabled")
     } else {
         document.getElementById("submit_button").setAttribute("disabled", true);
@@ -62,6 +65,7 @@ function prepare_sites() {
                 site_selection.innerHTML += site_html;
             }
             if (sites.length === 0) {
+                SITES_EMPTY = true
                 document.getElementById("submit_button").setAttribute("disabled", true)
             }
         })
@@ -90,6 +94,7 @@ function prepare_benchmarks() {
                 bm_selection.innerHTML += benchmark_html;
             }
             if (benchmarks.length === 0) {
+                BENCHMARKS_EMPTY = true
                 document.getElementById("submit_button").setAttribute("disabled", true)
             }
         })
