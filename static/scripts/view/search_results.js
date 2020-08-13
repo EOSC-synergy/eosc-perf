@@ -1,4 +1,19 @@
+// find result ajax
+$.ajax('/query_results?query_json='
+    + encodeURI(JSON.stringify(
+      {'filters':[
+            {
+                "type": "tag",
+                "value": "cpu"
+            }
+        ]})))
+    .done(function(data) {
+        console.log(data);
+    });
 // parameters represented as external state, so ResultSearch has no internal state, instead of a mix.
+window.addEventListener("load", function(){
+    onload();
+});
 function onload() {
     query = ""
     results = []
@@ -8,19 +23,19 @@ function onload() {
     filters = []
     results_per_page = 10
     ordered_by = null
-    columns = ["Select", "Location", "Uploader", "Json", "Tags", "Report"]
+    columns = ["Select", "Location", "Uploader", "Data", "Tags", "Report"]
     if (admin) {
         columns.push("Delete");
     }
-    values = ["selected", "site", "uploader", "json", "tag"]
+    values = ["selected", "site", "uploader", "data", "tags"]
     filter_uuid = 0
     filter_types = ["Uploader", "Site", "Tag", "Value greater than", "Value equal to", "Value less than"]
     results = [{
         selected: false, benchmark: "Test Benchmark for cpu", uploader: "John Doe", site: "Paris"
-        , tag: "CPU , not GPU", json: { test: "val1", test2: "val2" , uuid:"123"}
+        , tags: "[CPU , not GPU]",uuid:"123", data: { test: "val1", test2: "val2"}
     },{
         selected: false, benchmark: "Test Benchmark for cpu", uploader: "John Doe", site: "moon"
-        , tag: "CPU , not GPU", json: { test: "val1", test2: "val2" , uuid:"122"}
+        , tags: "[CPU , not GPU]", data: { test: "val1", test2: "val2"}
     }];
     ResultSearch.set_result_table();
     ResultSearch.set_page_selection();
@@ -70,7 +85,7 @@ class ResultSearch extends Content {
                         ResultSearch.sort_by((x, y) => x["uploader"] < y["uploader"], col)
                     });
                     break;
-                case ("Json"):
+                case ("Data"):
                     // Not clear what to sort after.
                     break;
                 case ("Tags"):
@@ -116,11 +131,12 @@ class ResultSearch extends Content {
                     case ("uploader"):
                         cell.textContent = res[col];
                         break;
-                    case ("json"):
+                    case ("data"):
                         var json = JSON.stringify(res[col]);
                         cell.textContent = json;
                         break;
-                    case ("tag"):
+                    case ("tags"):
+                        alert(res[col])
                         cell.textContent = res[col];
                         break;
                     default:
@@ -136,7 +152,7 @@ class ResultSearch extends Content {
                 let cell = document.createElement("TD");
                 var report_result = document.createElement("A");
                 report_result.textContent = "Report";
-                let href = "./report_result" + "?uuid=" + res["json"]["uuid"];
+                let href = "./report_result" + "?uuid=" + res["uuid"];
                 report_result.setAttribute("href", href);
                 cell.appendChild(report_result);
                 row.appendChild(cell);
@@ -151,7 +167,7 @@ class ResultSearch extends Content {
                 delete_btn.setAttribute("type", "submit");
                 delete_btn.setAttribute("value", "Delete Result");
                 delete_btn.setAttribute("class", "btn btn-danger");
-                let href = "./report_result" + "?uuid=" + res["json"]["uuid"];
+                let href = "./report_result" + "?uuid=" + res["uuid"];
                 delete_btn.setAttribute("href", href);
                 delete_result.appendChild(delete_btn);
                 cell.appendChild(delete_result);
@@ -249,9 +265,11 @@ class ResultSearch extends Content {
         )
         // reverse order if double clicked.
         if (ordered_by == column) {
-            results = results.reverse()
+            results = results.reverse();
+            ordered_by = "";
+        } else {
+            ordered_by = column;
         }
-        ordered_by = column
         this.update();
     }
 
