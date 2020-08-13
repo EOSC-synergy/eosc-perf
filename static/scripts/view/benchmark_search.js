@@ -16,12 +16,11 @@ $(function () {
         keywords = query.split(" ");
         $.ajax('/query_benchmarks?query_json='
             + encodeURI(JSON.stringify(
-                {'keywords':keywords})))
-            .done(function(data) {
+                { 'keywords': keywords })))
+            .done(function (data) {
                 results = data.results;
                 result_amount = results.length;
                 update_result_table();
-                console.log(data);
             })
         return false;
     });
@@ -49,8 +48,8 @@ function update_result_table() {
         var page_info = "Page " + (page + 1) + " of " + amount_pages
         document.getElementById("page_info").innerHTML = page_info
     } else {
-        hide_nav_buttons()  
-        document.getElementById("page_info").innerHTML = ""      
+        hide_nav_buttons()
+        document.getElementById("page_info").innerHTML = ""
     }
 }
 
@@ -78,7 +77,7 @@ function show_nav_buttons() {
     document.getElementById("previous_button").style.display = "inline-block";
 }
 
-window.onload = function() {
+window.onload = function () {
     hide_nav_buttons()
     document.getElementById("page_info").style.display = "inline-block";
 }

@@ -1,7 +1,6 @@
 $(function () {
     form = $('#form');
     form.submit(function (e) {
-        console.log("REEEEE");
         $.ajax({
             type: form.attr('method'),
             url: form.attr('action'),

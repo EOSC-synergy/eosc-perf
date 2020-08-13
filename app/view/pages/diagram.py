@@ -38,7 +38,6 @@ class DiagramFactory(PageFactory):
         # sort them by core_count
         results.sort(key=lambda result: result['core_count'])
         script_content = ', '.join([json.dumps(result) for result in results])
-        print(script_content)
         return script_content
 
     def generate_page_content(self, uuids) -> HTML:
