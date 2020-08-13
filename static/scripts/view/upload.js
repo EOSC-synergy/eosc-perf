@@ -22,8 +22,8 @@ $(function () {
 });
 
 function prepare_sites() {
-    var site_selection = document.getElementById("site_selection")
-    site_selection.innerHTML = ''
+    var site_selection = document.getElementById("site_selection");
+    site_selection.innerHTML = '';
     $.ajax('/fetch_sites')
         .done(function (data) {
             var sites = data.results;

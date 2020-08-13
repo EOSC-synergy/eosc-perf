@@ -42,7 +42,7 @@ def report_result():
 def report_result_submit():
     """HTTP endpoint to take in results"""
     if not controller.is_authenticated():
-        return error_redirect('Not logged in')
+        return error_json_redirect('Not logged in')
     # check if the post request has the file part
     if 'file' not in request.files:
         return error_redirect('No file in request')
@@ -50,7 +50,7 @@ def report_result_submit():
     # if user does not select file, browser might
     # submit an empty part without filename
     if file.filename == '':
-        return error_redirect('No file in request')
+        return error_json_redirect('No file in request')
 
     tags = request.form.getlist("tags")
     try:
@@ -68,12 +68,13 @@ def report_result_submit():
     try:
         result_json = file.read().decode("utf-8")
     except ValueError:
-        return error_redirect("Uploaded file is not UTF-8 encoded.")
+        return error_json_redirect("Uploaded file is not UTF-8 encoded.")
 
     try:
         success = controller.submit_result(result_json, json.dumps(metadata))
     except (ValueError, TypeError) as e:
-        return error_redirect('Failed to submit report: ' + str(e))
+        return error_json_redirect('Failed to submit report: ' + str(e))
     if not success:
-        return error_redirect('Failed to submit report.')
-    return info_redirect("Submission succesful")
+        return error_json_redirect('Failed to submit report.')
+    
+    return Response('{}', mimetype='application/json', status=200)
