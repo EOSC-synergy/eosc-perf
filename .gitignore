@@ -136,4 +136,5 @@ test.db
 # webapp files
 *.db
 config.yaml
+upload_license.txt
 certs/*
