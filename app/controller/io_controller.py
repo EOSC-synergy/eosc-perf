@@ -57,9 +57,10 @@ class IOController:
         # Check if user is authenticated
         if self.is_authenticated():
             # Check if the result is in the correct format.
-            if self._result_validator.validate_json(result_json):
-                # Try to add the result to the data base.
-                return facade.add_result(result_json, metadata)
+            if not self._result_validator.validate_json(result_json):
+                raise ValueError("no valid result JSON")
+            # Try to add the result to the data base.
+            return facade.add_result(result_json, metadata)
         return False
 
     def submit_benchmark(self, uploader_id: str, docker_name: str, comment: str,
