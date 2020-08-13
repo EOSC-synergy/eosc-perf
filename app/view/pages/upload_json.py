@@ -24,7 +24,7 @@ class UploadJSONFactory(PageFactory):
 upload_json_blueprint = Blueprint('upload_json_blueprint', __name__)
 
 @upload_json_blueprint.route('/upload', methods=['GET'])
-def report_result():
+def upload_result():
     """HTTP endpoint for the result upload page"""
 
     if not controller.is_authenticated():
@@ -39,7 +39,7 @@ def report_result():
     return Response(page, mimetype='text/html')
 
 @upload_json_blueprint.route('/upload_submit', methods=['POST'])
-def report_result_submit():
+def upload_result_submit():
     """HTTP endpoint to take in results"""
     if not controller.is_authenticated():
         return error_json_redirect('Not logged in')
@@ -73,8 +73,8 @@ def report_result_submit():
     try:
         success = controller.submit_result(result_json, json.dumps(metadata))
     except (ValueError, TypeError) as e:
-        return error_json_redirect('Failed to submit report: ' + str(e))
+        return error_json_redirect('Failed to submit result: ' + str(e))
     if not success:
-        return error_json_redirect('Failed to submit report.')
+        return error_json_redirect('Failed to submit result.')
     
     return Response('{}', mimetype='application/json', status=200)
