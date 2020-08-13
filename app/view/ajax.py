@@ -101,8 +101,8 @@ class SiteFetchAJAXHandler(AJAXHandler):
         for site in sites:
             result_dict = {}
             # do not display hidden sites
-          #  if site.get_hidden():
-           #     continue
+            if site.get_hidden():
+                continue
             result_dict["name"] = site.get_name()
             result_dict["short_name"] = site.get_short_name()
             result_dict["description"] = site.get_description()
