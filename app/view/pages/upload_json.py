@@ -5,19 +5,15 @@ Provided is:
 
 import json
 
-from flask import request, Response, redirect
+from flask import request, Response
 from flask.blueprints import Blueprint
 
 from ..page_factory import PageFactory
 from ..type_aliases import HTML, JSON
 
-from ...model.facade import facade
 from ...controller.io_controller import controller
-from ...configuration import configuration
-from ...model.database import db
-from ...model.data_types import ResultIterator
 
-from .helpers import error_json_redirect, error_redirect
+from .helpers import error_json_redirect, error_redirect, info_redirect
 
 class UploadJSONFactory(PageFactory):
     """A factory to build upload pages."""
@@ -31,7 +27,7 @@ upload_json_blueprint = Blueprint('upload_json_blueprint', __name__)
 def report_result():
     """HTTP endpoint for the result upload page"""
 
-    if not controller.authenticate():
+    if not controller.is_authenticated():
         return error_redirect('Not logged in')
 
     factory = UploadJSONFactory()
@@ -44,4 +40,36 @@ def report_result():
 
 @upload_json_blueprint.route('/upload_submit', methods=['POST'])
 def report_result_submit():
-    pass
+    """HTTP endpoint to take in results"""
+    if not controller.is_authenticated():
+        return error_redirect('Not logged in')
+    # check if the post request has the file part
+    if 'file' not in request.files:
+        return error_redirect('No file in request')
+    file = request.files['file']
+    # if user does not select file, browser might
+    # submit an empty part without filename
+    if file.filename == '':
+        return error_redirect('No file in request')
+
+    tags = request.form.getlist("tags")
+    try:
+        # trying to remove placeholder for no tags
+        tags.remove("--No Tag--")
+    except ValueError:
+        pass
+
+    metadata = {
+        'uploader': "dead beef", #controller.get_user_id(), TODO
+        'site': request.form['site'],
+        'benchmark': request.form['benchmark'],
+        'tags': tags}
+    print(metadata)
+    try:
+        result_json = file.read().decode("utf-8")
+    except ValueError:
+        return error_redirect("Uploaded file is not UTF-8 encoded.")
+        
+    if not controller.submit_result(result_json, json.dumps(metadata)):
+        return error_redirect('Failed to submit report')
+    return info_redirect("Submission succesful")
