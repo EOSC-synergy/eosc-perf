@@ -1,20 +1,9 @@
-// find result ajax
-$.ajax('/query_results?query_json='
-    + encodeURI(JSON.stringify(
-      {'filters':[
-            {
-                "type": "tag",
-                "value": "cpu"
-            }
-        ]})))
-    .done(function(data) {
-        console.log(data);
-    });
 // parameters represented as external state, so ResultSearch has no internal state, instead of a mix.
-window.addEventListener("load", function(){
+window.addEventListener("load", function () {
     onload();
 });
 function onload() {
+    benchmark = ""
     query = ""
     results = []
     current_page = 1
@@ -29,13 +18,17 @@ function onload() {
     }
     values = ["selected", "site", "uploader", "data", "tags"]
     filter_uuid = 0
-    filter_types = ["Uploader", "Site", "Tag", "Value greater than", "Value equal to", "Value less than"]
+    filter_types = ["Uploader", "Site", "Tag", "Value greater than", "Value equal to", "Value less than"];
+    filter_dic = {
+        "Uploader": "uploader", "Site": "site", "Tag": "tag", "Value greater than": "greater_than",
+        "Value equal to": "equals", "Value less than": "lesser_than"
+    };
     results = [{
         selected: false, benchmark: "Test Benchmark for cpu", uploader: "John Doe", site: "Paris"
-        , tags: "[CPU , not GPU]",uuid:"123", data: { test: "val1", test2: "val2"}
-    },{
+        , tags: "[CPU , not GPU]", uuid: "123", data: { test: "val1", test2: "val2" }
+    }, {
         selected: false, benchmark: "Test Benchmark for cpu", uploader: "John Doe", site: "moon"
-        , tags: "[CPU , not GPU]",uuid:"456", data: { test: "val1", test2: "val2"}
+        , tags: "[CPU , not GPU]", uuid: "456", data: { test: "val1", test2: "val2" }
     }];
     ResultSearch.set_result_table();
     ResultSearch.set_page_selection();
@@ -101,7 +94,7 @@ class ResultSearch extends Content {
         var results_amount = results.length;
         var start = (current_page - 1) * results_per_page;
         var end = Math.min(start + results_per_page, results_amount);
-        console.log("start:"+start+" end:"+end);
+        console.log("start:" + start + " end:" + end);
         for (var i = start; i < end; i++) {
             var row = document.createElement("TR")
             const res = results[i];
@@ -211,12 +204,47 @@ class ResultSearch extends Content {
         this.update();
     }
 
-    static search(new_query) {
+    static search() {
         // Generate query.
+        let filters = [];
+        var html_filter = document.getElementById("filters").children;
+        // Add benchmark filter
+        var bm = { "type": "benchmark", "value": benchmark };
+        filters = filters.concat([bm]);
+        for (var index = 0; index < html_filter.length; index++) {
+            let type = html_filter[index].firstChild.value;
+            let element = "";
+            if (type.includes("Value")) {
+                let key = html_filter[index].firstChild.nextSibling.value;
+                let value = html_filter[index].firstChild.nextSibling.nextSibling.value;
+                // Remove spaces and " characters.
+                key = key.replace(/(\s+)/g, '').replace(/\"+/g, "'");
+                type = filter_dic[type] + "";
+                if (key != "" && value != "" && type != "") {
+                    element = { 'type': 'json', 'key': key, 'value': value, 'mode': type };
 
-        // Request the result query.
-        $.getJSON('/query_results', { 'query_json': JSON.stringify(query) },
-            function (data) { results = JSON.parse(data.result) });
+                }
+            } else {
+                let value = html_filter[index].firstChild.nextSibling.value;
+                type = filter_dic[type];
+                if (type != "" && value != "") {
+                    element = { 'type': type, 'value': value };
+                }
+            }
+            // Append if not empty
+            if (element != "") {
+                filters = filters.concat([element]);
+            }
+        }
+        query = {"filters":filters}
+        // Find get new results via ajax query.
+        $.ajax('/query_results?query_json='
+            + encodeURI(JSON.stringify(filters)))
+            .done(function (data) {
+                console.log(data);
+            });
+        /**$.getJSON('/query_results', { 'query_json': JSON.stringify(query) },
+            function (data) { results = JSON.parse(data.result) });*/
 
     }
     static add_filter_field() {
@@ -226,7 +254,7 @@ class ResultSearch extends Content {
         // Creat the new filter.
         var new_filter = document.createElement('LI');
         new_filter.setAttribute("id", filter_id);
-        var filter_type = document.createElement("select");
+        let filter_type = document.createElement("select");
         // Add the different types.
         for (var i = 0; i < filter_types.length; i++) {
             // Create options with their name as value.
@@ -235,6 +263,16 @@ class ResultSearch extends Content {
             type.textContent = filter_types[i];
             filter_type.appendChild(type);
         }
+        // listener to adjust input fields.
+        filter_type.addEventListener("change", function () {
+            if (filter_type.value.includes("Value")) {
+                // Give field for numeric value.
+                document.getElementById("number" + filter_id).style.visibility = "visible";
+            } else {
+                // Hide numeric field.
+                document.getElementById("number" + filter_id).style.visibility = "hidden";
+            }
+        });
         // Add selection to row
         new_filter.appendChild(filter_type);
         // Create input.
@@ -242,6 +280,13 @@ class ResultSearch extends Content {
         input.setAttribute("type", "text");
         input.setAttribute("placeholder", "Filter Value");
         new_filter.appendChild(input);
+        // Create number field
+        var num_input = document.createElement("input");
+        num_input.setAttribute("type", "number");
+        num_input.setAttribute("id", "number" + filter_id);
+        num_input.setAttribute("min", "0");
+        num_input.style.visibility = "hidden";
+        new_filter.appendChild(num_input);
         // Create button to remove given filter.
         var remove_filter = document.createElement("input");
         remove_filter.setAttribute("type", "button");
@@ -289,14 +334,14 @@ class ResultSearch extends Content {
 
     static make_diagram() {
         // Store data in href
-        let selected_results = results.filter(x=>x["selected"]);
+        let selected_results = results.filter(x => x["selected"]);
         let uuids = "";
-        if(selected_results.length >0) {
-            for(var index in selected_results) {
-                uuids += "uuids:"+selected_results[index]["uuid"]+"&";
+        if (selected_results.length > 0) {
+            for (var index in selected_results) {
+                uuids += "uuids:" + selected_results[index]["uuid"] + "&";
             }
         }
-        window.location.href = '/make_diagram?'+uuids.slice(0,-1);
+        window.location.href = '/make_diagram?' + uuids.slice(0, -1);
     }
 
     static delete_result(result) {
