@@ -21,8 +21,8 @@ function onload() {
     }
     values = ["selected", "site", "uploader", "data", "tags"];
     filter_uuid = 0;
-    ResultSearch.set_result_table();
-    ResultSearch.set_page_selection();
+    
+    ResultSearch.search();
     ResultSearch.add_filter_field();
 }
 /**
