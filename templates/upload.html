@@ -9,6 +9,7 @@
 {% endblock %}
 
 {% block info %}
+<input type="hidden" id="license" value="{{ license }}" />
 <div id="overlay">
     <div id="overlay-text"></div>
 </div>
@@ -24,7 +25,11 @@
         <select class="form-control" id="site_selection" name="site"></select><br />
         <label for="tag_selection">Select tags (hold control for multi-selection):</label>
         <select multiple class="form-control" id="tag_selection" name="tags"></select><br />
-        <input type="submit" class="btn btn-success" name="upload" value="Upload" id="submit_button" />
+        <label class="checkbox-label">
+            <input class="checkbox" type="checkbox" value="" id="agreed_license" onclick="license_checkbox_click(this)"/>
+            I have read and accept the <button type="button" class="btn btn-secondary" onclick="show_license()">license agreement</button>
+        </label>
+        <input type="submit" class="btn btn-success float-right mr-1" name="upload" value="Upload" id="submit_button" disabled/>
     </form>
 </div>
 

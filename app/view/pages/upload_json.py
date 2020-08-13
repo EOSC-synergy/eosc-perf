@@ -4,22 +4,33 @@ Provided is:
 """
 
 import json
+from pathlib import Path
 
 from flask import request, Response
 from flask.blueprints import Blueprint
 
 from ..page_factory import PageFactory
 from ..type_aliases import HTML, JSON
+from ...configuration import configuration
 
 from ...controller.io_controller import controller
 
-from .helpers import error_json_redirect, error_redirect, info_redirect
+from .helpers import error_json_redirect, error_redirect
 
 class UploadJSONFactory(PageFactory):
     """A factory to build upload pages."""
 
     def _generate_content(self, args: JSON) -> HTML:
         pass
+
+    @staticmethod
+    def get_license_string() -> str:
+        """Helper: Get result upload license as string:"""
+        filename = configuration["upload_license_filename"]
+        path = str(Path(__file__).parent) + "/../../../" + filename
+        with open(path, "r") as license_file:
+            license_string = license_file.read()
+        return license_string
 
 upload_json_blueprint = Blueprint('upload_json_blueprint', __name__)
 
@@ -35,7 +46,8 @@ def upload_result():
     with open('templates/upload.html') as file:
         page = factory.generate_page(
             args='{}',
-            template=file.read())
+            template=file.read(),
+            license=factory.get_license_string().replace('\n', '<br>'))
     return Response(page, mimetype='text/html')
 
 @upload_json_blueprint.route('/upload_submit', methods=['POST'])

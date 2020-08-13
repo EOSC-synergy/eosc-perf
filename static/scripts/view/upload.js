@@ -15,7 +15,16 @@ $(function () {
                 // display success message and disable form
                 $('#overlay-text').text('Submission successful');
                 $('#overlay').show();
-                $('#form input[type="submit"]').prop("disabled", true);
+                (function ($) {
+                    $('#overlay').on('click', function (e) {
+                        if (e.target !== this)
+                            return;
+                        $(this).fadeOut();
+                        document.getElementById("result_file").value = "";
+                        document.getElementById("agreed_license").checked = false
+                        $('#form input[type="submit"]').prop("disabled", true);
+                    });
+                })(jQuery);
             },
             error: function (data) {
                 window.location.href = data.responseJSON.redirect;
@@ -25,6 +34,20 @@ $(function () {
         return false;
     });
 });
+
+function license_checkbox_click(cb) {
+    if (cb.checked) {
+        document.getElementById("submit_button").removeAttribute("disabled")
+    } else {
+        document.getElementById("submit_button").setAttribute("disabled", true);
+    }
+}
+
+function show_license() {
+    license = document.getElementById("license").getAttribute("value");
+    var wnd = window.open("about:blank", "", "_blank");
+    wnd.document.write("<html><body>"+license+"</body></html>");
+}
 
 function prepare_sites() {
     var site_selection = document.getElementById("site_selection");
