@@ -60,16 +60,16 @@ def report_result_submit():
         pass
 
     metadata = {
-        'uploader': "dead beef", #controller.get_user_id(), TODO
+        'uploader': controller.get_user_id(),
         'site': request.form['site'],
         'benchmark': request.form['benchmark'],
         'tags': tags}
-    print(metadata)
+
     try:
         result_json = file.read().decode("utf-8")
     except ValueError:
         return error_redirect("Uploaded file is not UTF-8 encoded.")
-        
+
     if not controller.submit_result(result_json, json.dumps(metadata)):
         return error_redirect('Failed to submit report')
     return info_redirect("Submission succesful")
