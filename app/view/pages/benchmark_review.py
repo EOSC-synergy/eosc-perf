@@ -14,13 +14,13 @@ from werkzeug.urls import url_encode
 from ..page_factory import PageFactory
 from ..type_aliases import HTML, JSON
 
-from ...model.facade import facade
+from ...model.facade import facade, DatabaseFacade
 from ...model.data_types import Report, BenchmarkReport
 from ...controller.io_controller import controller
 from ...controller.authenticator import AuthenticateError
 from ...configuration import configuration
 
-from .helpers import error_json_redirect, error_redirect
+from .helpers import error_json_redirect, error_redirect, info_redirect
 
 class BenchmarkReviewPageFactory(PageFactory):
     """A factory to build benchmark report view pages."""
@@ -75,17 +75,19 @@ def build_dockerregistry_url(docker_name):
 
 benchmark_review_blueprint = Blueprint('benchmark-review', __name__)
 
-@benchmark_review_blueprint.route('/test_benchmark_review', methods=['GET'])
-def test_benchmark_review():
-    """Testing helper."""
-    if not configuration['debug']:
-        return error_redirect('This endpoint is not available in production')
-    reports = facade.get_reports(only_unanswered=False)
+@benchmark_review_blueprint.route('/review_first_benchmark', methods=['GET'])
+def get_benchmark_review():
+    """Review a random new benchmark."""
+    try:
+        reports = facade.get_reports(only_unanswered=True)
+    except DatabaseFacade.NotFoundError:
+        return info_redirect('No benchmarks to review')
     # use first benchmark report we can find
     for report in reports:
         if report.get_report_type() == Report.BENCHMARK:
             return redirect(
                 '/benchmark_review?' + url_encode({'uuid': report.get_uuid()}), code=302)
+    return info_redirect('No benchmarks to review')
 
 @benchmark_review_blueprint.route('/benchmark_review', methods=['GET'])
 def review_benchmark():
