@@ -338,17 +338,13 @@ class ResultSearch extends Content {
         let uuids = "";
         if (selected_results.length > 0) {
             for (var index in selected_results) {
-                uuids += "uuids:" + selected_results[index]["uuid"] + "&";
+                uuids += "result_uuids:" + selected_results[index]["uuid"] + "&";
             }
         }
         window.location.href = '/make_diagram?' + uuids.slice(0, -1);
     }
 
     static delete_result(result) {
-
-    }
-
-    static report_result(result) {
 
     }
 
