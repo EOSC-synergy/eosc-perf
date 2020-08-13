@@ -221,10 +221,14 @@ class ResultSearch extends Content {
                 filters = filters.concat([element]);
             }
         }
-        query = {"filters":filters}
+        // TODO: SWITCH THIS BACK AFTER THE PAGE WORKS TO FIX THE FILTERING
+        // THIS MEANS YOU, MARC!
+        //query = { "filters": filters }
+        query = { "filters": [] }
+
         // Find get new results via ajax query.
         $.ajax('/query_results?query_json='
-            + encodeURI(JSON.stringify(filters)))
+            + encodeURI(JSON.stringify(query)))
             .done(function (data) {
                 console.log(data);
             });
