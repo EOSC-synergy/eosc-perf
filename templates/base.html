@@ -2,6 +2,7 @@
 
 <head>
     <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="static/css/overlay.css" />
     <script src="static/scripts/jquery-3.5.1.min.js"></script>
     <script src="static/scripts/bootstrap.min.js"></script>
     <title>{% block title %}{% endblock %}</title>
@@ -15,6 +16,15 @@
 </head>
 
 <body>
+    <div id="overlay">
+        <div id="overlay-wrapper">
+            <button type="button" class="close" aria-label="Close" onclick="$('#overlay').hide()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <div id="overlay-text">
+            </div>
+        </div>
+    </div>
     <div class="container">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <a class="navbar-brand" href="/">EOSC-PSE</a>

@@ -11,7 +11,7 @@
     z-index: 2;
 }
 
-#overlay-text {
+#overlay-wrapper {
     margin-top: 5em;
     margin-bottom: 5em;
     margin-left: auto;

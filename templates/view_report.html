@@ -4,14 +4,10 @@
 
 {% block head %}
 {{ super() }}
-<link rel="stylesheet" type="text/css" href="static/css/overlay.css" />
 <script src="static/scripts/view/site_review.js"></script>
 {% endblock %}
 
 {% block info %}
-    <div id="overlay">
-        <div id="overlay-text"></div>
-    </div>
     <h1>Inaccurate result report</h1>
     <p>
     Reported by: {{reporter_name}} ({{reporter_mail}})

@@ -4,15 +4,11 @@
 
 {% block head %}
 {{ super() }}
-<link rel="stylesheet" type="text/css" href="static/css/overlay.css" />
 <script src="static/scripts/view/upload.js"></script>
 {% endblock %}
 
 {% block info %}
 <input type="hidden" id="license" value="{{ license }}" />
-<div id="overlay">
-    <div id="overlay-text"></div>
-</div>
 <div class="container">
     <h1>Upload Result</h1>
     <br>

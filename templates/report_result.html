@@ -4,7 +4,6 @@
 
 {% block head %}
 {{ super() }}
-<link rel="stylesheet" type="text/css" href="static/css/overlay.css" />
 <script src="static/scripts/view/report_result.js"></script>
 <style>
     #message-box {
@@ -14,9 +13,6 @@
 {% endblock %}
 
 {% block info %}
-    <div id="overlay">
-        <div id="overlay-text"></div>
-    </div>
     <h1>Report result</h1>
     <h4>Result content:</h2>
     <code>

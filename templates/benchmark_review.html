@@ -4,14 +4,10 @@
 
 {% block head %}
 {{ super() }}
-<link rel="stylesheet" type="text/css" href="static/css/overlay.css" />
 <script src="static/scripts/view/benchmark_review.js"></script>
 {% endblock %}
 
 {% block info %}
-    <div id="overlay">
-        <div id="overlay-text"></div>
-    </div>
     <h1>Benchmark review</h1>
     <h4>Dockerhub description for <a href="{{docker_link}}">'{{docker_name}}'</a></h4>
     <div id="docker_desc" class="jumbotron" style="overflow:scroll;height:60%">

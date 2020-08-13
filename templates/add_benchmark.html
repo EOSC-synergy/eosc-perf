@@ -4,7 +4,6 @@
 
 {% block head %}
 {{ super() }}
-<link rel="stylesheet" type="text/css" href="static/css/overlay.css" />
 <script src="static/scripts/view/add_benchmark.js"></script>
 <style>
     #message-box {
@@ -14,9 +13,6 @@
 {% endblock %}
 
 {% block info %}
-    <div id="overlay">
-        <div id="overlay-text"></div>
-    </div>
     <h1>Add benchmark</h1>
     <form id="form" action="/add_benchmark_submit" method="POST">
         <input type="text" name="docker_name" placeholder="user/image:tag" />
