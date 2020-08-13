@@ -166,6 +166,7 @@ class Uploader(db.Model):
     def set_email(self, email: str):
         """Update the email address associated with the uploader."""
         self._email = email
+        db.session.commit()
 
     def get_name(self) -> str:
         """Get a human-readable human name."""
@@ -174,6 +175,7 @@ class Uploader(db.Model):
     def set_name(self, name: str):
         """Update the human-readable human human name."""
         self._name = name
+        db.session.commit()
 
     def get_results(self) -> ResultIterator:
         """Get an iterator for all the results associated with this uploader."""
@@ -221,6 +223,7 @@ class Benchmark(db.Model):
     def set_hidden(self, state: bool):
         """Set the hide state of the benchmark."""
         self._hidden = state
+        db.session.commit()
 
     def get_hidden(self) -> bool:
         """Get the hide state of the benchmark."""
@@ -268,6 +271,7 @@ class Site(db.Model):
     def set_address(self, info: str):
         """Update the current network address of the site."""
         self._address = info
+        db.session.commit()
 
     def get_description(self) -> str:
         """Get the human-readable description of the site."""
@@ -276,6 +280,7 @@ class Site(db.Model):
     def set_description(self, desc: str):
         """Update the current description of the site."""
         self._description = desc
+        db.session.commit()
 
     def get_results(self) -> ResultIterator:
         """Get an iterator for all results associated to this site."""
@@ -292,6 +297,7 @@ class Site(db.Model):
     def set_hidden(self, state: bool):
         """Set the hide state of the site."""
         self._hidden = state
+        db.session.commit()
 
     def get_hidden(self) -> bool:
         """Get the hide state of the site."""
@@ -331,6 +337,7 @@ class Tag(db.Model):
     def set_description(self, description: str):
         """Update the current tag's human-readable description."""
         self._description = description
+        db.session.commit()
 
     def get_name(self) -> str:
         """Get the name of the tag."""
@@ -416,6 +423,7 @@ class Result(db.Model):
     def set_hidden(self, state: bool):
         """Set the hide state of the result."""
         self._hidden = state
+        db.session.commit()
 
     def get_hidden(self) -> bool:
         """Get the hide state of the result."""
@@ -498,6 +506,7 @@ class Report(db.Model):
         """Update the verdict on the report."""
         self._verdict = verdict
         self._verified = True
+        db.session.commit()
 
     def get_uuid(self) -> str:
         """Get the UUID of this report."""
