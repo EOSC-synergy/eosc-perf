@@ -3,12 +3,9 @@ window.addEventListener("load", function () {
     onload();
 });
 function onload() {
-    benchmark = ""
     query = ""
     results = []
     current_page = 1
-    selected_results = []
-    admin = true
     filters = []
     results_per_page = 10
     ordered_by = null
@@ -18,18 +15,6 @@ function onload() {
     }
     values = ["selected", "site", "uploader", "data", "tags"]
     filter_uuid = 0
-    filter_types = ["Uploader", "Site", "Tag", "Value greater than", "Value equal to", "Value less than"];
-    filter_dic = {
-        "Uploader": "uploader", "Site": "site", "Tag": "tag", "Value greater than": "greater_than",
-        "Value equal to": "equals", "Value less than": "lesser_than"
-    };
-    results = [{
-        selected: false, benchmark: "Test Benchmark for cpu", uploader: "John Doe", site: "Paris"
-        , tags: "[CPU , not GPU]", uuid: "123", data: { test: "val1", test2: "val2" }
-    }, {
-        selected: false, benchmark: "Test Benchmark for cpu", uploader: "John Doe", site: "moon"
-        , tags: "[CPU , not GPU]", uuid: "456", data: { test: "val1", test2: "val2" }
-    }];
     ResultSearch.set_result_table();
     ResultSearch.set_page_selection();
 }
