@@ -55,11 +55,15 @@ class IOController:
         bool: If the benchmark was successfully added.
         """
         # Check if user is authenticated
-        if self.authenticate():
+        if self.is_authenticated():
             # Check if the result is in the correct format.
-            if self._result_validator  .validate_json(result_json):
-                # Try to add the result to the data base.
-                return facade.add_result(result_json, metadata)
+            if not self._result_validator.validate_json(result_json):
+                raise ValueError("no valid result JSON")
+
+            # if the user is not in the database, we must add them
+            self.add_current_user_if_missing()
+            # Try to add the result to the data base.
+            return facade.add_result(result_json, metadata)
         return False
 
     def submit_benchmark(self, uploader_id: str, docker_name: str, comment: str,
@@ -78,7 +82,7 @@ class IOController:
         bool: If the benchmark was successfully submitted.
         """
         # Check if user is authenticated.
-        if not self.authenticate():
+        if not self.is_authenticated():
             return False
         # Check for valid email address.
         # Check valid docker_hub_name.uploader_emailuploader_email
@@ -102,7 +106,7 @@ class IOController:
         Returns:
         bool: If the submission was successful.
         """
-        if self.authenticate():
+        if self.is_authenticated():
             # Crete new site.
             new_site = self._parse_site(metadata_json)
             # Add to unaproved sites.
@@ -166,7 +170,7 @@ class IOController:
         Returns:
         bool: If the report was successfully added.
         """
-        if self.authenticate():
+        if self.is_authenticated():
             # Add to database.
             if facade.add_report(metadata):
                 # TODO: notify admin, per email.

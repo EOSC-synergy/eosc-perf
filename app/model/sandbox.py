@@ -8,8 +8,8 @@ uploaders = [
     Uploader(identifier='do you believe in magic?', email='user@example.com', name='John Doe')
 ]
 sites = [
-    Site(short_name='rpi', address='192.168.1.2', description="My cool raspberry pi"),
-    Site(short_name="terrapc", address='127.0.0.1', description="My strong desktop PC")
+    Site(short_name='rpi', name="rpi_long", address='192.168.1.2', description="My cool raspberry pi"),
+    Site(short_name="terrapc", name="terra_long", address='127.0.0.1', description="My strong desktop PC")
 ]
 benchmarks = [
     Benchmark(docker_name='user/bench:version', uploader=uploaders[0]),
