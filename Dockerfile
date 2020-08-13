@@ -16,6 +16,7 @@ COPY ./app/. .
 COPY ./templates/. .
 COPY ./uwsgi.ini .
 # TODO: keep the config here?
+COPY ./upload_license.txt .
 COPY ./config.yaml .
 # set launch command
 CMD [ "uwsgi", "--ini", "uwsgi.ini" ]
