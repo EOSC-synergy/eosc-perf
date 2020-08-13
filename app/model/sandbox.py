@@ -16,9 +16,8 @@ benchmarks = [
     Benchmark(docker_name='user/otherbench:version', uploader=uploaders[0])
 ]
 for i in range(1, 101):
-    docker_name = "user{}/bench{}:version".format(i, i)
-    uploader = uploaders[i%2]
-    benchmarks.append(Benchmark(docker_name=docker_name, uploader=uploader))
+    fake_docker_name = "user{}/bench{}:version".format(i, i)
+    benchmarks.append(Benchmark(docker_name=fake_docker_name, uploader=uploaders[i%2]))
 
 tags = [
     Tag(name='neato'),
@@ -74,7 +73,7 @@ def add_dummies_if_not_exist():
         facade.add_benchmark(benchmark.get_docker_name(), benchmark.get_uploader().get_id())
 
     #for result in results:
-    #    facade.add_result(result.get_json(), result.dumps({
+    #    facade.add_result(result.get_json(), json.dumps({
     #        'uploader': result.get_uploader().get_id(),
     #        'site': result.get_site().get_short_name(),
     #        'benchmark': result.get_benchmark().get_docker_name(),
@@ -89,15 +88,26 @@ def add_dummies_if_not_exist():
             'tags': [tag.get_name() for tag in result.get_tags()]
         }))
     
+    # make data added up to this point visible and useable
+    iterator = ResultIterator(db.session)
+    for result in iterator:
+        result.set_hidden(False)
+    for site in facade.get_sites():
+        site.set_hidden(False)
+    for bench in facade.get_benchmarks():
+        bench.set_hidden(False)
+    
+    # add new 
     report_example_bench = Benchmark(docker_name='pihole/pihole:dev', uploader=uploaders[0])
     bench_report = BenchmarkReport(benchmark=report_example_bench, uploader=uploaders[0])
-    
-    site_report = SiteReport(site=sites[0], uploader=uploaders[0])
-    
-    test_results = facade.query_results(json.dumps({"filters": []}))
-    result_report = ResultReport(result=test_results[0], uploader=uploaders[1])
-    
     facade.add_benchmark(report_example_bench.get_docker_name(), report_example_bench.get_uploader().get_id())
+    
+    report_example_site = Site('foobar', 'elsewhere')
+    site_report = SiteReport(site=report_example_site, uploader=uploaders[0])
+    facade.add_site(json.dumps({
+        'short_name': report_example_site.get_short_name(),
+        'address': report_example_site.get_address()
+    }))
     
     facade.add_report(json.dumps({
         'message': 'Oopsie',
@@ -110,10 +120,4 @@ def add_dummies_if_not_exist():
         'type': 'site',
         'value': site_report.get_site().get_short_name(),
         'uploader': site_report.get_reporter().get_id()
-    }))
-    facade.add_report(json.dumps({
-        'message': 'FAKE!',
-        'type': 'result',
-        'value': result_report.get_result().get_uuid(),
-        'uploader': result_report.get_reporter().get_id()
     }))
