@@ -33,8 +33,6 @@ def create_app(config):
         print("Running in debug mode")
     else:
         print("Running in production mode")
-    # 16 megabytes is maximum for uploading files
-    flask_app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
     flask_app.app_context().push()
     configure_database(flask_app, config)
