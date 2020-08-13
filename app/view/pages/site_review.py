@@ -51,6 +51,9 @@ def review_site():
     if not controller.is_authenticated():
         return error_redirect('Not logged in')
 
+    if not controller.is_authenticated():
+        return error_json_redirect('Not an admin')
+
     uuid = request.args.get('uuid')
     if uuid is None:
         return error_redirect('Site review page opened with no uuid')
@@ -90,6 +93,9 @@ def review_site_submit():
 
     if not controller.is_authenticated():
         return error_json_redirect('Not logged in')
+    
+    if not controller.is_authenticated():
+        return error_json_redirect('Not an admin')
 
     uuid = request.form['uuid']
 

@@ -52,6 +52,9 @@ def view_report():
 
     if not controller.is_authenticated():
         return error_redirect('Not logged in')
+    
+    if not controller.is_authenticated():
+        return error_json_redirect('Not an admin')
 
     uuid = request.args.get('uuid')
     if uuid is None:
@@ -107,6 +110,9 @@ def view_report_submit():
 
     if not controller.is_authenticated():
         return error_json_redirect('Not logged in')
+    
+    if not controller.is_authenticated():
+        return error_json_redirect('Not an admin')
 
     uuid = request.form['uuid']
 
