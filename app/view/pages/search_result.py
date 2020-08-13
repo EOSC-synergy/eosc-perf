@@ -25,8 +25,8 @@ class SearchResultFactory(PageFactory):
             HTML: The finished content."""
         arguments = json.loads(args)
         try:
-            result = "admin = " + arguments['admin'] + ";\n"\
-                + "benchmark = " + arguments['benchmark'] + ";"
+            result = "admin = " + str(arguments['admin']) + ";\n"\
+                + "benchmark = " + str(arguments['benchmark']) + ";"
         except KeyError as error:
             print(error)
             result = ""
@@ -56,6 +56,5 @@ def make_search_page():
     args = json.dumps({'benchmark': benchmark, 'admin': controller.is_admin()})
     factory = SearchResultFactory()
     with open('templates/result_search.html') as file:
-        page = factory.generate_page(args=args,
-                                     template=file)
+        page = factory.generate_page(args=args, template=file.read())
     return Response(page, mimetype='text/html')
