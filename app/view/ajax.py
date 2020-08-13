@@ -64,7 +64,7 @@ class BenchmarkSearchAJAX(SearchAJAXHandler):
     def __init__(self, facade_: DatabaseFacade):
         """Set up a new BenchmarkSearchAJAX using the DatabaseFacade."""
         self._facade = facade_
-        
+
     def find_results(self, query: JSON) -> JSON:
         """Fetch benchmarks corresponding to given query."""
         results_dict = {"results": []}
@@ -83,6 +83,84 @@ class BenchmarkSearchAJAX(SearchAJAXHandler):
 
         return json.dumps(results_dict)
     
+class SiteFetchAJAXHandler(AJAXHandler):
+    """AJAX handler for fetching sites."""
+
+    def __init__(self, facade_: DatabaseFacade):
+        """Set up a new SiteFetchAJAXHandler using the DatabaseFacade."""
+        self._facade = facade_
+
+    def fetch_data(self, query: JSON = None) -> JSON:
+        """Fetch all sites independent of given query."""
+        return self.fetch_sites()
+
+    def fetch_sites(self) -> JSON:
+        """Fetch all sites."""
+        results_dict = {"results": []}
+        sites = self._facade.get_sites()
+        for site in sites:
+            result_dict = {}
+            # do not display hidden sites
+          #  if site.get_hidden():
+           #     continue
+            result_dict["name"] = site.get_name()
+            result_dict["short_name"] = site.get_short_name()
+            result_dict["description"] = site.get_description()
+            result_dict["address"] = site.get_address()
+            results_dict["results"].append(result_dict)
+        return json.dumps(results_dict)
+
+class TagFetchAJAXHandler(AJAXHandler):
+    """AJAX handler for fetching tags."""
+
+    def __init__(self, facade_: DatabaseFacade):
+        """Set up a new TagFetchAJAXHandler using the DatabaseFacade."""
+        self._facade = facade_
+
+    def fetch_data(self, query: JSON = None) -> JSON:
+        """Fetch all tags independent of given query."""
+        return self.fetch_tags()
+
+    def fetch_tags(self) -> JSON:
+        """Fetch all tags."""
+        results_dict = {"results": []}
+        tags = self._facade.get_tags()
+        for tag in tags:
+            result_dict = {}
+            result_dict["name"] = tag.get_name()
+            result_dict["description"] = tag.get_description()
+            results_dict["results"].append(result_dict)
+        return json.dumps(results_dict)
+
+class BenchmarkFetchAJAXHandler(AJAXHandler):
+    """AJAX handler for fetching benchmarks."""
+
+    def __init__(self, facade_: DatabaseFacade):
+        """Set up a new BenchmarkFetchAJAXHandler using the DatabaseFacade."""
+        self._facade = facade_
+
+    def fetch_data(self, query: JSON = None) -> JSON:
+        """Fetch all benchmarks independent of given query."""
+        return self.fetch_benchmarks()
+
+    def fetch_benchmarks(self) -> JSON:
+        """Fetch all benchmarks."""
+        results_dict = {"results": []}
+        benchmarks = self._facade.get_benchmarks()
+        for benchmark in benchmarks:
+            result_dict = {}
+            # do not display hidden benchmarks (= new ones)
+            if benchmark.get_hidden():
+                continue
+            # decode and add to structure to avoid dealing with storing json within jsonj
+            result_dict["docker_name"] = benchmark.get_docker_name()
+            result_dict["uploader"] = benchmark.get_uploader().get_email()
+            results_dict["results"].append(result_dict)
+
+        return json.dumps(results_dict)
+
+
+
 ajax_blueprint = Blueprint('ajax', __name__)
 
 
@@ -103,3 +181,21 @@ def query_benchmarks():
         query_json = "{}"
     handler = BenchmarkSearchAJAX(facade)
     return Response(handler.fetch_data(query_json), mimetype='application/json')
+
+@ajax_blueprint.route('/fetch_sites')
+def fetch_sites():
+    """HTTP endpoint for site AJAX fetches."""
+    handler = SiteFetchAJAXHandler(facade)
+    return Response(handler.fetch_data(), mimetype='application/json')
+
+@ajax_blueprint.route('/fetch_tags')
+def fetch_tags():
+    """HTTP endpoint for tag AJAX fetches."""
+    handler = TagFetchAJAXHandler(facade)
+    return Response(handler.fetch_data(), mimetype='application/json')
+
+@ajax_blueprint.route('/fetch_benchmarks')
+def fetch_benchmarks():
+    """HTTP endpoint for benchmark AJAX fetches."""
+    handler = BenchmarkFetchAJAXHandler(facade)
+    return Response(handler.fetch_data(), mimetype='application/json')
