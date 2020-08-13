@@ -4,7 +4,6 @@ $(function () {
         data = {};
         data['uuid'] = form.find('input[name="uuid"]').val();
         data['action'] = e.originalEvent.submitter.name;
-        console.log(data);
         $.ajax({
             type: form.attr('method'),
             url: form.attr('action'),

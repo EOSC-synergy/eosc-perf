@@ -204,8 +204,6 @@ class DatabaseFacade:
         try:
             metadata = json.loads(metadata_json)
         except json.JSONDecodeError as decode_error:
-            # forward exceptions
-            print("illegal uploader json submitted")
             raise decode_error
 
         # input validation
@@ -234,8 +232,6 @@ class DatabaseFacade:
         try:
             metadata = json.loads(metadata_json)
         except json.JSONDecodeError as decode_error:
-            # forward exceptions
-            print("illegal result json submitted")
             raise decode_error
 
         # input validation
@@ -305,8 +301,6 @@ class DatabaseFacade:
         try:
             metadata = json.loads(metadata_json)
         except json.JSONDecodeError as decode_error:
-            # forward exceptions
-            print("illegal site json submitted")
             raise decode_error
 
         # input validation
