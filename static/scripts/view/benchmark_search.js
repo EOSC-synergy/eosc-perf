@@ -39,8 +39,17 @@ function update_result_table() {
     for (index = start_index; index < limit; ++index) {
         var result_row = table_body.insertRow(-1);
         var docker_name_cell = result_row.insertCell(0);
-        var docker_name = results[index].docker_name;
-        docker_name_cell.innerHTML = docker_name;
+        let docker_name = results[index].docker_name;
+
+        // add a 'a' with href
+        let a = document.createElement('a');
+
+        let link_text = document.createTextNode(docker_name);
+        a.appendChild(link_text);
+        a.title = docker_name;
+        a.href = '/result_search?benchmark=' + encodeURI(docker_name);
+
+        docker_name_cell.appendChild(a);
     }
     if (result_amount > results_per_page) {
         show_nav_buttons()
