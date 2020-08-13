@@ -201,7 +201,6 @@ class ResultSearch extends Content {
         var html_filter = document.getElementById("filters").children;
         // Add benchmark filter
         var bm = { 'type': "benchmark", 'value': benchmark };
-        console.log(bm)
         filters = filters.concat([bm]);
         for (var index = 0; index < html_filter.length; index++) {
             let type = html_filter[index].firstChild.value;
