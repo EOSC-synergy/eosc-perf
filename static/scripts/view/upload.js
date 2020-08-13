@@ -30,6 +30,7 @@ function prepare_sites() {
     site_selection.innerHTML = ''
     $.ajax('/fetch_sites')
     .done(function(data) {
+        console.log(data);
         var sites = data.results;
         for (index = 0; index < sites.length; ++index) {
             site_name = sites[index].name;
@@ -37,7 +38,9 @@ function prepare_sites() {
             site_html = "<option id=" + site_id + ">" + site_name + "</option>\n" ;
             site_selection.innerHTML += site_html;
         }
-        console.log(data);
+        if (sites.length === 0) {
+            document.getElementById("submit_button").setAttribute("disabled", true)
+        }
     })
 }
 
@@ -59,12 +62,15 @@ function prepare_benchmarks() {
     var bm_selection = document.getElementById("bm_selection")
     $.ajax('/fetch_benchmarks')
     .done(function(data) {
+        console.log(data);
         var benchmarks = data.results;
         for (index = 0; index < benchmarks.length; ++index) {
             benchmark_html = "<option>" + benchmarks[index].docker_name + "</option>\n";
             bm_selection.innerHTML += benchmark_html;
         }
-        console.log(data);
+        if (benchmarks.length === 0) {
+            document.getElementById("submit_button").setAttribute("disabled", true)
+        }
     })
 }
 

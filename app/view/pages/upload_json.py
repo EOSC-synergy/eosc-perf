@@ -70,6 +70,10 @@ def report_result_submit():
     except ValueError:
         return error_redirect("Uploaded file is not UTF-8 encoded.")
 
-    if not controller.submit_result(result_json, json.dumps(metadata)):
-        return error_redirect('Failed to submit report')
+    try:
+        success = controller.submit_result(result_json, json.dumps(metadata))
+    except (ValueError, TypeError) as e:
+        return error_redirect('Failed to submit report: ' + str(e))
+    if not success:
+        return error_redirect('Failed to submit report.')
     return info_redirect("Submission succesful")
