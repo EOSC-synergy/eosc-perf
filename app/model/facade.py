@@ -142,6 +142,18 @@ class DatabaseFacade:
         #
         return results
 
+    def get_benchmarks(self) -> List[Benchmark]:
+        """Get all benchmarks."""
+        # prepare query
+        results = db.session.query(Benchmark).all()
+
+        # check number of results
+        if len(results) < 1:
+            raise self.NotFoundError("no benchmarks found")
+
+        #
+        return results
+
     def query_results(self, filter_json: str) -> List[Result]:
         """Fetch results based on given filters formatted in JSON."""
         filterer = ResultFilterer()
