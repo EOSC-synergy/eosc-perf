@@ -3,20 +3,27 @@ window.addEventListener("load", function () {
     onload();
 });
 function onload() {
-    query = ""
-    results = []
-    current_page = 1
-    filters = []
-    results_per_page = 10
-    ordered_by = null
-    columns = ["Select", "Location", "Uploader", "Data", "Tags", "Report"]
+    query = "";
+    results = [];
+    current_page = 1;
+    filters = [];
+    results_per_page = 10;
+    ordered_by = null;
+    columns = ["Select", "Location", "Uploader", "Data", "Tags", "Report"];
+    filter_uuid = 0;
+    filter_types = ["Uploader", "Site", "Tag", "Value greater than", "Value equal to", "Value less than"];
+    filter_dic = {
+        "Uploader": "uploader", "Site": "site", "Tag": "tag", "Value greater than": "greater_than",
+        "Value equal to": "equals", "Value less than": "lesser_than"
+    };
     if (admin) {
         columns.push("Delete");
     }
-    values = ["selected", "site", "uploader", "data", "tags"]
-    filter_uuid = 0
+    values = ["selected", "site", "uploader", "data", "tags"];
+    filter_uuid = 0;
     ResultSearch.set_result_table();
     ResultSearch.set_page_selection();
+    ResultSearch.add_filter_field();
 }
 /**
  * The ResultSearch class is responsible to communicate with the backend to 
@@ -79,7 +86,6 @@ class ResultSearch extends Content {
         var results_amount = results.length;
         var start = (current_page - 1) * results_per_page;
         var end = Math.min(start + results_per_page, results_amount);
-        console.log("start:" + start + " end:" + end);
         for (var i = start; i < end; i++) {
             var row = document.createElement("TR")
             const res = results[i];
@@ -194,7 +200,8 @@ class ResultSearch extends Content {
         let filters = [];
         var html_filter = document.getElementById("filters").children;
         // Add benchmark filter
-        var bm = { "type": "benchmark", "value": benchmark };
+        var bm = { 'type': "benchmark", 'value': benchmark };
+        console.log(bm)
         filters = filters.concat([bm]);
         for (var index = 0; index < html_filter.length; index++) {
             let type = html_filter[index].firstChild.value;
@@ -222,19 +229,24 @@ class ResultSearch extends Content {
             }
         }
         // TODO: SWITCH THIS BACK AFTER THE PAGE WORKS TO FIX THE FILTERING
-        // THIS MEANS YOU, MARC!
-        //query = { "filters": filters }
-        query = { "filters": [] }
-
+        // THIS MEANS YOU, MARC!}
+        query = { "filters": filters };
+        console.log(encodeURI(JSON.stringify(query)));
         // Find get new results via ajax query.
         $.ajax('/query_results?query_json='
             + encodeURI(JSON.stringify(query)))
             .done(function (data) {
-                console.log(data);
+                results = data["results"];
+                if (results.length > 0) {
+                    // add selected col
+                    results.forEach(element => {
+                        element["selected"] = false;
+                    });
+                }
+                ResultSearch.set_page_selection();
+                ResultSearch.update();
             });
-        /**$.getJSON('/query_results', { 'query_json': JSON.stringify(query) },
-            function (data) { results = JSON.parse(data.result) });*/
-
+            return false;
     }
     static add_filter_field() {
         var filter_id = "f" + filter_uuid++;
