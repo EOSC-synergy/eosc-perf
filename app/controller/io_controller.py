@@ -56,10 +56,8 @@ class IOController:
         """
         # Check if user is authenticated
         if self.is_authenticated():
-            print("Authenticated")
             # Check if the result is in the correct format.
             if self._result_validator.validate_json(result_json):
-                print("Validated")
                 # Try to add the result to the data base.
                 return facade.add_result(result_json, metadata)
         return False
