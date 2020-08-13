@@ -3,13 +3,17 @@ and the EGI Check-In authentication system.
 Provided is:
  - Authenticator'''
 
+import json
+import requests
 from time import time
+from urllib.request import urlopen
 
-from flask import redirect, session
+from flask import session
 from flask.blueprints import Blueprint
 from authlib.integrations.flask_client import OAuth
 from ..model.facade import facade
 from ..view.pages.helpers import info_redirect, error_redirect
+
 
 CONF_URL = 'https://aai-dev.egi.eu/oidc/.well-known/openid-configuration'
 
@@ -86,6 +90,18 @@ class Authenticator:
             return False
         return any(aff in affiliations for aff in self.admin_affiliations)
 
+    def logout(self):
+        """Signs out the current user"""
+        if not self.is_authenticated():
+            return info_redirect('There is no authenticated user to log out.')
+        token = session['user']['info']
+        endpoint = json.loads(urlopen(CONF_URL).read())["revocation_endpoint"]
+        requests.post(endpoint,
+            params={'token': token},
+            headers = {'content-type': 'application/x-www-form-urlencoded'})
+        session.pop('user', None)
+        return info_redirect('Logged out')
+
     @staticmethod
     def __update_user_info():
         """If current user is in db, saved email and name are updated"""
@@ -108,12 +124,6 @@ class Authenticator:
             return True
         return user['exp'] < time()
 
-    @staticmethod
-    def sign_out():
-        """Signs out the current user"""
-        session.pop('user', None)
-        return redirect('/')
-
 # single global instance
 authenticator = Authenticator()
 authenticator_blueprint = Blueprint('authenticator', __name__)
@@ -131,3 +141,8 @@ def authenticate_user():
 def authentication_redirect():
     """"OIDC-Authentication redirect through authenticator singleton"""
     return authenticator.authentication_redirect()
+
+@authenticator_blueprint.route('/logout')
+def logout():
+    """"Revoke current user's authentication"""
+    return authenticator.logout()
