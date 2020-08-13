@@ -25,7 +25,6 @@ def error():
     """HTTP endpoint for information page"""
     info = request.args.get('text')
     if info is None:
-        # TODO: error page
         info = "Unknown error"
 
     factory = ErrorPageFactory()

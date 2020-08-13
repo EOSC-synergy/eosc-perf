@@ -65,10 +65,10 @@ def add_dummies_if_not_exist():
             'name': site.get_name(),
             'description': site.get_description()
         }))
-    
+
     for tag in tags:
         facade.add_tag(tag.get_name())
-    
+
     for benchmark in benchmarks:
         facade.add_benchmark(benchmark.get_docker_name(), benchmark.get_uploader().get_id())
 
@@ -79,7 +79,7 @@ def add_dummies_if_not_exist():
     #        'benchmark': result.get_benchmark().get_docker_name(),
     #        'tags': [tag.get_name() for tag in result.get_tags()]
     #    }))
-    
+
     for result in data_results:
         facade.add_result(result.get_json(), json.dumps({
             'uploader': result.get_uploader().get_id(),
@@ -87,7 +87,7 @@ def add_dummies_if_not_exist():
             'benchmark': result.get_benchmark().get_docker_name(),
             'tags': [tag.get_name() for tag in result.get_tags()]
         }))
-    
+
     # make data added up to this point visible and useable
     iterator = ResultIterator(db.session)
     for result in iterator:
@@ -96,19 +96,19 @@ def add_dummies_if_not_exist():
         site.set_hidden(False)
     for bench in facade.get_benchmarks():
         bench.set_hidden(False)
-    
+
     # add new 
     report_example_bench = Benchmark(docker_name='pihole/pihole:dev', uploader=uploaders[0])
     bench_report = BenchmarkReport(benchmark=report_example_bench, uploader=uploaders[0])
     facade.add_benchmark(report_example_bench.get_docker_name(), report_example_bench.get_uploader().get_id())
-    
+
     report_example_site = Site('foobar', 'elsewhere')
     site_report = SiteReport(site=report_example_site, uploader=uploaders[0])
     facade.add_site(json.dumps({
         'short_name': report_example_site.get_short_name(),
         'address': report_example_site.get_address()
     }))
-    
+
     facade.add_report(json.dumps({
         'message': 'Oopsie',
         'type': 'benchmark',

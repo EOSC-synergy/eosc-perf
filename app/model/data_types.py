@@ -219,7 +219,7 @@ class Benchmark(db.Model):
     def get_results(self) -> ResultIterator:
         """Get an iterator for all the results associated to this benchmark."""
         return ResultIterator(Session.object_session(self), benchmark=self)
-    
+
     def set_hidden(self, state: bool):
         """Set the hide state of the benchmark."""
         self._hidden = state
@@ -293,7 +293,7 @@ class Site(db.Model):
     def get_short_name(self) -> str:
         """Get the site's identifier."""
         return self._short_name
-    
+
     def set_hidden(self, state: bool):
         """Set the hide state of the site."""
         self._hidden = state

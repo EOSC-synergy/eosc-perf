@@ -4,9 +4,9 @@ Provided is:
  - Authenticator'''
 
 import json
-import requests
 from time import time
 from urllib.request import urlopen
+import requests
 
 from flask import session
 from flask.blueprints import Blueprint
@@ -19,7 +19,6 @@ CONF_URL = 'https://aai-dev.egi.eu/oidc/.well-known/openid-configuration'
 
 class AuthenticateError(Exception):
     """Exception to signal a user isn't authenticated correctly."""
-    pass
 
 class Authenticator:
     """A fascade between IOController and the EGI Check-In authentication
@@ -96,9 +95,10 @@ class Authenticator:
             return info_redirect('There is no authenticated user to log out.')
         token = session['user']['info']
         endpoint = json.loads(urlopen(CONF_URL).read())["revocation_endpoint"]
-        requests.post(endpoint,
+        requests.post(
+            endpoint,
             params={'token': token},
-            headers = {'content-type': 'application/x-www-form-urlencoded'})
+            headers={'content-type': 'application/x-www-form-urlencoded'})
         session.pop('user', None)
         return info_redirect('Logged out')
 

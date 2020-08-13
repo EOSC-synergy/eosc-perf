@@ -8,6 +8,7 @@ DEFAULT_TEMPLATE_PATH = 'config/result_template.json'
 
 
 class JSONResultValidator:
+    """Helper class to validate uploaded result json files."""
 
     def __init__(self, template_path=DEFAULT_TEMPLATE_PATH):
         dirname = os.path.dirname(__file__)
@@ -16,6 +17,7 @@ class JSONResultValidator:
             self.template_json = json.load(template)
 
     def validate_json(self, result_string):
+        """Validate the json."""
         try:
             result_json = json.loads(result_string)
         except json.JSONDecodeError:
@@ -29,14 +31,14 @@ class JSONResultValidator:
 
 def _same_keys(json_one, json_two, check_subkeys=True):
     # Check if both parameters are dictionaries
-    if not type(json_one) == type(json_two) == dict:
+    if not (isinstance(json_one, dict) and isinstance(json_two, dict)):
         return False
     # Check if both dictionaries have the same keys
     if not set(json_one.keys()) == set(json_two.keys()):
         return False
     if check_subkeys:
         # Check if both dictionaries have the same subkeys
-        keys_with_dict_values = [key for key in json_one.keys() if type(json_one[key]) == dict]
+        keys_with_dict_values = [key for key in json_one.keys() if isinstance(json_one[key], dict)]
         for key in keys_with_dict_values:
             if not _same_keys(json_one[key], json_two[key]):
                 return False

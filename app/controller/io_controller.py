@@ -2,17 +2,16 @@
 This module acts as a facade between view and model.
 """
 import json
-from flask import session, redirect
 from re import match
 from typing import List
 from requests import get
+from flask import session, redirect
 from requests_html import HTMLSession
 from .json_result_validator import JSONResultValidator
 from .authenticator import authenticator, AuthenticateError
-from .type_aliases import USER, JSON
-from ..configuration import configuration
+from .type_aliases import JSON
 from ..model.facade import DatabaseFacade, facade
-from ..model.data_types import Benchmark, Site, Report
+from ..model.data_types import Site, Report
 # The parent url of docker hub projects, first for private second for docker certified.
 docker_hub_url = {"certified": "https://hub.docker.com/r/",
                   "default": "https://hub.docker.com/_/"}
@@ -21,29 +20,20 @@ docker_hub_url = {"certified": "https://hub.docker.com/r/",
 class IOController:
     """This class acts as a facade between view and model, and validate user input.
     Attributes:
-    _result_validator  (JSONResultValidator): The validator for an uploaded benchmark result.
-    _unapproved_benchmarks (List[Benchmark]): The user suggested unaproved benchmarks.
-    _unapproved_sites           (List[Site]): The user suggested unaproved sites."""
+    _result_validator  (JSONResultValidator): The validator for an uploaded benchmark result."""
 
-    def __init__(self, unapproved_sites: List[Site] = [],
-                 unapproved_benchmarks: List[Benchmark] = []):
+    def __init__(self):
         """Constructor generat a new instance of IOController.
         Args:
         data_base (DatabaseFacade): The facade used to interact with the model if left
                                     empty creates a new facade and there for a new database.
-        unapproved_sites (List[Site]): A list of unaproved Sites can be left empty.
-        unapproved_benchmarks (List[Benchmark]): A list of unaproved Benchmarks can be left empty.
         """
-        # TODO: Find better solution for database_facade since it is supposed to be Singelton.
         self._result_validator = JSONResultValidator()
-        self._unapproved_sites = unapproved_sites
 
     def authenticate(self):
         """Authenticate the current user."""
-        if not (self.is_authenticated()):
+        if not self.is_authenticated():
             return redirect('/login')
-
-
 
     def submit_result(self, result_json: str, metadata: str) -> bool:
         """Submit a new benchmark result to the system if it is valid.
@@ -88,8 +78,7 @@ class IOController:
         # Check valid docker_hub_name.uploader_emailuploader_email
         if self._valid_docker_hub_name(docker_name, check_for_page):
             # Add to model.
-            if facade.add_benchmark(
-                docker_name=docker_name, uploader_id=uploader_id):
+            if facade.add_benchmark(docker_name=docker_name, uploader_id=uploader_id):
                 return self.report(json.dumps({
                     'message': comment,
                     'type': 'benchmark',
@@ -228,8 +217,9 @@ class IOController:
                 return False
             return True
         return False
-        
+
     def add_current_user_if_missing(self):
+        """Add the user from the current system as an uploader if they do not exist yet."""
         if authenticator.is_authenticated():
             uid = self.get_user_id()
             try:
@@ -277,8 +267,8 @@ class IOController:
                 return False
             # Load the http.
             else:
-                session = HTMLSession()
-                content = session.get(url)
+                htmlsession = HTMLSession()
+                content = htmlsession.get(url)
                 # Might install chromium.
                 # Timeconsuming Step
                 content.html.render()
@@ -357,7 +347,7 @@ class IOController:
         """Checks if current user has admin right, if one is logged on.
            Returns: True if current user is admin, otherwise False."""
         return authenticator.is_admin()
-    
+
     @staticmethod
     def is_authenticated() -> bool:
         """Check if the current user is authenticated."""

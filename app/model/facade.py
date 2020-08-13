@@ -6,6 +6,8 @@ And as helpers:
   - DatabaseFacade.ToomanyError"""
 from typing import List
 import json
+# is there an equivalent import path for flask_sqlalchemy for the error type?
+from sqlalchemy.exc import SQLAlchemyError
 from app.model.data_types import Result, Tag, Benchmark, Uploader, Site,\
     ResultIterator, Report, ResultReport, BenchmarkReport, SiteReport
 from app.model.result_filterer import ResultFilterer
@@ -193,7 +195,7 @@ class DatabaseFacade:
             db.session.add(obj)
             db.session.commit()
             return True
-        except:
+        except SQLAlchemyError:
             # reset session to previous state without the object
             db.session.rollback()
             return False

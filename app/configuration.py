@@ -1,4 +1,5 @@
-
+"""Configuration structure for config files to the application."""
+import os
 import yaml
 
 def load_config():
@@ -6,18 +7,23 @@ def load_config():
     defaults = {
         'debug': False,
         'database-path': 'sqlite.db',
-        'oidc_client_secret': ''
+        'admin_affiliations': ['example@kit.edu'],
+        'debug_admin_affiliations': ['example2@kit.edu'],
+        'oidc_client_secret': '',
+        'upload_license_filename': 'upload_license.txt'
     }
-    with open('config.yaml') as file:
-        try:
+    if os.path.exists('config.yaml'):
+        with open('config.yaml') as file:
             config = yaml.safe_load(file.read())
-        except:
+        if config is None:
             print("Could not read config.yaml!")
-    
-    for key, value in defaults.items():
-        if key not in config:
-            config[key] = str(value)
-    
-    return config
+
+        for key, value in defaults.items():
+            if key not in config:
+                config[key] = str(value)
+        return config
+
+    return defaults
+
 
 configuration = load_config()

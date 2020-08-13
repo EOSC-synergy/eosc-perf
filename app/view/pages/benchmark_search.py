@@ -1,10 +1,10 @@
-"""This module contains the factory to generate pages used to search 
+"""This module contains the factory to generate pages used to search
 benchmarks.
 Provided is:
  - BenchmarkSearchFactory
 """
 
-from flask import Response, redirect
+from flask import Response
 from flask.blueprints import Blueprint
 
 from ..page_factory import PageFactory

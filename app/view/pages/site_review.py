@@ -93,7 +93,7 @@ def review_site_submit():
 
     if not controller.is_authenticated():
         return error_json_redirect('Not logged in')
-    
+
     if not controller.is_authenticated():
         return error_json_redirect('Not an admin')
 

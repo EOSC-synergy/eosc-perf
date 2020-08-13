@@ -75,7 +75,8 @@ def upload_result_submit():
         'uploader': controller.get_user_id(),
         'site': request.form['site'],
         'benchmark': request.form['benchmark'],
-        'tags': tags}
+        'tags': tags
+    }
 
     try:
         result_json = file.read().decode("utf-8")
@@ -84,9 +85,9 @@ def upload_result_submit():
 
     try:
         success = controller.submit_result(result_json, json.dumps(metadata))
-    except (ValueError, TypeError) as e:
-        return error_json_redirect('Failed to submit result: ' + str(e))
+    except (ValueError, TypeError) as error:
+        return error_json_redirect('Failed to submit result: ' + str(error))
     if not success:
         return error_json_redirect('Failed to submit result.')
-    
+
     return Response('{}', mimetype='application/json', status=200)

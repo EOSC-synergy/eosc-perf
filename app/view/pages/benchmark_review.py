@@ -18,7 +18,6 @@ from ...model.facade import facade, DatabaseFacade
 from ...model.data_types import Report, BenchmarkReport
 from ...controller.io_controller import controller
 from ...controller.authenticator import AuthenticateError
-from ...configuration import configuration
 
 from .helpers import error_json_redirect, error_redirect, info_redirect
 
@@ -57,18 +56,18 @@ def decompose_dockername(docker_name):
         image = docker_name[slash + 1:colon]
         tag = docker_name[colon + 1:]
 
-    return (username, image, tag)
+    return (username, image)
 
 def build_dockerhub_url(docker_name):
     """Helper function to build a link to a docker hub page."""
-    (username, image, tag) = decompose_dockername(docker_name)
+    (username, image) = decompose_dockername(docker_name)
 
     url = 'https://hub.docker.com/r/{}/{}'.format(username, image)
     return url
 
 def build_dockerregistry_url(docker_name):
     """Helper function to build a link to the docker hub registry api."""
-    (username, image, tag) = decompose_dockername(docker_name)
+    (username, image) = decompose_dockername(docker_name)
 
     url = 'https://registry.hub.docker.com/v2/repositories/{}/{}/'.format(username, image)
     return url
@@ -95,7 +94,7 @@ def review_benchmark():
 
     if not controller.is_authenticated():
         return error_redirect('Not logged in')
-    
+
     if not controller.is_admin():
         return error_redirect('Not an administrator')
 
@@ -152,7 +151,7 @@ def review_benchmark_submit():
 
     if not controller.is_authenticated():
         return error_json_redirect('Not logged in')
-    
+
     if not controller.is_authenticated():
         return error_json_redirect('Not an admin')
 

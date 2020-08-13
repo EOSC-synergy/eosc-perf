@@ -70,7 +70,7 @@ class BenchmarkSearchAJAX(SearchAJAXHandler):
         results_dict = {"results": []}
         keywords = json.loads(query)['keywords']
         benchmarks = self._facade.query_benchmarks(keywords)
-        
+
         for benchmark in benchmarks:
             result_dict = {}
             # do not display hidden benchmarks (= new ones)
@@ -82,7 +82,7 @@ class BenchmarkSearchAJAX(SearchAJAXHandler):
             results_dict["results"].append(result_dict)
 
         return json.dumps(results_dict)
-    
+
 class SiteFetchAJAXHandler(AJAXHandler):
     """AJAX handler for fetching sites."""
 
@@ -172,7 +172,7 @@ def query_results():
         query_json = "{}"
     handler = ResultSearchAJAX(facade)
     return Response(handler.fetch_data(query_json), mimetype='application/json')
-    
+
 @ajax_blueprint.route('/query_benchmarks')
 def query_benchmarks():
     """HTTP endpoint for benchmark AJAX queries."""
