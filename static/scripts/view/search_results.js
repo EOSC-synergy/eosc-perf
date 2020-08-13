@@ -35,7 +35,7 @@ function onload() {
         , tags: "[CPU , not GPU]",uuid:"123", data: { test: "val1", test2: "val2"}
     },{
         selected: false, benchmark: "Test Benchmark for cpu", uploader: "John Doe", site: "moon"
-        , tags: "[CPU , not GPU]", data: { test: "val1", test2: "val2"}
+        , tags: "[CPU , not GPU]",uuid:"456", data: { test: "val1", test2: "val2"}
     }];
     ResultSearch.set_result_table();
     ResultSearch.set_page_selection();
@@ -136,7 +136,6 @@ class ResultSearch extends Content {
                         cell.textContent = json;
                         break;
                     case ("tags"):
-                        alert(res[col])
                         cell.textContent = res[col];
                         break;
                     default:
@@ -290,6 +289,14 @@ class ResultSearch extends Content {
 
     static make_diagram() {
         // Store data in href
+        let selected_results = results.filter(x=>x["selected"]);
+        let uuids = "";
+        if(selected_results.length >0) {
+            for(var index in selected_results) {
+                uuids += "uuids:"+selected_results[index]["uuid"]+"&";
+            }
+        }
+        window.location.href = '/make_diagram?'+uuids.slice(0,-1);
     }
 
     static delete_result(result) {
