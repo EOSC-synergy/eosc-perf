@@ -112,5 +112,7 @@ def upload_tag():
     tag = request.form['new_tag']
     if tag == "":
         return error_json_redirect('No name entered for new tag')
+    if tag == "--No Tag--":
+        return error_json_redirect('New tag cannot ba called "--No Tag--", as that is a placeholder name')
     controller.submit_tag(tag)
     return Response('{}', mimetype='application/json', status=200)
