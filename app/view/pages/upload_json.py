@@ -105,3 +105,12 @@ def upload_result_submit():
         return error_json_redirect('Failed to submit result.')
 
     return Response('{}', mimetype='application/json', status=200)
+
+@upload_json_blueprint.route('/upload_tag', methods=['POST'])
+def upload_tag():
+    """HTTP endpoint to take in new tags"""
+    tag = request.form['new_tag']
+    if tag == "":
+        return error_json_redirect('No name entered for new tag')
+    controller.submit_tag(tag)
+    return Response('{}', mimetype='application/json', status=200)

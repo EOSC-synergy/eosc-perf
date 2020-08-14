@@ -19,7 +19,7 @@ $(function () {
             processData: false,
             contentType: false,
             success: function (data, textStatus) {
-                // display success message and disable form
+                // display success message and reset page
                 $('#overlay-text').text('Submission successful');
                 $('#overlay').show();
                 prepare_page()
@@ -81,6 +81,64 @@ function append_form_data(fd) {
     }
 }
 
+function stopped_typing_tag_field(){
+    if(document.getElementById("custom_tag").value.trim().length > 0) {
+        document.getElementById('add_tag_button').removeAttribute("disabled");
+    } else {
+        document.getElementById('add_tag_button').setAttribute("disabled", true);
+    }
+}
+
+function add_tag() {
+    tag = document.getElementById("custom_tag").value.trim();
+    form = $('#form');
+    formData = new FormData()
+    formData.append("new_tag", tag)
+    $.ajax({
+        type: "POST",
+        url: "upload_tag",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (data, textStatus) {
+            // reset tag field and reload tags
+            document.getElementById("custom_tag").value  = ""
+            document.getElementById('add_tag_button').setAttribute("disabled", true);
+            prepare_tags();
+        },
+        error: function (data) {
+            window.location.href = data.responseJSON.redirect;
+        }
+    });
+
+    form.submit(function (e) {
+        var selection = document.getElementById('site_selection');
+        var old_html = selection.options[selection.selectedIndex].innerHTML
+        var site_id = selection.options[selection.selectedIndex].id;
+        selection.options[selection.selectedIndex].innerHTML = site_id;
+        formData = new FormData(this)
+        append_form_data(formData)
+        $.ajax({
+            type: form.attr('method'),
+            url: form.attr('action'),
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data, textStatus) {
+                // display success message and disable form
+                $('#overlay-text').text('Submission successful');
+                $('#overlay').show();
+                prepare_page()
+            },
+            error: function (data) {
+                window.location.href = data.responseJSON.redirect;
+            }
+        });
+        selection.options[selection.selectedIndex].innerHTML = old_html;
+        return false;
+    });
+}
+
 function prepare_sites() {
     var site_selection = document.getElementById("site_selection");
     site_selection.innerHTML = '';
@@ -94,15 +152,15 @@ function prepare_sites() {
                 site_selection.innerHTML += site_html;
             }
             if (sites.length === 0) {
-                SITES_EMPTY = true
-                document.getElementById("submit_button").setAttribute("disabled", true)
+                SITES_EMPTY = true;
+                document.getElementById("submit_button").setAttribute("disabled", true);
             }
         })
 }
 
 function prepare_tags() {
-    var tag_selection = document.getElementById("tag_selection")
-    tag_selection.innerHTML = '<option selected>--No Tag--</option>'
+    var tag_selection = document.getElementById("tag_selection");
+    tag_selection.innerHTML = '<option selected>--No Tag--</option>';
     $.ajax('/fetch_tags')
         .done(function (data) {
             var tags = data.results;
@@ -131,6 +189,8 @@ function prepare_benchmarks() {
 
 function prepare_page() {
     document.getElementById("result_file").value = "";
+    document.getElementById("custom_tag").value = "";
+    document.getElementById('add_tag_button').setAttribute("disabled", true);
     if (false != document.getElementById("agreed_license").checked) {
         document.getElementById("agreed_license").click();
     }

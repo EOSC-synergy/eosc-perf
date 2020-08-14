@@ -105,6 +105,17 @@ class IOController:
             return facade.add_site(json_str)
         return False
 
+    def submit_tag(self, tag: str) -> bool:
+        """Submit a new tag
+        Args:
+        metadata_json (str): The submitted tag.
+        Returns:
+        bool: If the submission was successful.
+        """
+        if self.is_authenticated():
+            return facade.add_tag(tag)
+        return False
+
     def get_unapproved_sites(self) -> List[Site]:
         """If the current user is an admin provide a list of all unaproved sites.
         Args:
