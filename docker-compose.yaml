@@ -12,6 +12,7 @@ services:
       - ${PWD}/app:/app/app
       - ${PWD}/templates:/app/templates
       - ${PWD}/uwsgi.ini:/app/uwsgi.ini
+      - ${PWD}/upload_license.txt:/app/upload_license.txt
       # production config
       - ${PWD}/config.yaml:/app/config.yaml
 
