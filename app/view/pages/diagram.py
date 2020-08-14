@@ -44,16 +44,17 @@ class DiagramFactory(PageFactory):
         """Generate page body code.
 
         This contains a list of compared results."""
-        list_start = 'Comparing elements:'
+        list_start = '<div class="card"><div class="card-header">Compared results: site, benchmark, num_gpus</div><ul class="list-group list-group-flush">'
+        list_end = '</ul></div>'
         list_elements = []
         results = [facade.get_result(uuid) for uuid in uuids]
         for result in results:
             core_count = json.loads(result.get_json())['user_args']['num_gpus']
-            list_elements.append('[{} - {} - {}]'.format(
+            list_elements.append('<li class="list-group-item result-info">{}, {}, {}</li>'.format(
                 result.get_site().get_name(),
                 result.get_benchmark().get_docker_name(),
                 core_count))
-        return list_start + ', '.join(list_elements)
+        return list_start + ''.join(list_elements) + list_end
 
     def check_if_results_exist(self, uuids) -> bool:
         """Helper method."""

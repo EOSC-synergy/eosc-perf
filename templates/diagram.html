@@ -8,11 +8,11 @@
 <script type="text/javascript" src="static/scripts/view/content.js"></script>
 <script type="text/javascript" src="static/scripts/view/diagram.js"></script>
 <style>
-    .diagram-wrap {
-        margin-left: auto;
-        margin-right: auto;
-        width: 80%;
-    }
+    .diagram-wrap { width: 80%; padding: 1em; }
+    .flex-container { display: flex; align-items: center; }
+    .fixed { }
+    .flex-item { flex-grow: 1; }
+    .result-info { font-size: 0.7em; padding: 0.25em; }
 </style>
 {% endblock %}
 
@@ -28,12 +28,15 @@ return [
 
 {% block info %}
 <h1>Diagram test page</h1>
-<p class="Text">
-    {{ page_content }}
-<div class="diagram-wrap">
-    <canvas id="speedup">
-    </canvas>
+<div class="flex-container">
+    <div class="fixed">
+        {{ page_content|safe }}
+    </div>
+    <div class="diagram-wrap flex-item">
+        <canvas id="speedup">
+        </canvas>
+        <a href="#" id="download-button" download="diagram.png" class="button">Download as PNG</a>
+    </div>
 </div>
-<a href="#" id="download-button" download="diagram.png" class="button">Download as PNG</a>
 </p>
 {% endblock %}
