@@ -76,11 +76,11 @@ def make_diagram_example():
         'filters': [
             {
                 'type': 'benchmark',
-                'value': 'user/bench:version'
+                'value': 'someone/gpu_cuda'
             },
             {
                 'type': 'site',
-                'value': 'rpi'
+                'value': 'karlsruhe'
             }
         ]
     }))
