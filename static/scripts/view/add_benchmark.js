@@ -20,3 +20,11 @@ $(function () {
         return false;
     });
 });
+
+function stopped_typing(){
+    if(document.getElementById("docker_name").value.trim().length > 0) {
+        document.getElementById("submit").removeAttribute("disabled");
+    } else {
+        document.getElementById("submit").setAttribute("disabled", true);
+    }
+}

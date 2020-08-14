@@ -15,10 +15,10 @@
 {% block info %}
     <h1>Add benchmark</h1>
     <form id="form" action="/add_benchmark_submit" method="POST">
-        <input type="text" name="docker_name" placeholder="user/image:tag" />
+        <input type="text" name="docker_name" id="docker_name" placeholder="user/image:tag" onkeyup="stopped_typing()"/>
         <input type="text" id="message-box" name="message" value=""
-            placeholder="Enter a description of the new benchmark here." />
+            placeholder="Enter a description of the new benchmark here."/>
         <br/>
-        <input type="submit" name="submit" value="Submit benchmark" />
+        <input type="submit" name="submit" id="submit" value="Submit benchmark" disabled/>
     </form>
 {% endblock %}
