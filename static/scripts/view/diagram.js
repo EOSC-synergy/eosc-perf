@@ -36,7 +36,7 @@ class Diagram extends Content {
     buildLabels(data, index) {
         let labels = [];
         for (const value of data) {
-            labels.push(value.core_count.toString() + ' cores');
+            labels.push(value.core_count.toString());
         }
         return labels;
     }
@@ -72,6 +72,16 @@ class Diagram extends Content {
                     yAxes: [{
                         ticks: {
                             beginAtZero: true
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'score'
+                        }
+                    }],
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'num_gpus'
                         }
                     }]
                 }
