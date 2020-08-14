@@ -97,11 +97,12 @@ class IOController:
         """
         if self.is_authenticated():
             # Crete new site.
-            new_site = self._parse_site(metadata_json)
-            # Add to unaproved sites.
-            if not new_site is None:
-                self._unapproved_sites.append(new_site)
-                return True
+            site = self._parse_site(metadata_json)
+            json_str = '{ '+'"short_name" : "' + site.get_short_name() + \
+                           '" , "address" : "' + site.get_address() + \
+                           '" , "name" : "' + site.get_name() + \
+                           '" , "description" : "' + site.get_description() + '" ' + '}'
+            return facade.add_site(json_str)
         return False
 
     def get_unapproved_sites(self) -> List[Site]:
