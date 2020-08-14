@@ -14,16 +14,32 @@
     <br>
     <form action="/upload_submit" id="form" enctype="multipart/form-data" method="POST">
         <label for="result_file">Please select result JSON file:</label>
-        <input type="file" class="form-control-file" id="result_file" name="file" /><br />
+        <input type="file" class="form-control-file" id="result_file" name="file" /><br/>
         <label for="bm_selection">Select benchmark:</label>
-        <select class="form-control" id="bm_selection" name="benchmark"></select><br />
+        <select class="form-control" id="bm_selection" name="benchmark"></select><br/>
         <label for="site_selection">Select execution site:</label>
-        <select class="form-control" id="site_selection" name="site"></select><br />
+        <select class="form-control" id="site_selection" name="site"></select><br/>
+        <label class="checkbox-label">
+            <input class="checkbox" type="checkbox" value="" id="custom_site" onclick="site_checkbox_click(this)"/>
+            Custom site
+            </input>
+        </label>
+        <div class="form-row">
+            <div class="col">
+                <input type="text" id="site_name" placeholder="Enter site name" disabled>
+            </div>
+            <div class="col">
+                <input type="text" id="site_address" placeholder="Enter site IP" disabled>
+            </div>
+            <div class="col-7">
+                <input type="text" id="site_description" placeholder="Enter optional description" disabled>
+            </div>
+        </div></br>
         <label for="tag_selection">Select tags (hold control for multi-selection):</label>
         <select multiple class="form-control" id="tag_selection" name="tags"></select><br />
         <label class="checkbox-label">
             <input class="checkbox" type="checkbox" value="" id="agreed_license" onclick="license_checkbox_click(this)"/>
-            I have read and accept the <button type="button" class="btn btn-secondary" onclick="show_license()">license agreement</button>
+            I have read and accept the <button type="button" class="btn btn-secondary" onclick="show_license()">License agreement</button>
         </label>
         <input type="submit" class="btn btn-success float-right mr-1" name="upload" value="Upload" id="submit_button" disabled/>
     </form>

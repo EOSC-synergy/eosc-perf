@@ -65,19 +65,33 @@ def upload_result_submit():
         return error_json_redirect('No file in request')
 
     tags = request.form.getlist("tags")
-    try:
-        # trying to remove placeholder for no tags
+    if "--No Tag--" in tags:
         tags.remove("--No Tag--")
-    except ValueError:
-        pass
+
+    site = ""
+    custom_site = (request.form["custom_site"] == 'true')
+    if not custom_site:
+        site = request.form['site']
+    else:
+        site = request.form["new_site_name"]
+        metadata = {
+            'short_name': request.form["new_site_name"],
+            'address': request.form["new_site_address"],
+            'description': request.form["new_site_description"]
+        }
+        if metadata["short_name"] == "":
+            return error_json_redirect("No name for custom site entered.")
+        if metadata["address"] == "":
+            return error_json_redirect("No address for custom site entered.")
+        if not controller.submit_site(json.dumps(metadata)):
+            return error_json_redirect('Failed to submit new site.')
 
     metadata = {
         'uploader': controller.get_user_id(),
-        'site': request.form['site'],
+        'site': site,
         'benchmark': request.form['benchmark'],
         'tags': tags
     }
-
     try:
         result_json = file.read().decode("utf-8")
     except ValueError:

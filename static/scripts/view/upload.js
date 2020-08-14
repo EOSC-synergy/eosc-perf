@@ -1,46 +1,66 @@
-var SITES_EMPTY = true
-var BENCHMARKS_EMPTY = true
+var SITES_EMPTY = false
+var BENCHMARKS_EMPTY = false
+var CUSTOM_SITE = false
+var LICENSE_AGREED = false
 
 $(function () {
     form = $('#form');
     form.submit(function (e) {
         var selection = document.getElementById('site_selection');
+        var old_html = selection.options[selection.selectedIndex].innerHTML
         var site_id = selection.options[selection.selectedIndex].id;
         selection.options[selection.selectedIndex].innerHTML = site_id;
-
+        formData = new FormData(this)
+        append_form_data(formData)
         $.ajax({
             type: form.attr('method'),
             url: form.attr('action'),
-            data: new FormData(this),
+            data: formData,
             processData: false,
             contentType: false,
             success: function (data, textStatus) {
                 // display success message and disable form
                 $('#overlay-text').text('Submission successful');
                 $('#overlay').show();
-                (function ($) {
-                    $('#overlay').on('click', function (e) {
-                        if (e.target !== this)
-                            return;
-                        $(this).fadeOut();
-                        document.getElementById("result_file").value = "";
-                        document.getElementById("agreed_license").checked = false
-                        $('#form input[type="submit"]').prop("disabled", true);
-                    });
-                })(jQuery);
+                prepare_page()
             },
             error: function (data) {
                 window.location.href = data.responseJSON.redirect;
             }
         });
-
+        selection.options[selection.selectedIndex].innerHTML = old_html;
         return false;
     });
 });
 
+function site_checkbox_click(cb) {
+    CUSTOM_SITE = cb.checked;
+    if (CUSTOM_SITE) {
+        document.getElementById("site_name").removeAttribute("disabled");
+        document.getElementById("site_address").removeAttribute("disabled");
+        document.getElementById("site_description").removeAttribute("disabled");
+        document.getElementById("site_selection").setAttribute("disabled", true);
+        if (!BENCHMARKS_EMPTY && LICENSE_AGREED) {
+            document.getElementById("submit_button").removeAttribute("disabled");
+        }
+    } else {
+        document.getElementById("site_name").setAttribute("disabled", true);
+        document.getElementById("site_name").value = "";
+        document.getElementById("site_address").setAttribute("disabled", true);
+        document.getElementById("site_address").value = "";
+        document.getElementById("site_description").setAttribute("disabled", true);
+        document.getElementById("site_description").value = "";
+        document.getElementById("site_selection").removeAttribute("disabled");
+        if (SITES_EMPTY) {
+            document.getElementById("submit_button").setAttribute("disabled", true);
+        }
+    }
+}
+
 function license_checkbox_click(cb) {
-    if (cb.checked && !(SITES_EMPTY || BENCHMARKS_EMPTY)) {
-        document.getElementById("submit_button").removeAttribute("disabled")
+    LICENSE_AGREED = cb.checked
+    if (LICENSE_AGREED && (!SITES_EMPTY || CUSTOM_SITE) && !BENCHMARKS_EMPTY) {
+        document.getElementById("submit_button").removeAttribute("disabled");
     } else {
         document.getElementById("submit_button").setAttribute("disabled", true);
     }
@@ -50,6 +70,15 @@ function show_license() {
     license = document.getElementById("license").getAttribute("value");
     var wnd = window.open("about:blank", "", "_blank");
     wnd.document.write("<html><body>"+license+"</body></html>");
+}
+
+function append_form_data(fd) {
+    fd.append("custom_site", CUSTOM_SITE)
+    if (CUSTOM_SITE) {
+        fd.append("new_site_name", document.getElementById("site_name").value)
+        fd.append("new_site_address", document.getElementById("site_address").value)
+        fd.append("new_site_description", document.getElementById("site_description").value)
+    }
 }
 
 function prepare_sites() {
@@ -100,8 +129,18 @@ function prepare_benchmarks() {
         })
 }
 
-window.onload = function () {
+function prepare_page() {
+    document.getElementById("result_file").value = "";
+    if (false != document.getElementById("agreed_license").checked) {
+        document.getElementById("agreed_license").click();
+    }
+    if (false != document.getElementById("custom_site").checked) {
+        document.getElementById("custom_site").click();
+    }
     prepare_sites()
     prepare_tags()
     prepare_benchmarks()
 }
+
+
+window.onload = prepare_page
