@@ -130,7 +130,7 @@ def review_benchmark():
         content = json.loads(dockerhub_content)
         dockerhub_desc = content['full_description']
         dockerhub_desc_formatted = markdown2.markdown(
-            dockerhub_desc, extras=["fenced-code-blocks", "tables"])
+            dockerhub_desc, extras=["fenced-code-blocks", "tables", "break-on-newline", "cuddled-lists"])
     except:
         dockerhub_desc_formatted = "Could not load description"
 
@@ -139,6 +139,7 @@ def review_benchmark():
         docker_name=docker_name,
         docker_link=dockerhub_link,
         docker_desc=dockerhub_desc_formatted,
+        desc=report.get_message(),
         uploader_name=uploader_name,
         uploader_mail=uploader_mail,
         date=date,

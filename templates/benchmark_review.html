@@ -9,15 +9,15 @@
 
 {% block info %}
     <h1>Benchmark review</h1>
+    <p>
+    Uploader: {{uploader_name}} ({{uploader_mail}})<br/>
+    Description: {{desc}}<br/>
+    Date: {{date}}
+    </p>
     <h4>Dockerhub description for <a href="{{docker_link}}">'{{docker_name}}'</a></h4>
     <div id="docker_desc" class="jumbotron" style="overflow:scroll;height:60%">
         {{docker_desc|safe}}
     </div>
-    <p>
-    Uploader: {{uploader_name}} ({{uploader_mail}})
-    <br>
-    Date: {{date}}
-    </p>
     <form id="form" action="/benchmark_review_submit" method="POST">
         <input type="hidden" name="uuid" value="{{ uuid }}" />
         <input type="submit" class="btn btn-danger" name="remove" value="Remove benchmark" />
