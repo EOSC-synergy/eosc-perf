@@ -83,5 +83,12 @@ class Diagram extends Content {
 diagram = new Diagram();
 
 window.onload = function () {
+    var canvas = document.getElementById('speedup');
+    let button = document.getElementById('download-button')
+    button.addEventListener('click', function (e) {
+        var dataURL = canvas.toDataURL('image/png');
+        button.href = dataURL;
+    });
+
     diagram.update();
 };
