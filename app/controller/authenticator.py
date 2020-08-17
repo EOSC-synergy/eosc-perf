@@ -27,6 +27,7 @@ class Authenticator:
     def __init__(self):
         self.oauth = None
         self.admin_affiliations = []
+        self.hostname = None
 
     def configure_authenticator(self, flask_app, config):
         """Sets up OIDC authentication functionality for the web app"""
@@ -39,6 +40,7 @@ class Authenticator:
         flask_app.config["EOSC-PERF_CLIENT_SECRET"] = client_secret
 
         self.oauth = OAuth(flask_app)
+        self.hostname = config['oidc_redirect_hostname']
         self.oauth.register(
             name='eosc-perf',
             userinfo_endpoint='https://aai-dev.egi.eu/oidc/userinfo',
@@ -48,6 +50,7 @@ class Authenticator:
             },
             secret=client_secret
         )
+
         if config['debug']:
             self.admin_affiliations = config['debug_admin_affiliations']
         else:
@@ -55,7 +58,7 @@ class Authenticator:
 
     def authenticate_user(self):
         """Redirects user to EGI Check-In for authentication"""
-        redirect_uri = 'https://localhost/oidc-redirect'
+        redirect_uri = 'https://' + self.hostname + '/oidc-redirect'
         return self.oauth._clients["eosc-perf"].authorize_redirect(redirect_uri)
 
     def authentication_redirect(self):

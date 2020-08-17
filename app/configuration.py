@@ -10,6 +10,7 @@ def load_config():
         'admin_affiliations': ['example@kit.edu'],
         'debug_admin_affiliations': ['example2@kit.edu'],
         'oidc_client_secret': '',
+        'oidc_redirect_hostname': 'localhost',
         'upload_license_filename': 'upload_license.txt'
     }
     if os.path.exists('config.yaml'):
