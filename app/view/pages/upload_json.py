@@ -73,18 +73,13 @@ def upload_result_submit():
     if not custom_site:
         site = request.form['site']
     else:
-        site = request.form["new_site_name"]
-        metadata = {
-            'short_name': request.form["new_site_name"],
-            'address': request.form["new_site_address"],
-            'description': request.form["new_site_description"]
-        }
-        if metadata["short_name"] == "":
+        if request.form["new_site_name"] == "":
             return error_json_redirect("No name for custom site entered.")
-        if metadata["address"] == "":
+        if request.form["new_site_address"] == "":
             return error_json_redirect("No address for custom site entered.")
-        if not controller.submit_site(json.dumps(metadata)):
+        if not controller.submit_site(request.form["new_site_name"], request.form["new_site_address"], description=request.form["new_site_description"]):
             return error_json_redirect('Failed to submit new site.')
+        site = request.form["new_site_name"]
 
     metadata = {
         'uploader': controller.get_user_id(),

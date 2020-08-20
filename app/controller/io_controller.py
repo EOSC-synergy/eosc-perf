@@ -87,17 +87,29 @@ class IOController:
                 }))
         return False
 
-    def submit_site(self, metadata_json: JSON) -> bool:
-        """Submit a new site, will be aviable after getting approved.
+    def submit_site(self, short_name: str, address: str, *, name: str = None, description: str = None) -> bool:
+        """Submit a new site to the system for review.
         Args:
-        metadata_json (JSON): A json formated str containing a 'short_name' and 'address' parameter
-                              ,as well as maybe a 'name' parameter.
+            short_name (str): site identifier
+            address (str): network address of site
+            name (str): human-readable name for site
+            description (str): human-readable description for site
         Returns:
-        bool: If the submission was successful.
+            bool: True on success
         """
-        if self.is_authenticated():
-            return facade.add_site(metadata_json)
-        return False
+        if not self.is_authenticated():
+            return False
+
+        meta = {
+            'short_name': short_name,
+            'address': address
+        }
+        if name is not None:
+            meta['name'] = name
+        if description is not None:
+            meta['description'] = description
+
+        return facade.add_site(json.dumps(meta))
 
     def submit_tag(self, tag: str) -> bool:
         """Submit a new tag
