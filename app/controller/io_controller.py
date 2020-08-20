@@ -96,13 +96,7 @@ class IOController:
         bool: If the submission was successful.
         """
         if self.is_authenticated():
-            # Crete new site.
-            site = self._parse_site(metadata_json)
-            json_str = '{ '+'"short_name" : "' + site.get_short_name() + \
-                           '" , "address" : "' + site.get_address() + \
-                           '" , "name" : "' + site.get_name() + \
-                           '" , "description" : "' + site.get_description() + '" ' + '}'
-            return facade.add_site(json_str)
+            return facade.add_site(metadata_json)
         return False
 
     def submit_tag(self, tag: str) -> bool:
@@ -289,37 +283,6 @@ class IOController:
                 return not any(map(lambda x: 'data-testid="404page" alt="404 Route Not Found"'
                                    in x, rendered_contend))
         return False
-
-    def _parse_site(self, metadata_json: JSON) -> Site:
-        """Create a new site using a metadata json formated object.
-        Args:
-        metadata_json (JSON): A json formated str containing a 'short_name' and 'address' parameter
-                              ,as well as maybe a 'name' parameter.
-        Returns:
-        Site: The new created Site object, is None if metadata_json doesn't
-              contain the required parameters.
-        """
-        metadata = None
-        try:
-            metadata = json.loads(metadata_json)
-        except json.JSONDecodeError:
-            return None
-        site = None
-        # Helper function controlls that parameter is in metadata
-        # and the associated value isn't empty.
-        contained = lambda a: a in metadata and bool(a)
-        # input validation
-        if all(map(contained, ['short_name', 'address'])):
-            # Create with or without name.
-            if contained('name'):
-                site = Site(metadata['short_name'],
-                            metadata['address'], name=metadata['name'])
-            else:
-                site = Site(metadata['short_name'], metadata['address'])
-            # add description if contaiend in metadata.
-            if contained('description'):
-                site.set_description(metadata['description'])
-        return site
 
     @staticmethod
     def get_email():
