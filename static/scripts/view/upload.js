@@ -141,7 +141,7 @@ function add_tag() {
 
 function prepare_sites() {
     var site_selection = document.getElementById("site_selection");
-    site_selection.innerHTML = '';
+    site_selection.innerHTML = "";
     $.ajax('/fetch_sites')
         .done(function (data) {
             var sites = data.results;
@@ -172,7 +172,8 @@ function prepare_tags() {
 }
 
 function prepare_benchmarks() {
-    var bm_selection = document.getElementById("bm_selection")
+    var bm_selection = document.getElementById("bm_selection");
+    bm_selection.innerHTML = "";
     $.ajax('/fetch_benchmarks')
         .done(function (data) {
             var benchmarks = data.results;
