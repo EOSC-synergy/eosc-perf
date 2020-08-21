@@ -125,7 +125,7 @@ class Authenticator:
             user = session['user']
         except KeyError:
             return True
-        return user['exp'] < time()
+        return user['exp'] < (time() - 3000)
 
 # single global instance
 authenticator = Authenticator()
