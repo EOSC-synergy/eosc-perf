@@ -122,6 +122,20 @@ class IOController:
             return facade.add_tag(tag)
         return False
 
+    def get_site(self, short_name) -> Site:
+        """Get a single site by it's short name.
+           Args:
+           short_name (str): short name of a site
+           Returns:
+           Site: The site with the given short name.
+                 None if no site with given name is found."""
+        try:
+            site = facade.get_site(short_name)
+        except facade.NotFoundError:
+            site = None
+        return site
+        
+
     def get_unapproved_sites(self) -> List[Site]:
         """If the current user is an admin provide a list of all unaproved sites.
         Args:

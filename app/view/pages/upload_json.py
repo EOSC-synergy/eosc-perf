@@ -68,22 +68,32 @@ def upload_result_submit():
     if "--No Tag--" in tags:
         tags.remove("--No Tag--")
 
-    site = ""
+    site_name = ""
     custom_site = (request.form["custom_site"] == 'true')
     if not custom_site:
-        site = request.form['site']
+        site_name = request.form['site']
     else:
-        if request.form["new_site_name"] == "":
-            return error_json_redirect("No name for custom site entered.")
-        if request.form["new_site_address"] == "":
-            return error_json_redirect("No address for custom site entered.")
-        if not controller.submit_site(request.form["new_site_name"], request.form["new_site_address"], description=request.form["new_site_description"]):
-            return error_json_redirect('Failed to submit new site.')
-        site = request.form["new_site_name"]
+        site_name = request.form["new_site_name"]
+        existing_site = controller.get_site(site_name)
+        if existing_site is None:
+            if site_name == "":
+                return error_json_redirect("No name for custom site entered.")
+            if request.form["new_site_address"] == "":
+                return error_json_redirect("No address for custom site entered.")
+            if not controller.submit_site(site_name, request.form["new_site_address"], description=request.form["new_site_description"]):
+                return error_json_redirect('Failed to submit new site.')
+        else:
+            print(existing_site.get_hidden())
+            if existing_site.get_hidden() is False:
+                msg = 'There is already a site with name "{}"'.format(site_name)
+                return error_json_redirect(msg)
+            else:
+                # if site with same name exists but is hidden, add result anyway
+                pass
 
     metadata = {
         'uploader': controller.get_user_id(),
-        'site': site,
+        'site': site_name,
         'benchmark': request.form['benchmark'],
         'tags': tags
     }
