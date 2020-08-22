@@ -11,7 +11,8 @@ def load_config():
         'debug_admin_affiliations': ['example2@kit.edu'],
         'oidc_client_secret': '',
         'oidc_redirect_hostname': 'localhost',
-        'upload_license_filename': 'upload_license.txt'
+        'upload_license_filename': 'upload_license.txt',
+        'infrastructure_href': 'https://example.com'
     }
     if os.path.exists('config.yaml'):
         with open('config.yaml') as file:
