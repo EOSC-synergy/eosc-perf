@@ -199,6 +199,16 @@ class DatabaseFacade:
             # reset session to previous state without the object
             db.session.rollback()
             return False
+    
+    def _remove_from_db(self, obj: db.Model) -> bool:
+        """Remove a model object from the database."""
+        try:
+            db.session.delete(obj)
+            db.session.commit()
+            return True
+        except SQLAlchemyError:
+            db.session.rollback()
+            return False
 
     def add_uploader(self, metadata_json: str) -> bool:
         """Add new uploader using uploader metadata json."""
@@ -325,6 +335,14 @@ class DatabaseFacade:
                     name=full_name)
 
         return self._add_to_db(site)
+    
+    def remove_site(self, short_name: str) -> bool:
+        """Remove a site by short name."""
+        try:
+            site = self.get_site(short_name)
+            return self._remove_from_db(site)
+        except (self.NotFoundError, self.TooManyError):
+            return False
 
     def add_tag(self, name: str) -> bool:
         """Add a new tag."""
