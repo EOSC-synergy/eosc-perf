@@ -63,6 +63,10 @@ def upload_result_submit():
     # submit an empty part without filename
     if file.filename == '':
         return error_json_redirect('No file in request')
+    try:
+        result_json = file.read().decode("utf-8")
+    except ValueError:
+        return error_json_redirect("Uploaded file is not UTF-8 encoded.")
 
     tags = request.form.getlist("tags")
     if "--No Tag--" in tags:
@@ -97,16 +101,16 @@ def upload_result_submit():
         'benchmark': request.form['benchmark'],
         'tags': tags
     }
-    try:
-        result_json = file.read().decode("utf-8")
-    except ValueError:
-        return error_json_redirect("Uploaded file is not UTF-8 encoded.")
-
+    
     try:
         success = controller.submit_result(result_json, json.dumps(metadata))
     except (ValueError, TypeError) as error:
+        if custom_site:
+            controller.remove_site(site_name)
         return error_json_redirect('Failed to submit result: ' + str(error))
     if not success:
+        if custom_site:
+            controller.remove_site(site_name)
         return error_json_redirect('Failed to submit result.')
 
     return Response('{}', mimetype='application/json', status=200)
