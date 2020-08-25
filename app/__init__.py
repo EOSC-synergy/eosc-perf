@@ -7,7 +7,7 @@ from .configuration import configuration
 from .controller.authenticator import (configure_authenticator,
                                        authenticator_blueprint)
 from .model.database import db, configure_database
-from .model.sandbox import add_dummies_if_not_exist
+from .model.sandbox import add_dummies
 from .view.ajax import ajax_blueprint
 from .view.pages.diagram import diagram_blueprint
 from .view.pages.information_page import info_blueprint
@@ -40,8 +40,8 @@ def create_app(config):
     configure_database(flask_app, config)
     configure_authenticator(flask_app, config)
 
-    if config['debug']:
-        add_dummies_if_not_exist()
+    if config['debug'] and config['debug-db-dummy-items']:
+        add_dummies()
 
     flask_app.register_blueprint(ajax_blueprint)
     flask_app.register_blueprint(diagram_blueprint)

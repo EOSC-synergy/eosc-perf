@@ -1,5 +1,8 @@
+"""Test data generation module.
+Provides: add_dummies()"""
+
 import json
-from .data_types import *
+from .data_types import Uploader, Site, Benchmark, Result, Tag, ResultIterator, SiteReport
 from .database import db
 from .facade import facade
 
@@ -9,11 +12,34 @@ uploaders = [
     Uploader(identifier='TEST_USER_2', email='idontknow@gmail.com', name='Moritz'),
     Uploader(identifier='TEST_USER_3', email='idontknow@gmail.com', name='Marc')
 ]
+diagram_uploader = Uploader(
+    identifier='DIAGRAM_USER',
+    email='diagram@example.com',
+    name='Diagram (Do not use)')
+
 sites = [
-    Site(short_name='paris', name="Paris Cluster", address='10.0.0.1', description="Université de Paris (Cluster)"),
-    Site(short_name="berlin", name="Berlin Cluster", address='10.0.0.2', description="Freie Universität Berlin (Cluster)"),
-    Site(short_name="karlsruhe", name="Karlsruhe Cluster", address='10.0.0.3', description="Karlsruher Institut für Technologie (Cluster)")
+    Site(
+        short_name='paris',
+        name="Paris Cluster",
+        address='10.0.0.1',
+        description="Université de Paris (Cluster)"),
+    Site(
+        short_name="berlin",
+        name="Berlin Cluster",
+        address='10.0.0.2',
+        description="Freie Universität Berlin (Cluster)"),
+    Site(
+        short_name="karlsruhe",
+        name="Karlsruhe Cluster",
+        address='10.0.0.3',
+        description="Karlsruher Institut für Technologie (Cluster)")
 ]
+diagram_site = Site(
+    short_name='diagram_site',
+    name="Diagram Site (Do not use)",
+    address='127.0.0.1',
+    description='Diagram test site entry (Do not use)')
+
 benchmarks = [
     Benchmark(docker_name='pihole/pihole:dev', uploader=uploaders[1]),
     Benchmark(docker_name='someone/gpu_cuda', uploader=uploaders[2]),
@@ -23,6 +49,7 @@ benchmarks = [
     Benchmark(docker_name='someone/benchmarks', uploader=uploaders[2]),
     Benchmark(docker_name='someone/here', uploader=uploaders[3])
 ]
+diagram_benchmark = Benchmark(docker_name='donotuse/diagram:test', uploader=diagram_uploader)
 
 tags = [
     Tag(name='gpu'),
@@ -31,13 +58,17 @@ tags = [
     Tag(name='testing')
 ]
 
-#results = []
-#for uploader in uploaders:
-#   for site in sites:
-#        for benchmark in benchmarks:
-#             for tag in tags:
-#                result = Result(json="{}", uploader=uploader, site=site, benchmark=benchmark, tags=[tag])
-#                results.append(result)
+FAKE_RESULTS = []
+for uploader in uploaders:
+    for site in sites:
+        for benchmark in benchmarks:
+            for tag in tags:
+                result = Result(
+                    json="{}",
+                    uploader=uploader,
+                    site=site,
+                    benchmark=benchmark, tags=[tag])
+                FAKE_RESULTS.append(result)
 
 # generate a series of results with values for testing the diagram
 GENERATED_RESULTS = []
@@ -56,59 +87,87 @@ for i in range(2, 17):
             }
         }
     }
-    GENERATED_RESULTS.append(Result(json=json.dumps(d), uploader=uploaders[0], site=sites[2], benchmark=benchmarks[1], tags=[tags[0], tags[3]]))
+    GENERATED_RESULTS.append(Result(
+        json=json.dumps(d),
+        uploader=diagram_uploader,
+        site=diagram_site,
+        benchmark=diagram_benchmark))
 
-def add_dummies_if_not_exist():
-    for uploader in uploaders:
-        facade.add_uploader(json.dumps({
-            'id': uploader.get_id(),
-            'email': uploader.get_email(),
-            'name': uploader.get_name()
-        }))
+def add_dummies():
+    """Add dummy test items to the system."""
+    for test_uploader in uploaders + [diagram_uploader]:
+        try:
+            facade.get_uploader(test_uploader.get_id())
+        except facade.NotFoundError:
+            facade.add_uploader(json.dumps({
+                'id': test_uploader.get_id(),
+                'email': test_uploader.get_email(),
+                'name': test_uploader.get_name()
+            }))
 
-    for site in sites:
-        facade.add_site(json.dumps({
-            'short_name': site.get_short_name(),
-            'address': site.get_address(),
-            'name': site.get_name(),
-            'description': site.get_description()
-        }))
+    for test_site in sites + [diagram_site]:
+        try:
+            facade.get_site(test_site.get_short_name())
+        except facade.NotFoundError:
+            facade.add_site(json.dumps({
+                'short_name': test_site.get_short_name(),
+                'address': test_site.get_address(),
+                'name': test_site.get_name(),
+                'description': test_site.get_description()
+            }))
 
-    for tag in tags:
-        facade.add_tag(tag.get_name())
+    for test_tag in tags:
+        try:
+            facade.get_tag(test_tag.get_name())
+        except facade.NotFoundError:
+            facade.add_tag(test_tag.get_name())
 
-    for benchmark in benchmarks:
-        facade.add_benchmark(benchmark.get_docker_name(), benchmark.get_uploader().get_id())
+    for test_benchmark in benchmarks + [diagram_benchmark]:
+        try:
+            facade.get_benchmark(test_benchmark.get_docker_name())
+        except facade.NotFoundError:
+            facade.add_benchmark(
+                test_benchmark.get_docker_name(),
+                test_benchmark.get_uploader().get_id())
 
-    #for result in results:
-    #    facade.add_result(result.get_json(), json.dumps({
-    #        'uploader': result.get_uploader().get_id(),
-    #        'site': result.get_site().get_short_name(),
-    #        'benchmark': result.get_benchmark().get_docker_name(),
-    #        'tags': [tag.get_name() for tag in result.get_tags()]
-    #    }))
+    filters = {'filters': [
+        {'type': 'site', 'value': diagram_site.get_short_name()},
+        {'type': 'benchmark', 'value': diagram_benchmark.get_docker_name()}
+    ]}
+    results = facade.query_results(json.dumps(filters))
+    # only add test results if there aren't any results
+    if len(results) <= 0:
+        for test_result in GENERATED_RESULTS:
+            facade.add_result(test_result.get_json(), json.dumps({
+                'uploader': test_result.get_uploader().get_id(),
+                'site': test_result.get_site().get_short_name(),
+                'benchmark': test_result.get_benchmark().get_docker_name(),
+                'tags': [test_tag.get_name() for test_tag in result.get_tags()]
+            }))
 
-    for result in GENERATED_RESULTS:
-        facade.add_result(result.get_json(), json.dumps({
-            'uploader': result.get_uploader().get_id(),
-            'site': result.get_site().get_short_name(),
-            'benchmark': result.get_benchmark().get_docker_name(),
-            'tags': [tag.get_name() for tag in result.get_tags()]
-        }))
+        for test_result in FAKE_RESULTS:
+            facade.add_result(test_result.get_json(), json.dumps({
+                'uploader': test_result.get_uploader().get_id(),
+                'site': test_result.get_site().get_short_name(),
+                'benchmark': test_result.get_benchmark().get_docker_name(),
+                'tags': [tag.get_name() for tag in test_result.get_tags()]
+            }))
 
     # make data added up to this point visible and useable
     iterator = ResultIterator(db.session)
-    for result in iterator:
-        result.set_hidden(False)
-    for site in facade.get_sites():
-        site.set_hidden(False)
-    for bench in facade.get_benchmarks():
-        bench.set_hidden(False)
+    for test_result in iterator:
+        test_result.set_hidden(False)
+    for test_site in facade.get_sites():
+        test_site.set_hidden(False)
+    for test_benchmark in facade.get_benchmarks():
+        test_benchmark.set_hidden(False)
 
-    # add new 
+    # add new benchmark report for tests
     #report_example_bench = Benchmark(docker_name='pihole/pihole:dev', uploader=uploaders[0])
     #bench_report = BenchmarkReport(benchmark=report_example_bench, uploader=uploaders[0])
-    #facade.add_benchmark(report_example_bench.get_docker_name(), report_example_bench.get_uploader().get_id())
+    #facade.add_benchmark(
+    #    report_example_bench.get_docker_name(),
+    #    report_example_bench.get_uploader().get_id())
 
     report_example_site = Site('foobar', 'elsewhere')
     site_report = SiteReport(site=report_example_site, uploader=uploaders[0])

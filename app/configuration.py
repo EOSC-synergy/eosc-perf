@@ -6,6 +6,8 @@ def load_config():
     """Load the config file from 'config.ini'."""
     defaults = {
         'debug': False,
+        'debug-db-reset': False,
+        'debug-db-dummy-items': True,
         'database-path': 'sqlite.db',
         'admin_affiliations': ['example@kit.edu'],
         'debug_admin_affiliations': ['example2@kit.edu'],

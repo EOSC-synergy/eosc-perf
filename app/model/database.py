@@ -14,7 +14,7 @@ def configure_database(app, config):
     db.init_app(app)
 
     # delete database on debug launch
-    if config['debug']:
+    if config['debug'] and config['debug-db-reset']:
         if os.path.exists(config['database-path']):
             os.remove(config['database-path'])
         # drop everything
