@@ -8,9 +8,9 @@ from .facade import facade
 
 uploaders = [
     Uploader(identifier='TEST_USER_0', email='fake.address@protonmail.ch', name='Christophe'),
-    Uploader(identifier='TEST_USER_1', email='idontknow@gmail.com', name='Jonas'),
-    Uploader(identifier='TEST_USER_2', email='idontknow@gmail.com', name='Moritz'),
-    Uploader(identifier='TEST_USER_3', email='idontknow@gmail.com', name='Marc')
+    Uploader(identifier='TEST_USER_1', email='idontknow1@gmail.com', name='Jonas'),
+    Uploader(identifier='TEST_USER_2', email='idontknow2@gmail.com', name='Moritz'),
+    Uploader(identifier='TEST_USER_3', email='idontknow3@gmail.com', name='Marc')
 ]
 diagram_uploader = Uploader(
     identifier='DIAGRAM_USER',
