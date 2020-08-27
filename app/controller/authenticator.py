@@ -28,16 +28,18 @@ class Authenticator:
         self.oauth = None
         self.admin_affiliations = []
         self.hostname = None
+        self.client_secret = None
+        self.scope = 'openid email profile eduperson_scoped_affiliation offline_access'
 
     def configure_authenticator(self, flask_app, config):
         """Sets up OIDC authentication functionality for the web app"""
         if len(config['oidc_client_secret']) == 0:
             raise ValueError("missing openID client secret in configuration")
-        client_secret = config['oidc_client_secret']
+        self.client_secret = config['oidc_client_secret']
 
         flask_app.secret_key = '!secret'
         flask_app.config["EOSC-PERF_CLIENT_ID"] = 'eosc-perf'
-        flask_app.config["EOSC-PERF_CLIENT_SECRET"] = client_secret
+        flask_app.config["EOSC-PERF_CLIENT_SECRET"] = self.client_secret
 
         self.oauth = OAuth(flask_app)
         self.hostname = config['oidc_redirect_hostname']
@@ -46,9 +48,9 @@ class Authenticator:
             userinfo_endpoint='https://aai-dev.egi.eu/oidc/userinfo',
             server_metadata_url=CONF_URL,
             client_kwargs={
-                'scope': 'openid email profile eduperson_scoped_affiliation'
+                'scope': self.scope
             },
-            secret=client_secret
+            secret=self.client_secret
         )
 
         if config['debug']:
@@ -78,6 +80,7 @@ class Authenticator:
             user = self.oauth._clients['eosc-perf'].parse_id_token(token)
             userinfo = self.oauth._clients['eosc-perf'].userinfo()
             session['user'] = user
+            session['user']['token'] = token
             session['user']['info'] = userinfo
             self.__update_user_info()
         except KeyError:
@@ -91,7 +94,7 @@ class Authenticator:
         except KeyError:
             return False
         return any(aff in affiliations for aff in self.admin_affiliations)
-
+    
     def logout(self):
         """Signs out the current user"""
         if not self.is_authenticated():
@@ -104,6 +107,37 @@ class Authenticator:
             headers={'content-type': 'application/x-www-form-urlencoded'})
         session.pop('user', None)
         return info_redirect('Logged out')
+
+    def _refresh_token(self):
+        """Tries to refresh token of current user.
+           Returns True if refresh succeeds, False otherwise."""
+        endpoint = json.loads(urlopen(CONF_URL).read())["token_endpoint"]
+        refresh_token = session['user']['token']['refresh_token']
+        response = requests.post(
+            endpoint,
+            params={'client_id': "eosc-perf",
+                    'client_secret': self.client_secret,
+                    'grant_type': "refresh_token",
+                    'refresh_token': refresh_token,
+                    'scope': self.scope},
+            headers={'content-type': 'application/x-www-form-urlencoded'})
+        new_token = response.json()
+        user = self.oauth._clients['eosc-perf'].parse_id_token(new_token)
+        user['info'] = session['user']['info']
+        user['token'] = new_token
+        session['user'] = user
+        return (response.status_code == 200)
+
+    def _token_expired(self):
+        """Checks if the current user has a valid authentication token"""
+        try:
+            user = session['user']
+        except KeyError:
+            return True
+        if user['exp'] < time():
+            self._refresh_token()
+            user = session['user']
+        return user['exp'] < time()
 
     @staticmethod
     def __update_user_info():
@@ -118,17 +152,9 @@ class Authenticator:
         uploader.set_email(email)
         uploader.set_name(name)
 
-    @staticmethod
-    def _token_expired():
-        """Checks if the current user has a valid authentication token"""
-        try:
-            user = session['user']
-        except KeyError:
-            return True
-        return user['exp'] < (time() - 3000)
-
 # single global instance
 authenticator = Authenticator()
+
 authenticator_blueprint = Blueprint('authenticator', __name__)
 
 def configure_authenticator(app, config):
