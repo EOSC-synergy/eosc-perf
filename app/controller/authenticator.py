@@ -135,7 +135,8 @@ class Authenticator:
         except KeyError:
             return True
         if user['exp'] < time():
-            self._refresh_token()
+            if not self._refresh_token():
+                return False
             user = session['user']
         return user['exp'] < time()
 
