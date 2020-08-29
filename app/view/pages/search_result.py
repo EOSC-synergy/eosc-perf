@@ -42,18 +42,18 @@ def make_search_page():
     """Http endpoint for resultsearch genration."""
     benchmark = request.args.get('benchmark')
     if benchmark is None:
-        return redirect(
-            '/error?'+url_encode({'text': 'Result search reqires a Benchmark'}), code=302)
-    try:
-        facade.get_benchmark(benchmark)
-    except facade.NotFoundError:
-        return redirect(
-            '/error?'+url_encode(
-                {'text': 'Result search reqires a valid Benchmark name'}), code=302)
-    except facade.TooManyError as error:
-        # Shouldn't have any bad effects on Result search
-        if configuration['debug']:
-            print(error)
+        benchmark = ""
+    else:
+        try:
+            facade.get_benchmark(benchmark)
+        except facade.NotFoundError:
+            return redirect(
+                '/error?'+url_encode(
+                    {'text': 'Result search reqires a valid Benchmark name'}), code=302)
+        except facade.TooManyError as error:
+            # Shouldn't have any bad effects on Result search
+            if configuration['debug']:
+                print(error)
     args = json.dumps({'benchmark': benchmark, 'admin': controller.is_admin()})
     factory = SearchResultFactory()
     print(factory._generate_content(args))
