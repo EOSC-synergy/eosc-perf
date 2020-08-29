@@ -21,6 +21,7 @@ from .view.pages.add_benchmark import add_benchmark_blueprint
 from .view.pages.upload_json import upload_json_blueprint
 from .view.pages.search_result import result_search_blueprint
 from .view.pages.privacy_policy import privacy_blueprint
+from .view.pages.json_display import display_json_blueprint
 
 
 def create_app(config):
@@ -57,6 +58,7 @@ def create_app(config):
     flask_app.register_blueprint(upload_json_blueprint)
     flask_app.register_blueprint(result_search_blueprint)
     flask_app.register_blueprint(privacy_blueprint)
+    flask_app.register_blueprint(display_json_blueprint)
 
     return flask_app
 

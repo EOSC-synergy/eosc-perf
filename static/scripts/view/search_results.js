@@ -11,9 +11,9 @@ function onload() {
     ordered_by = null;
     columns = ["Select", "Location", "Uploader", "Data", "Tags", "Report"];
     filter_uuid = 0;
-    filter_types = ["Uploader", "Site", "Tag", "Value greater than", "Value equal to", "Value less than"];
+    filter_types = ["Benchmark", "Uploader", "Site", "Tag", "Value greater than", "Value equal to", "Value less than"];
     filter_dic = {
-        "Uploader": "uploader", "Site": "site", "Tag": "tag", "Value greater than": "greater_than",
+        "Benchmark": 'benchmark', "Uploader": "uploader", "Site": "site", "Tag": "tag", "Value greater than": "greater_than",
         "Value equal to": "equals", "Value less than": "lesser_than"
     };
     if (admin) {
@@ -21,7 +21,7 @@ function onload() {
     }
     values = ["selected", "site", "uploader", "data", "tags"];
     filter_uuid = 0;
-    
+
     ResultSearch.search();
     ResultSearch.add_filter_field();
 }
@@ -116,8 +116,12 @@ class ResultSearch extends Content {
                         cell.textContent = res[col];
                         break;
                     case ("data"):
-                        var json = JSON.stringify(res[col]);
-                        cell.textContent = json;
+                        var view_data = document.createElement("A");
+                        view_data.textContent = "view JSON";
+                        let href = "./result" + "?uuid=" + res["uuid"];
+                        view_data.setAttribute("href", href);
+                        view_data.setAttribute("target","_blank");
+                        cell.appendChild(view_data);
                         break;
                     case ("tags"):
                         cell.textContent = res[col];
@@ -227,10 +231,8 @@ class ResultSearch extends Content {
                 filters = filters.concat([element]);
             }
         }
-        // TODO: SWITCH THIS BACK AFTER THE PAGE WORKS TO FIX THE FILTERING
-        // THIS MEANS YOU, MARC!}
+        // Finish query.
         query = { "filters": filters };
-        console.log(encodeURI(JSON.stringify(query)));
         // Find get new results via ajax query.
         $.ajax('/query_results?query_json='
             + encodeURI(JSON.stringify(query)))
@@ -245,7 +247,7 @@ class ResultSearch extends Content {
                 ResultSearch.set_page_selection();
                 ResultSearch.update();
             });
-            return false;
+        return false;
     }
     static add_filter_field() {
         var filter_id = "f" + filter_uuid++;
@@ -333,6 +335,7 @@ class ResultSearch extends Content {
 
 
     static make_diagram() {
+        /**Link to the Diagram-page, with selected results.*/
         // Store data in href
         let selected_results = results.filter(x => x["selected"]);
         let uuids = "";
@@ -349,7 +352,14 @@ class ResultSearch extends Content {
     }
 
     static result_information(result) {
-
+        /**Display the full json in a new tab.
+         * result (json): The json to get displayed.
+        */
+        let result_presentation = window.open();
+        let content = document.createElement("CODE");
+        content.textContent = JSON.stringify(result, undefined, 4);
+        result_presentation.document.open().appendChild(content);
+        result_presentation.document.close();
     }
 
     static hide_information(result) {
