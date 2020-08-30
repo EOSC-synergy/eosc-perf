@@ -26,20 +26,20 @@ class JSONResultValidator:
 
     # Check whether the given json has the same keys as the template
     def _has_mandatory_fields(self, result_json):
-        return _same_keys(result_json, self.template_json)
+        return _subset_keys(result_json, self.template_json)
 
 
-def _same_keys(json_one, json_two, check_subkeys=True):
+def _subset_keys(json_result, json_template, check_subkeys=True):
     # Check if both parameters are dictionaries
-    if not (isinstance(json_one, dict) and isinstance(json_two, dict)):
+    if not (isinstance(json_result, dict) and isinstance(json_template, dict)):
         return False
     # Check if both dictionaries have the same keys
-    if not set(json_one.keys()) == set(json_two.keys()):
+    if not set(json_template.keys()).issubset((json_result.keys())):
         return False
     if check_subkeys:
         # Check if both dictionaries have the same subkeys
-        keys_with_dict_values = [key for key in json_one.keys() if isinstance(json_one[key], dict)]
+        keys_with_dict_values = [key for key in json_template.keys() if isinstance(json_template[key], dict)]
         for key in keys_with_dict_values:
-            if not _same_keys(json_one[key], json_two[key]):
+            if not _subset_keys(json_result[key], json_template[key]):
                 return False
     return True
