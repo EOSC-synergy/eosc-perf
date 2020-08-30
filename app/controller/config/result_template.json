@@ -2,7 +2,7 @@
   "user_args": {
     "num_gpus": 1
   },
-  "evaluation": {
+  "training": {
     "num_gpus": 1,
     "result": {
       "average_examples_per_sec": 100.00
