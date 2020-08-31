@@ -139,6 +139,10 @@ function add_tag() {
     });
 }
 
+function show_mandatory_fields() {
+    
+}
+
 function prepare_sites() {
     var site_selection = document.getElementById("site_selection");
     site_selection.innerHTML = "";
@@ -163,13 +167,24 @@ function prepare_tags() {
     tag_selection.innerHTML = '<option selected>--No Tag--</option>';
     $.ajax('/fetch_tags')
         .done(function (data) {
-            var tags = data.results;
+            var tags = data.results.sort(compare);
             for (index = 0; index < tags.length; ++index) {
                 tag_html = "<option>" + tags[index].name + "</option>\n";
                 tag_selection.innerHTML += tag_html;
             }
         })
 }
+
+// Used to compare tags by their name
+function compare(a, b) {
+    if ( a.name.toLowerCase() < b.name.toLowerCase() ){
+      return -1;
+    }
+    if ( a.name.toLowerCase() > b.name.toLowerCase() ){
+      return 1;
+    }
+    return 0;
+  }
 
 function prepare_benchmarks() {
     var bm_selection = document.getElementById("bm_selection");
