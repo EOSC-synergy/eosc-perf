@@ -51,7 +51,7 @@ class IOController:
                 raise ValueError("no valid result JSON")
 
             # if the user is not in the database, we must add them
-            self.add_current_user_if_missing()
+            self._add_current_user_if_missing()
             # Try to add the result to the data base.
             return facade.add_result(result_json, metadata)
         return False
@@ -200,6 +200,8 @@ class IOController:
         bool: If the report was successfully added.
         """
         if self.is_authenticated():
+            # if the user is not in the database, we must add them
+            self._add_current_user_if_missing()
             # Add to database.
             if facade.add_report(metadata):
                 # TODO: notify admin, per email.
@@ -258,7 +260,7 @@ class IOController:
             return True
         return False
 
-    def add_current_user_if_missing(self):
+    def _add_current_user_if_missing(self):
         """Add the user from the current system as an uploader if they do not exist yet."""
         if authenticator.is_authenticated():
             uid = self.get_user_id()

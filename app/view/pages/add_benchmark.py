@@ -55,7 +55,6 @@ def add_benchmark_submit():
         return error_json_redirect('Could not submit benchmark (not logged in?)')
 
 
-    controller.add_current_user_if_missing()
     # handle redirect in a special way because ajax
     if not controller.submit_benchmark(uid, docker_name, message):
         return error_json_redirect('Failed to submit benchmark')
