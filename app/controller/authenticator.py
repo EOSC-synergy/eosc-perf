@@ -112,7 +112,11 @@ class Authenticator:
         """Tries to refresh token of current user.
            Returns True if refresh succeeds, False otherwise."""
         endpoint = json.loads(urlopen(CONF_URL).read())["token_endpoint"]
-        refresh_token = session['user']['token']['refresh_token']
+        try:
+            refresh_token = session['user']['token']['refresh_token']
+        except KeyError:
+            self.logout()
+            return False
         response = requests.post(
             endpoint,
             params={'client_id': "eosc-perf",
