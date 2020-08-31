@@ -34,8 +34,9 @@ def _subset_keys(json_result, json_template, check_subkeys=True):
     if not (isinstance(json_result, dict) and isinstance(json_template, dict)):
         return False
     # Check if both dictionaries have the same keys
-    if not set(json_template.keys()).issubset((json_result.keys())):
-        return False
+    if not set(json_template.keys()).issubset(set(json_result.keys())):
+        diff = set(json_template.keys()).difference(set(json_result.keys()))
+        raise ValueError("Uploaded Json misses the following (sub-)keys: {}".format(str(diff)))
     if check_subkeys:
         # Check if both dictionaries have the same subkeys
         keys_with_dict_values = [key for key in json_template.keys() if isinstance(json_template[key], dict)]
