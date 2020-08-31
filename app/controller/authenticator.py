@@ -98,7 +98,7 @@ class Authenticator:
     def logout(self):
         """Signs out the current user"""
         if not self.is_authenticated():
-            return info_redirect('There is no authenticated user to log out.')
+            return False
         token = session['user']['info']
         endpoint = json.loads(urlopen(CONF_URL).read())["revocation_endpoint"]
         requests.post(
@@ -106,7 +106,7 @@ class Authenticator:
             params={'token': token},
             headers={'content-type': 'application/x-www-form-urlencoded'})
         session.pop('user', None)
-        return info_redirect('Logged out')
+        return True
 
     def _refresh_token(self):
         """Tries to refresh token of current user.
@@ -179,4 +179,7 @@ def authentication_redirect():
 @authenticator_blueprint.route('/logout')
 def logout():
     """"Revoke current user's authentication"""
-    return authenticator.logout()
+    if authenticator.logout():
+        return info_redirect('Logged out')
+    else:
+        return info_redirect('There is no authenticated user to log out.')
