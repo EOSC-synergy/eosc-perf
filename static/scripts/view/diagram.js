@@ -41,16 +41,25 @@ class Diagram extends Content {
         return labels;
     }
 
+    generateCSV(dataIndex) {
+        let dataHeader = "data:text/csv;charset=utf-8,";
+        let rows = ["core_count,score"];
+        for (const row of this.results[dataIndex]) {
+            rows.push(row.core_count.toString() + "," + row.score.toString());
+        }
+        return dataHeader + rows.join("\r\n");
+    }
+
     // update method inherited from Content
     update() {
-        let results = getData();
+        this.results = getData();
 
         let dataSets = [];
-        for (let i = 0; i < results.length; i++) {
-            let dataset = this.buildDataset(results[i], i);
+        for (let i = 0; i < this.results.length; i++) {
+            let dataset = this.buildDataset(this.results[i], i);
             dataSets.push(dataset);
         }
-        let labels = this.buildLabels(results[0]);
+        let labels = this.buildLabels(this.results[0]);
 
         let context = document.getElementById('speedup').getContext('2d');
         window.diagram = new Chart(context, {
@@ -90,15 +99,24 @@ class Diagram extends Content {
     }
 }
 
-diagram = new Diagram();
-
 window.onload = function () {
-    var canvas = document.getElementById('speedup');
-    let button = document.getElementById('download-button')
-    button.addEventListener('click', function (e) {
-        var dataURL = canvas.toDataURL('image/png');
-        button.href = dataURL;
+    var diagram = new Diagram();
+
+    let canvas = document.getElementById('speedup');
+    let downloadButton = document.getElementById('download-button')
+    downloadButton.addEventListener('click', function (e) {
+        let dataURL = canvas.toDataURL('image/png');
+        downloadButton.href = dataURL;
     });
 
     diagram.update();
+
+    let csvButton = document.getElementById('csv-button');
+    csvButton.addEventListener('click', function (e) {
+        // TODO: defaults to dataset 0, selection not implemented due to
+        // multiple-dataset functionality being absent
+        let dataURI = encodeURI(diagram.generateCSV(0));
+        csvButton.href = dataURI;
+    });
+
 };
