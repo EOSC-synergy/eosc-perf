@@ -2,13 +2,13 @@
 import os
 import yaml
 
-def load_config():
-    """Load the config file from 'config.ini'."""
+def load_defaults():
+    """Get default configuration values."""
     defaults = {
         'debug': False,
         'debug-db-reset': False,
         'debug-db-dummy-items': True,
-        'database-path': 'sqlite.db',
+        'database-path': '',
         'admin_affiliations': ['example@kit.edu'],
         'debug_admin_affiliations': ['example2@kit.edu'],
         'oidc_client_secret': '',
@@ -16,6 +16,12 @@ def load_config():
         'upload_license_filename': 'upload_license.txt',
         'infrastructure_href': 'https://example.com'
     }
+
+    return defaults
+
+def load_config():
+    """Load the config file from 'config.ini'."""
+    defaults = load_defaults()
     if os.path.exists('config.yaml'):
         with open('config.yaml') as file:
             config = yaml.safe_load(file.read())
