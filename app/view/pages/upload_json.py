@@ -84,7 +84,8 @@ def upload_result_submit():
                 return error_json_redirect("No name for custom site entered.")
             if request.form["new_site_address"] == "":
                 return error_json_redirect("No address for custom site entered.")
-            if not controller.submit_site(site_name, request.form["new_site_address"], description=request.form["new_site_description"]):
+            if not controller.submit_site(site_name, request.form["new_site_address"],
+                                          description=request.form["new_site_description"]):
                 return error_json_redirect('Failed to submit new site.')
         else:
             print(existing_site.get_hidden())

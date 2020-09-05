@@ -15,34 +15,30 @@ from ..model.data_types import Site, Report
 # The parent url of docker hub projects, first for private second for docker certified.
 docker_hub_url = {"certified": "https://hub.docker.com/r/",
                   "default": "https://hub.docker.com/_/"}
-# For debugging skips the authentication process
 
 class IOController:
-    """This class acts as a facade between view and model, and validate user input.
+    """This class acts as a facade between view and model and validates user input.
     Attributes:
-    _result_validator  (JSONResultValidator): The validator for an uploaded benchmark result."""
+    _result_validator (JSONResultValidator): The validator for uploaded benchmark results."""
 
     def __init__(self):
-        """Constructor generat a new instance of IOController.
-        Args:
-        data_base (DatabaseFacade): The facade used to interact with the model if left
-                                    empty creates a new facade and there for a new database.
-        """
+        """Constructor: create a new instance of IOController."""
         self._result_validator = JSONResultValidator()
 
     def authenticate(self):
-        """Authenticate the current user."""
+        """Authenticate the current user. Redirects user to '/login' which again redirects 
+           the user to EGI Check-In for authentication."""
         if not self.is_authenticated():
             return redirect('/login')
 
     def submit_result(self, result_json: str, metadata: str) -> bool:
-        """Submit a new benchmark result to the system if it is valid.
-            Fails if the user isn't authenticated or the result json is in an invalid format.
+        """Submit a new benchmark result to the system.
+           Fails if the user isn't authenticated or the result json is invalid.
         Args:
-        result_json  (JSON): The benchmark result.
+        result_json  (JSON): The benchmark result to be uploaded.
         metadata      (str): The metadata associated with the benchmark result.
         Returns:
-        bool: If the benchmark was successfully added.
+        bool: True if the benchmark was successfully added, false otherwise.
         """
         # Check if user is authenticated
         if self.is_authenticated():
@@ -61,15 +57,14 @@ class IOController:
         """Submit a new Benchmark to the system.
         Args:
         uploader_id  (str): The id of the uploader.
-        docker_name     (str): The name of the dockerhub reposetory and sub url.
-                               So that https://hub.docker.com/_/[docker_name] or
-                               https://hub.docker.com/_/[docker_name] results in a valid url.
-        check_for_page (bool): Determines whether to control if the url corresponds to
+        docker_name     (str): The name of the dockerhub repository and sub url.
+                               https://hub.docker.com/_/[docker_name] or
+                               https://hub.docker.com/_/[docker_name] should be a valid url.
+        check_for_page (bool): If true, it will be checked whether docker_name corresponds to
                                an existing image on docker hub. Can lead to problems if
-                               chromium isn't installed
-                               and takes a considerable amount of time (5-10s).
+                               chromium isn't installed and takes a considerable amount of time (5-10s).
         Returns:
-        bool: If the benchmark was successfully submitted.
+        bool: True if the benchmark was successfully submitted, false othwe
         """
         # Check if user is authenticated.
         if not self.is_authenticated():
@@ -80,25 +75,26 @@ class IOController:
             # Add to model.
             if facade.add_benchmark(docker_name=docker_name, uploader_id=uploader_id):
                 return self.report(json.dumps({
-                    'message': comment,
+                    'message': "New Benchmark. Submit comment: {}".format(comment),
                     'type': 'benchmark',
                     'value': docker_name,
                     'uploader': uploader_id
                 }))
         return False
 
-    def submit_site(self, short_name: str, address: str, *, name: str = None, description: str = None) -> bool:
+    def submit_site(self, short_name: str, address: str, name: str = None, description: str = None) -> bool:
         """Submit a new site to the system for review.
         Args:
             short_name (str): site identifier
-            address (str): network address of site
-            name (str): human-readable name for site
-            description (str): human-readable description for site
+            address (str): network address of the site
+            name (str): human-readable name of the site
+            description (str): human-readable description of the site
         Returns:
-            bool: True on success
+            bool: True on success, false othwerwise.
         """
         if not self.is_authenticated():
             return False
+        self._add_current_user_if_missing()
 
         meta = {
             'short_name': short_name,
@@ -109,14 +105,27 @@ class IOController:
         if description is not None:
             meta['description'] = description
 
-        return facade.add_site(json.dumps(meta))
+        if facade.add_site(json.dumps(meta)):
+            message = "New Site. Short name: {}, address: {}".format(short_name, address)
+            if name is not None:
+                message += ", name: {}".format(name)
+            if description is not None:
+                message += ", description: {}".format(description)
+            return self.report(json.dumps({
+                    'message': message,
+                    'type': 'site',
+                    'value': short_name,
+                    'uploader': self.get_user_id()
+                }))
+        return False
+
 
     def submit_tag(self, tag: str) -> bool:
         """Submit a new tag
         Args:
-        metadata_json (str): The submitted tag.
+        metadata_json (str): The tag to be submitted.
         Returns:
-        bool: If the submission was successful.
+        bool: True if the submission was successful, false otherwise.
         """
         if self.is_authenticated():
             return facade.add_tag(tag)
@@ -140,76 +149,28 @@ class IOController:
            Args:
            short_name (str): short name of a site
            Returns:
-           bool: True if removal was successful, otherwise False."""
+           bool: True if removal was successful, false otherwise"""
         return facade.remove_site(short_name)
-            
-
-    def get_unapproved_sites(self) -> List[Site]:
-        """If the current user is an admin provide a list of all unaproved sites.
-        Args:
-        Returns:
-        List[Sites]: All unaproved sites, can be empty.
-        """
-        # Check if admin.
-        if authenticator.is_admin():
-            return self._unapproved_sites
-        # User isn't admin.
-        raise AuthenticateError(
-            "The users attempting to get teh unapproved sites isn't an an admin.")
-
-    def approve_site(self, site: Site = None, metadata_json: JSON = None) \
-            -> bool:
-        """If the current user is an admin, approve the given site.
-        Args:
-        site          (Site): The admin reviewed site getting add to the model.
-        metadata_json (JSON): A json formated str containing a 'short_name' and 'address' parameter
-                              ,as well as maybe a 'name' parameter. Gets used if site is left empty.
-        Returns:
-        bool: If process was successful.
-        """
-
-        # Check if user is allowed to approve.
-        if authenticator.is_admin():
-            # Decide whether to use site or metadata_json.
-            site = [site, self._parse_site(metadata_json)][site is None]
-            if not site is None:
-                # Atm unnecessary step, but usefull in case the site got created not in
-                # IOController or DatabaseFacade.
-                json_str = '{ '+'"short_name" : "' + site.get_short_name() + \
-                           '" , "address" : "' + site.get_address() + \
-                           '" , "name" : "' + site.get_name() + \
-                           '" , "description" : "' + site.get_description() + '" ' + '}'
-                # Try to add to database.
-                if facade.add_site(json_str):
-                    # Successfully added, remove from _unapproved_sites.
-                    for singel_site in self._unapproved_sites:
-                        # one of the attributes enough in case a admin corrected eg. the addres.
-                        if singel_site.get_short_name() is site.get_short_name() or \
-                                singel_site.get_address() is site.get_address():
-                            self._unapproved_sites.remove(singel_site)
-                            break
-                    return True
-        return False
 
     def report(self, metadata: JSON) -> bool:
-        """Add a Report to the model, and notify an admin about it.
+        """Add a Report to the model and notify an admin about it.
         Args:
-        metadata     (JSON): The metadata in json format, containing the
+        metadata     (JSON): The metadata in json format containing the
                              benchmark 'result_id' and the associated 'user_message'.
         Returns:
-        bool: If the report was successfully added.
+        bool: True If the report was successfully added, false otherwise
         """
         if self.is_authenticated():
-            # if the user is not in the database, we must add them
+            # if the user is not in the database, add them
             self._add_current_user_if_missing()
             # Add to database.
             if facade.add_report(metadata):
-                # TODO: notify admin, per email.
+                # TODO: notify admin per email
                 return True
         return False
 
     def get_report(self, uuid: str) -> Report:
-        """Get a report by UUID, require the user to be an admin.
+        """Get a report by UUID. Requires the user to be an admin.
         Args:
             uuid (str): The unique identifier for the report.
         Returns:
@@ -232,10 +193,12 @@ class IOController:
             "User trying to view the reports isn't an admin.")
 
     def process_report(self, verdict: bool, uuid: str) -> bool:
-        """Add the verdict to the model, if the verdict consents the report the associated
-        benchmark gets deleted.
+        """Add verdict to report with given uuid. If verdict is False, the item with given uuid
+           will stay hidden or become hidden.
         Args:
-            verdict (bool): The verdict; True when approving the reported item, False otherwise.
+            verdict (bool): The verdict; True when approving the reported item, which means
+                            it stays/becomes visible. If false, the reported item will
+                            stay/become hidden.
             uuid (str): The uuid of the judged report.
         Returns:
             bool: If the process was successful.
@@ -249,11 +212,12 @@ class IOController:
                 report.set_verdict(verdict)
                 # for benchmarks and sites: hidden only when added,
                 # visible after 'review' == report
-                if verdict:
-                    if report.get_report_type() == Report.BENCHMARK:
-                        report.get_benchmark().set_hidden(False)
-                    elif report.get_report_type() == Report.SITE:
-                        report.get_site().set_hidden(False)
+                if report.get_report_type() == Report.BENCHMARK:
+                    report.get_benchmark().set_hidden(not verdict)
+                elif report.get_report_type() == Report.SITE:
+                    report.get_site().set_hidden(not verdict)
+                elif report.get_report_type() == Report.RESULT:
+                    report.get_result().set_hidden(not verdict)
             except DatabaseFacade.NotFoundError:
                 # There is no report with given uuid.
                 return False
@@ -261,7 +225,7 @@ class IOController:
         return False
 
     def _add_current_user_if_missing(self):
-        """Add the user from the current system as an uploader if they do not exist yet."""
+        """Add the current user as an uploader if they do not exist yet."""
         if authenticator.is_authenticated():
             uid = self.get_user_id()
             try:
@@ -277,15 +241,15 @@ class IOController:
                 }))
 
     def _valid_docker_hub_name(self, docker_name: str, check_for_page: bool) -> bool:
-        """Check if it is a valid docker hub name.
-        Therefore controll the naming convention and if the corrensponding docker hub page,
-        is existing.
+        """Check if the given name is valid, which means that is follows the naming
+           convention and that a corresponding docker hub page exists.
         Args:
-        docker_name      (str): The url to the docker hub page.
-        check_for_page  (bool): Determines whether to control if the url corresponds to
-                                an existing image on docker hub.
+        docker_name      (str): The name to be checked.
+        check_for_page  (bool): If true, it will be checked whether docker_name corresponds to
+                                an existing image on docker hub. Can lead to problems if
+                                chromium isn't installed and takes a considerable amount of time (5-10s).
         Returns:
-        bool: If it is a valid docker name.
+        bool: True if it is a valid docker name, false otherwise.
         """
         # Distinguish between docker certified, and not docker certified.
         if "/" in docker_name:
