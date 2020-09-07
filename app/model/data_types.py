@@ -13,6 +13,7 @@ from typing import List
 import uuid
 from datetime import datetime
 from abc import abstractmethod
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm.session import Session
 from .database import db
 
@@ -432,6 +433,32 @@ class Result(db.Model):
     def get_uuid(self) -> str:
         """Get the result's UUID."""
         return self._uuid
+
+    def add_tag(self, tag: Tag) -> bool:
+        """Add a new tag to the result."""
+        # do not add tag twice
+        if tag in self._tags:
+            return False
+        self._tags.append(tag)
+        try:
+            db.session.commit()
+        except SQLAlchemyError:
+            db.session.rollback()
+            return False
+        return True
+
+    def remove_tag(self, tag: Tag) -> bool:
+        """Remove a tag from the result."""
+        # do not remove not-associated tag
+        if not tag in self._tags:
+            return False
+        self._tags.remove(tag)
+        try:
+            db.session.commit()
+        except SQLAlchemyError:
+            db.session.rollback()
+            return False
+        return True
 
     def __repr__(self):
         """Get a human-readable representation string of the result."""
