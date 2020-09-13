@@ -220,15 +220,15 @@ class DatabaseFacade:
 
         # input validation
         if 'id' not in metadata:
-            raise ValueError("id is missing from site metadata")
+            raise ValueError("id is missing from uploader metadata")
         if len(metadata['id']) < 1:
             raise ValueError("id empty")
         if 'name' not in metadata:
-            raise ValueError("name is missing from site metadata")
+            raise ValueError("name is missing from uploader metadata")
         if len(metadata['name']) < 1:
             raise ValueError("name is empty")
         if 'email' not in metadata:
-            raise ValueError("email is missing from site metadata")
+            raise ValueError("email is missing from uploader metadata")
         if len(metadata['email']) < 1:
             raise ValueError("email is empty")
 
@@ -410,14 +410,6 @@ class DatabaseFacade:
         # 3 because 'user@domain' => 'a@b'
         if len(uploader_id) == 0:
             raise ValueError("benchmark uploader id impossibly short")
-
-        # check if benchmark already exists beforehand to not add new uploader
-        # if uploader does not exist
-        try:
-            self.get_benchmark(docker_name)
-            return False
-        except self.NotFoundError:
-            pass
 
         try:
             uploader = self.get_uploader(uploader_id)
