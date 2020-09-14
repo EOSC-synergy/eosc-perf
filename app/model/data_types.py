@@ -256,7 +256,7 @@ class Site(db.Model):
             description (str, optional): A human readable description for the site.
         """
         new_args = {}
-        if 'name' in kwargs:
+        if 'name' in kwargs and kwargs['name'] is not None:
             new_args['_name'] = kwargs['name']
         else:
             new_args['_name'] = short_name
