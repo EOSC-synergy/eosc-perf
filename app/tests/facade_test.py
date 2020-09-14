@@ -2,9 +2,9 @@
 import unittest
 import json
 from flask import Flask
-from ..database import configure_database
-from ..facade import DatabaseFacade
-from ...configuration import configuration, load_defaults
+from ..model.database import configure_database
+from ..model.facade import DatabaseFacade
+from ..configuration import configuration, load_defaults
 
 configuration = load_defaults()
 
