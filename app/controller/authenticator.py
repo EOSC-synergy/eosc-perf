@@ -97,9 +97,10 @@ class Authenticator:
     
     def logout(self):
         """Signs out the current user"""
-        if not self.is_authenticated():
+        try:
+            token = session['user']['info']
+        except KeyError:
             return False
-        token = session['user']['info']
         endpoint = json.loads(urlopen(CONF_URL).read())["revocation_endpoint"]
         requests.post(
             endpoint,
