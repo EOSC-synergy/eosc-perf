@@ -36,16 +36,17 @@ class ViewReportPageFactory(PageFactory):
 
 view_report_blueprint = Blueprint('view-report', __name__)
 
-@view_report_blueprint.route('/test_view_report', methods=['GET'])
+@view_report_blueprint.route('/view_report_fetch_first', methods=['GET'])
 def test_view_report():
-    """Testing helper."""
-    if not configuration['debug']:
-        return error_redirect('This endpoint is not available in production')
-    reports = facade.get_reports(only_unanswered=False)
+    """Review the first new benchmark report."""
+    try:
+        reports = facade.get_reports(only_unanswered=True)
+    except facade.NotFoundError:
+        return info_redirect('No reports available')
     for report in reports:
         if report.get_report_type() == Report.RESULT:
             return redirect('/view_report?' + url_encode({'uuid': report.get_uuid()}), code=302)
-    return info_redirect('There is no current result report available')
+    return info_redirect('No result report to review')
 
 @view_report_blueprint.route('/view_report', methods=['GET'])
 def view_report():

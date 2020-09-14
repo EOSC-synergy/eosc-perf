@@ -57,16 +57,16 @@
                     <li class="nav-item">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Secret admin menu
+                                Admin menu
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#">View all reports (missing)</a>
-                                <a class="dropdown-item" href="/review_first_benchmark">Review a benchmark</a>
+                                <a class="dropdown-item" href="#">View all reports (page missing)</a>
+                                <a class="dropdown-item" href="/benchmark_review_fetch_first">Review first benchmark report</a>
+                                <a class="dropdown-item" href="/site_review_fetch_first">Review first site report</a>
+                                <a class="dropdown-item" href="/view_report_fetch_first">Review first result report</a>
                                 {% if debug %}
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="/test_report_result">Report random result</a>
-                                <a class="dropdown-item" href="/test_view_report">Test result report review</a>
-                                <a class="dropdown-item" href="/site_review_fetch_first">Review first site report</a>
+                                <a class="dropdown-item" href="/test_report_result">Test report random result</a>
                                 <a class="dropdown-item" href="/test_make_diagram">Test speedup diagram</a>
                                 {% endif %}
                              </div>
