@@ -49,14 +49,8 @@ def add_benchmark_submit():
     if docker_name is None:
         return error_json_redirect('Incomplete report form submitted (missing Docker name)')
 
-    # parse input
-    uid = controller.get_user_id()
-    if uid is None or len(uid) == 0:
-        return error_json_redirect('Could not submit benchmark (not logged in?)')
-
-
     # handle redirect in a special way because ajax
-    if not controller.submit_benchmark(uid, docker_name, message):
+    if not controller.submit_benchmark(docker_name, message):
         return error_json_redirect('Failed to submit benchmark')
 
     return Response('{}', mimetype='application/json', status=200)

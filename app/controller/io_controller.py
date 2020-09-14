@@ -52,7 +52,7 @@ class IOController:
             return facade.add_result(result_json, metadata)
         return False
 
-    def submit_benchmark(self, uploader_id: str, docker_name: str, comment: str,
+    def submit_benchmark(self, docker_name: str, comment: str,
                          check_for_page: bool = False) -> bool:
         """Submit a new Benchmark to the system.
         Args:
@@ -72,13 +72,14 @@ class IOController:
         # Check for valid email address.
         # Check valid docker_hub_name.uploader_emailuploader_email
         if self._valid_docker_hub_name(docker_name, check_for_page):
+            self._add_current_user_if_missing()
             # Add to model.
-            if facade.add_benchmark(docker_name=docker_name, uploader_id=uploader_id):
+            if facade.add_benchmark(docker_name=docker_name, uploader_id=self.get_user_id()):
                 return self.report(json.dumps({
                     'message': "New Benchmark. Submit comment: {}".format(comment),
                     'type': 'benchmark',
                     'value': docker_name,
-                    'uploader': uploader_id
+                    'uploader': self.get_user_id()
                 }))
         return False
 
