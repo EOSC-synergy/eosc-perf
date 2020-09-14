@@ -260,7 +260,7 @@ class Site(db.Model):
             new_args['_name'] = kwargs['name']
         else:
             new_args['_name'] = short_name
-        if 'description' in kwargs:
+        if 'description' in kwargs and kwargs['description'] is not None:
             new_args['_description'] = kwargs['description']
 
         super(Site, self).__init__(_short_name=short_name, _address=address, **new_args)
