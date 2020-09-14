@@ -161,30 +161,3 @@ def add_dummies():
         test_site.set_hidden(False)
     for test_benchmark in facade.get_benchmarks():
         test_benchmark.set_hidden(False)
-
-    # add new benchmark report for tests
-    #report_example_bench = Benchmark(docker_name='pihole/pihole:dev', uploader=uploaders[0])
-    #bench_report = BenchmarkReport(benchmark=report_example_bench, uploader=uploaders[0])
-    #facade.add_benchmark(
-    #    report_example_bench.get_docker_name(),
-    #    report_example_bench.get_uploader().get_id())
-
-    report_example_site = Site('foobar', 'elsewhere')
-    site_report = SiteReport(site=report_example_site, uploader=uploaders[0])
-    facade.add_site(json.dumps({
-        'short_name': report_example_site.get_short_name(),
-        'address': report_example_site.get_address()
-    }))
-
-    #facade.add_report(json.dumps({
-    #    'message': 'Oopsie',
-    #    'type': 'benchmark',
-    #    'value': report_example_bench.get_docker_name(),
-    #    'uploader': bench_report.get_reporter().get_id()
-    #}))
-    facade.add_report(json.dumps({
-        'message': 'Woopsie',
-        'type': 'site',
-        'value': site_report.get_site().get_short_name(),
-        'uploader': site_report.get_reporter().get_id()
-    }))
