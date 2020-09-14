@@ -17,7 +17,7 @@ from ...model.data_types import Report, ResultReport
 from ...controller.io_controller import controller
 from ...configuration import configuration
 
-from .helpers import error_json_redirect, error_redirect
+from .helpers import error_json_redirect, error_redirect, info_redirect
 
 class ViewReportPageFactory(PageFactory):
     """A factory to build result report view pages."""
@@ -45,6 +45,7 @@ def test_view_report():
     for report in reports:
         if report.get_report_type() == Report.RESULT:
             return redirect('/view_report?' + url_encode({'uuid': report.get_uuid()}), code=302)
+    return info_redirect('There is no current result report available')
 
 @view_report_blueprint.route('/view_report', methods=['GET'])
 def view_report():
