@@ -77,9 +77,8 @@ benchmark_review_blueprint = Blueprint('benchmark-review', __name__)
 @benchmark_review_blueprint.route('/benchmark_review_fetch_first', methods=['GET'])
 def get_benchmark_review():
     """Review the first new benchmark."""
-    try:
-        reports = facade.get_reports(only_unanswered=True)
-    except DatabaseFacade.NotFoundError:
+    reports = facade.get_reports(only_unanswered=True)
+    if len(reports) == 0:
         return info_redirect('No reports available')
     # use first benchmark report we can find
     for report in reports:

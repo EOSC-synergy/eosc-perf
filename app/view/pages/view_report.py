@@ -38,9 +38,8 @@ view_report_blueprint = Blueprint('view-report', __name__)
 @view_report_blueprint.route('/view_report_fetch_first', methods=['GET'])
 def test_view_report():
     """Review the first new benchmark report."""
-    try:
-        reports = facade.get_reports(only_unanswered=True)
-    except facade.NotFoundError:
+    reports = facade.get_reports(only_unanswered=True)
+    if len(reports) == 0:
         return info_redirect('No reports available')
     for report in reports:
         if report.get_report_type() == Report.RESULT:

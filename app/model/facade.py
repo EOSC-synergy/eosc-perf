@@ -85,10 +85,6 @@ class DatabaseFacade:
         # prepare query
         results = db.session.query(Site).all()
 
-        # check number of results
-        if len(results) < 1:
-            raise self.NotFoundError("no sites found")
-
         #
         return results
 
@@ -97,10 +93,6 @@ class DatabaseFacade:
         # prepare query
         results = db.session.query(Tag).all()
 
-        # check number of results
-        if len(results) < 1:
-            raise self.NotFoundError("no tags found")
-
         #
         return results
 
@@ -108,10 +100,6 @@ class DatabaseFacade:
         """Get all benchmarks."""
         # prepare query
         results = db.session.query(Benchmark).all()
-
-        # check number of results
-        if len(results) < 1:
-            raise self.NotFoundError("no benchmarks found")
 
         #
         return results
@@ -412,10 +400,6 @@ class DatabaseFacade:
         sites = sites.all()
 
         reports = results + benchmarks + sites
-
-        # check number of results
-        if len(reports) < 1:
-            raise self.NotFoundError("no reports found")
 
         #
         return reports

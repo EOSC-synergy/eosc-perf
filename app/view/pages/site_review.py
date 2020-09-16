@@ -36,9 +36,8 @@ site_review_blueprint = Blueprint('site-review', __name__)
 @site_review_blueprint.route('/site_review_fetch_first', methods=['GET'])
 def review_site_helper():
     """Review the first new site report."""
-    try:
-        reports = facade.get_reports(only_unanswered=True)
-    except facade.NotFoundError:
+    reports = facade.get_reports(only_unanswered=True)
+    if len(reports) == 0:
         return info_redirect('No reports available')
     for report in reports:
         if report.get_report_type() == Report.SITE:
