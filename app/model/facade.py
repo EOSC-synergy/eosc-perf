@@ -20,10 +20,6 @@ class DatabaseFacade:
     class NotFoundError(RuntimeError):
         """Helper exception type to represent queries with no results."""
 
-    def _get_result_iterator(self) -> ResultIterator:
-        """Get a result iterator that iterates through every result, unfiltered."""
-        return ResultIterator(db.session)
-
     def get_result(self, uuid: str) -> Result:
         """Fetch a single result by UUID."""
         # prepare query
