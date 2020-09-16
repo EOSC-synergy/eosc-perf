@@ -370,9 +370,28 @@ class FacadeTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.facade.add_result(content_json, json.dumps(meta))
 
+        meta = {
+            'uploader': 1,
+            'site': self.tested_site_name,
+            'benchmark': self.tested_benchmark_name,
+            'tags': [self.tested_tag_name]
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_result(content_json, json.dumps(meta))
+
         # missing site
         meta = {
             'uploader': self.tested_uploader_id,
+            'benchmark': self.tested_benchmark_name,
+            'tags': [self.tested_tag_name]
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_result(content_json, json.dumps(meta))
+
+        # empty site
+        meta = {
+            'uploader': self.tested_uploader_id,
+            'site': '',
             'benchmark': self.tested_benchmark_name,
             'tags': [self.tested_tag_name]
         }
@@ -389,10 +408,29 @@ class FacadeTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.facade.add_result(content_json, json.dumps(meta))
 
+        meta = {
+            'uploader': self.tested_uploader_id,
+            'site': 1,
+            'benchmark': self.tested_benchmark_name,
+            'tags': [self.tested_tag_name]
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_result(content_json, json.dumps(meta))
+
         # missing benchmark
         meta = {
             'uploader': self.tested_uploader_id,
             'site': self.tested_site_name,
+            'tags': [self.tested_tag_name]
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_result(content_json, json.dumps(meta))
+
+        # empty benchmark
+        meta = {
+            'uploader': self.tested_uploader_id,
+            'site': self.tested_site_name,
+            'benchmark': '',
             'tags': [self.tested_tag_name]
         }
         with self.assertRaises(ValueError):
@@ -403,6 +441,15 @@ class FacadeTest(unittest.TestCase):
             'uploader': self.tested_uploader_id,
             'site': self.tested_site_name,
             'benchmark': 'the moon is made of cheese',
+            'tags': [self.tested_tag_name]
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_result(content_json, json.dumps(meta))
+
+        meta = {
+            'uploader': self.tested_uploader_id,
+            'site': self.tested_site_name,
+            'benchmark': 1,
             'tags': [self.tested_tag_name]
         }
         with self.assertRaises(ValueError):

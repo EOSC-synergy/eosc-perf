@@ -160,9 +160,9 @@ class DatabaseFacade:
 
     def _has_uploader(self, uploader: str) -> bool:
         """Input validation helper."""
-        if len(uploader) < 1:
-            return False
         if not isinstance(uploader, str):
+            return False
+        if len(uploader) < 1:
             return False
         try:
             self.get_uploader(uploader)
@@ -172,9 +172,9 @@ class DatabaseFacade:
 
     def _has_site(self, site: str) -> bool:
         """Input validation helper."""
-        if len(site) < 1:
-            return False
         if not isinstance(site, str):
+            return False
+        if len(site) < 1:
             return False
         try:
             self.get_site(site)
@@ -184,9 +184,9 @@ class DatabaseFacade:
 
     def _has_benchmark(self, benchmark: str) -> bool:
         """Input validation helper."""
-        if len(benchmark) < 1:
-            return False
         if not isinstance(benchmark, str):
+            return False
+        if len(benchmark) < 1:
             return False
         try:
             self.get_benchmark(benchmark)
