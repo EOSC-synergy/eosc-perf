@@ -2,17 +2,16 @@
 import unittest
 import json
 from flask import Flask
+from ..configuration import configuration
 from ..model.database import configure_database
 from ..model.facade import DatabaseFacade
-from ..configuration import configuration
-
-configuration = load_defaults()
 
 class FacadeTest(unittest.TestCase):
     """Tests for facade."""
     tested_uploader_id: str = 'test_user'
     tested_benchmark_name: str = 'foobar/bazbutt'
     tested_site_name: str = 'iamasitename'
+    tested_tag_name: str = 'testtag'
 
     def setUp(self):
         """Called before each test."""
@@ -41,6 +40,11 @@ class FacadeTest(unittest.TestCase):
             'email': 'test@example.com'
         }
         self.assertTrue(self.facade.add_uploader(json.dumps(meta)))
+
+        try:
+            self.facade.get_uploader(self.tested_uploader_id)
+        except self.facade.NotFoundError:
+            self.fail("added uploader not found")
 
     def test_add_uploader_invalid(self):
         """Test various invalid calls to add_uploader."""
@@ -113,7 +117,13 @@ class FacadeTest(unittest.TestCase):
         # add necessary uploader
         self.test_add_uploader_valid()
 
-        self.assertTrue(self.facade.add_benchmark(self.tested_benchmark_name, self.tested_uploader_id))
+        self.assertTrue(
+            self.facade.add_benchmark(self.tested_benchmark_name, self.tested_uploader_id))
+
+        try:
+            self.facade.get_benchmark(self.tested_benchmark_name)
+        except self.facade.NotFoundError:
+            self.fail("added benchmark not found")
 
     def test_add_benchmark_invalid(self):
         """Test various invalid calls to add_benchmark."""
@@ -131,7 +141,8 @@ class FacadeTest(unittest.TestCase):
 
         # duplicate
         self.test_add_benchmark_valid()
-        self.assertFalse(self.facade.add_benchmark(self.tested_benchmark_name, self.tested_uploader_id))
+        self.assertFalse(
+            self.facade.add_benchmark(self.tested_benchmark_name, self.tested_uploader_id))
 
     def test_add_site_valid(self):
         """Test valid call to add_site."""
@@ -140,6 +151,11 @@ class FacadeTest(unittest.TestCase):
             'address': 'example.com'
         }
         self.assertTrue(self.facade.add_site(json.dumps(meta)))
+
+        try:
+            self.facade.get_site(self.tested_site_name)
+        except self.facade.NotFoundError:
+            self.fail("added site not found")
 
     def test_add_site_invalid(self):
         """Test various invalid calls to add_site."""
@@ -185,6 +201,218 @@ class FacadeTest(unittest.TestCase):
         self.test_add_site_valid()
         self.assertFalse(self.facade.add_site(json.dumps(meta)))
 
+    def test_add_tag_valid(self):
+        """Test valid call to add_tag."""
+        self.assertTrue(self.facade.add_tag(self.tested_tag_name))
+
+        try:
+            self.facade.get_tag(self.tested_tag_name)
+        except self.facade.NotFoundError:
+            self.fail("added tag not found")
+
+    def test_add_tag_invalid(self):
+        """Test various invalid calls to add_tag."""
+        with self.assertRaises(ValueError):
+            self.facade.add_tag("")
+
+        self.test_add_tag_valid()
+        self.assertFalse(self.facade.add_tag(self.tested_tag_name))
+
+    def _add_result_data(self):
+        usermeta = {
+            'id': self.tested_uploader_id,
+            'name': 'user',
+            'email': 'test@example.com'
+        }
+        sitemeta = {
+            'short_name': self.tested_site_name,
+            'address': 'example.com'
+        }
+
+        self.assertTrue(self.facade.add_uploader(json.dumps(usermeta)))
+        self.assertTrue(self.facade.add_benchmark(self.tested_benchmark_name, self.tested_uploader_id))
+        self.assertTrue(self.facade.add_site(json.dumps(sitemeta)))
+
+    def test_add_result_valid(self):
+        """Test valid call to add_result."""
+        content_json = "{ 'tag': 'value' }"
+        meta = {
+            'uploader': self.tested_uploader_id,
+            'site': self.tested_site_name,
+            'benchmark': self.tested_benchmark_name,
+            'tags': [self.tested_tag_name]
+        }
+        self._add_result_data()
+        self.test_add_tag_valid()
+        self.assertTrue(self.facade.add_result(content_json, json.dumps(meta)))
+
+        # no duplicate test for results because they are not guaranteed unique
+
+    def test_add_result_invalid(self):
+        """Test invalid calls to add_result."""
+        # missing uploader
+        content_json = "{ 'tag': 'value' }"
+        meta = {
+            'site': self.tested_site_name,
+            'benchmark': self.tested_benchmark_name,
+            'tags': [self.tested_tag_name]
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_result(content_json, json.dumps(meta))
+
+        # invalid uploader
+        meta = {
+            'uploader': 'foobar',
+            'site': self.tested_site_name,
+            'benchmark': self.tested_benchmark_name,
+            'tags': [self.tested_tag_name]
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_result(content_json, json.dumps(meta))
+
+        # missing site
+        meta = {
+            'uploader': self.tested_uploader_id,
+            'benchmark': self.tested_benchmark_name,
+            'tags': [self.tested_tag_name]
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_result(content_json, json.dumps(meta))
+
+        # invalid site
+        meta = {
+            'uploader': self.tested_uploader_id,
+            'site': 'hello world',
+            'benchmark': self.tested_benchmark_name,
+            'tags': [self.tested_tag_name]
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_result(content_json, json.dumps(meta))
+
+        # missing benchmark
+        meta = {
+            'uploader': self.tested_uploader_id,
+            'site': self.tested_site_name,
+            'tags': [self.tested_tag_name]
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_result(content_json, json.dumps(meta))
+
+        # invalid benchmark
+        meta = {
+            'uploader': self.tested_uploader_id,
+            'site': self.tested_site_name,
+            'benchmark': 'the moon is made of cheese',
+            'tags': [self.tested_tag_name]
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_result(content_json, json.dumps(meta))
+
+        # missing tags is not an error
+
+        # invalid tags
+        meta = {
+            'uploader': self.tested_uploader_id,
+            'site': self.tested_site_name,
+            'benchmark': self.tested_benchmark_name,
+            'tags': 'not a list'
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_result(content_json, json.dumps(meta))
+
+        meta = {
+            'uploader': self.tested_uploader_id,
+            'site': self.tested_site_name,
+            'benchmark': self.tested_benchmark_name,
+            'tags': [['not a list of strings']]
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_result(content_json, json.dumps(meta))
+
+    def test_add_report_valid(self):
+        """Test valid calls to add_report."""
+
+        self.test_add_result_valid()
+
+        # site
+        meta = {
+            'uploader': self.tested_uploader_id,
+            'type': 'site',
+            'value': self.tested_site_name
+        }
+        self.assertTrue(self.facade.add_report(json.dumps(meta)))
+
+        # benchmark
+        meta = {
+            'uploader': self.tested_uploader_id,
+            'type': 'benchmark',
+            'value': self.tested_benchmark_name
+        }
+        self.assertTrue(self.facade.add_report(json.dumps(meta)))
+
+        # result
+        # no simple available way to reference test result
+        #meta = {
+        #    'uploader': self.tested_uploader_id,
+        #    'type': 'result',
+        #    'value': ?
+        #}
+        #self.assertTrue(self.facade.add_report(json.dumps(meta)))
+
+    def test_add_report_invalid(self):
+        """Test various invalid calls to add_report."""
+        self._add_result_data()
+
+        # no uploader
+        meta = {
+            'type': 'site',
+            'value': self.tested_site_name
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_report(json.dumps(meta))
+
+        # no type
+        meta = {
+            'uploader': self.tested_uploader_id,
+            'value': 'something'
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_report(json.dumps(meta))
+
+        # no value
+        meta = {
+            'uploader': self.tested_uploader_id,
+            'type': 'test'
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_report(json.dumps(meta))
+
+        # invalid site
+        meta = {
+            'uploader': self.tested_uploader_id,
+            'type': 'site',
+            'value': '!!!invalid'
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_report(json.dumps(meta))
+
+        # invalid benchmark
+        meta = {
+            'uploader': self.tested_uploader_id,
+            'type': 'benchmark',
+            'value': '!!!invalid'
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_report(json.dumps(meta))
+
+        # invalid uploader
+        meta = {
+            'uploader': 'not an uploader',
+            'type': 'site',
+            'value': self.tested_site_name
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_report(json.dumps(meta))
 
 if __name__ == '__main__':
     unittest.main()

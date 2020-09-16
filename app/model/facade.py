@@ -266,17 +266,17 @@ class DatabaseFacade:
         if 'uploader' not in metadata:
             raise ValueError("uploader is missing from result metadata")
         if not self._has_uploader(metadata['uploader']):
-            raise TypeError("uploader id is invalid")
+            raise ValueError("uploader id is invalid")
 
         if 'site' not in metadata:
             raise ValueError("site is missing from result metadata")
         if not self._has_site(metadata['site']):
-            raise TypeError("site id is invalid")
+            raise ValueError("site id is invalid")
 
         if 'benchmark' not in metadata:
             raise ValueError("benchmark is missing from result metadata")
         if not self._has_benchmark(metadata['benchmark']):
-            raise TypeError("benchmark name is invalid")
+            raise ValueError("benchmark name is invalid")
 
         uploader = self.get_uploader(metadata['uploader'])
         site = self.get_site(metadata['site'])
