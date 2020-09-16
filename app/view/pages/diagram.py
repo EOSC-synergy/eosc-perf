@@ -44,7 +44,9 @@ class DiagramFactory(PageFactory):
         """Generate page body code.
 
         This contains a list of compared results."""
-        list_start = '<div class="card"><div class="card-header">Compared results: site, benchmark, num_gpus</div><ul class="list-group list-group-flush">'
+        list_start = '<div class="card"><div class="card-header">' \
+            'Compared results: site, benchmark, num_gpus' \
+            '</div><ul class="list-group list-group-flush">'
         list_end = '</ul></div>'
         list_elements = []
         results = [facade.get_result(uuid) for uuid in uuids]
@@ -71,7 +73,7 @@ diagram_blueprint = Blueprint('diagram-factory', __name__)
 @diagram_blueprint.route('/test_make_diagram', methods=['GET'])
 def make_diagram_example():
     """Testing helper."""
-    if not configuration['debug']:
+    if not configuration.get('debug'):
         return error_redirect('This endpoint is not available in production')
     results = facade.query_results(json.dumps({
         'filters': [

@@ -50,7 +50,7 @@ result_report_blueprint = Blueprint('result-report-factory', __name__)
 @result_report_blueprint.route('/test_report_result', methods=['GET'])
 def test_report_result():
     """Mock helper."""
-    if not configuration['debug']:
+    if not configuration.get('debug'):
         return error_redirect('This endpoint is not available in production')
     iterator = ResultIterator(db.session)
     results = []

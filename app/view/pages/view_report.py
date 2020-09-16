@@ -15,7 +15,6 @@ from ..type_aliases import HTML, JSON
 from ...model.facade import facade
 from ...model.data_types import Report, ResultReport
 from ...controller.io_controller import controller
-from ...configuration import configuration
 
 from .helpers import error_json_redirect, error_redirect, info_redirect
 

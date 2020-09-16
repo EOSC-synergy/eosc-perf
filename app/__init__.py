@@ -24,13 +24,17 @@ from .view.pages.privacy_policy import privacy_blueprint
 from .view.pages.json_display import display_json_blueprint
 
 
-def create_app(config):
+def create_app():
     """Create the flask app object.
 
     Args:
         config (dict): A dictionary containing the configuration values."""
     flask_app = Flask(__name__)
-    if config['debug']:
+
+    # only load file contents here instead of by default for tests
+    configuration.reload()
+
+    if configuration.get('debug'):
         flask_app.config['DEBUG'] = True
         #app.config['SQLALCHEMY_ECHO'] = True
         print("Running in debug mode")
@@ -38,10 +42,10 @@ def create_app(config):
         print("Running in production mode")
 
     flask_app.app_context().push()
-    configure_database(flask_app, config)
-    configure_authenticator(flask_app, config)
+    configure_database(flask_app)
+    configure_authenticator(flask_app)
 
-    if config['debug'] and config['debug-db-dummy-items']:
+    if configuration.get('debug') and configuration.get('debug-db-dummy-items'):
         add_dummies()
 
     flask_app.register_blueprint(ajax_blueprint)
@@ -62,4 +66,4 @@ def create_app(config):
 
     return flask_app
 
-app: Flask = create_app(configuration)
+app: Flask = create_app()

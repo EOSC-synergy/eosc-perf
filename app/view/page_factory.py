@@ -68,8 +68,8 @@ class PageFactory:
                 info=info_tmp,
                 content=self._generate_content(args),
                 admin=controller.is_admin(),
-                debug=configuration['debug'],
-                im_link=configuration['infrastructure_href'],
+                debug=configuration.get('debug'),
+                im_link=configuration.get('infrastructure_href'),
                 user_name=controller.get_full_name(),
                 logged_in=controller.is_authenticated(),
                 **jinja_args)

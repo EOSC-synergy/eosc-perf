@@ -11,6 +11,7 @@ import requests
 from flask import session
 from flask.blueprints import Blueprint
 from authlib.integrations.flask_client import OAuth
+from ..configuration import configuration
 from ..model.facade import facade
 from ..view.pages.helpers import info_redirect, error_redirect
 
@@ -31,18 +32,18 @@ class Authenticator:
         self.client_secret = None
         self.scope = 'openid email profile eduperson_scoped_affiliation offline_access'
 
-    def configure_authenticator(self, flask_app, config):
+    def configure_authenticator(self, flask_app):
         """Sets up OIDC authentication functionality for the web app"""
-        if len(config['oidc_client_secret']) == 0:
+        if len(configuration.get('oidc_client_secret')) == 0:
             raise ValueError("missing openID client secret in configuration")
-        self.client_secret = config['oidc_client_secret']
+        self.client_secret = configuration.get('oidc_client_secret')
 
         flask_app.secret_key = '!secret'
         flask_app.config["EOSC-PERF_CLIENT_ID"] = 'eosc-perf'
         flask_app.config["EOSC-PERF_CLIENT_SECRET"] = self.client_secret
 
         self.oauth = OAuth(flask_app)
-        self.hostname = config['oidc_redirect_hostname']
+        self.hostname = configuration.get('oidc_redirect_hostname')
         self.oauth.register(
             name='eosc-perf',
             userinfo_endpoint='https://aai-dev.egi.eu/oidc/userinfo',
@@ -53,10 +54,10 @@ class Authenticator:
             secret=self.client_secret
         )
 
-        if config['debug']:
-            self.admin_affiliations = config['debug_admin_affiliations']
+        if configuration.get('debug'):
+            self.admin_affiliations = configuration.get('debug_admin_affiliations')
         else:
-            self.admin_affiliations = config['admin_affiliations']
+            self.admin_affiliations = configuration.get('admin_affiliations')
 
     def authenticate_user(self):
         """Redirects user to EGI Check-In for authentication"""
@@ -94,7 +95,7 @@ class Authenticator:
         except KeyError:
             return False
         return any(aff in affiliations for aff in self.admin_affiliations)
-    
+
     def logout(self):
         """Signs out the current user"""
         try:
@@ -131,7 +132,7 @@ class Authenticator:
         user['info'] = session['user']['info']
         user['token'] = new_token
         session['user'] = user
-        return (response.status_code == 200)
+        return response.status_code == 200
 
     def _token_expired(self):
         """Checks if the current user has a valid authentication token"""
@@ -163,9 +164,9 @@ authenticator = Authenticator()
 
 authenticator_blueprint = Blueprint('authenticator', __name__)
 
-def configure_authenticator(app, config):
+def configure_authenticator(app):
     """Configures the authenticator for given app and config"""
-    authenticator.configure_authenticator(app, config)
+    authenticator.configure_authenticator(app)
 
 @authenticator_blueprint.route('/login')
 def authenticate_user():

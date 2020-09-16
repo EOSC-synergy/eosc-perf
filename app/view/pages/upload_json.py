@@ -9,9 +9,9 @@ from pathlib import Path
 from flask import request, Response
 from flask.blueprints import Blueprint
 
+from ...configuration import configuration
 from ..page_factory import PageFactory
 from ..type_aliases import HTML, JSON
-from ...configuration import configuration
 
 from ...controller.io_controller import controller
 
@@ -26,7 +26,7 @@ class UploadJSONFactory(PageFactory):
     @staticmethod
     def get_license_string() -> str:
         """Helper: Get result upload license as string:"""
-        filename = configuration["upload_license_filename"]
+        filename = configuration.get("upload_license_filename")
         path = str(Path(__file__).parent) + "/../../../" + filename
         with open(path, "r") as license_file:
             license_string = license_file.read()
@@ -102,7 +102,7 @@ def upload_result_submit():
         'benchmark': request.form['benchmark'],
         'tags': tags
     }
-    
+
     try:
         success = controller.submit_result(result_json, json.dumps(metadata))
     except (ValueError, TypeError) as error:
@@ -123,6 +123,6 @@ def upload_tag():
     if tag == "":
         return error_json_redirect('No name entered for new tag')
     if tag == "--No Tag--":
-        return error_json_redirect('New tag cannot ba called "--No Tag--", as that is a placeholder name')
+        return error_json_redirect('New tag cannot be called "--No Tag--"')
     controller.submit_tag(tag)
     return Response('{}', mimetype='application/json', status=200)

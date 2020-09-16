@@ -4,7 +4,7 @@ import json
 from flask import Flask
 from ..model.database import configure_database
 from ..model.facade import DatabaseFacade
-from ..configuration import configuration, load_defaults
+from ..configuration import configuration
 
 configuration = load_defaults()
 
@@ -22,10 +22,8 @@ class FacadeTest(unittest.TestCase):
         self.app.app_context().push()
 
         # use memory database, reset entirely every time
-        configuration['database-path'] = ''
-        configuration['debug'] = True
-        configuration['debug-db-reset'] = True
-        configure_database(self.app, configuration)
+        configuration.reset()
+        configure_database(self.app)
 
         # facade
         self.facade = DatabaseFacade()

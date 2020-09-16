@@ -6,9 +6,7 @@ import unittest
 from flask import Flask, session
 from ...model.database import configure_database
 from ..io_controller import controller
-from ...configuration import configuration, load_defaults
-
-CONFIG = load_defaults()
+from ...configuration import configuration
 
 class FacadeTest(unittest.TestCase):
 
@@ -21,10 +19,8 @@ class FacadeTest(unittest.TestCase):
         self.app.secret_key = '!secret'
 
         # use memory database, reset entirely every time
-        configuration['database-path'] = ''
-        configuration['debug'] = True
-        configuration['debug-db-reset'] = True
-        configure_database(self.app, CONFIG)
+        configuration.reset()
+        configure_database(self.app)
 
         # facade
         self.controller = controller
