@@ -11,8 +11,6 @@ from ..page_factory import PageFactory
 from ..type_aliases import HTML, JSON
 from ...controller.io_controller import controller
 from ...model.facade import facade
-from ...configuration import configuration
-
 
 class SearchResultFactory(PageFactory):
     """ A factory to create search result pages."""
