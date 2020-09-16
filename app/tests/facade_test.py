@@ -2,9 +2,9 @@
 import unittest
 import json
 from flask import Flask
-from ..configuration import configuration
-from ..model.database import configure_database
-from ..model.facade import DatabaseFacade
+from app.configuration import configuration
+from app.model.database import configure_database
+from app.model.facade import DatabaseFacade
 
 class FacadeTest(unittest.TestCase):
     """Tests for facade."""
