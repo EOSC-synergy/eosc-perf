@@ -112,6 +112,14 @@ class FacadeTest(unittest.TestCase):
         self.test_add_uploader_valid()
         self.assertFalse(self.facade.add_uploader(json.dumps(meta)))
 
+    def test_find_uploader(self):
+        """Test finding added uploader."""
+        self.test_add_uploader_valid()
+        try:
+            self.facade.get_uploader(self.tested_uploader_id)
+        except self.facade.NotFoundError:
+            self.fail("could not find added uploader")
+
     def test_add_benchmark_valid(self):
         """Test valid call to add_benchmark."""
         # add necessary uploader
@@ -143,6 +151,16 @@ class FacadeTest(unittest.TestCase):
         self.test_add_benchmark_valid()
         self.assertFalse(
             self.facade.add_benchmark(self.tested_benchmark_name, self.tested_uploader_id))
+
+    def test_find_benchmark(self):
+        """Test finding added benchmark."""
+        self.test_add_benchmark_valid()
+        try:
+            self.facade.get_benchmark(self.tested_benchmark_name)
+        except self.facade.NotFoundError:
+            self.fail("could not find added benchmark")
+        
+        self.assertGreater(len(self.facade.get_benchmarks()), 0)
 
     def test_add_site_valid(self):
         """Test valid call to add_site."""
@@ -201,6 +219,16 @@ class FacadeTest(unittest.TestCase):
         self.test_add_site_valid()
         self.assertFalse(self.facade.add_site(json.dumps(meta)))
 
+    def test_find_site(self):
+        """Test finding added site."""
+        self.test_add_site_valid()
+        try:
+            self.facade.get_site(self.tested_site_name)
+        except self.facade.NotFoundError:
+            self.fail("could not find added site")
+        
+        self.assertGreater(len(self.facade.get_sites()), 0)
+
     def test_add_tag_valid(self):
         """Test valid call to add_tag."""
         self.assertTrue(self.facade.add_tag(self.tested_tag_name))
@@ -217,6 +245,16 @@ class FacadeTest(unittest.TestCase):
 
         self.test_add_tag_valid()
         self.assertFalse(self.facade.add_tag(self.tested_tag_name))
+
+    def test_find_tag(self):
+        """Test finding added tag."""
+        self.test_add_tag_valid()
+        try:
+            self.facade.get_tag(self.tested_tag_name)
+        except self.facade.NotFoundError:
+            self.fail("could not find added tag")
+
+        self.assertGreater(len(self.facade.get_tags()), 0)
 
     def _add_result_data(self):
         usermeta = {
@@ -329,6 +367,11 @@ class FacadeTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.facade.add_result(content_json, json.dumps(meta))
 
+    def test_find_result(self):
+        """Test if added results can be found."""
+        self.test_add_result_valid()
+        self.assertGreater(len(self.facade.query_results('{ "filters": [] }')), 0)
+
     def test_add_report_valid(self):
         """Test valid calls to add_report."""
 
@@ -413,6 +456,11 @@ class FacadeTest(unittest.TestCase):
         }
         with self.assertRaises(ValueError):
             self.facade.add_report(json.dumps(meta))
+
+    def test_find_report(self):
+        """Test if added reports can be found."""
+        self.test_add_report_valid()
+        self.assertGreater(len(self.facade.get_reports()), 0)
 
 if __name__ == '__main__':
     unittest.main()
