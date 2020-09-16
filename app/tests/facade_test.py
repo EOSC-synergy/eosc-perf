@@ -55,7 +55,7 @@ class FacadeTest(unittest.TestCase):
         # empty id
         meta = {
             'id': '',
-            'user': 'name',
+            'name': 'user',
             'email': 'test@example.com'
         }
         with self.assertRaises(ValueError):
@@ -63,7 +63,7 @@ class FacadeTest(unittest.TestCase):
 
         # missing id
         meta = {
-            'user': 'name',
+            'name': 'user',
             'email': 'test@example.com'
         }
         with self.assertRaises(ValueError):
@@ -72,7 +72,7 @@ class FacadeTest(unittest.TestCase):
         # empty user
         meta = {
             'id': 'random',
-            'user': '',
+            'name': '',
             'email': 'test@example.com'
         }
         with self.assertRaises(ValueError):
@@ -89,7 +89,7 @@ class FacadeTest(unittest.TestCase):
         # empty email
         meta = {
             'id': 'random',
-            'user': 'name',
+            'name': 'user',
             'email': ''
         }
         with self.assertRaises(ValueError):
@@ -98,7 +98,7 @@ class FacadeTest(unittest.TestCase):
         # missing email
         meta = {
             'id': 'random',
-            'user': 'name',
+            'name': 'user',
         }
         with self.assertRaises(ValueError):
             self.facade.add_uploader(json.dumps(meta))
@@ -159,14 +159,38 @@ class FacadeTest(unittest.TestCase):
             self.facade.get_benchmark(self.tested_benchmark_name)
         except self.facade.NotFoundError:
             self.fail("could not find added benchmark")
-        
+
+    def test_find_benchmark_invalid(self):
+        """Test finding nonexistent benchmark."""
+        with self.assertRaises(self.facade.NotFoundError):
+            self.facade.get_benchmark("this benchmark does not exist")
+
+    def test_find_benchmarks(self):
+        """Test finding benchmarks."""
+        self.test_add_benchmark_valid()
         self.assertGreater(len(self.facade.get_benchmarks()), 0)
+
+    def test_query_benchmarks(self):
+        """Test querying benchmarks."""
+        self.test_add_benchmark_valid()
+        self.assertGreater(len(self.facade.query_benchmarks([])), 0)
+
+    def test_query_benchmarks_by_name(self):
+        """Test querying benchmarks by name."""
+        self.test_add_benchmark_valid()
+        self.assertGreater(len(self.facade.query_benchmarks([self.tested_benchmark_name])), 0)
+
+    def test_find_benchmarks_empty(self):
+        """Test finding no benchmarks."""
+        self.assertEqual(len(self.facade.get_benchmarks()), 0)
 
     def test_add_site_valid(self):
         """Test valid call to add_site."""
         meta = {
             'short_name': self.tested_site_name,
-            'address': 'example.com'
+            'address': 'example.com',
+            'description': 'this is a description',
+            'name': 'very long name'
         }
         self.assertTrue(self.facade.add_site(json.dumps(meta)))
 
@@ -226,8 +250,31 @@ class FacadeTest(unittest.TestCase):
             self.facade.get_site(self.tested_site_name)
         except self.facade.NotFoundError:
             self.fail("could not find added site")
-        
+
+    def test_find_site_invalid(self):
+        """Test finding nonexistent site."""
+        with self.assertRaises(self.facade.NotFoundError):
+            self.facade.get_site("this site does not exist")
+
+    def test_find_sites(self):
+        """Test finding sites."""
+        self.test_add_site_valid()
         self.assertGreater(len(self.facade.get_sites()), 0)
+
+    def test_find_sites_empty(self):
+        """Test finding no sites."""
+        self.assertEqual(len(self.facade.get_sites()), 0)
+
+    def test_remove_site(self):
+        """Test removing a site."""
+        self.test_add_site_valid()
+        self.assertTrue(self.facade.remove_site(self.tested_site_name))
+        with self.assertRaises(self.facade.NotFoundError):
+            self.facade.get_site(self.tested_site_name)
+    
+    def test_remove_site_invalid(self):
+        """Test removing a site that doesn't exist."""
+        self.assertFalse(self.facade.remove_site(self.tested_site_name))
 
     def test_add_tag_valid(self):
         """Test valid call to add_tag."""
@@ -254,7 +301,19 @@ class FacadeTest(unittest.TestCase):
         except self.facade.NotFoundError:
             self.fail("could not find added tag")
 
+    def test_find_tag_invalid(self):
+        """Test finding nonexistent tag."""
+        with self.assertRaises(self.facade.NotFoundError):
+            self.facade.get_tag("this tag does not exist")
+
+    def test_find_tags(self):
+        """Test finding all tags."""
+        self.test_add_tag_valid()
         self.assertGreater(len(self.facade.get_tags()), 0)
+
+    def test_find_tags_empty(self):
+        """Test finding no tags."""
+        self.assertEqual(len(self.facade.get_tags()), 0)
 
     def _add_result_data(self):
         usermeta = {
@@ -288,6 +347,9 @@ class FacadeTest(unittest.TestCase):
 
     def test_add_result_invalid(self):
         """Test invalid calls to add_result."""
+
+        self._add_result_data()
+
         # missing uploader
         content_json = "{ 'tag': 'value' }"
         meta = {
@@ -355,7 +417,7 @@ class FacadeTest(unittest.TestCase):
             'benchmark': self.tested_benchmark_name,
             'tags': 'not a list'
         }
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             self.facade.add_result(content_json, json.dumps(meta))
 
         meta = {
@@ -364,13 +426,27 @@ class FacadeTest(unittest.TestCase):
             'benchmark': self.tested_benchmark_name,
             'tags': [['not a list of strings']]
         }
+        with self.assertRaises(TypeError):
+            self.facade.add_result(content_json, json.dumps(meta))
+
+        # unknown tag
+        meta = {
+            'uploader': self.tested_uploader_id,
+            'site': self.tested_site_name,
+            'benchmark': self.tested_benchmark_name,
+            'tags': ['fake tag']
+        }
         with self.assertRaises(ValueError):
             self.facade.add_result(content_json, json.dumps(meta))
 
-    def test_find_result(self):
+    def test_find_results(self):
         """Test if added results can be found."""
         self.test_add_result_valid()
         self.assertGreater(len(self.facade.query_results('{ "filters": [] }')), 0)
+
+    def test_find_results_empty(self):
+        """Test finding no results."""
+        self.assertEqual(len(self.facade.query_results('{ "filters": [] }')), 0)
 
     def test_add_report_valid(self):
         """Test valid calls to add_report."""
@@ -381,7 +457,8 @@ class FacadeTest(unittest.TestCase):
         meta = {
             'uploader': self.tested_uploader_id,
             'type': 'site',
-            'value': self.tested_site_name
+            'value': self.tested_site_name,
+            'message': 'hello world'
         }
         self.assertTrue(self.facade.add_report(json.dumps(meta)))
 
@@ -457,10 +534,19 @@ class FacadeTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.facade.add_report(json.dumps(meta))
 
-    def test_find_report(self):
+    def test_find_reports(self):
         """Test if added reports can be found."""
         self.test_add_report_valid()
         self.assertGreater(len(self.facade.get_reports()), 0)
+
+    def test_find_reports_unanswered(self):
+        """Test finding only unanswered reports."""
+        self.test_add_report_valid()
+        self.assertGreater(len(self.facade.get_reports(only_unanswered=True)), 0)
+
+    def test_find_reports_empty(self):
+        """Test finding no reports."""
+        self.assertEqual(len(self.facade.get_reports()), 0)
 
 if __name__ == '__main__':
     unittest.main()
