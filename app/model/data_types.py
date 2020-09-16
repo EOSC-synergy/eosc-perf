@@ -395,7 +395,7 @@ class Result(db.Model):
             tags (List[Tag], optional): A list of tags to associated the result with.
         """
         new_args = {}
-        if 'tags' in kwargs:
+        if 'tags' in kwargs and len(kwargs['tags']) > 0:
             new_args['_tags'] = kwargs['tags']
 
         super(Result, self).__init__(_json=json, _uploader=uploader,
