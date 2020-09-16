@@ -1,5 +1,5 @@
 """Launch code in case the module is ran directly."""
-from . import app
+from .flask_app import flask_app
 
 if __name__ == '__main__':
-    app.run()
+    flask_app.run()

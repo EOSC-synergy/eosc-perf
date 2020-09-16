@@ -1,6 +1,6 @@
 from typing import List
 import code
-from app import app
+from app.flask_app import flask_app
 from app.model.database import db
 from app.model.sandbox import *
 from app.model.data_types import *
