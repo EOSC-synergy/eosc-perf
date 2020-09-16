@@ -2,8 +2,7 @@
 Provided are:
   - DatabaseFacade
 And as helpers:
-  - DatabaseFacade.NotFoundError
-  - DatabaseFacade.ToomanyError"""
+  - DatabaseFacade.NotFoundError"""
 from typing import List
 import json
 from sqlalchemy.exc import SQLAlchemyError
@@ -21,9 +20,6 @@ class DatabaseFacade:
     class NotFoundError(RuntimeError):
         """Helper exception type to represent queries with no results."""
 
-    class TooManyError(RuntimeError):
-        """Helper exception type to represent queries with too many results."""
-
     def _get_result_iterator(self) -> ResultIterator:
         """Get a result iterator that iterates through every result, unfiltered."""
         return ResultIterator(db.session)
@@ -36,9 +32,6 @@ class DatabaseFacade:
         # check number of results
         if len(results) < 1:
             raise self.NotFoundError("result '{}' not found".format(uuid))
-        if len(results) > 1:
-            # if this happens, database is in invalid state
-            raise self.TooManyError("results UUID collision")
 
         #
         return results[0]
@@ -51,9 +44,6 @@ class DatabaseFacade:
         # check number of results
         if len(results) < 1:
             raise self.NotFoundError("tag '{}' not found".format(name))
-        if len(results) > 1:
-            # if this happens, database is in invalid state
-            raise self.TooManyError("tags with name collision ({})".format(name))
 
         #
         return results[0]
@@ -66,9 +56,6 @@ class DatabaseFacade:
         # check number of results
         if len(results) < 1:
             raise self.NotFoundError("benchmark '{}' not found".format(docker_name))
-        if len(results) > 1:
-            # if this happens, database is in invalid state
-            raise self.TooManyError("benchmark name collision ({})".format(docker_name))
 
         #
         return results[0]
@@ -81,8 +68,6 @@ class DatabaseFacade:
         # check number of results
         if len(results) < 1:
             raise self.NotFoundError("uploader '{}' not found".format(identifier))
-        if len(results) > 1:
-            raise self.TooManyError("uploader name collision ({})".format(identifier))
 
         #
         return results[0]
@@ -95,9 +80,6 @@ class DatabaseFacade:
         # check number of results
         if len(results) < 1:
             raise self.NotFoundError("site '{}' not found".format(short_name))
-        if len(results) > 1:
-            raise self.TooManyError(
-                "multiple sites with same short name ({})".format(short_name))
 
         #
         return results[0]
@@ -202,8 +184,6 @@ class DatabaseFacade:
             self.get_uploader(uploader)
         except self.NotFoundError:
             return False
-        except self.TooManyError:
-            return False
         return True
 
     def _has_site(self, site: str) -> bool:
@@ -216,8 +196,6 @@ class DatabaseFacade:
             self.get_site(site)
         except self.NotFoundError:
             return False
-        except self.TooManyError:
-            return True
         return True
 
     def _has_benchmark(self, benchmark: str) -> bool:
@@ -230,8 +208,6 @@ class DatabaseFacade:
             self.get_benchmark(benchmark)
         except self.NotFoundError:
             return False
-        except self.TooManyError:
-            return True
         return True
 
     def add_uploader(self, metadata_json: str) -> bool:
@@ -328,7 +304,7 @@ class DatabaseFacade:
         try:
             site = self.get_site(short_name)
             return self._remove_from_db(site)
-        except (self.NotFoundError, self.TooManyError):
+        except self.NotFoundError:
             return False
 
     def add_tag(self, name: str) -> bool:
@@ -416,9 +392,6 @@ class DatabaseFacade:
         # check number of results
         if len(results) < 1:
             raise self.NotFoundError("report '{}' not found".format(uuid))
-        if len(results) > 1:
-            raise self.TooManyError(
-                "multiple reports with same uuid ({})".format(uuid))
 
         #
         return results[0]

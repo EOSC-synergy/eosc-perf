@@ -50,10 +50,6 @@ def make_search_page():
             return redirect(
                 '/error?'+url_encode(
                     {'text': 'Result search reqires a valid Benchmark name'}), code=302)
-        except facade.TooManyError as error:
-            # Shouldn't have any bad effects on Result search
-            if configuration['debug']:
-                print(error)
     args = json.dumps({'benchmark': benchmark, 'admin': controller.is_admin()})
     factory = SearchResultFactory()
     print(factory._generate_content(args))
