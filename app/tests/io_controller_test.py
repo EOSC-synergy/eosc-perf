@@ -37,6 +37,40 @@ class FacadeTest(unittest.TestCase):
     def test_submit_result(self):
         pass
 
+    def test_is_admin_fail_no_affiliations(self):
+        with self.app.test_request_context():
+            session['user'] = {'exp': time() + 3600}
+            self.assertFalse(self.controller.is_admin())
+            session.pop('user', None)
+
+    def test_is_admin_fail_wrong_affiliations(self):
+        with self.app.test_request_context():
+            session['user'] = {'exp': time() + 3600}
+            session['user']['info'] = {}
+            session['user']['info']['edu_person_scoped_affiliations'] = ["student@mit.edu"]
+            self.assertFalse(self.controller.is_admin())
+            session.pop('user', None)
+
+    def test_is_admin_one_afilliation(self):
+        with self.app.test_request_context():
+            session['user'] = {'exp': time() + 3600}
+            admin_afill = configuration.get('debug_admin_affiliations')[:1]
+            session['user']['info'] = {}
+            session['user']['info']['edu_person_scoped_affiliations'] = admin_afill
+            self.assertTrue(self.controller.is_admin())
+            session.pop('user', None)
+
+    def test_is_admin_all_afilliations(self):
+        admin_affiliations = configuration.get('debug_admin_affiliations')
+        admin_affiliations += ["test@test.edu", "hacker@1337.ccc"]
+        configuration.set("debug_admin_affiliations", admin_affiliations)
+        with self.app.test_request_context():
+            session['user'] = {'exp': time() + 3600}
+            session['user']['info'] = {}
+            session['user']['info']['edu_person_scoped_affiliations'] = admin_affiliations
+            self.assertTrue(self.controller.is_admin())
+            session.pop('user', None)
+
     def test_authenticated(self):
         """Tests if IOController returns True when logged
            in during is_authenticated method call"""
