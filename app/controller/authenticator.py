@@ -127,12 +127,18 @@ class Authenticator:
                     'refresh_token': refresh_token,
                     'scope': self.scope},
             headers={'content-type': 'application/x-www-form-urlencoded'})
-        new_token = response.json()
-        user = self.oauth._clients['eosc-perf'].parse_id_token(new_token)
-        user['info'] = session['user']['info']
-        user['token'] = new_token
-        session['user'] = user
-        return response.status_code == 200
+        if (response.status_code == 200):
+            new_token = response.json()
+            user = self.oauth._clients['eosc-perf'].parse_id_token(new_token)
+            try:
+                user['info'] = session['user']['info']
+                user['token'] = new_token
+                session['user'] = user
+            except KeyError:
+                self.logout()
+                return False
+            return True
+        return False
 
     def _token_expired(self):
         """Checks if the current user has a valid authentication token"""
