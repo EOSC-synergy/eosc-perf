@@ -4,9 +4,10 @@ This module contains unit tests for the IOController class
 from time import time
 import unittest
 from flask import Flask, session
-from ...model.database import configure_database
-from ..io_controller import controller
-from ...configuration import configuration
+from app.model.database import configure_database
+from app.controller.authenticator import configure_authenticator
+from app.controller.io_controller import controller
+from app.configuration import configuration
 
 class FacadeTest(unittest.TestCase):
 
@@ -19,16 +20,22 @@ class FacadeTest(unittest.TestCase):
         self.app.secret_key = '!secret'
 
         # use memory database, reset entirely every time
-        configuration.reset()
+        configuration.reload()
+        configuration.set('database-path', '')
+        configuration.set('debug', True)
+        configuration.set('debug-db-reset', True)
+        configure_authenticator(self.app)
         configure_database(self.app)
 
-        # facade
         self.controller = controller
 
     def tearDown(self):
         """Called after each test."""
         del self.controller
         del self.app
+
+    def test_submit_result(self):
+        pass
 
     def test_authenticated(self):
         """Tests if IOController returns True when logged
