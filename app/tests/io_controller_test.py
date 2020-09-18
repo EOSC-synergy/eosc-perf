@@ -9,7 +9,7 @@ from app.controller.authenticator import configure_authenticator
 from app.controller.io_controller import controller
 from app.configuration import configuration
 
-class FacadeTest(unittest.TestCase):
+class IOControllerTest(unittest.TestCase):
 
     def setUp(self):
         """Called before each test."""
@@ -36,6 +36,30 @@ class FacadeTest(unittest.TestCase):
 
     def test_submit_result(self):
         pass
+
+    def test_get_full_name(self):
+        with self.app.test_request_context():
+            session['user'] = {'info': {'name': 'John Doe'}}
+            self.assertEqual(self.controller.get_full_name(), 'John Doe')
+            session.pop('user', None)
+        with self.app.test_request_context():
+            self.assertEqual(self.controller.get_full_name(), None)
+
+    def test_get_email(self):
+        with self.app.test_request_context():
+            session['user'] = {'info': {'email': 'email@kit.edu'}}
+            self.assertEqual(self.controller.get_email(), 'email@kit.edu')
+            session.pop('user', None)
+        with self.app.test_request_context():
+            self.assertEqual(self.controller.get_email(), None)
+
+    def test_get_user_id(self):
+        with self.app.test_request_context():
+            session['user'] = {'sub': "id"}
+            self.assertEqual(self.controller.get_user_id(), "id")
+            session.pop('user', None)
+        with self.app.test_request_context():
+            self.assertEqual(self.controller.get_user_id(), None)
 
     def test_is_admin_fail_no_affiliations(self):
         with self.app.test_request_context():
