@@ -50,7 +50,10 @@ def add_benchmark_submit():
         return error_json_redirect('Incomplete report form submitted (missing Docker name)')
 
     # handle redirect in a special way because ajax
-    if not controller.submit_benchmark(docker_name, message):
-        return error_json_redirect('Failed to submit benchmark')
+    try:
+        if not controller.submit_benchmark(docker_name, message):
+            return error_json_redirect('Failed to submit benchmark')
+    except (RuntimeError, ValueError) as exception:
+        return error_json_redirect(str(exception))
 
     return Response('{}', mimetype='application/json', status=200)

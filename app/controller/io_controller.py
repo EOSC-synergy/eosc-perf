@@ -68,7 +68,7 @@ class IOController:
         """
         # Check if user is authenticated.
         if not self.is_authenticated():
-            return False
+            raise RuntimeError("You need to be logged in to submit a benchmark.")
         # Check for valid email address.
         # Check valid docker_hub_name.uploader_emailuploader_email
         if self._valid_docker_hub_name(docker_name, check_for_page):
@@ -81,7 +81,9 @@ class IOController:
                     'value': docker_name,
                     'uploader': self.get_user_id()
                 }))
-        return False
+            else:
+                raise RuntimeError("Adding benchmark to database failed.")
+        raise RuntimeError("{} is not a valid docker hub name.".format(docker_name))
 
     def submit_site(self, short_name: str, address: str, name: str = None, description: str = None) -> bool:
         """Submit a new site to the system for review.
