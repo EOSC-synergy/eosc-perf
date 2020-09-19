@@ -21,7 +21,7 @@ class ResultFilterer:
         while len(filtered) < 100:
             try:
                 result = next(results)
-                if all([f.filter(result) for f in self._filters]):
+                if all([f.filter(result) for f in self._filters]) and not result.get_hidden():
                     filtered.append(result)
             except StopIteration:
                 break
