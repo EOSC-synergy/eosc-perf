@@ -1,7 +1,10 @@
+
 // parameters represented as external state, so ResultSearch has no internal state, instead of a mix.
 window.addEventListener("load", function () {
     onload();
 });
+
+
 function onload() {
     // initializes state not contained in the html.
     query = "";
@@ -22,14 +25,18 @@ function onload() {
     }
     values = ["selected", "benchmark", "site", "uploader", "data", "tags"];
     filter_uuid = 0;
+    msg = "";
 
-    
     // Case it got initialed with a Benchmark.
     if (benchmark) {
         ResultSearch.add_filter_field({ 'filter_type': 'Benchmark', 'input': benchmark });
     }
     ResultSearch.add_filter_field();
     ResultSearch.search();
+    // Enable popover.
+    $('[data-toggle="popover"]').popover({
+        html: true
+    });
 }
 /**
  * The ResultSearch class is responsible to communicate with the backend to 
@@ -41,8 +48,25 @@ class ResultSearch extends Content {
     static update() {
         // Update table.
         this.set_result_table();
+        ResultSearch.generate_tag_cont();
+        // Update tag info description.
+        let filters = document.getElementById("filters").childNodes;
+        filters.forEach(function (f) {
+            if (f.firstChild && f.firstChild.value && f.firstChild.value.includes("Tag")) {
+                // Select the info element, and update content.
+                f.childNodes.forEach(function (x) {
+                    if (x.getAttribute("id") && x.getAttribute("id").includes("info")) {
+                        x.setAttribute("data-content",
+                            ResultSearch.generate_tag_cont()
+                        );
+                    }
+                });
+            }
 
+        });
     }
+
+
     static set_result_table() {
         /**create the result table from current results */
         // Empty existing table.
@@ -131,6 +155,7 @@ class ResultSearch extends Content {
                         let href = "./result" + "?uuid=" + res["uuid"];
                         view_data.setAttribute("href", href);
                         view_data.setAttribute("target", "_blank");
+                        view_data.setAttribute("title", JSON.stringify(res[col], null, "\t"));
                         cell.appendChild(view_data);
                         break;
                     case ("tags"):
@@ -166,7 +191,7 @@ class ResultSearch extends Content {
                 var delete_btn = document.createElement("input");
                 delete_btn.setAttribute("type", "submit");
                 delete_btn.setAttribute("value", "Delete Result");
-                delete_btn.setAttribute("class", "btn btn-danger");
+                delete_btnvalue.setAttribute("class", "btn btn-danger");
                 let href = "./report_result" + "?uuid=" + res["uuid"];
                 delete_btn.setAttribute("href", href);
                 delete_result.appendChild(delete_btn);
@@ -286,21 +311,62 @@ class ResultSearch extends Content {
             type.textContent = filter_types[i];
             filter_type.appendChild(type);
         }
-        // listener to adjust input fields.
+        // listener to adjust input fields and the associated info.
         filter_type.addEventListener("change", function () {
             if (filter_type.value.includes("Value")) {
                 // Give field for numeric value.
                 document.getElementById("number" + filter_id).style.visibility = "visible";
+                // Set descriptive placeholder.
+                document.getElementById("filter_value" + filter_id).placeholder = "path.to.value";
+                // Adjust info.
+                document.getElementById("info" + filter_id).setAttribute("data-content",
+                    "The search value has to describe the exact path within the JSON, separated with a dot. (Only search for numeric values possible.) \
+                    <br> <b>Example:</b> \
+                    <br> <code>{'example':{'nested':{'json':'value'},'different':{'path':{'to':'otherValue'}}} </code> \
+                    <br> <b>Correct:</b> \
+                    <br> example.nested.json or different.path.to \
+                    <br> <b>Wrong:</b> \
+                    <br> json or example.nested or different:path:to").replace("\n", "<br>");
             } else {
                 // Hide numeric field.
                 document.getElementById("number" + filter_id).style.visibility = "hidden";
+            }
+            if (filter_type.value.includes("Benchmark")) {
+                // Set descriptive placeholder.
+                document.getElementById("filter_value" + filter_id).placeholder = "User/Image";
+                document.getElementById("info" + filter_id).setAttribute("data-content",
+                    'The Benchmark name has to be complete, following the structure <i>Dockerhub username  <b> / </b>Image name </i> . \
+                    <br> The <a href="/" >Benchmark search</a> can be used to discover Benchmarks.'
+                );
+            }
+            if (filter_type.value.includes("Tag")) {
+                // Set descriptive placeholder.
+                document.getElementById("filter_value" + filter_id).placeholder = "SingleTag";
+                document.getElementById("info" + filter_id).setAttribute("data-content",
+                    ResultSearch.generate_tag_cont()
+                );
+            }
+            if (filter_type.value.includes("Uploader")) {
+                // Set descriptive placeholder.
+                document.getElementById("filter_value" + filter_id).placeholder = "Uploader@provid.er";
+                document.getElementById("info" + filter_id).setAttribute("data-content",
+                    "The Uploader is described by the uploader's email. Different uploaders can be found in the table below in the <i>Uploader</i> column."
+                );
+            }
+            if (filter_type.value.includes("Site")) {
+                // Set descriptive placeholder.
+                document.getElementById("filter_value" + filter_id).placeholder = "Location";
+                document.getElementById("info" + filter_id).setAttribute("data-content",
+                    'The Location requires a single site as input. Sites can be found in the <i>Location</i> column in the result table below.'
+                );
             }
         });
         // Create input.
         var input = document.createElement("input");
         input.setAttribute("type", "text");
+        input.setAttribute("id", "filter_value" + filter_id);
         input.setAttribute("placeholder", "Filter Value");
-        // Create number field
+        // Create number field.
         var num_input = document.createElement("input");
         num_input.setAttribute("type", "number");
         num_input.setAttribute("id", "number" + filter_id);
@@ -309,10 +375,21 @@ class ResultSearch extends Content {
         // Create button to remove given filter.
         var remove_filter = document.createElement("input");
         remove_filter.setAttribute("type", "button");
+        remove_filter.setAttribute("class", "btn btn-danger");
         remove_filter.setAttribute("value", "Remove Filter");
         remove_filter.addEventListener("click", function () {
             ResultSearch.remove_filter(filter_id);
         })
+        // Create info button.
+        var type_info = document.createElement("input");
+        type_info.setAttribute("type", "button");
+        type_info.setAttribute("id", "info" + filter_id);
+        type_info.setAttribute("class", "btn btn-warning");
+        type_info.setAttribute("value", "?");
+        type_info.setAttribute("data-toggle", "popover");
+        type_info.setAttribute("title", "Format Description");
+        type_info.setAttribute("data-content", "You find some Tips for the expected input values here.");
+        type_info.setAttribute("data-placement", "right");
         // Add default parameters if given.
         if (input_values) {
             if (input_values["filter_type"]) {
@@ -333,7 +410,12 @@ class ResultSearch extends Content {
         new_filter.appendChild(num_input);
         // Add remove filter button.
         new_filter.appendChild(remove_filter);
+        new_filter.appendChild(type_info);
         filter_list.appendChild(new_filter);
+        // Activate popover.
+        $('[data-toggle="popover"]').popover({
+            html: true
+        });
     }
 
     static remove_filter(filter_id) {
@@ -387,6 +469,43 @@ class ResultSearch extends Content {
             }
         }
         window.location.href = '/make_diagram?' + uuids.slice(0, -1);
+    }
+
+    static generate_tag_cont() {
+        /**
+         * Helper method generating the tag input field info according to the current results.
+         * Returns:
+         *      A string containing the html formatted text.
+         */
+        var msg = "";
+        // Collect all tags
+        let tags = "";
+        for (var i = 0; i < results.length; i++) {
+            if (results[i].tags) {
+                tags += results[i].tags + ",";
+            }
+        }
+        // Count double tags
+        var tag_tuple = {};
+        tags.split(",").filter(Boolean).forEach(function (i) { tag_tuple[i] = (tag_tuple[i] || 0) + 1; });
+        var tag_tmp = [];
+        // Convert to List.
+        for (var tag in tag_tuple) {
+            tag_tmp.push([tag, tag_tuple[tag]]);
+        }
+        tag_tmp.sort(function (x, y) {
+            return x - y;
+        })
+        msg = 'The Tag value has to be a single tag.<br>';
+        if (results.length >= 100) {
+            // Most likely not all matching results loaded.
+            msg += "The below listed tags and occurrence amount are <b>not representative</b> of the result space.\n";
+        } else {
+            // All matching results loaded.
+            msg += "The list below lists all tags and occurrence amount from the result list matching your query. \n"
+        }
+        tag_tmp.forEach(function (x) { msg += "<br>" + x[0] + " <i>(" + x[1] + ")</i>"; });
+        return msg;
     }
 
     static delete_result(result) {
