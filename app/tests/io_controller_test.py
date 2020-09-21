@@ -53,7 +53,6 @@ class IOControllerTest(unittest.TestCase):
 
     def test_submit_result_success(self):
         uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
-        print(uploader_metadata)
         self.facade.add_uploader(uploader_metadata)
         self.facade.add_benchmark("name/name:tag", USER['sub'])
         self.facade.add_site('{"short_name": "name", "address": "100"  }')
@@ -67,6 +66,85 @@ class IOControllerTest(unittest.TestCase):
                 "site": "name" \
             }'
             self.assertTrue(self.controller.submit_result(json, metadata))
+
+    def test_submit_benchmark_unauthenticated(self):
+        with self.app.test_request_context():
+            self.assertRaises(RuntimeError, self.controller.submit_benchmark, "", "")
+
+    def test_submit_benchmark_malformed_docker_name(self):
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.assertRaises(RuntimeError, self.controller.submit_benchmark, ":", "")
+            self.assertRaises(ValueError, self.controller.submit_benchmark, None, "")
+
+    def test_submit_benchmark_success(self):
+        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
+        self.facade.add_uploader(uploader_metadata)
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.assertTrue(self.controller.submit_benchmark("mysql", "submit comment."))
+            self.assertTrue(self.controller.submit_benchmark("python", ""))
+
+    def test_submit_benchmark_duplicate(self):
+        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
+        self.facade.add_uploader(uploader_metadata)
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.controller.submit_benchmark("mysql", "submit comment.")
+            self.assertRaises(RuntimeError, self.controller.submit_benchmark, "mysql", "submit comment.")
+
+    def test_submit_site_unauthenticated(self):
+        with self.app.test_request_context():
+            self.assertFalse(self.controller.submit_site("name", "address"))
+
+    def test_submit_site_invalid_short_name(self):
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.assertRaises(ValueError, self.controller.submit_site, None, "address")
+            self.assertRaises(ValueError, self.controller.submit_site, "", "address")
+
+    def test_submit_site_invalid_address(self):
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.assertRaises(ValueError, self.controller.submit_site, "name", None)
+            self.assertRaises(ValueError, self.controller.submit_site, "name", "")
+
+    def test_submit_site_success(self):
+        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
+        self.facade.add_uploader(uploader_metadata)
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.assertTrue(self.controller.submit_site("name", "127.0.0.1"))
+
+    def test_submit_site_duplicate_name(self):
+        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
+        self.facade.add_uploader(uploader_metadata)
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.controller.submit_site("name", "127.0.0.1")
+            self.assertFalse(self.controller.submit_site("name", "127.0.0.2"))
+
+    def test_submit_tag_unauthenticated(self):
+        with self.app.test_request_context():
+            self.assertFalse(self.controller.submit_tag("tag"))
+
+    def test_submit_tag_malformed(self):
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.assertRaises(ValueError, self.controller.submit_tag, None)
+            self.assertRaises(ValueError, self.controller.submit_tag, "")
+
+    def test_submit_tag_success(self):
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.assertTrue(self.controller.submit_tag("tag"))
+            self.assertTrue(self.controller.submit_tag("tag2"))
+
+    def test_submit_tag_duplicate(self):
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.controller.submit_tag("tag")
+            self.assertFalse(self.controller.submit_tag("tag"))
 
     def test_add_current_user_if_missing(self):
         with self.app.test_request_context():
