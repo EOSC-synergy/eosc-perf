@@ -20,7 +20,7 @@ from .view.pages.upload_json import upload_json_blueprint
 from .view.pages.search_result import result_search_blueprint
 from .view.pages.privacy_policy import privacy_blueprint
 from .view.pages.json_display import display_json_blueprint
-
+from .view.pages.upload_instruction import upload_instructions_blueprint
 
 def create_app():
     """Create the flask app object.
@@ -60,6 +60,7 @@ def create_app():
     flask_app.register_blueprint(result_search_blueprint)
     flask_app.register_blueprint(privacy_blueprint)
     flask_app.register_blueprint(display_json_blueprint)
+    flask_app.register_blueprint(upload_instructions_blueprint)
 
     return flask_app
 
