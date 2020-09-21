@@ -3,14 +3,16 @@ Provided is:
 - SearchResultFactory
 """
 import json
-from flask import request, Response, redirect
+from flask import request, Response
 from flask.blueprints import Blueprint
-from werkzeug.urls import url_encode
 
 from ..page_factory import PageFactory
 from ..type_aliases import HTML, JSON
 from ...controller.io_controller import controller
 from ...model.facade import facade
+
+from .helpers import error_redirect
+
 
 class SearchResultFactory(PageFactory):
     """ A factory to create search result pages."""
@@ -43,14 +45,26 @@ def make_search_page():
         benchmark = ""
     else:
         try:
-            facade.get_benchmark(benchmark)
+            facade.get_benchmark(docker_name=benchmark)
         except facade.NotFoundError:
-            return redirect(
-                '/error?'+url_encode(
-                    {'text': 'Result search reqires a valid Benchmark name'}), code=302)
+            return error_redirect('Result search reqires a valid Benchmark name')
     args = json.dumps({'benchmark': benchmark, 'admin': controller.is_admin()})
     factory = SearchResultFactory()
-    print(factory._generate_content(args))
     with open('templates/result_search.html') as file:
         page = factory.generate_page(args=args, template=file.read())
     return Response(page, mimetype='text/html')
+
+
+@result_search_blueprint.route('/delete_result')
+def delete_result():
+    """Http endpoint for result deletion ajax fetch.
+    """
+    if not controller.is_admin():
+        return Response('You not authenticated for this action.', mimetype='text/html')
+
+    uuid = request.args.get('uuid')
+
+    if not controller.remove_result(uuid=uuid):
+        return Response('Result search reqires a valid Benchmark name', mimetype='text/html')
+
+    return Response("Successfull removed result.", mimetype='text/html')

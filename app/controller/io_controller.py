@@ -236,6 +236,22 @@ class IOController:
             return True
         return False
 
+    def remove_result(self, uuid:str):
+        """Make a result invisible.
+        Args:
+            uuid (str): The uuid of the result.
+        Resturns:
+            bool: If the process was successfull."""
+        if authenticator.is_admin():
+            try:
+                result = facade.get_result(uuid)
+                result.set_hidden(True)
+            except DatabaseFacade.NotFoundError:
+                # There is no result with given uuid.
+                return False
+            return True
+        return False
+    
     def _add_current_user_if_missing(self):
         """Add the current user as an uploader if they do not exist yet."""
         if authenticator.is_authenticated():

@@ -64,6 +64,9 @@ class ResultSearch extends Content {
             }
 
         });
+        $('[data-toggle="popover"]').popover({
+            html: true
+        });
     }
 
 
@@ -185,17 +188,20 @@ class ResultSearch extends Content {
             // Add delete col
             if (columns.includes("Delete")) {
                 let cell = document.createElement("TD");
-                var delete_result = document.createElement("FORM");
-                delete_result.setAttribute("method", "post");
-                delete_result.setAttribute("id", ("delete" + i));
                 var delete_btn = document.createElement("input");
                 delete_btn.setAttribute("type", "submit");
                 delete_btn.setAttribute("value", "Delete Result");
-                delete_btnvalue.setAttribute("class", "btn btn-danger");
-                let href = "./report_result" + "?uuid=" + res["uuid"];
-                delete_btn.setAttribute("href", href);
-                delete_result.appendChild(delete_btn);
-                cell.appendChild(delete_result);
+                delete_btn.setAttribute("data-toggle", "popover");
+                delete_btn.setAttribute("title", "Delete result from system.");
+                delete_btn.setAttribute("data-content", "Deleting the result will remove it from the database <b>not (just) the search selection</b>.");
+                delete_btn.setAttribute("data-placement", "right");
+                delete_btn.setAttribute("data-trigger", "hover");
+                delete_btn.setAttribute("class", "btn btn-danger");
+                // add delete function
+                delete_btn.addEventListener("click", function () {
+                    ResultSearch.delete_result(res["uuid"]);
+                });
+                cell.appendChild(delete_btn);
                 row.appendChild(cell);
             }
             table.appendChild(row);
@@ -509,6 +515,19 @@ class ResultSearch extends Content {
     }
 
     static delete_result(result) {
-
+        /**Send ajax to remove a specific result form the database.
+         * Args:
+         *      result: The uuid of a result to be deleted.
+         */
+        $.ajax('/delete_result?uuid=' + encodeURI(result)).done(function (data) {
+            alert(data);
+            if (data.toLowerCase.includes("success")) {
+                results.filter(function (r) {
+                    return r["uuid"] == result;
+                });
+                ResultSearch.update();
+            }
+        });
+        return false;
     }
 }
