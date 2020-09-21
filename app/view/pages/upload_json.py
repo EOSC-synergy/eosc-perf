@@ -88,7 +88,6 @@ def upload_result_submit():
                                           description=request.form["new_site_description"]):
                 return error_json_redirect('Failed to submit new site.')
         else:
-            print(existing_site.get_hidden())
             if existing_site.get_hidden() is False:
                 msg = 'There is already a site with name "{}"'.format(site_name)
                 return error_json_redirect(msg)

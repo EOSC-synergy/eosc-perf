@@ -25,6 +25,5 @@ upload_instructions_blueprint = Blueprint('upload-instructions-factory', __name_
 @upload_instructions_blueprint.route('/instructions')
 def privacy_page():
     """HTTP endpoint for the upload instructions page."""
-    print("============================================yay")
     factory = UploadInstructionFactory()
     return Response(factory.generate_page('{}'), mimetype='text/html')
