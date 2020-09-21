@@ -56,7 +56,7 @@ def view_report():
         return error_redirect('Not logged in')
 
     if not controller.is_admin():
-        return error_json_redirect('Not an admin')
+        return error_redirect('Not an admin')
 
     uuid = request.args.get('uuid')
     if uuid is None:
