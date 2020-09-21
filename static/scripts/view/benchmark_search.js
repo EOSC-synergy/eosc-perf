@@ -6,25 +6,25 @@ var page = 0;
 $(function () {
     form = $('#form');
     form.submit(function (e) {
-        results = [];
-        result_amount = 0;
-        page = 0;
-        query = form.find('input[name="query"]').val().trim();
-        if (query === "") {
-            return false;
-        }
-        keywords = query.split(" ");
-        $.ajax('/query_benchmarks?query_json='
-            + encodeURI(JSON.stringify(
-                { 'keywords': keywords })))
-            .done(function (data) {
-                results = data.results;
-                result_amount = results.length;
-                update_result_table();
-            })
+        search_benchmarks(form.find('input[name="query"]').val().trim());
         return false;
     });
 });
+
+function search_benchmarks(query) {
+    results = [];
+    result_amount = 0;
+    page = 0;
+    keywords = query.split(" ");
+    $.ajax('/query_benchmarks?query_json='
+        + encodeURI(JSON.stringify(
+            { 'keywords': keywords })))
+        .done(function (data) {
+            results = data.results;
+            result_amount = results.length;
+            update_result_table();
+        })
+}
 
 function update_result_table() {
     // clear result
@@ -89,4 +89,5 @@ function show_nav_buttons() {
 window.onload = function () {
     hide_nav_buttons()
     document.getElementById("page_info").style.display = "inline-block";
+    search_benchmarks("")
 }
