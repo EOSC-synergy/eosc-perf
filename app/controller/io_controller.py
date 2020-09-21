@@ -69,6 +69,8 @@ class IOController:
         # Check if user is authenticated.
         if not self.is_authenticated():
             raise RuntimeError("You need to be logged in to submit a benchmark.")
+        if docker_name is None:
+            raise ValueError("Docker name must not be None")
         # Check for valid email address.
         # Check valid docker_hub_name.uploader_emailuploader_email
         if self._valid_docker_hub_name(docker_name, check_for_page):
@@ -98,6 +100,11 @@ class IOController:
         if not self.is_authenticated():
             return False
         self._add_current_user_if_missing()
+
+        if short_name is None:
+            raise ValueError("Short name must not be None")
+        if address is None:
+            raise ValueError("Address name must not be None")
 
         meta = {
             'short_name': short_name,
@@ -130,6 +137,8 @@ class IOController:
         Returns:
         bool: True if the submission was successful, false otherwise.
         """
+        if tag is None:
+            raise ValueError("Tag must not be None")
         if self.is_authenticated():
             return facade.add_tag(tag)
         return False
