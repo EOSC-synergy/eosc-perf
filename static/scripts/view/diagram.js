@@ -35,8 +35,18 @@ class Diagram extends Content {
     // todo: sum of all datasets' core_counts
     buildLabels(data, index) {
         let labels = [];
+        let sameSite = true;
+        let siteName = data[0].site;
+        for (const keypoint of data) {
+            sameSite &&= (keypoint.site == siteName);
+        }
         for (const value of data) {
-            labels.push(value.core_count.toString());
+            if (sameSite) {
+                labels.push(value.core_count.toString());
+            }
+            else {
+                labels.push(value.site + ', ' + value.core_count.toString());
+            }
         }
         return labels;
     }

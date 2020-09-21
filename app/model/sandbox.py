@@ -80,7 +80,7 @@ for i in range(2, 17):
         'user_args': {
             'num_gpus': i
         },
-        'evaluation': {
+        'training': {
             'result': {
                 # generated following amdahl's law
                 'average_examples_per_sec': 1/(1-p+p/i) * 100

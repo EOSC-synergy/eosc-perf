@@ -33,7 +33,7 @@ class DiagramFactory(PageFactory):
             result = json.loads(result_json.get_json())
             core_count = result['user_args']['num_gpus']
             score = result['training']['result']['average_examples_per_sec']
-            results.append({'core_count': core_count, 'score': score})
+            results.append({'core_count': core_count, 'score': score, 'site': result_json.get_site().get_short_name()})
 
         # sort them by core_count
         results.sort(key=lambda result: result['core_count'])
