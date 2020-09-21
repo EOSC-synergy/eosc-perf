@@ -288,6 +288,8 @@ class ResultSearch extends Content {
                         element["selected"] = false;
                     });
                 }
+                current_page = 1;
+                document.getElementById("pages").value = current_page;
                 ResultSearch.set_page_selection();
                 ResultSearch.update();
             });
