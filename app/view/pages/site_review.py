@@ -36,6 +36,8 @@ site_review_blueprint = Blueprint('site-review', __name__)
 @site_review_blueprint.route('/site_review_fetch_first', methods=['GET'])
 def review_site_helper():
     """Review the first new site report."""
+    if not controller.is_admin():
+        return error_redirect('Not an admin')
     reports = facade.get_reports(only_unanswered=True)
     if len(reports) == 0:
         return info_redirect('No reports available')
@@ -51,7 +53,7 @@ def review_site():
     if not controller.is_authenticated():
         return error_redirect('Not logged in')
 
-    if not controller.is_authenticated():
+    if not controller.is_admin():
         return error_json_redirect('Not an admin')
 
     uuid = request.args.get('uuid')

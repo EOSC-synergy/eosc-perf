@@ -38,6 +38,8 @@ view_report_blueprint = Blueprint('view-report', __name__)
 @view_report_blueprint.route('/view_report_fetch_first', methods=['GET'])
 def test_view_report():
     """Review the first new benchmark report."""
+    if not controller.is_admin():
+        return error_redirect('Not an admin')
     reports = facade.get_reports(only_unanswered=True)
     if len(reports) == 0:
         return info_redirect('No reports available')
@@ -53,7 +55,7 @@ def view_report():
     if not controller.is_authenticated():
         return error_redirect('Not logged in')
 
-    if not controller.is_authenticated():
+    if not controller.is_admin():
         return error_json_redirect('Not an admin')
 
     uuid = request.args.get('uuid')
