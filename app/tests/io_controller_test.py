@@ -3,6 +3,7 @@ This module contains unit tests for the IOController class
 """
 from time import time
 import unittest
+import json
 from flask import Flask, session
 from app.model.database import configure_database
 from app.model.facade import DatabaseFacade
@@ -58,14 +59,14 @@ class IOControllerTest(unittest.TestCase):
         self.facade.add_site('{"short_name": "name", "address": "100"  }')
         with self.app.test_request_context():
             f = open("app/controller/config/result_template.json")
-            json = f.read()
+            template = f.read()
             self._login_standard_user()
             metadata = '{ \
                 "uploader": "' + USER["sub"] + '", \
                 "benchmark": "name/name:tag", \
                 "site": "name" \
             }'
-            self.assertTrue(self.controller.submit_result(json, metadata))
+            self.assertTrue(self.controller.submit_result(template, metadata))
 
     def test_submit_benchmark_unauthenticated(self):
         with self.app.test_request_context():
@@ -146,6 +147,105 @@ class IOControllerTest(unittest.TestCase):
             self.controller.submit_tag("tag")
             self.assertFalse(self.controller.submit_tag("tag"))
 
+    def test_get_site_not_found(self):
+        with self.app.test_request_context():
+            self.assertEqual(self.controller.get_site("name"), None)
+
+    def test_get_site(self):
+        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
+        self.facade.add_uploader(uploader_metadata)
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.controller.submit_site("name", "127.0.0.1")
+            self.assertEqual(self.controller.get_site("name").get_name(), "name")
+
+    def test_remove_site_not_authenticated(self):
+        with self.app.test_request_context():
+            self.assertRaises(RuntimeError, self.controller.remove_site, "name")
+
+    def test_remove_site_not_existing(self):
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.assertFalse(self.controller.remove_site("not existing"))
+
+    def test_remove_site_with_results(self):
+        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
+        self.facade.add_uploader(uploader_metadata)
+        self.facade.add_benchmark("name/name:tag", USER['sub'])
+        self.facade.add_site('{"short_name": "name", "address": "100"  }')
+        with self.app.test_request_context():
+            f = open("app/controller/config/result_template.json")
+            template = f.read()
+            self._login_standard_user()
+            metadata = '{ \
+                "uploader": "' + USER["sub"] + '", \
+                "benchmark": "name/name:tag", \
+                "site": "name" \
+            }'
+            self.controller.submit_result(template, metadata)
+            self.assertRaises(RuntimeError, self.controller.remove_site, "name")
+
+    def test_remove_site(self):
+        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
+        self.facade.add_uploader(uploader_metadata)
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.controller.submit_site("name", "127.0.0.1")
+            self.assertTrue(self.controller.remove_site("name"))
+            # make sure that site is removed
+            self.assertFalse(self.controller.remove_site("name"))
+
+    def test_remove_result_not_authenticated(self):
+        with self.app.test_request_context():
+            self.assertFalse(self.controller.remove_result("name"))
+
+    def test_remove_result_not_admin(self):
+        with self.app.test_request_context():        
+            self._login_standard_user()
+            self.assertFalse(self.controller.remove_result("name"))
+
+    def test_remove_result_not_found(self):
+        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
+        self.facade.add_uploader(uploader_metadata)
+        self.facade.add_benchmark("name/name:tag", USER['sub'])
+        self.facade.add_site('{"short_name": "name", "address": "100"  }')
+        with self.app.test_request_context():
+            f = open("app/controller/config/result_template.json")
+            template = f.read()
+            self._login_admin()
+            metadata = '{ \
+                "uploader": "' + USER["sub"] + '", \
+                "benchmark": "name/name:tag", \
+                "site": "name" \
+            }'
+            self.controller.submit_result(template, metadata)
+            self.assertFalse(self.controller.remove_result("wrong_uuid"))
+
+    def test_remove_result(self):
+        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
+        self.facade.add_uploader(uploader_metadata)
+        self.facade.add_benchmark("name/name:tag", USER['sub'])
+        self.facade.add_site('{"short_name": "name", "address": "100"  }')
+        with self.app.test_request_context():
+            f = open("app/controller/config/result_template.json")
+            template = f.read()
+            self._login_admin()
+            metadata = {
+                "uploader": USER["sub"],
+                "benchmark": "name/name:tag",
+                "site": "name"
+            }
+            self.controller.submit_result(template, json.dumps(metadata))
+            filters = {'filters': [
+                {'type': 'uploader', 'value': USER["info"]["email"]},
+            ]}
+            results = self.facade.query_results(json.dumps(filters))
+            self.assertEqual(len(results), 1)
+            self.assertTrue(self.controller.remove_result(results[0].get_uuid()))
+            # make sure that result is now hidden
+            results = self.facade.query_results(json.dumps(filters))
+            self.assertEqual(len(results), 0)
+
     def test_add_current_user_if_missing(self):
         with self.app.test_request_context():
             controller._add_current_user_if_missing()
@@ -155,7 +255,6 @@ class IOControllerTest(unittest.TestCase):
             self.assertTrue(self.facade.get_uploader(USER['sub']))
             controller._add_current_user_if_missing()
             self.assertTrue(self.facade.get_uploader(USER['sub']))
-
 
     def test_valid_docker_hub_name(self):
         # TODO: Add tests after method is fixed
@@ -241,10 +340,6 @@ class IOControllerTest(unittest.TestCase):
 
     def _logout(self):
         session.pop('user', None)
-        try:
-            print(session['user'])
-        except KeyError:
-            print("No User")
 
 if __name__ == '__main__':
     unittest.main()
