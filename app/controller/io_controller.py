@@ -162,7 +162,13 @@ class IOController:
            short_name (str): short name of a site
            Returns:
            bool: True if removal was successful, false otherwise"""
-        return facade.remove_site(short_name)
+        if self.is_authenticated():
+            if self._site_result_amount(short_name) is 0:
+                return facade.remove_site(short_name)
+            else:
+                raise RuntimeError("Only sites without results can be removed.")
+        else:
+            raise RuntimeError("You need to be logged in to remove a site.")
 
     def report(self, metadata: JSON) -> bool:
         """Add a Report to the model and notify an admin about it.
@@ -311,6 +317,13 @@ class IOController:
                 return not any(map(lambda x: 'data-testid="404page" alt="404 Route Not Found"'
                                    in x, rendered_contend))
         return False
+
+    def _site_result_amount(self, short_name):
+        filters = {'filters': [
+            {'type': 'site', 'value': short_name}
+        ]}
+        results = facade.query_results(json.dumps(filters))
+        return len(results)
 
     @staticmethod
     def get_email():
