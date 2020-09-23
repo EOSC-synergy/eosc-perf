@@ -4,12 +4,14 @@ This module contains unit tests for the IOController class
 from time import time
 import unittest
 import json
-from flask import Flask, session
+from flask import Flask, session, redirect
 from app.model.database import configure_database
 from app.model.facade import DatabaseFacade
 from app.controller.authenticator import configure_authenticator
 from app.controller.io_controller import controller
+from app.controller.authenticator import AuthenticateError
 from app.configuration import configuration
+from app.model.data_types import Report
 
 USER = {'exp': time() + 3600,
         'sub': 'id',
@@ -42,6 +44,15 @@ class IOControllerTest(unittest.TestCase):
         del self.controller
         del self.facade
         del self.app
+
+    def test_authenticate_not_authenticated(self):
+        with self.app.test_request_context():
+            self.assertIsNotNone(self.controller.authenticate())
+
+    def test_authenticate_already_authenticated(self):
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.assertIsNone(self.controller.authenticate())
 
     def test_submit_result_unauthenticated(self):
         with self.app.test_request_context():
@@ -115,7 +126,7 @@ class IOControllerTest(unittest.TestCase):
         self.facade.add_uploader(uploader_metadata)
         with self.app.test_request_context():
             self._login_standard_user()
-            self.assertTrue(self.controller.submit_site("name", "127.0.0.1"))
+            self.assertTrue(self.controller.submit_site("name", "127.0.0.1", "long name", "description"))
 
     def test_submit_site_duplicate_name(self):
         uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
@@ -177,12 +188,12 @@ class IOControllerTest(unittest.TestCase):
             f = open("app/controller/config/result_template.json")
             template = f.read()
             self._login_standard_user()
-            metadata = '{ \
-                "uploader": "' + USER["sub"] + '", \
-                "benchmark": "name/name:tag", \
-                "site": "name" \
-            }'
-            self.controller.submit_result(template, metadata)
+            metadata = {
+                "uploader": USER["sub"],
+                "benchmark": "name/name:tag",
+                "site": "name"
+            }
+            self.controller.submit_result(template, json.dumps(metadata))
             self.assertRaises(RuntimeError, self.controller.remove_site, "name")
 
     def test_remove_site(self):
@@ -194,6 +205,164 @@ class IOControllerTest(unittest.TestCase):
             self.assertTrue(self.controller.remove_site("name"))
             # make sure that site is removed
             self.assertFalse(self.controller.remove_site("name"))
+
+    def test_report_not_authenticated(self):
+        with self.app.test_request_context():
+            self.assertRaises(RuntimeError, self.controller.report, "{}")
+
+    def test_report_incomplete(self):
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.assertRaises(ValueError, self.controller.report, "{}")
+
+    def test_report_non_existent_object(self):
+        with self.app.test_request_context():
+            self._login_standard_user()
+            report = {
+                "type": "site",
+                "uploader": USER["sub"],
+                "value": "name",
+                "message": "msg"
+            }
+            self.assertRaises(ValueError, self.controller.report, json.dumps(report))
+
+    def test_report(self):
+        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
+        self.facade.add_uploader(uploader_metadata)
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.controller.submit_site("name", "127.0.0.1")
+            report = {
+                "type": "site",
+                "uploader": USER["sub"],
+                "value": "name",
+                "message": "msg"
+            }
+            self.assertTrue(self.controller.report(json.dumps(report)))
+
+    def test_get_report_not_authenticated(self):
+        with self.app.test_request_context():
+            self.assertRaises(AuthenticateError, self.controller.get_report, "uuid")
+
+    def test_get_report_not_admin(self):
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.assertRaises(AuthenticateError, self.controller.get_report, "uuid")
+
+    def test_get_report_non_existent(self):
+        with self.app.test_request_context():
+            self._login_admin()
+            self.assertRaises(DatabaseFacade.NotFoundError, self.controller.get_report, "uuid")
+
+    def test_get_report(self):
+        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
+        self.facade.add_uploader(uploader_metadata)
+        with self.app.test_request_context():
+            self._login_admin()
+            self.controller.submit_site("name", "127.0.0.1")
+            report = self.controller.get_reports()[0]
+            uuid = report.get_uuid()
+            self.assertEqual(uuid, self.controller.get_report(uuid).get_uuid())
+
+    def test_get_reports_not_authenticated(self):
+        with self.app.test_request_context():
+            self.assertRaises(AuthenticateError, self.controller.get_reports)
+
+    def test_get_reports_not_admin(self):
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.assertRaises(AuthenticateError, self.controller.get_reports)
+
+    def test_get_reports_empty(self):
+        with self.app.test_request_context():
+            self._login_admin()
+            self.assertEqual(len(self.controller.get_reports(True)), 0)
+
+    def test_get_reports(self):
+        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
+        self.facade.add_uploader(uploader_metadata)
+        with self.app.test_request_context():
+            self._login_admin()
+            self.controller.submit_site("name", "127.0.0.1")
+            report = {
+                "type": "site",
+                "uploader": USER["sub"],
+                "value": "name",
+                "message": "msg"
+            }
+            self.controller.report(json.dumps(report))
+            report["message"] = "msg2"
+            self.controller.report(json.dumps(report))
+            # 3 reports: 2 submitted manually, 1 automatically generated for submitted site
+            self.assertEqual(len(self.controller.get_reports(True)), 3)
+
+    def test_process_report_not_authenticated(self):
+        with self.app.test_request_context():
+            self.assertEqual(self.controller.process_report(True, "id"), False)
+
+    def test_process_report_not_admin(self):
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.assertEqual(self.controller.process_report(True, "id"), False)
+
+    def test_process_report_report_not_exists(self):
+        with self.app.test_request_context():
+            self._login_admin()
+            self.assertEqual(self.controller.process_report(True, "id"), False)
+  
+    def test_process_report_site(self):
+        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
+        self.facade.add_uploader(uploader_metadata)
+        with self.app.test_request_context():
+            self._login_admin()
+            self.controller.submit_site("name", "127.0.0.1")
+            report = self.controller.get_reports()[0]
+            uuid = report.get_uuid()
+            self.assertEqual(self.controller.process_report(True, uuid), True)
+
+    def test_process_report_benchmark(self):
+        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
+        self.facade.add_uploader(uploader_metadata)
+        with self.app.test_request_context():
+            self._login_admin()
+            self.controller.submit_benchmark("mysql", "submit comment.")
+            report = self.controller.get_reports()[0]
+            uuid = report.get_uuid()
+            self.assertEqual(self.controller.process_report(True, uuid), True)
+
+    def test_process_report_result(self):
+        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
+        self.facade.add_uploader(uploader_metadata)
+        self.facade.add_benchmark("name/name:tag", USER['sub'])
+        self.facade.add_site('{"short_name": "name", "address": "100"  }')
+        with self.app.test_request_context():
+            f = open("app/controller/config/result_template.json")
+            template = f.read()
+            self._login_admin()
+            metadata = '{ \
+                "uploader": "' + USER["sub"] + '", \
+                "benchmark": "name/name:tag", \
+                "site": "name" \
+            }'
+            self.controller.submit_result(template, metadata)
+            filters = {'filters': [
+                {'type': 'uploader', 'value': USER["info"]["email"]},
+            ]}
+            result = self.facade.query_results(json.dumps(filters))[0]
+            report = {
+                "type": "result",
+                "uploader": USER["sub"],
+                "value": result.get_uuid(),
+                "message": "msg"
+            }
+            self.controller.report(json.dumps(report))
+            reports = self.controller.get_reports()
+            result_report = None
+            for report in reports:
+                if report.get_report_type() == Report.RESULT:
+                    result_report = report
+            uuid = result_report.get_uuid()
+            self.assertTrue(self.controller.process_report(True, uuid), True)
 
     def test_remove_result_not_authenticated(self):
         with self.app.test_request_context():
@@ -260,13 +429,23 @@ class IOControllerTest(unittest.TestCase):
         # TODO: Add tests after method is fixed
         pass
 
-    def test_get_full_name(self):
+    def test_site_result_amount(self):
+        self.assertEqual(self.controller._site_result_amount("name"), 0)
+        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
+        self.facade.add_uploader(uploader_metadata)
+        self.facade.add_benchmark("name/name:tag", USER['sub'])
+        self.facade.add_site('{"short_name": "name", "address": "100"  }')
         with self.app.test_request_context():
+            f = open("app/controller/config/result_template.json")
+            template = f.read()
             self._login_standard_user()
-            self.assertEqual(self.controller.get_full_name(), USER["info"]["name"])
-            self._logout()
-        with self.app.test_request_context():
-            self.assertEqual(self.controller.get_full_name(), None)
+            metadata = '{ \
+                "uploader": "' + USER["sub"] + '", \
+                "benchmark": "name/name:tag", \
+                "site": "name" \
+            }'
+            self.controller.submit_result(template, metadata)
+            self.assertEqual(self.controller._site_result_amount("name"), 1)
 
     def test_get_email(self):
         with self.app.test_request_context():
@@ -275,6 +454,14 @@ class IOControllerTest(unittest.TestCase):
             self._logout()
         with self.app.test_request_context():
             self.assertEqual(self.controller.get_email(), None)
+
+    def test_get_full_name(self):
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.assertEqual(self.controller.get_full_name(), USER["info"]["name"])
+            self._logout()
+        with self.app.test_request_context():
+            self.assertEqual(self.controller.get_full_name(), None)
 
     def test_get_user_id(self):
         with self.app.test_request_context():
@@ -288,20 +475,17 @@ class IOControllerTest(unittest.TestCase):
         with self.app.test_request_context():
             self._login_standard_user()
             self.assertFalse(self.controller.is_admin())
-            self._logout()
 
     def test_is_admin_fail_wrong_affiliations(self):
         with self.app.test_request_context():
             self._login_standard_user()
             session['user']['info']['edu_person_scoped_affiliations'] = ["student@mit.edu"]
             self.assertFalse(self.controller.is_admin())
-            self._logout()
 
     def test_is_admin_one_afilliation(self):
         with self.app.test_request_context():
             self._login_admin()
             self.assertTrue(self.controller.is_admin())
-            self._logout()
 
     def test_is_admin_all_afilliations(self):
         admin_affiliations = configuration.get('debug_admin_affiliations')
@@ -313,7 +497,6 @@ class IOControllerTest(unittest.TestCase):
             self._login_standard_user()
             session['user']['info']['edu_person_scoped_affiliations'] = admin_affiliations
             self.assertTrue(self.controller.is_admin())
-            self._logout()
 
     def test_authenticated(self):
         """Tests if IOController returns True when logged
@@ -321,13 +504,12 @@ class IOControllerTest(unittest.TestCase):
         with self.app.test_request_context():
             self._login_standard_user()
             self.assertTrue(self.controller.is_authenticated())
-            self._logout()
 
     def test_not_authenticated(self):
         """Tests if IOController returns False when not logged
            in during is_authenticated method call"""
         with self.app.test_request_context():
-            self.assertFalse(self.controller.is_authenticated())   
+            self.assertFalse(self.controller.is_authenticated())
 
     def _login_standard_user(self):
         session['user'] = USER
