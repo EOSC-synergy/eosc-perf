@@ -163,7 +163,7 @@ class IOController:
            Returns:
            bool: True if removal was successful, false otherwise"""
         if self.is_authenticated():
-            if self._site_result_amount(short_name) is 0:
+            if self._site_result_amount(short_name) == 0:
                 return facade.remove_site(short_name)
             else:
                 raise RuntimeError("Only sites without results can be removed.")
@@ -182,10 +182,10 @@ class IOController:
             # if the user is not in the database, add them
             self._add_current_user_if_missing()
             # Add to database.
-            if facade.add_report(metadata):
-                # TODO: notify admin per email
-                return True
-        return False
+            # TODO: notify admin per email
+            return facade.add_report(metadata)
+        else:
+            raise RuntimeError("Must be logged in to submit a report")
 
     def get_report(self, uuid: str) -> Report:
         """Get a report by UUID. Requires the user to be an admin.
@@ -318,7 +318,8 @@ class IOController:
                                    in x, rendered_contend))
         return False
 
-    def _site_result_amount(self, short_name):
+    @staticmethod
+    def _site_result_amount(short_name):
         filters = {'filters': [
             {'type': 'site', 'value': short_name}
         ]}
