@@ -122,7 +122,7 @@ class ResultSearch extends Content {
         // Create Body.
         var results_amount = results.length;
         var start = (current_page - 1) * results_per_page;
-        var end = Math.min(start + results_per_page, results_amount);
+        var end = Math.min(start + parseInt(results_per_page), results_amount);
         for (var i = start; i < end; i++) {
             var row = document.createElement("TR")
             const res = results[i];
