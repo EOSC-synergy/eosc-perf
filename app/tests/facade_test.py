@@ -9,6 +9,7 @@ from app.model.facade import DatabaseFacade
 class FacadeTest(unittest.TestCase):
     """Tests for facade."""
     tested_uploader_id: str = 'test_user'
+    tested_uploader_email: str = 'test@example.com'
     tested_benchmark_name: str = 'foobar/bazbutt'
     tested_site_name: str = 'iamasitename'
     tested_tag_name: str = 'testtag'
@@ -37,7 +38,7 @@ class FacadeTest(unittest.TestCase):
         meta = {
             'id': self.tested_uploader_id,
             'name': 'user',
-            'email': 'test@example.com'
+            'email': self.tested_uploader_email
         }
         self.assertTrue(self.facade.add_uploader(json.dumps(meta)))
 
@@ -56,7 +57,7 @@ class FacadeTest(unittest.TestCase):
         meta = {
             'id': '',
             'name': 'user',
-            'email': 'test@example.com'
+            'email': self.tested_uploader_email
         }
         with self.assertRaises(ValueError):
             self.facade.add_uploader(json.dumps(meta))
@@ -64,7 +65,7 @@ class FacadeTest(unittest.TestCase):
         # missing id
         meta = {
             'name': 'user',
-            'email': 'test@example.com'
+            'email': self.tested_uploader_email
         }
         with self.assertRaises(ValueError):
             self.facade.add_uploader(json.dumps(meta))
@@ -73,7 +74,7 @@ class FacadeTest(unittest.TestCase):
         meta = {
             'id': 'random',
             'name': '',
-            'email': 'test@example.com'
+            'email': self.tested_uploader_email
         }
         with self.assertRaises(ValueError):
             self.facade.add_uploader(json.dumps(meta))
@@ -81,7 +82,7 @@ class FacadeTest(unittest.TestCase):
         # missing user
         meta = {
             'id': 'random',
-            'email': 'test@example.com'
+            'email': self.tested_uploader_email
         }
         with self.assertRaises(ValueError):
             self.facade.add_uploader(json.dumps(meta))
@@ -107,7 +108,7 @@ class FacadeTest(unittest.TestCase):
         meta = {
             'id': self.tested_uploader_id,
             'name': 'user',
-            'email': 'test@example.com'
+            'email': self.tested_uploader_email
         }
         self.test_add_uploader_valid()
         self.assertFalse(self.facade.add_uploader(json.dumps(meta)))
@@ -319,7 +320,7 @@ class FacadeTest(unittest.TestCase):
         usermeta = {
             'id': self.tested_uploader_id,
             'name': 'user',
-            'email': 'test@example.com'
+            'email': self.tested_uploader_email
         }
         sitemeta = {
             'short_name': self.tested_site_name,
@@ -332,7 +333,7 @@ class FacadeTest(unittest.TestCase):
 
     def test_add_result_valid(self):
         """Test valid call to add_result."""
-        content_json = "{ 'tag': 'value' }"
+        content_json = '{ "tag": 3.1415926535 }'
         meta = {
             'uploader': self.tested_uploader_id,
             'site': self.tested_site_name,
@@ -351,7 +352,7 @@ class FacadeTest(unittest.TestCase):
         self._add_result_data()
 
         # missing uploader
-        content_json = "{ 'tag': 'value' }"
+        content_json = '{ "tag": 3.1415926535 }'
         meta = {
             'site': self.tested_site_name,
             'benchmark': self.tested_benchmark_name,
@@ -594,6 +595,99 @@ class FacadeTest(unittest.TestCase):
     def test_find_reports_empty(self):
         """Test finding no reports."""
         self.assertEqual(len(self.facade.get_reports()), 0)
+
+    
+    def test_find_results_with_filters(self):
+        """Test if added results can be found using filters."""
+        self.test_add_result_valid()
+        self.assertGreater(len(self.facade.query_results(json.dumps({ "filters": [
+            {
+                "type": "benchmark",
+                "value": self.tested_benchmark_name
+            },
+            {
+                "type": "uploader",
+                "value": self.tested_uploader_email
+            },
+            {
+                "type": "site",
+                "value": self.tested_site_name
+            },
+            {
+                "type": "tag",
+                "value": self.tested_tag_name
+            },
+            {
+                "type": "json",
+                "mode": "equals",
+                "key": "tag",
+                "value": 3.1415926535
+            },
+            {
+                "type": "json",
+                "mode": "greater_than",
+                "key": "tag",
+                "value": 2.7182818284
+            },
+            {
+                "type": "json",
+                "mode": "lesser_than",
+                "key": "tag",
+                "value": 3.15
+            }
+        ]}))), 0)
+
+    def test_find_results_wrong_filters(self):
+        """Test with filters finding no results."""
+        self.test_add_result_valid()
+        self.assertEqual(len(self.facade.query_results(json.dumps({ "filters": [
+            {
+                "type": "benchmark",
+                "value": "mrbrightside/leave-cage:latest"
+            }
+        ]}))), 0)
+        self.assertEqual(len(self.facade.query_results(json.dumps({ "filters": [
+            {
+                "type": "uploader",
+                "value": "dorian.grey@fictional-domain.tld"
+            }
+        ]}))), 0)
+        self.assertEqual(len(self.facade.query_results(json.dumps({ "filters": [
+            {
+                "type": "site",
+                "value": "wonderland"
+            }
+        ]}))), 0)
+        self.assertEqual(len(self.facade.query_results(json.dumps({ "filters": [
+            {
+                "type": "tag",
+                "value": "important"
+            }
+        ]}))), 0)
+        self.assertEqual(len(self.facade.query_results(json.dumps({ "filters": [
+            {
+                "type": "json",
+                "mode": "equals",
+                "key": "tag",
+                "value": 2.7182818284
+            }
+        ]}))), 0)
+        self.assertEqual(len(self.facade.query_results(json.dumps({ "filters": [
+            {
+                "type": "json",
+                "mode": "greater_than",
+                "key": "tag",
+                "value": 6.28318530718
+            }
+        ]}))), 0)
+        self.assertEqual(len(self.facade.query_results(json.dumps({ "filters": [
+            {
+                "type": "json",
+                "mode": "lesser_than",
+                "key": "tag",
+                "value": 1.41421356237
+            }
+        ]}))), 0)
 
 if __name__ == '__main__':
     unittest.main()
