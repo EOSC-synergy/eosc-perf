@@ -2,11 +2,10 @@
 This module acts as a facade between view and model.
 """
 import json
+import urllib.request
 from re import match
 from typing import List
-from requests import get
 from flask import session, redirect
-from requests_html import HTMLSession
 from .json_result_validator import JSONResultValidator
 from .authenticator import authenticator, AuthenticateError
 from .type_aliases import JSON
@@ -280,43 +279,37 @@ class IOController:
         Args:
         docker_name      (str): The name to be checked.
         check_for_page  (bool): If true, it will be checked whether docker_name corresponds to
-                                an existing image on docker hub. Can lead to problems if
-                                chromium isn't installed and takes a considerable amount of time (5-10s).
+                                an existing image on docker hub.
         Returns:
         bool: True if it is a valid docker name, false otherwise.
         """
         # Distinguish between docker certified, and not docker certified.
         if "/" in docker_name:
             user_name, image_name = docker_name.split("/", 1)
-            url_prefix = docker_hub_url['default']
+            image_name = image_name.split(":", 1)[0]
             # controll valid docker id (https://docs.docker.com/docker-id/).
             if match(r'^([a-z]|[0,9]){4,30}\Z', user_name) is None:
                 return False
         else:
-            image_name = docker_name
-            url_prefix = docker_hub_url['certified']
-        url = url_prefix+docker_name
+            user_name = "library"
+            image_name = docker_name.split(":", 1)[0]
         # Controll the naming conventions (https://docs.docker.com/docker-hub/repos/).
         if not match(r'^([a-z]|[0,9]|[-,_]){2,255}\Z', image_name) is None:
             if not check_for_page:
                 return True
             # Check if the page exists.
+            url = 'https://registry.hub.docker.com/v2/repositories/{}/{}/'.format(
+            user_name, image_name)
+            # Call to the api, check if public.
             try:
-                get(url)
-            except ConnectionError:
+                dockerhub_content = urllib.request.urlopen(url).read()
+                content = json.loads(dockerhub_content)
+                # Ensure public image.
+                is_private = content['is_private']
+                return not is_private
+            except:
+                # If url isn't valid or doesn't contain 'is_private' value.
                 return False
-            # Load the http.
-            else:
-                htmlsession = HTMLSession()
-                content = htmlsession.get(url)
-                # Might install chromium.
-                # Timeconsuming Step
-                content.html.render()
-                rendered_contend = content.html.search('<body{}/body>')
-                # Exclude the default empty page on dockerhub.
-                return not any(map(lambda x: 'data-testid="404page" alt="404 Route Not Found"'
-                                   in x, rendered_contend))
-        return False
 
     @staticmethod
     def _site_result_amount(short_name):
