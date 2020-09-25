@@ -9,22 +9,24 @@
 
 <style>
     table {
-      border-collapse: collapse;
-      border-spacing: 0;
-      width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+        width: 100%;
     }
 
     tr {
         border-collapse: collapse;
     }
 
-    th, td {
+    th,
+    td {
         padding: 8px;
         text-align: left;
         border-bottom: 3px solid #000;
     }
+
     td {
-        border-bottom: 1px solid #ddd; 
+        border-bottom: 1px solid #ddd;
     }
 </style>
 {% endblock %}
@@ -32,23 +34,25 @@
 {% block info %}
 <div class="container">
     <h1>Benchmark Search</h1>
-    <form id="form" action="/benchmark_search" method="POST">
-        <input type="text" name="query" placeholder="Enter your query here" size=100/> 
-        <input type="submit" class="btn btn-info" name="submit" value="Search"/>
-        <table id="result_table">
-            <thead>
-                <tr>
-                    <th>Docker Name</th>
-                </tr>
-            </thead>
-            <tbody id="result_table_body">
-            </tbody>
-        </table>
+    <form id="form" action="/benchmark_search" style="display:flex" method="POST">
+        <input type="text" name="query" class="form-control" style="flex: 10 1 0;min-width:0"
+            placeholder="Enter your query here" size=100 />
+        <input type="submit" class="btn btn-info" style="flex: 1 1 0" name="submit" value="Search" />
     </form>
+    <table id="result_table">
+        <thead>
+            <tr>
+                <th>Docker Name</th>
+            </tr>
+        </thead>
+        <tbody id="result_table_body">
+        </tbody>
+    </table>
     <br />
     <p id="page_info" class="text-right"></p>
     <button type="button" onclick="next_page()" class="btn btn-info float-right mr-1" id="next_button">Next</button>
-    <button type="button"  onclick="prev_page()" class="btn btn-info float-right mr-1" id="previous_button">Previous</button>
+    <button type="button" onclick="prev_page()" class="btn btn-info float-right mr-1"
+        id="previous_button">Previous</button>
 </div>
 
 {% endblock %}
