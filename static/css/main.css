@@ -30,3 +30,15 @@
 select {
     margin: 4px;
 }
+
+@media (min-width: 576px) {
+    .card-columns.upload-form  {
+        column-count: 2;
+    }
+}
+
+@media (min-width: 992px) {
+    .card-columns.upload-form  {
+        column-count: 3;
+    }
+}
