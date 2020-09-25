@@ -581,6 +581,15 @@ class FacadeTest(unittest.TestCase):
         }
         with self.assertRaises(ValueError):
             self.facade.add_report(json.dumps(meta))
+        
+        # invalid result
+        meta = {
+            'uploader': 'not an uploader',
+            'type': 'result',
+            'value': 'ceci n\'est pas une UUID'
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_report(json.dumps(meta))
 
     def test_find_reports(self):
         """Test if added reports can be found."""
