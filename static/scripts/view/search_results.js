@@ -310,7 +310,7 @@ class ResultSearch extends Content {
         // Creat the new filter.
         var new_filter = document.createElement('LI');
         new_filter.setAttribute("id", filter_id);
-        new_filter.setAttribute("class", "filter");
+        new_filter.setAttribute("class", "flexbox filter");
         let filter_type = document.createElement("select");
         // Add the different types.
         for (var i = 0; i < filter_types.length; i++) {
@@ -401,7 +401,6 @@ class ResultSearch extends Content {
         type_info.setAttribute("title", "Format Description");
         type_info.setAttribute("data-content", "You find some Tips for the expected input values here.");
         type_info.setAttribute("data-placement", "right");
-        type_info.setAttribute("style", "flex: 1 1 0");
         // Add default parameters if given.
         if (input_values) {
             if (input_values["filter_type"]) {

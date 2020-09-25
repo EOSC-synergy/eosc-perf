@@ -34,10 +34,9 @@
 {% block info %}
 <div class="container">
     <h1>Benchmark Search</h1>
-    <form id="form" action="/benchmark_search" style="display:flex" method="POST">
-        <input type="text" name="query" class="form-control" style="flex: 10 1 0;min-width:0"
-            placeholder="Enter your query here" size=100 />
-        <input type="submit" class="btn btn-info" style="flex: 1 1 0" name="submit" value="Search" />
+    <form id="form" action="/benchmark_search" class="flexbox" method="POST">
+        <input type="text" name="query" class="form-control" style="flex: 10 1 0" placeholder="Enter your query here" />
+        <input type="submit" class="btn btn-info" name="submit" value="Search" />
     </form>
     <table id="result_table">
         <thead>
