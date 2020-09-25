@@ -13,21 +13,28 @@
 {% block info %}
 <h1>Result Search</h1>
 <input type="button" class="btn btn-info" value="Find Results" onclick="ResultSearch.search()">
+<input type="button" class="btn btn-success" id="add_filter" value="Add Filter"
+    onclick="ResultSearch.add_filter_field()">
+<input type="button" class="btn btn-secondary" id="diagram" value="Visualize" onclick="ResultSearch.make_diagram()">
 <ul id="filters" class="list-unstyled">
 </ul>
-<input type="button" id="add_filter" value="+ Add Filter" class="btn btn-success" onclick="ResultSearch.add_filter_field()">
-<input type="button" id="diagram" value="Visualize" onclick="ResultSearch.make_diagram()">
 <table id="result_table" width=100%>
 </table>
-<select id="pages" onchange="ResultSearch.set_page()">
-</select>
-<h4>Results on page:</h4>
-<select id="results_on_page" onchange="ResultSearch.set_results_per_page()">
-    <option value="1">1</option>
-    <option value="10" selected>10</option>
-    <option value="15">15</option>
-    <option value="20">20</option>
-    <option value="50">50</option>
-    <option value="100">100</option>
-</select>
+<div class="flex-horizontal">
+    <select id="pages" class="form-control" onchange="ResultSearch.set_page()">
+    </select>
+    <div style="flex-grow: 2"></div>
+    <div style="flex-grow: 1;display: flex">
+        <h5 style="align-self:center;flex:1 1 0">Results on page:</h5>
+        <select id="results_on_page" style="flex: 1 1 0" class="form-control"
+            onchange="ResultSearch.set_results_per_page()">
+            <option value="1">1</option>
+            <option value="10" selected>10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+    </div>
+</div>
 {% endblock %}

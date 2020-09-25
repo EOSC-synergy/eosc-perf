@@ -310,6 +310,7 @@ class ResultSearch extends Content {
         // Creat the new filter.
         var new_filter = document.createElement('LI');
         new_filter.setAttribute("id", filter_id);
+        new_filter.setAttribute("class", "filter");
         let filter_type = document.createElement("select");
         // Add the different types.
         for (var i = 0; i < filter_types.length; i++) {
@@ -369,16 +370,18 @@ class ResultSearch extends Content {
                 );
             }
         });
+        filter_type.setAttribute("class", "form-control");
         // Create input.
         var input = document.createElement("input");
         input.setAttribute("type", "text");
         input.setAttribute("id", "filter_value" + filter_id);
         input.setAttribute("placeholder", "Filter Value");
+        input.setAttribute("class", "form-control");
         // Create number field.
         var num_input = document.createElement("input");
-        num_input.setAttribute("type", "number");
         num_input.setAttribute("id", "number" + filter_id);
         num_input.setAttribute("min", "0");
+        num_input.setAttribute("class", "form-control");
         num_input.style.visibility = "hidden";
         // Create button to remove given filter.
         var remove_filter = document.createElement("input");
@@ -398,6 +401,7 @@ class ResultSearch extends Content {
         type_info.setAttribute("title", "Format Description");
         type_info.setAttribute("data-content", "You find some Tips for the expected input values here.");
         type_info.setAttribute("data-placement", "right");
+        type_info.setAttribute("style", "flex: 1 1 0");
         // Add default parameters if given.
         if (input_values) {
             if (input_values["filter_type"]) {
