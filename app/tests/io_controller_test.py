@@ -69,8 +69,8 @@ class IOControllerTest(unittest.TestCase):
         self.facade.add_benchmark("name/name:tag", USER['sub'])
         self.facade.add_site('{"short_name": "name", "address": "100"  }')
         with self.app.test_request_context():
-            f = open("app/controller/config/result_template.json")
-            template = f.read()
+            with open("app/controller/config/result_template.json") as file:
+                template = file.read()
             self._login_standard_user()
             metadata = '{ \
                 "uploader": "' + USER["sub"] + '", \
@@ -185,8 +185,8 @@ class IOControllerTest(unittest.TestCase):
         self.facade.add_benchmark("name/name:tag", USER['sub'])
         self.facade.add_site('{"short_name": "name", "address": "100"  }')
         with self.app.test_request_context():
-            f = open("app/controller/config/result_template.json")
-            template = f.read()
+            with open("app/controller/config/result_template.json") as file:
+                template = file.read()
             self._login_standard_user()
             metadata = {
                 "uploader": USER["sub"],
@@ -336,8 +336,8 @@ class IOControllerTest(unittest.TestCase):
         self.facade.add_benchmark("name/name:tag", USER['sub'])
         self.facade.add_site('{"short_name": "name", "address": "100"  }')
         with self.app.test_request_context():
-            f = open("app/controller/config/result_template.json")
-            template = f.read()
+            with open("app/controller/config/result_template.json") as file:
+                template = file.read()
             self._login_admin()
             metadata = '{ \
                 "uploader": "' + USER["sub"] + '", \
@@ -379,8 +379,8 @@ class IOControllerTest(unittest.TestCase):
         self.facade.add_benchmark("name/name:tag", USER['sub'])
         self.facade.add_site('{"short_name": "name", "address": "100"  }')
         with self.app.test_request_context():
-            f = open("app/controller/config/result_template.json")
-            template = f.read()
+            with open("app/controller/config/result_template.json") as file:
+                template = file.read()
             self._login_admin()
             metadata = '{ \
                 "uploader": "' + USER["sub"] + '", \
@@ -396,8 +396,8 @@ class IOControllerTest(unittest.TestCase):
         self.facade.add_benchmark("name/name:tag", USER['sub'])
         self.facade.add_site('{"short_name": "name", "address": "100"  }')
         with self.app.test_request_context():
-            f = open("app/controller/config/result_template.json")
-            template = f.read()
+            with open("app/controller/config/result_template.json") as file:
+                template = file.read()
             self._login_admin()
             metadata = {
                 "uploader": USER["sub"],
@@ -436,8 +436,8 @@ class IOControllerTest(unittest.TestCase):
         self.facade.add_benchmark("name/name:tag", USER['sub'])
         self.facade.add_site('{"short_name": "name", "address": "100"  }')
         with self.app.test_request_context():
-            f = open("app/controller/config/result_template.json")
-            template = f.read()
+            with open("app/controller/config/result_template.json") as file:
+                template = file.read()
             self._login_standard_user()
             metadata = '{ \
                 "uploader": "' + USER["sub"] + '", \
