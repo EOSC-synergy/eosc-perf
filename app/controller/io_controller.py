@@ -314,7 +314,9 @@ class IOController:
             dockerhub_content = urllib.request.urlopen(
                 self._build_dockerregistry_url(docker_name)).read()
             (username, image, tag) = self._decompose_dockername(docker_name)
-            json.loads(dockerhub_content)
+            meta = json.loads(dockerhub_content)
+            if meta['is_private']:
+                return False
             if not tag is None:
                 # check tag as well
                 dockerhub_tags = urllib.request.urlopen(
