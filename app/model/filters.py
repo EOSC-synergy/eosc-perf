@@ -23,7 +23,7 @@ class BenchmarkFilter(Filter):
 
     def filter(self, result: Result) -> bool:
         """Returns whether the result belongs to the benchmark the filter was primed with."""
-        return result.get_benchmark().get_docker_name() == self.docker_name
+        return self.docker_name in result.get_benchmark().get_docker_name()
 
 class UploaderFilter(Filter):
     """Filter implementation that matches on uploader email."""
@@ -41,7 +41,7 @@ class SiteFilter(Filter):
 
     def filter(self, result: Result) -> bool:
         """Returns whether the result was uploaded by the user the filter was primed with."""
-        return result.get_site().get_short_name() == self.site
+        return self.site in result.get_site().get_short_name()
 
 class TagFilter(Filter):
     """Filter implementation that matches on tags."""
