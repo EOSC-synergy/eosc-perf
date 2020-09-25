@@ -94,16 +94,16 @@ class IOControllerTest(unittest.TestCase):
         self.facade.add_uploader(uploader_metadata)
         with self.app.test_request_context():
             self._login_standard_user()
-            self.assertTrue(self.controller.submit_benchmark("mysql", "submit comment."))
-            self.assertTrue(self.controller.submit_benchmark("python", ""))
+            self.assertTrue(self.controller.submit_benchmark("rosskukulinski/leaking-app", "submit comment."))
+            self.assertTrue(self.controller.submit_benchmark("rosskukulinski/leaking-app:latest", ""))
 
     def test_submit_benchmark_duplicate(self):
         uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
         self.facade.add_uploader(uploader_metadata)
         with self.app.test_request_context():
             self._login_standard_user()
-            self.controller.submit_benchmark("mysql", "submit comment.")
-            self.assertRaises(RuntimeError, self.controller.submit_benchmark, "mysql", "submit comment.")
+            self.controller.submit_benchmark("rosskukulinski/leaking-app", "submit comment.")
+            self.assertRaises(RuntimeError, self.controller.submit_benchmark, "rosskukulinski/leaking-app", "submit comment.")
 
     def test_submit_site_unauthenticated(self):
         with self.app.test_request_context():
@@ -325,7 +325,7 @@ class IOControllerTest(unittest.TestCase):
         self.facade.add_uploader(uploader_metadata)
         with self.app.test_request_context():
             self._login_admin()
-            self.controller.submit_benchmark("mysql", "submit comment.")
+            self.controller.submit_benchmark("rosskukulinski/leaking-app", "submit comment.")
             report = self.controller.get_reports()[0]
             uuid = report.get_uuid()
             self.assertEqual(self.controller.process_report(True, uuid), True)
@@ -425,9 +425,30 @@ class IOControllerTest(unittest.TestCase):
             controller._add_current_user_if_missing()
             self.assertTrue(self.facade.get_uploader(USER['sub']))
 
+    def test_valid_docker_hub_name_fails(self):
+        # malformed
+        self.assertFalse(self.controller._valid_docker_hub_name(None))
+        self.assertFalse(self.controller._valid_docker_hub_name(""))
+        self.assertFalse(self.controller._valid_docker_hub_name("Gibberishcfzugiop"))
+        # official images are not supported
+        self.assertFalse(self.controller._valid_docker_hub_name("mysql"))
+        # private image
+        self.assertFalse(self.controller._valid_docker_hub_name("thechristophe/example-private"))
+        # typos, non existent image, wrong tags etc
+        self.assertFalse(self.controller._valid_docker_hub_name("mysql!"))
+        self.assertFalse(self.controller._valid_docker_hub_name("mysql:8.0.123"))
+        self.assertFalse(self.controller._valid_docker_hub_name("mysql:"))
+        self.assertFalse(self.controller._valid_docker_hub_name("rosskukulinsk/leaking-app:latest"))
+        self.assertFalse(self.controller._valid_docker_hub_name("rosskukulinski/leakingapp:latest"))
+        self.assertFalse(self.controller._valid_docker_hub_name("rosskukulinski/leaking-app:lates"))
+        self.assertFalse(self.controller._valid_docker_hub_name("/leaking-app:latest"))
+        self.assertFalse(self.controller._valid_docker_hub_name("/:latest"))
+        self.assertFalse(self.controller._valid_docker_hub_name("/:"))
+        self.assertFalse(self.controller._valid_docker_hub_name(":"))
+
     def test_valid_docker_hub_name(self):
-        # TODO: Add tests after method is fixed
-        pass
+        self.assertTrue(self.controller._valid_docker_hub_name("rosskukulinski/leaking-app"))
+        self.assertTrue(self.controller._valid_docker_hub_name("rosskukulinski/leaking-app:latest"))
 
     def test_site_result_amount(self):
         self.assertEqual(self.controller._site_result_amount("name"), 0)
