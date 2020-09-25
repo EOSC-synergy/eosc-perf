@@ -23,8 +23,13 @@
 <table id="result_table" width=100%>
 </table>
 <div class="flexbox">
-    <select id="pages" class="form-control" onchange="ResultSearch.set_page()">
-    </select>
+    <div class="flexbox">
+        <input type="button" id="prevpage" class="btn btn-secondary" value="<-" onclick="ResultSearch.prev_page()"
+            disabled />
+        <select id="pages" class="form-control" onchange="ResultSearch.set_page()">
+        </select>
+        <input type="button" id="nextpage" class="btn btn-secondary" value="->" onclick="ResultSearch.next_page()" />
+    </div>
     <div style="flex-grow: 2"></div>
     <div style="flex-grow: 1" class="flexbox">
         <h5>Results on page:</h5>

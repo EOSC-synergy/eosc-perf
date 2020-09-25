@@ -67,6 +67,19 @@ class ResultSearch extends Content {
         $('[data-toggle="popover"]').popover({
             html: true
         });
+
+        if (this.get_page() > 1) {
+            document.getElementById("prevpage").disabled = false;
+        }
+        else {
+            document.getElementById("prevpage").disabled = true;
+        }
+        if (this.get_page() < document.getElementById("pages").length) {
+            document.getElementById("nextpage").disabled = false;
+        }
+        else {
+            document.getElementById("nextpage").disabled = true;
+        }
     }
 
 
@@ -236,10 +249,23 @@ class ResultSearch extends Content {
             });
             pages_select.appendChild(p);
         }
+    }
 
+    static get_page() {
+        return document.getElementById("pages").value;
+    }
+    static prev_page() {
+        document.getElementById("pages").selectedIndex -= 1;
+        current_page = document.getElementById("pages").value;
+        this.update();
     }
     static set_page() {
         /** Change the page displayed. */
+        current_page = document.getElementById("pages").value;
+        this.update();
+    }
+    static next_page() {
+        document.getElementById("pages").selectedIndex += 1;
         current_page = document.getElementById("pages").value;
         this.update();
     }
