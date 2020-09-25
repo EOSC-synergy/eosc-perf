@@ -54,8 +54,15 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{im_link}}">Infrastructure Manager</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/instructions">Instructions</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Instructions
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="/instructions">Upload</a>
+                            <a class="dropdown-item" href="/code_guidelines">Code Guidelines</a>
+                        </div>
                     </li>
                     {% if admin %}
                     <li class="nav-item">
