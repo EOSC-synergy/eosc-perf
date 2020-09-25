@@ -12,39 +12,65 @@
 <div class="container">
     <h1>Upload Result</h1>
     <br>
-    <form action="/upload_submit" id="form" enctype="multipart/form-data" method="POST">
-        <label for="result_file">Please select result JSON file:</label>
-        <input type="file" class="form-control-file" id="result_file" name="file" /><br/>
-        <label for="bm_selection">Select benchmark:</label>
-        <select class="form-control" id="bm_selection" name="benchmark"></select><br/>
-        <label for="site_selection">Select execution site:</label>
-        <select class="form-control" id="site_selection" name="site"></select><br/>
+    <form action="/upload_submit" id="form" enctype="multipart/form-data" class="form-group" method="POST">
+        <div class="card-columns">
+            <div class="card">
+                <div class="card-body">
+                    <label for="result_file">Please select result JSON file:</label>
+                    <input type="file" class="form-control-file" id="result_file" name="file" />
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <label for="bm_selection">Select benchmark:</label>
+                    <select class="form-control" id="bm_selection" name="benchmark"></select>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <label for="site_selection">Select execution site:</label>
+                    <div class="flexbox">
+                        <select class="form-control" id="site_selection" name="site"></select>
+                    </div>
+                    <label class="checkbox-label">
+                        <input class="checkbox" type="checkbox" value="" id="custom_site"
+                            onclick="site_checkbox_click(this)" />
+                        Custom site
+                        </input>
+                    </label>
+                    <div class="flexbox">
+                        <input type="text" id="site_name" class="form-control" placeholder="Site name" disabled>
+                        <input type="text" id="site_address" class="form-control" placeholder="Site IP" disabled>
+                        <input type="text" id="site_description" class="form-control" placeholder="Optional description"
+                            disabled>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <label for="tag_selection">Select tags (hold control for
+                        multi-selection):</label>
+                    <div class="flexbox">
+                        <select multiple class="form-control" id="tag_selection" name="tags"></select></div>
+                    <div class="flexbox">
+                        <input type="text" id="custom_tag" placeholder="Enter custom tag" class="form-control"
+                            onkeyup="stopped_typing_tag_field()">
+                        <button type="button" id="add_tag_button" class="btn btn-info" onclick="add_tag()">Add
+                            Tag</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <label class="checkbox-label">
-            <input class="checkbox" type="checkbox" value="" id="custom_site" onclick="site_checkbox_click(this)"/>
-            Custom site
-            </input>
+            <input class="checkbox" type="checkbox" value="" id="agreed_license"
+                onclick="license_checkbox_click(this)" />
+            I have read and accept the <button type="button" class="btn btn-secondary" onclick="show_license()">License
+                agreement</button>
         </label>
-        <div class="form-row">
-            <div class="col">
-                <input type="text" id="site_name" placeholder="Enter site name" disabled>
-            </div>
-            <div class="col">
-                <input type="text" id="site_address" placeholder="Enter site IP" disabled>
-            </div>
-            <div class="col-7">
-                <input type="text" id="site_description" placeholder="Enter optional description" disabled>
-            </div>
-        </div></br>
-        <label for="tag_selection">Select tags (hold control for multi-selection):</label>
-        <select multiple class="form-control" id="tag_selection" name="tags"></select><br />
-        <input type="text" id="custom_tag" placeholder="Enter custom tag" onkeyup="stopped_typing_tag_field()">
-        <button type="button" id="add_tag_button" class="btn btn-info" onclick="add_tag()">Add Tag</button><br/><br/>
-        <label class="checkbox-label">
-            <input class="checkbox" type="checkbox" value="" id="agreed_license" onclick="license_checkbox_click(this)"/>
-            I have read and accept the <button type="button" class="btn btn-secondary" onclick="show_license()">License agreement</button>
-        </label>
-        <input type="submit" class="btn btn-success float-right mr-1" name="upload" value="Upload" id="submit_button" disabled/>
-    </form>
+        <input type="submit" class="btn btn-success float-right mr-1" name="upload" value="Upload" id="submit_button"
+            disabled />
+</div>
+</form>
 </div>
 
 {% endblock %}

@@ -25,3 +25,7 @@
 .filter :last-child {
     flex: 1 1 0;
 }
+
+select {
+    margin: 4px;
+}
