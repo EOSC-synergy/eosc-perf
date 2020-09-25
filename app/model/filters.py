@@ -70,6 +70,8 @@ class JsonValueFilter(Filter):
         val = self._deep_get(json.loads(result.get_json()), self.template)
         if val is not None:
             if self.mode == 'equals':
+                if isinstance(val, str):
+                    return val == self.value
                 return abs( float(val) - float(self.value)) < 0.001
             elif self.mode == 'greater_than':
                 return float(val) > float(self.value)
