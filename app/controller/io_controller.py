@@ -51,8 +51,7 @@ class IOController:
             return facade.add_result(result_json, metadata)
         return False
 
-    def submit_benchmark(self, docker_name: str, comment: str,
-                         check_for_page: bool = False) -> bool:
+    def submit_benchmark(self, docker_name: str, comment: str) -> bool:
         """Submit a new Benchmark to the system.
         Args:
         uploader_id  (str): The id of the uploader.
@@ -72,7 +71,7 @@ class IOController:
             raise ValueError("Docker name must not be None")
         # Check for valid email address.
         # Check valid docker_hub_name.uploader_emailuploader_email
-        if self._valid_docker_hub_name(docker_name, check_for_page):
+        if self._valid_docker_hub_name(docker_name):
             self._add_current_user_if_missing()
             # Add to model.
             if facade.add_benchmark(docker_name=docker_name, uploader_id=self.get_user_id()):
@@ -83,8 +82,8 @@ class IOController:
                     'uploader': self.get_user_id()
                 }))
             else:
-                raise RuntimeError("Adding benchmark to database failed.")
-        raise RuntimeError("{} is not a valid docker hub name.".format(docker_name))
+                raise RuntimeError("A benchmark with the given name was already submitted.")
+        raise RuntimeError("Could not verify {} as a valid docker hub name.".format(docker_name))
 
     def submit_site(self, short_name: str, address: str, name: str = None, description: str = None) -> bool:
         """Submit a new site to the system for review.
@@ -273,43 +272,62 @@ class IOController:
                     'name': name
                 }))
 
-    def _valid_docker_hub_name(self, docker_name: str, check_for_page: bool) -> bool:
-        """Check if the given name is valid, which means that is follows the naming
-           convention and that a corresponding docker hub page exists.
-        Args:
-        docker_name      (str): The name to be checked.
-        check_for_page  (bool): If true, it will be checked whether docker_name corresponds to
-                                an existing image on docker hub.
-        Returns:
-        bool: True if it is a valid docker name, false otherwise.
-        """
-        # Distinguish between docker certified, and not docker certified.
-        if "/" in docker_name:
-            user_name, image_name = docker_name.split("/", 1)
-            image_name = image_name.split(":", 1)[0]
-            # controll valid docker id (https://docs.docker.com/docker-id/).
-            if match(r'^([a-z]|[0,9]){4,30}\Z', user_name) is None:
-                return False
+    def _decompose_dockername(self, docker_name):
+        """Helper to break a model-docker_name into a tuple."""
+        slash = docker_name.find('/')
+        if slash == -1:
+            # this should not have passed input validation
+            pass
+        username = docker_name[:slash]
+        colon = docker_name.find(':')
+        if colon == -1:
+            image = docker_name[slash + 1:]
+            tag = None
         else:
-            user_name = "library"
-            image_name = docker_name.split(":", 1)[0]
-        # Controll the naming conventions (https://docs.docker.com/docker-hub/repos/).
-        if not match(r'^([a-z]|[0,9]|[-,_]){2,255}\Z', image_name) is None:
-            if not check_for_page:
-                return True
-            # Check if the page exists.
-            url = 'https://registry.hub.docker.com/v2/repositories/{}/{}/'.format(
-            user_name, image_name)
-            # Call to the api, check if public.
-            try:
-                dockerhub_content = urllib.request.urlopen(url).read()
-                content = json.loads(dockerhub_content)
-                # Ensure public image.
-                is_private = content['is_private']
-                return not is_private
-            except:
-                # If url isn't valid or doesn't contain 'is_private' value.
+            image = docker_name[slash + 1:colon]
+            tag = docker_name[colon + 1:]
+
+        return (username, image, tag)
+
+    def _build_dockerregistry_url(self, docker_name):
+        """Helper function to build a link to the docker hub registry api."""
+        (username, image, tag) = self._decompose_dockername(docker_name)
+
+        url = 'https://registry.hub.docker.com/v2/repositories/{}/{}'.format(username, image)
+        return url
+
+    def _build_dockerregistry_tag_url(self, docker_name):
+        """Helper function to build a link to the docker hub registry api."""
+        (username, image, tag) = self._decompose_dockername(docker_name)
+
+        url = 'https://registry.hub.docker.com/v2/repositories/{}/{}/tags'.format(username, image)
+        return url
+
+    def _valid_docker_hub_name(self, docker_name: str) -> bool:
+        """Check if a benchmark exists with the given name on dockerhub.
+        Args:
+            docker_name      (str): The name to be checked.
+        Returns:
+            bool: True if the image exists.
+        """
+        try:
+            dockerhub_content = urllib.request.urlopen(
+                self._build_dockerregistry_url(docker_name)).read()
+            (username, image, tag) = self._decompose_dockername(docker_name)
+            json.loads(dockerhub_content)
+            if not tag is None:
+                # check tag as well
+                dockerhub_tags = urllib.request.urlopen(
+                    self._build_dockerregistry_tag_url(docker_name)).read()
+                tags = json.loads(dockerhub_tags)
+                # search result with correct tagname
+                for result in tags['results']:
+                    if tag == result['name']:
+                        return True
                 return False
+            return True
+        except:
+            return False
 
     @staticmethod
     def _site_result_amount(short_name):
