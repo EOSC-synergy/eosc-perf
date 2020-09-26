@@ -4,7 +4,7 @@ This module contains unit tests for the IOController class
 from time import time
 import unittest
 import json
-from flask import Flask, session, redirect
+from flask import Flask, session
 from app.model.database import configure_database
 from app.model.facade import DatabaseFacade
 from app.controller.authenticator import configure_authenticator
@@ -56,7 +56,7 @@ class IOControllerTest(unittest.TestCase):
 
     def test_submit_result_unauthenticated(self):
         with self.app.test_request_context():
-            self.assertFalse(self.controller.submit_result("", ""))
+            self.assertRaises(AuthenticateError, self.controller.submit_result, "", "")
 
     def test_submit_result_malformed_json(self):
         with self.app.test_request_context():
@@ -81,7 +81,7 @@ class IOControllerTest(unittest.TestCase):
 
     def test_submit_benchmark_unauthenticated(self):
         with self.app.test_request_context():
-            self.assertRaises(RuntimeError, self.controller.submit_benchmark, "", "")
+            self.assertRaises(AuthenticateError, self.controller.submit_benchmark, "", "")
 
     def test_submit_benchmark_malformed_docker_name(self):
         with self.app.test_request_context():
@@ -107,7 +107,7 @@ class IOControllerTest(unittest.TestCase):
 
     def test_submit_site_unauthenticated(self):
         with self.app.test_request_context():
-            self.assertFalse(self.controller.submit_site("name", "address"))
+            self.assertRaises(AuthenticateError, self.controller.submit_site, "name", "address")
 
     def test_submit_site_invalid_short_name(self):
         with self.app.test_request_context():
@@ -138,7 +138,7 @@ class IOControllerTest(unittest.TestCase):
 
     def test_submit_tag_unauthenticated(self):
         with self.app.test_request_context():
-            self.assertFalse(self.controller.submit_tag("tag"))
+            self.assertRaises(AuthenticateError, self.controller.submit_tag, "tag")
 
     def test_submit_tag_malformed(self):
         with self.app.test_request_context():
@@ -172,7 +172,7 @@ class IOControllerTest(unittest.TestCase):
 
     def test_remove_site_not_authenticated(self):
         with self.app.test_request_context():
-            self.assertRaises(RuntimeError, self.controller.remove_site, "name")
+            self.assertRaises(AuthenticateError, self.controller.remove_site, "name")
 
     def test_remove_site_not_existing(self):
         with self.app.test_request_context():
@@ -208,7 +208,7 @@ class IOControllerTest(unittest.TestCase):
 
     def test_report_not_authenticated(self):
         with self.app.test_request_context():
-            self.assertRaises(RuntimeError, self.controller.report, "{}")
+            self.assertRaises(AuthenticateError, self.controller.report, "{}")
 
     def test_report_incomplete(self):
         with self.app.test_request_context():
@@ -298,12 +298,12 @@ class IOControllerTest(unittest.TestCase):
 
     def test_process_report_not_authenticated(self):
         with self.app.test_request_context():
-            self.assertEqual(self.controller.process_report(True, "id"), False)
+           self.assertRaises(AuthenticateError, self.controller.process_report, True, "id")
 
     def test_process_report_not_admin(self):
         with self.app.test_request_context():
             self._login_standard_user()
-            self.assertEqual(self.controller.process_report(True, "id"), False)
+            self.assertRaises(AuthenticateError, self.controller.process_report, True, "id")
 
     def test_process_report_report_not_exists(self):
         with self.app.test_request_context():
@@ -366,12 +366,12 @@ class IOControllerTest(unittest.TestCase):
 
     def test_remove_result_not_authenticated(self):
         with self.app.test_request_context():
-            self.assertFalse(self.controller.remove_result("name"))
+            self.assertRaises(AuthenticateError, self.controller.remove_result, "name")
 
     def test_remove_result_not_admin(self):
         with self.app.test_request_context():        
             self._login_standard_user()
-            self.assertFalse(self.controller.remove_result("name"))
+            self.assertRaises(AuthenticateError, self.controller.remove_result, "name")
 
     def test_remove_result_not_found(self):
         uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'

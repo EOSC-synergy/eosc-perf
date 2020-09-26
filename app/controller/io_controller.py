@@ -49,7 +49,7 @@ class IOController:
             self._add_current_user_if_missing()
             # Try to add the result to the data base.
             return facade.add_result(result_json, metadata)
-        return False
+        raise AuthenticateError("Only authenticated users can submit results")
 
     def submit_benchmark(self, docker_name: str, comment: str) -> bool:
         """Submit a new Benchmark to the system.
@@ -66,7 +66,7 @@ class IOController:
         """
         # Check if user is authenticated.
         if not self.is_authenticated():
-            raise RuntimeError("You need to be logged in to submit a benchmark.")
+            raise AuthenticateError("You need to be logged in to submit a benchmark.")
         if docker_name is None:
             raise ValueError("Docker name must not be None")
         # Check for valid email address.
@@ -96,7 +96,7 @@ class IOController:
             bool: True on success, false othwerwise.
         """
         if not self.is_authenticated():
-            return False
+            raise AuthenticateError("You must be logged in to submit a site")
         self._add_current_user_if_missing()
 
         if short_name is None:
@@ -139,7 +139,7 @@ class IOController:
             raise ValueError("Tag must not be None")
         if self.is_authenticated():
             return facade.add_tag(tag)
-        return False
+        raise AuthenticateError("You must be logged in to submit a tag")
 
     def get_site(self, short_name) -> Site:
         """Get a single site by it's short name.
@@ -166,7 +166,7 @@ class IOController:
             else:
                 raise RuntimeError("Only sites without results can be removed.")
         else:
-            raise RuntimeError("You need to be logged in to remove a site.")
+            raise AuthenticateError("You need to be logged in to remove a site.")
 
     def report(self, metadata: JSON) -> bool:
         """Add a Report to the model and notify an admin about it.
@@ -183,7 +183,7 @@ class IOController:
             # TODO: notify admin per email
             return facade.add_report(metadata)
         else:
-            raise RuntimeError("Must be logged in to submit a report")
+            raise AuthenticateError("Must be logged in to submit a report")
 
     def get_report(self, uuid: str) -> Report:
         """Get a report by UUID. Requires the user to be an admin.
@@ -238,7 +238,7 @@ class IOController:
                 # There is no report with given uuid.
                 return False
             return True
-        return False
+        raise AuthenticateError("Only admins can process reports")
 
     def remove_result(self, uuid:str):
         """Make a result invisible.
@@ -254,7 +254,8 @@ class IOController:
                 # There is no result with given uuid.
                 return False
             return True
-        return False
+        raise AuthenticateError("Only admins can remove results")
+
     
     def _add_current_user_if_missing(self):
         """Add the current user as an uploader if they do not exist yet."""
