@@ -23,7 +23,14 @@ class AuthenticateError(Exception):
 
 class Authenticator:
     """A fascade between IOController and the EGI Check-In authentication
-       system. It integrates Open ID Connect into the web app."""
+       system. It integrates Open ID Connect into the web app.
+    Attributes:
+    oauth (OAuth): The used Flask OAuth registry for oauth clients.
+    admin_affiliations (list of str): If a user has one affiliation that is 
+                                      included in this list, they have admin rights.
+    hostname (str): The hostname used for redirection after authentication.
+    client_secret (str): The oauth client secret.
+    scope (str): The scope used for registering the oauth client."""
 
     def __init__(self):
         self.oauth = None
@@ -33,7 +40,9 @@ class Authenticator:
         self.scope = 'openid email profile eduperson_scoped_affiliation offline_access'
 
     def configure_authenticator(self, flask_app):
-        """Sets up OIDC authentication functionality for the web app"""
+        """Sets up OIDC authentication functionality for the web app.
+        Args:
+        flask_app (Flask): The flask app for which to set up OIDC functionality."""
         if len(configuration.get('oidc_client_secret')) == 0:
             raise ValueError("missing openID client secret in configuration")
         self.client_secret = configuration.get('oidc_client_secret')
