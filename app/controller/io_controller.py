@@ -3,7 +3,6 @@ This module acts as a facade between view and model.
 """
 import json
 import urllib.request
-from re import match
 from typing import List
 from flask import session, redirect
 from .json_result_validator import JSONResultValidator
@@ -11,9 +10,6 @@ from .authenticator import authenticator, AuthenticateError
 from .type_aliases import JSON
 from ..model.facade import DatabaseFacade, facade
 from ..model.data_types import Site, Report
-# The parent url of docker hub projects, first for private second for docker certified.
-docker_hub_url = {"certified": "https://hub.docker.com/r/",
-                  "default": "https://hub.docker.com/_/"}
 
 class IOController:
     """This class acts as a facade between view and model and validates user input.
