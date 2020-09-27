@@ -20,3 +20,6 @@ To generate a certificate and key for your localhost, use:
   -newkey rsa:2048 -nodes -sha256 \
   -subj '/CN=localhost' -extensions EXT -config <( \
    printf "[dn]\nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:localhost\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")`
+
+To run the included unit tests, the unittest package can be used:
+  `python -m unittest discover app "*_test.py"`
