@@ -160,7 +160,7 @@ class IOControllerTest(unittest.TestCase):
 
     def test_get_site_not_found(self):
         with self.app.test_request_context():
-            self.assertEqual(self.controller.get_site("name"), None)
+            self.assertIsNone(self.controller.get_site("name"))
 
     def test_get_site(self):
         uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
@@ -474,7 +474,7 @@ class IOControllerTest(unittest.TestCase):
             self.assertEqual(self.controller.get_email(), USER["info"]["email"])
             self._logout()
         with self.app.test_request_context():
-            self.assertEqual(self.controller.get_email(), None)
+            self.assertIsNone(self.controller.get_email())
 
     def test_get_full_name(self):
         with self.app.test_request_context():
@@ -482,7 +482,7 @@ class IOControllerTest(unittest.TestCase):
             self.assertEqual(self.controller.get_full_name(), USER["info"]["name"])
             self._logout()
         with self.app.test_request_context():
-            self.assertEqual(self.controller.get_full_name(), None)
+            self.assertIsNone(self.controller.get_full_name())
 
     def test_get_user_id(self):
         with self.app.test_request_context():
@@ -490,7 +490,7 @@ class IOControllerTest(unittest.TestCase):
             self.assertEqual(self.controller.get_user_id(), USER["sub"])
             self._logout()
         with self.app.test_request_context():
-            self.assertEqual(self.controller.get_user_id(), None)
+            self.assertIsNone(self.controller.get_user_id())
 
     def test_is_admin_fail_no_affiliations(self):
         with self.app.test_request_context():
