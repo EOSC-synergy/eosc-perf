@@ -3,6 +3,7 @@ debug-db-reset: false
 debug-db-dummy-items: true
 admin_affiliations: ["example@kit.edu"]
 debug_admin_affiliations: ["example2@kit.edu"]
+secret_key: 'ENTER YOUR SECRET KEY HERE' # used for flask session cookie encryption
 oidc_client_secret: Enter secret here
 oidc_redirect_hostname: "localhost"
 upload_license_filename: "upload_license.txt"

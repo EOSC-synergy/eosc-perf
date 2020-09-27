@@ -16,6 +16,7 @@ class ConfigHandler:
             'debug-db-dummy-items': True,
             'database-path': '',
             'admin_affiliations': ['example@kit.edu'],
+            'secret_key': '!secret',
             'debug_admin_affiliations': ['example2@kit.edu'],
             'oidc_client_secret': '',
             'oidc_redirect_hostname': 'localhost',
