@@ -55,6 +55,10 @@ class DiagramFactory(PageFactory):
         list_end = '</ul></div>'
         list_elements = []
         results = [facade.get_result(uuid) for uuid in uuids]
+
+        # sort list in same order as diagram
+        results.sort(key=lambda result: int(json.loads(result.get_json())['user_args']['num_gpus']))
+        
         for result in results:
             core_count = json.loads(result.get_json())['user_args']['num_gpus']
             list_elements.append('<li class="list-group-item result-info">{}, {}, {}</li>'.format(
