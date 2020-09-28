@@ -561,4 +561,16 @@ class ResultSearch extends Content {
         });
         return false;
     }
+
+    static invert_selection() {
+        /**Invert the result selection. */
+        if(results.length == 0) {
+            return false;
+        }
+        results.forEach(r => {
+            r.selected = r.selected ? false : true;
+        });
+        ResultSearch.update();
+        return false;
+    }
 }
