@@ -31,9 +31,14 @@ class DiagramFactory(PageFactory):
             result_json = facade.get_result(uuid)
             # pulling at straws here, but hoping this is useful data
             result = json.loads(result_json.get_json())
-            core_count = result['user_args']['num_gpus']
-            score = result['training']['result']['average_examples_per_sec']
-            results.append({'core_count': core_count, 'score': score, 'site': result_json.get_site().get_short_name()})
+            core_count = int(result['user_args']['num_gpus'])
+            score = float(result['training']['result']['average_examples_per_sec'])
+            results.append(
+                {
+                    'core_count': core_count,
+                    'score': score,
+                    'site': result_json.get_site().get_short_name()
+                })
 
         # sort them by core_count
         results.sort(key=lambda result: result['core_count'])
@@ -96,21 +101,24 @@ def query_results():
     """HTTP endpoint for diagram generation page"""
     uuids = request.args.getlist('result_uuids')
     if len(uuids) == 0:
-        return redirect('/error?' + url_encode({
-            'text': 'Diagram page called with invalid arguments'}), code=302)
+        return redirect('Diagram page called with invalid arguments')
 
     factory = DiagramFactory()
 
     if not factory.check_if_results_exist(uuids):
-        return redirect('/error?' + url_encode({
-            'text': 'At least one result given to diagram does not exist'}), code=302)
+        return error_redirect('At least one result given to diagram does not exist')
 
     args = {'uuids': uuids}
+
+    try:
+        script_content = factory.generate_script_content(uuids)
+    except ValueError:
+        return error_redirect('At least one result provided has invalid fields')
 
     with open('templates/diagram.html') as file:
         page = factory.generate_page(
             args=json.dumps(args),
             template=file.read(),
             page_content=factory.generate_page_content(uuids),
-            script_content=factory.generate_script_content(uuids))
+            script_content=script_content)
     return Response(page, mimetype='text/html')
