@@ -53,9 +53,9 @@ class Diagram extends Content {
 
     generateCSV(dataIndex) {
         let dataHeader = "data:text/csv;charset=utf-8,";
-        let rows = ["core_count,score"];
+        let rows = ["core_count,score,site"];
         for (const row of this.results[dataIndex]) {
-            rows.push(row.core_count.toString() + "," + row.score.toString());
+            rows.push(row.core_count.toString() + "," + row.score.toString() + "," + row.site.toString());
         }
         return dataHeader + rows.join("\r\n");
     }
