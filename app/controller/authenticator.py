@@ -15,8 +15,10 @@ from ..configuration import configuration
 from ..model.facade import facade
 from ..view.pages.helpers import info_redirect, error_redirect
 
-
-CONF_URL = 'https://aai-dev.egi.eu/oidc/.well-known/openid-configuration'
+CONFIGURATION_URL_DEBUG = 'https://aai-dev.egi.eu/oidc/.well-known/openid-configuration'
+CONFIGURATION_URL = 'https://aai.egi.eu/oidc/.well-known/openid-configuration'
+USERINFO_URL_DEBUG = 'https://aai-dev.egi.eu/oidc/userinfo'
+USERINFO_URL = 'https://aai.egi.eu/oidc/userinfo'
 
 class AuthenticateError(Exception):
     """Exception to signal a user isn't authenticated correctly."""
@@ -51,22 +53,27 @@ class Authenticator:
         flask_app.config["EOSC-PERF_CLIENT_ID"] = 'eosc-perf'
         flask_app.config["EOSC-PERF_CLIENT_SECRET"] = self.client_secret
 
+        if configuration.get('debug'):
+            self.admin_affiliations = configuration.get('debug_admin_affiliations')
+            self.conf_url = CONFIGURATION_URL_DEBUG
+            self.userinfo_url = USERINFO_URL_DEBUG
+        else:
+            self.admin_affiliations = configuration.get('admin_affiliations')
+            self.conf_url = CONFIGURATION_URL
+            self.userinfo_url = USERINFO_URL
+
         self.oauth = OAuth(flask_app)
         self.hostname = configuration.get('oidc_redirect_hostname')
         self.oauth.register(
             name='eosc-perf',
-            userinfo_endpoint='https://aai-dev.egi.eu/oidc/userinfo',
-            server_metadata_url=CONF_URL,
+            userinfo_endpoint=self.userinfo_url,
+            server_metadata_url=self.conf_url,
             client_kwargs={
                 'scope': self.scope
             },
             secret=self.client_secret
         )
 
-        if configuration.get('debug'):
-            self.admin_affiliations = configuration.get('debug_admin_affiliations')
-        else:
-            self.admin_affiliations = configuration.get('admin_affiliations')
 
     def authenticate_user(self):
         """Redirects user to EGI Check-In for authentication"""
@@ -111,7 +118,7 @@ class Authenticator:
             token = session['user']['info']
         except KeyError:
             return False
-        endpoint = json.loads(urlopen(CONF_URL).read())["revocation_endpoint"]
+        endpoint = json.loads(urlopen(self.conf_url).read())["revocation_endpoint"]
         requests.post(
             endpoint,
             params={'token': token},
@@ -122,7 +129,7 @@ class Authenticator:
     def _refresh_token(self):
         """Tries to refresh token of current user.
            Returns True if refresh succeeds, False otherwise."""
-        endpoint = json.loads(urlopen(CONF_URL).read())["token_endpoint"]
+        endpoint = json.loads(urlopen(self.conf_url).read())["token_endpoint"]
         try:
             refresh_token = session['user']['token']['refresh_token']
         except KeyError:
