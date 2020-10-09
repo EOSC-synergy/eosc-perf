@@ -39,7 +39,7 @@ class Authenticator:
         self.admin_affiliations = []
         self.hostname = None
         self.client_secret = None
-        self.scope = 'openid email profile eduperson_scoped_affiliation offline_access'
+        self.scope = 'openid email profile eduperson_entitlement offline_access'
 
     def configure_authenticator(self, flask_app):
         """Sets up OIDC authentication functionality for the web app.
@@ -107,10 +107,10 @@ class Authenticator:
     def is_admin(self):
         """Checks wether the current user has admin rights"""
         try:
-            affiliations = session['user']['info']['edu_person_scoped_affiliations']
+            entitlements = session['user']['info']['edu_person_entitlements']
         except KeyError:
             return False
-        return any(aff in affiliations for aff in self.admin_affiliations)
+        return any(any(ent.startswith(aff) for ent in entitlements) for aff in self.admin_affiliations)
 
     def logout(self):
         """Signs out the current user"""
