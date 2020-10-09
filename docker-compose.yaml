@@ -28,6 +28,6 @@ services:
       - ./static:/var/www/web/
       - /etc/letsencrypt:/etc/letsencrypt
       - /var/www/certbot:/var/www/certbot/
-    #command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
     depends_on:
       - flask
