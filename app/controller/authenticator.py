@@ -29,7 +29,7 @@ class Authenticator:
        system. It integrates Open ID Connect into the web app.
     Attributes:
     oauth (OAuth): The used Flask OAuth registry for oauth clients.
-    admin_affiliations (list of str): If a user has one affiliation that is 
+    admin_affiliations (list of str): If a user has one affiliation that is
                                       included in this list, they have admin rights.
     hostname (str): The hostname used for redirection after authentication.
     client_secret (str): The oauth client secret.
@@ -41,6 +41,8 @@ class Authenticator:
         self.hostname = None
         self.client_secret = None
         self.scope = 'openid email profile eduperson_entitlement offline_access'
+        self.conf_url = ""
+        self.userinfo_url = ""
 
     def configure_authenticator(self, flask_app):
         """Sets up OIDC authentication functionality for the web app.
@@ -108,10 +110,14 @@ class Authenticator:
     def is_admin(self):
         """Checks wether the current user has admin rights"""
         try:
-            entitlements = session['user']['info']['edu_person_entitlements']
+            entitlements = session['user']['info']['eduperson_entitlement']
         except KeyError:
             return False
-        return any((__match_entitlement(ent, adm_ent) for ent in entitlements) for adm_ent in self.admin_entitlements)
+        for entitlement in entitlements:
+            for required in self.admin_entitlements:
+                if self._match_entitlement(required, entitlement):
+                    return True
+        return False
 
     def logout(self):
         """Signs out the current user"""
@@ -144,7 +150,7 @@ class Authenticator:
                     'refresh_token': refresh_token,
                     'scope': self.scope},
             headers={'content-type': 'application/x-www-form-urlencoded'})
-        if (response.status_code == 200):
+        if response.status_code == 200:
             new_token = response.json()
             user = self.oauth._clients['eosc-perf'].parse_id_token(new_token)
             try:
@@ -168,9 +174,9 @@ class Authenticator:
                 return False
             user = session['user']
         return user['exp'] < time()
-        
+
     @staticmethod
-    def __match_entitlement(required, actual):
+    def _match_entitlement(required, actual):
         """Matches an AARC G002 entitlement"""
         required_entitlement = Aarc_g002_entitlement(
             required, strict=False)
