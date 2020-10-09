@@ -109,7 +109,6 @@ class Authenticator:
         """Checks wether the current user has admin rights"""
         try:
             entitlements = session['user']['info']['edu_person_entitlements']
-            print(entitlements)
         except KeyError:
             return False
         return any((__match_entitlement(ent, adm_ent) for ent in entitlements) for adm_ent in self.admin_entitlements)
