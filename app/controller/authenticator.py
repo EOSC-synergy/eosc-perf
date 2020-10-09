@@ -7,6 +7,7 @@ import json
 from time import time
 from urllib.request import urlopen
 import requests
+from aarc_g002_entitlement import Aarc_g002_entitlement
 
 from flask import session
 from flask.blueprints import Blueprint
@@ -36,7 +37,7 @@ class Authenticator:
 
     def __init__(self):
         self.oauth = None
-        self.admin_affiliations = []
+        self.admin_entitlements = []
         self.hostname = None
         self.client_secret = None
         self.scope = 'openid email profile eduperson_entitlement offline_access'
@@ -54,11 +55,11 @@ class Authenticator:
         flask_app.config["EOSC-PERF_CLIENT_SECRET"] = self.client_secret
 
         if configuration.get('debug'):
-            self.admin_affiliations = configuration.get('debug_admin_affiliations')
+            self.admin_entitlements = configuration.get('debug_admin_entitlements')
             self.conf_url = CONFIGURATION_URL_DEBUG
             self.userinfo_url = USERINFO_URL_DEBUG
         else:
-            self.admin_affiliations = configuration.get('admin_affiliations')
+            self.admin_entitlements = configuration.get('admin_entitlements')
             self.conf_url = CONFIGURATION_URL
             self.userinfo_url = USERINFO_URL
 
@@ -108,9 +109,10 @@ class Authenticator:
         """Checks wether the current user has admin rights"""
         try:
             entitlements = session['user']['info']['edu_person_entitlements']
+            print(entitlements)
         except KeyError:
             return False
-        return any(any(ent.startswith(aff) for ent in entitlements) for aff in self.admin_affiliations)
+        return any((__match_entitlement(ent, adm_ent) for ent in entitlements) for adm_ent in self.admin_entitlements)
 
     def logout(self):
         """Signs out the current user"""
@@ -167,6 +169,14 @@ class Authenticator:
                 return False
             user = session['user']
         return user['exp'] < time()
+        
+    @staticmethod
+    def __match_entitlement(required, actual):
+        """Matches an AARC G002 entitlement"""
+        required_entitlement = Aarc_g002_entitlement(
+            required, strict=False)
+        actual_entitlement = Aarc_g002_entitlement(actual)
+        return required_entitlement.is_contained_in(actual_entitlement)
 
     @staticmethod
     def __update_user_info():

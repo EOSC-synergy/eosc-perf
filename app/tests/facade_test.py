@@ -642,7 +642,7 @@ class FacadeTest(unittest.TestCase):
                 "type": "json",
                 "mode": "lesser_than",
                 "key": "tag",
-                "value": 3.15
+                "value": 6.28318530718
             }
         ]}))), 0)
 

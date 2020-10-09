@@ -1,8 +1,8 @@
 debug: true
 debug-db-reset: false
 debug-db-dummy-items: true
-admin_affiliations: ["example@kit.edu"]
-debug_admin_affiliations: ["example2@kit.edu"]
+admin_entitlements: ["urn:mace:egi.eu:group:mteam.data.kit.edu:role=member"]
+debug_admin_entitlements: ["urn:mace:egi.eu:group:mteam.data.kit.edu:role=member"]
 secret_key: 'ENTER YOUR SECRET KEY HERE' # used for flask session cookie encryption
 oidc_client_secret: Enter secret here
 oidc_redirect_hostname: "localhost"
