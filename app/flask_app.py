@@ -5,7 +5,7 @@ from .configuration import configuration
 from .controller.authenticator import (configure_authenticator,
                                        authenticator_blueprint)
 from .model.database import db, configure_database
-from .model.sandbox import add_dummies
+from .model.sandbox import add_demo, add_filler
 from .view.ajax import ajax_blueprint
 from .view.pages.diagram import diagram_blueprint
 from .view.pages.information_page import info_blueprint
@@ -41,8 +41,10 @@ def create_app():
     configure_database(flask_app)
     configure_authenticator(flask_app)
 
-    if configuration.get('debug') and configuration.get('debug-db-dummy-items'):
-        add_dummies()
+    if configuration.get('debug') and configuration.get('debug-db-demo-items'):
+        add_demo()
+    if configuration.get('debug') and configuration.get('debug-db-filler-items'):
+        add_filler()
 
     flask_app.register_blueprint(ajax_blueprint)
     flask_app.register_blueprint(diagram_blueprint)
