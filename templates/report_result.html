@@ -18,11 +18,11 @@
     <code>
     {{ page_content }}
     </code>
+    <br/>
     <form id="form" action="/report_result_submit" method="POST">
         <input type="hidden" name="uuid" value="{{ uuid }}" />
-        <input type="text" id="message-box" name="message" value=""
+        <input type="text" id="message-box" class="form-control" name="message" value=""
             placeholder="Enter an explanation for your report here." />
-        <br/>
-        <input type="submit" name="submit" value="Submit report" />
+        <input type="submit" name="submit" class="btn btn-danger" value="Submit report" />
     </form>
 {% endblock %}
