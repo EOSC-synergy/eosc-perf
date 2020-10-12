@@ -6,10 +6,12 @@ var LICENSE_AGREED = false
 $(function () {
     form = $('#form');
     form.submit(function (e) {
-        var selection = document.getElementById('site_selection');
-        var old_html = selection.options[selection.selectedIndex].innerHTML
-        var site_id = selection.options[selection.selectedIndex].id;
-        selection.options[selection.selectedIndex].innerHTML = site_id;
+        if (!CUSTOM_SITE) {
+            var selection = document.getElementById('site_selection');
+            var old_html = selection.options[selection.selectedIndex].innerHTML;
+            var site_id = selection.options[selection.selectedIndex].id;
+            selection.options[selection.selectedIndex].innerHTML = site_id;
+        }
         formData = new FormData(this)
         append_form_data(formData)
         $.ajax({
@@ -28,7 +30,9 @@ $(function () {
                 window.location.href = data.responseJSON.redirect;
             }
         });
-        selection.options[selection.selectedIndex].innerHTML = old_html;
+        if (!CUSTOM_SITE) {
+            selection.options[selection.selectedIndex].innerHTML = old_html;
+        }
         return false;
     });
 });
