@@ -105,7 +105,7 @@ def query_results():
     """HTTP endpoint for diagram generation page"""
     uuids = request.args.getlist('result_uuids')
     if len(uuids) == 0:
-        return redirect('Diagram page called with invalid arguments')
+        return error_redirect('Diagram page called with invalid arguments')
 
     factory = DiagramFactory()
 
