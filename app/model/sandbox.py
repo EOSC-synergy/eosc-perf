@@ -2,8 +2,7 @@
 Provides: add_dummies()"""
 
 import json
-from .data_types import Uploader, Site, Benchmark, Result, Tag, ResultIterator
-from .database import db
+from .data_types import Uploader, Site, Benchmark, Result, Tag
 from .facade import facade
 
 def add_filler():
@@ -113,15 +112,6 @@ def add_filler():
                 'tags': [tag.get_name() for tag in test_result.get_tags()]
             }))
 
-    # make data added up to this point visible and useable
-    iterator = ResultIterator(db.session)
-    for test_result in iterator:
-        test_result.set_hidden(False)
-    for test_site in facade.get_sites():
-        test_site.set_hidden(False)
-    for test_benchmark in facade.get_benchmarks():
-        test_benchmark.set_hidden(False)
-
 def add_demo():
     """Add data that is good for demonstration."""
 
@@ -201,12 +191,3 @@ def add_demo():
                 'benchmark': result.get_benchmark().get_docker_name(),
                 'tags': [test_tag.get_name() for test_tag in result.get_tags()]
             }))
-
-    # make data added up to this point visible and useable
-    iterator = ResultIterator(db.session)
-    for test_result in iterator:
-        test_result.set_hidden(False)
-    for test_site in facade.get_sites():
-        test_site.set_hidden(False)
-    for test_benchmark in facade.get_benchmarks():
-        test_benchmark.set_hidden(False)
