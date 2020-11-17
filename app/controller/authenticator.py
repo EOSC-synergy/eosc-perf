@@ -1,7 +1,8 @@
-'''This module acts as a facade between the IOController
+"""This module acts as a facade between the IOController
 and the EGI Check-In authentication system.
 Provided is:
- - Authenticator'''
+ - Authenticator
+"""
 
 import json
 from time import time
@@ -21,11 +22,13 @@ CONFIGURATION_URL = 'https://aai.egi.eu/oidc/.well-known/openid-configuration'
 USERINFO_URL_DEBUG = 'https://aai-dev.egi.eu/oidc/userinfo'
 USERINFO_URL = 'https://aai.egi.eu/oidc/userinfo'
 
+
 class AuthenticateError(Exception):
     """Exception to signal a user isn't authenticated correctly."""
 
+
 class Authenticator:
-    """A fascade between IOController and the EGI Check-In authentication
+    """A facade between IOController and the EGI Check-In authentication
        system. It integrates Open ID Connect into the web app.
     Attributes:
     oauth (OAuth): The used Flask OAuth registry for oauth clients.
@@ -53,8 +56,8 @@ class Authenticator:
         self.client_secret = configuration.get('oidc_client_secret')
 
         flask_app.secret_key = configuration.get('secret_key')
-        flask_app.config["EOSC-PERF_CLIENT_ID"] = 'eosc-perf'
-        flask_app.config["EOSC-PERF_CLIENT_SECRET"] = self.client_secret
+        flask_app.config["EOSC_PERF_CLIENT_ID"] = 'eosc-perf'
+        flask_app.config["EOSC_PERF_CLIENT_SECRET"] = self.client_secret
 
         if configuration.get('debug'):
             self.admin_entitlements = configuration.get('debug_admin_entitlements')
@@ -68,7 +71,7 @@ class Authenticator:
         self.oauth = OAuth(flask_app)
         self.hostname = configuration.get('oidc_redirect_hostname')
         self.oauth.register(
-            name='eosc-perf',
+            name='eosc_perf',
             userinfo_endpoint=self.userinfo_url,
             server_metadata_url=self.conf_url,
             client_kwargs={
@@ -77,11 +80,10 @@ class Authenticator:
             secret=self.client_secret
         )
 
-
     def authenticate_user(self):
         """Redirects user to EGI Check-In for authentication"""
         redirect_uri = 'https://' + self.hostname + '/oidc-redirect'
-        return self.oauth._clients["eosc-perf"].authorize_redirect(redirect_uri)
+        return self.oauth.eosc_perf.authorize_redirect(redirect_uri)
 
     def authentication_redirect(self):
         """Validates user authentication after login through EGI Check-In"""
@@ -96,9 +98,9 @@ class Authenticator:
         if not self._token_expired():
             return True
         try:
-            token = self.oauth._clients['eosc-perf'].authorize_access_token()
-            user = self.oauth._clients['eosc-perf'].parse_id_token(token)
-            userinfo = self.oauth._clients['eosc-perf'].userinfo()
+            token = self.oauth.eosc_perf.authorize_access_token()
+            user = self.oauth.eosc_perf.parse_id_token(token)
+            userinfo = self.oauth.eosc_perf.userinfo()
             session['user'] = user
             session['user']['token'] = token
             session['user']['info'] = userinfo
@@ -108,7 +110,7 @@ class Authenticator:
         return True
 
     def is_admin(self):
-        """Checks wether the current user has admin rights"""
+        """Checks whether the current user has admin rights"""
         try:
             entitlements = session['user']['info']['eduperson_entitlement']
         except KeyError:
@@ -144,7 +146,7 @@ class Authenticator:
             return False
         response = requests.post(
             endpoint,
-            params={'client_id': "eosc-perf",
+            params={'client_id': "eosc_perf",
                     'client_secret': self.client_secret,
                     'grant_type': "refresh_token",
                     'refresh_token': refresh_token,
@@ -152,7 +154,7 @@ class Authenticator:
             headers={'content-type': 'application/x-www-form-urlencoded'})
         if response.status_code == 200:
             new_token = response.json()
-            user = self.oauth._clients['eosc-perf'].parse_id_token(new_token)
+            user = self.oauth.eosc_perf.parse_id_token(new_token)
             try:
                 user['info'] = session['user']['info']
                 user['token'] = new_token
@@ -178,8 +180,7 @@ class Authenticator:
     @staticmethod
     def _match_entitlement(required, actual):
         """Matches an AARC G002 entitlement"""
-        required_entitlement = Aarc_g002_entitlement(
-            required, strict=False)
+        required_entitlement = Aarc_g002_entitlement(required, strict=False)
         actual_entitlement = Aarc_g002_entitlement(actual)
         return required_entitlement.is_contained_in(actual_entitlement)
 
@@ -196,24 +197,29 @@ class Authenticator:
         uploader.set_email(email)
         uploader.set_name(name)
 
+
 # single global instance
 authenticator = Authenticator()
 
 authenticator_blueprint = Blueprint('authenticator', __name__)
 
+
 def configure_authenticator(app):
     """Configures the authenticator for given app and config"""
     authenticator.configure_authenticator(app)
+
 
 @authenticator_blueprint.route('/login')
 def authenticate_user():
     """"Authenticates user through authenticator singleton"""
     return authenticator.authenticate_user()
 
+
 @authenticator_blueprint.route('/oidc-redirect')
 def authentication_redirect():
     """"OIDC-Authentication redirect through authenticator singleton"""
     return authenticator.authentication_redirect()
+
 
 @authenticator_blueprint.route('/logout')
 def logout():
