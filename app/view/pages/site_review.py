@@ -76,17 +76,16 @@ def review_site():
 
     date = report.get_date()
 
-    with open('templates/site_review.html') as file:
-        page = factory.generate_page(
-            args='{}',
-            template=file.read(),
-            site_name=site_name,
-            site_description=report.get_site().get_description(),
-            site_human_name=report.get_site().get_name(),
-            uploader_name=uploader_name,
-            uploader_mail=uploader_mail,
-            date=date,
-            uuid=uuid)
+    page = factory.generate_page(
+        template='site_review.html',
+        args=None,
+        site_name=site_name,
+        site_description=report.get_site().get_description(),
+        site_human_name=report.get_site().get_name(),
+        uploader_name=uploader_name,
+        uploader_mail=uploader_mail,
+        date=date,
+        uuid=uuid)
     return Response(page, mimetype='text/html')
 
 @site_review_blueprint.route('/site_review_submit', methods=['POST'])

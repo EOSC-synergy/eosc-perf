@@ -119,10 +119,9 @@ def query_results():
     except ValueError:
         return error_redirect('At least one result provided has invalid fields')
 
-    with open('templates/diagram.html') as file:
-        page = factory.generate_page(
-            args=json.dumps(args),
-            template=file.read(),
-            page_content=factory.generate_page_content(uuids),
-            script_content=script_content)
+    page = factory.generate_page(
+        template='diagram.html',
+        args=json.dumps(args),
+        page_content=factory.generate_page_content(uuids),
+        script_content=script_content)
     return Response(page, mimetype='text/html')

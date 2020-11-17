@@ -73,12 +73,11 @@ def report_result():
     if not factory.result_exists(uuid):
         return error_redirect('Result does not exist')
 
-    with open('templates/report_result.html') as file:
-        page = factory.generate_page(
-            args='{}',
-            template=file.read(),
-            page_content=factory.generate_page_content(uuid),
-            uuid=uuid)
+    page = factory.generate_page(
+        template='report_result.html',
+        args=None,
+        page_content=factory.generate_page_content(uuid),
+        uuid=uuid)
     return Response(page, mimetype='text/html')
 
 @result_report_blueprint.route('/report_result_submit', methods=['POST'])

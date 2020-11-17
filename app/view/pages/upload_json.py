@@ -43,11 +43,10 @@ def upload_result():
 
     factory = UploadJSONFactory()
 
-    with open('templates/upload.html') as file:
-        page = factory.generate_page(
-            args='{}',
-            template=file.read(),
-            license=factory.get_license_string().replace('\n', '<br>'))
+    page = factory.generate_page(
+        template='upload.html',
+        args=None,
+        license=factory.get_license_string().replace('\n', '<br/>'))
     return Response(page, mimetype='text/html')
 
 @upload_json_blueprint.route('/upload_submit', methods=['POST'])

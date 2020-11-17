@@ -50,8 +50,7 @@ def make_search_page():
             return error_redirect('Result search reqires a valid Benchmark name')
     args = json.dumps({'benchmark': benchmark, 'admin': controller.is_admin()})
     factory = SearchResultFactory()
-    with open('templates/result_search.html') as file:
-        page = factory.generate_page(args=args, template=file.read())
+    page = factory.generate_page(template='result_search.html', args=args)
     return Response(page, mimetype='text/html')
 
 

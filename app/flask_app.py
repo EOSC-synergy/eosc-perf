@@ -9,7 +9,6 @@ from .model.sandbox import add_demo, add_filler
 from .view.ajax import ajax_blueprint
 from .view.pages.diagram import diagram_blueprint
 from .view.pages.information_page import info_blueprint
-from .view.pages.error_page import error_blueprint
 from .view.pages.report_result import result_report_blueprint
 from .view.pages.benchmark_review import benchmark_review_blueprint
 from .view.pages.benchmark_search import benchmark_search_blueprint
@@ -49,7 +48,6 @@ def create_app():
     flask_app.register_blueprint(ajax_blueprint)
     flask_app.register_blueprint(diagram_blueprint)
     flask_app.register_blueprint(info_blueprint)
-    flask_app.register_blueprint(error_blueprint)
     flask_app.register_blueprint(result_report_blueprint)
     flask_app.register_blueprint(benchmark_review_blueprint)
     flask_app.register_blueprint(site_review_blueprint)

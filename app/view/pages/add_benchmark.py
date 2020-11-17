@@ -30,10 +30,7 @@ def add_benchmark():
 
     factory = AddBenchmarkPageFactory()
 
-    with open('templates/add_benchmark.html') as file:
-        page = factory.generate_page(
-            args='{}',
-            template=file.read())
+    page = factory.generate_page(template='add_benchmark.html')
     return Response(page, mimetype='text/html')
 
 @add_benchmark_blueprint.route('/add_benchmark_submit', methods=['POST'])

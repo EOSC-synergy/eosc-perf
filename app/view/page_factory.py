@@ -39,8 +39,7 @@ class PageFactory:
         self._content = None
         self._info = None
 
-    def generate_page(
-            self, args: Any, template: HTML = None, info: str = None, **jinja_args) -> HTML:
+    def generate_page(self, template: str, args: Any = None, **jinja_args) -> HTML:
         """Generate a HTML page from the input parameters not using the
         template provided in the class.
 
@@ -59,23 +58,15 @@ class PageFactory:
         Returns:
             HTML: The finished HTML page displaying the content and information.
         """
-        template_tmp = self._template
-        info_tmp = self._info
-        if not template is None:
-            template_tmp = self._environment.from_string(template)
-        if not info is None:
-            info_tmp = info
-        if self._content is None:
-            return template_tmp.render(
-                info=info_tmp,
-                content=self._generate_content(args),
-                admin=controller.is_admin(),
-                debug=configuration.get('debug'),
-                im_link=configuration.get('infrastructure_href'),
-                user_name=controller.get_full_name(),
-                logged_in=controller.is_authenticated(),
-                **jinja_args)
-        return template_tmp.render(info=info_tmp, content=self._content, **jinja_args)
+        template_content = self._environment.get_template(template)
+        return template_content.render(
+            content=self._generate_content(args),
+            admin=controller.is_admin(),
+            debug=configuration.get('debug'),
+            im_link=configuration.get('infrastructure_href'),
+            user_name=controller.get_full_name(),
+            logged_in=controller.is_authenticated(),
+            **jinja_args)
 
     @abstractmethod
     def _generate_content(self, args: Any) -> HTML:
@@ -88,34 +79,3 @@ class PageFactory:
         Returns:
             HTML: The Content part, consisting of JavaScript.
         """
-
-    def set_template(self, template: HTML):
-        """Change the default template to the input template.
-
-        Args:
-            template (HTML): The new template for this instance of PageFactory.
-                Either template as String or the filepath in view/template/s.
-                doesn't validate format.
-        """
-        if isfile("template/"+template):
-            self._template = self._environment.get_template(template)
-        else:
-            self._template = self._environment.from_string(template)
-
-    def set_content(self, content: str):
-        """Set the content to the input content.
-
-        Args:
-            content (str): New content for this instance of PageFactory.
-        """
-        self._content = content
-
-    def set_info(self, info: str):
-        """(abstract) Change the default info into the input info.
-
-        Args:
-            info (str): The new info of this instance of PageFactory, may
-                contain HTML formatting.
-                is not checking if it is valid html syntax
-        """
-        self._info = info

@@ -24,11 +24,6 @@ from .helpers import error_json_redirect, error_redirect, info_redirect
 class BenchmarkReviewPageFactory(PageFactory):
     """A factory to build benchmark report view pages."""
 
-    def __init__(self):
-        super(BenchmarkReviewPageFactory, self).__init__()
-        with open('templates/benchmark_review.html') as file:
-            self.set_template(file.read())
-
     def _generate_content(self, args: JSON) -> HTML:
         pass
 
@@ -136,7 +131,8 @@ def review_benchmark():
         dockerhub_desc_formatted = "Could not load description"
 
     page = factory.generate_page(
-        args='{}',
+        template='benchmark_review.html',
+        args=None,
         docker_name=docker_name,
         docker_link=dockerhub_link,
         docker_desc=dockerhub_desc_formatted,

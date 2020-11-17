@@ -63,10 +63,9 @@ def display_json_page():
     if not factory.result_exists(uuid):
         return error_redirect('Result not found in Database.')
 
-    with open('templates/display_json.html') as file:
-        page = factory.generate_page(
-            args=uuid,
-            template=file.read(),
-            uuid=uuid)
+    page = factory.generate_page(
+        template='display_json.html',
+        args=uuid,
+        uuid=uuid)
 
     return Response(page, mimetype='text/html')

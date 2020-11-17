@@ -18,6 +18,7 @@ from ...controller.io_controller import controller
 
 from .helpers import error_json_redirect, error_redirect, info_redirect
 
+
 class ViewReportPageFactory(PageFactory):
     """A factory to build result report view pages."""
 
@@ -33,7 +34,9 @@ class ViewReportPageFactory(PageFactory):
         except facade.NotFoundError:
             return False
 
+
 view_report_blueprint = Blueprint('view-report', __name__)
+
 
 @view_report_blueprint.route('/view_report_fetch_first', methods=['GET'])
 def test_view_report():
@@ -47,6 +50,7 @@ def test_view_report():
         if report.get_report_type() == Report.RESULT:
             return redirect('/view_report?' + url_encode({'uuid': report.get_uuid()}), code=302)
     return info_redirect('No result report to review')
+
 
 @view_report_blueprint.route('/view_report', methods=['GET'])
 def view_report():
@@ -89,22 +93,22 @@ def view_report():
     tag_str = ', '.join(tags)
     json_data = json.dumps(json.loads(result.get_json()), indent=4)
 
-    with open('templates/view_report.html') as file:
-        page = factory.generate_page(
-            args='{}',
-            template=file.read(),
-            reporter_name=reporter_name,
-            reporter_mail=reporter_mail,
-            report_message=message,
-            site=site,
-            benchmark=benchmark,
-            uploader_name=uploader_name,
-            uploader_mail=uploader_mail,
-            tags=tag_str,
-            JSON=json_data,
-            date=date,
-            uuid=uuid)
+    page = factory.generate_page(
+        template='view_report.html',
+        args=None,
+        reporter_name=reporter_name,
+        reporter_mail=reporter_mail,
+        report_message=message,
+        site=site,
+        benchmark=benchmark,
+        uploader_name=uploader_name,
+        uploader_mail=uploader_mail,
+        tags=tag_str,
+        JSON=json_data,
+        date=date,
+        uuid=uuid)
     return Response(page, mimetype='text/html')
+
 
 @view_report_blueprint.route('/view_report_submit', methods=['POST'])
 def view_report_submit():

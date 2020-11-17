@@ -6,6 +6,8 @@ Provided is:
 """
 import json
 import os
+from typing import Any
+
 from flask import request, Response
 from flask.blueprints import Blueprint
 
@@ -19,8 +21,8 @@ from .helpers import error_redirect
 class InformationPageFactory(PageFactory):
     """A factory to build information pages."""
 
-    def _generate_content(self, args: JSON) -> HTML:
-        pass
+    def _generate_content(self, args: Any) -> HTML:
+        return args
 
 
 info_blueprint = Blueprint('information-page-factory', __name__)
@@ -34,9 +36,7 @@ def info_page():
         return error_redirect('Information page called with invalid arguments')
 
     factory = InformationPageFactory()
-    factory.set_info(info)
-    with open('templates/information.html') as file:
-        page = factory.generate_page('{}', file.read())
+    page = factory.generate_page(template='information.html', args=info)
     return Response(page, mimetype='text/html')
 
 
@@ -44,8 +44,7 @@ def info_page():
 def privacy_page():
     """HTTP endpoint for the upload instructions page."""
     factory = InformationPageFactory()
-    with open('templates/upload_instruction.html') as file:
-        page = factory.generate_page('{}', file.read())
+    page = factory.generate_page(template='upload_instruction.html')
     return Response(page, mimetype='text/html')
 
 
@@ -54,10 +53,21 @@ def code_guidelines():
     """HTTP endpoint for code guidelines page"""
     factory = InformationPageFactory()
     info = json.loads("{}")
-    with open('controller/'+DEFAULT_TEMPLATE_PATH) as min_template:
+    with open('controller/' + DEFAULT_TEMPLATE_PATH) as min_template:
         info = json.loads(min_template.read())
     info = json.dumps(info, indent=4, sort_keys=True)
-    factory.set_info(info)
     with open('templates/code_guidelines.html') as file:
-        page = factory.generate_page('{}', file.read())
+        page = factory.generate_page(template='code_guidelines.html', args=info)
+    return Response(page, mimetype='text/html')
+
+
+@info_blueprint.route('/error')
+def error():
+    """HTTP endpoint for information page"""
+    info = request.args.get('text')
+    if info is None:
+        info = "Unknown error"
+
+    factory = InformationPageFactory()
+    page = factory.generate_page(template='error.html', args=info)
     return Response(page, mimetype='text/html')

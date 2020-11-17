@@ -24,9 +24,4 @@ benchmark_search_blueprint = Blueprint('benchmark-search', __name__)
 def search_benchmark():
     """HTTP endpoint for the benchmark search page"""
     factory = BenchmarkSearchFactory()
-
-    with open('templates/benchmark_search.html') as file:
-        page = factory.generate_page(
-            args='{}',
-            template=file.read())
-    return Response(page, mimetype='text/html')
+    return Response(factory.generate_page(template='benchmark_search.html'), mimetype='text/html')
