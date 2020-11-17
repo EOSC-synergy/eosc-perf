@@ -3,8 +3,9 @@ Provided is:
  - DisplayJsonFactory
 """
 import json
+from typing import Any
 
-from flask import request, Response
+from flask import request, Response, Markup
 from flask.blueprints import Blueprint
 
 from ..page_factory import PageFactory
@@ -17,29 +18,29 @@ from .helpers import error_redirect
 class DisplayJsonFactory(PageFactory):
     """A factory to build information pages."""
 
-    def _generate_content(self, args: JSON) -> HTML:
-        pass
-
-    def generate_page_content(self, uuid: str) -> HTML:
+    def _generate_content(self, uuid: Any) -> HTML:
         """Generate page body code.
 
         This contains the result json for the template.
         Args:
-        uuid (str): uuid of the result to get displayed.
+            uuid (str): uuid of the result to get displayed.
         Returns:
-        HTML: The JSON in a readable format."""
+            HTML: The JSON in a readable format.
+        """
         result = facade.get_result(uuid)
         # return a pretty-printed version.
         result_json = json.loads(result.get_json())
-        string = json.dumps(result_json, indent=4, sort_keys=True)
-        return string
+        # pretty-print with HTML newlines
+        string = json.dumps(result_json, indent=2).replace('\n', '<br/>')
+        return Markup(string)
 
     def result_exists(self, uuid: str) -> bool:
         """Helper to determine whether a result exists.
         Args:
             uuid (str): The result uuid to check.
         Returns:
-            bool: If the result is in the database."""
+            bool: If the result is in the database.
+        """
         try:
             facade.get_result(uuid)
             return True
@@ -64,9 +65,8 @@ def display_json_page():
 
     with open('templates/display_json.html') as file:
         page = factory.generate_page(
-            args='{}',
+            args=uuid,
             template=file.read(),
-            page_content=factory.generate_page_content(uuid),
             uuid=uuid)
 
     return Response(page, mimetype='text/html')

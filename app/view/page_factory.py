@@ -4,6 +4,8 @@ Provided are:
 """
 from os.path import isfile
 from abc import abstractmethod
+from typing import Any
+
 import jinja2 as jj
 from .type_aliases import HTML, JSON
 from ..configuration import configuration
@@ -38,7 +40,7 @@ class PageFactory:
         self._info = None
 
     def generate_page(
-            self, args: JSON, template: HTML = None, info: str = None, **jinja_args) -> HTML:
+            self, args: Any, template: HTML = None, info: str = None, **jinja_args) -> HTML:
         """Generate a HTML page from the input parameters not using the
         template provided in the class.
 
@@ -76,7 +78,7 @@ class PageFactory:
         return template_tmp.render(info=info_tmp, content=self._content, **jinja_args)
 
     @abstractmethod
-    def _generate_content(self, args: JSON) -> HTML:
+    def _generate_content(self, args: Any) -> HTML:
         """(abstract) Pattern function to generate the content of a given page.
 
         Args:
