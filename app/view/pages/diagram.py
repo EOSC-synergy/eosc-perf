@@ -1,8 +1,4 @@
-"""This module contains the factory to generate result-comparison diagram
-pages.
-Provided is:
- - DiagramFactory
-"""
+"""This module contains the factory to generate result-comparison diagram pages."""
 
 import json
 

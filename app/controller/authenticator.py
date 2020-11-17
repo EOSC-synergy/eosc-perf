@@ -1,8 +1,4 @@
-"""This module acts as a facade between the IOController
-and the EGI Check-In authentication system.
-Provided is:
- - Authenticator
-"""
+"""This module acts as a facade between the IOController and the EGI Check-In authentication system."""
 
 import json
 from time import time
@@ -28,15 +24,18 @@ class AuthenticateError(Exception):
 
 
 class Authenticator:
-    """A facade between IOController and the EGI Check-In authentication
-       system. It integrates Open ID Connect into the web app.
+    """A facade between IOController and the EGI Check-In authentication system.
+
+    It integrates Open ID Connect into the web app.
+
     Attributes:
-    oauth (OAuth): The used Flask OAuth registry for oauth clients.
-    admin_affiliations (list of str): If a user has one affiliation that is
-                                      included in this list, they have admin rights.
-    hostname (str): The hostname used for redirection after authentication.
-    client_secret (str): The oauth client secret.
-    scope (str): The scope used for registering the oauth client."""
+        oauth (OAuth): The used Flask OAuth registry for oauth clients.
+        admin_entitlements (list of str): If a user has one entitlement that is included in this list,
+            they have admin rights.
+        hostname (str): The hostname used for redirection after authentication.
+        client_secret (str): The oauth client secret.
+        scope (str): The scope used for registering the oauth client.
+    """
 
     def __init__(self):
         self.oauth = None
@@ -50,7 +49,8 @@ class Authenticator:
     def configure_authenticator(self, flask_app):
         """Sets up OIDC authentication functionality for the web app.
         Args:
-        flask_app (Flask): The flask app for which to set up OIDC functionality."""
+            flask_app (Flask): The flask app for which to set up OIDC functionality.
+        """
         if len(configuration.get('oidc_client_secret')) == 0:
             raise ValueError("missing openID client secret in configuration")
         self.client_secret = configuration.get('oidc_client_secret')
@@ -94,7 +94,8 @@ class Authenticator:
     def is_authenticated(self):
         """Checks if the current user is authenticated. Will return true
            if the user just logged in through EGI Check-In or if the user
-           still has a token that is not expired."""
+           still has a token that is not expired.
+        """
         if not self._token_expired():
             return True
         try:

@@ -1,5 +1,4 @@
-"""Test data generation module.
-Provides: add_dummies()"""
+"""Test data generation module."""
 
 import json
 from .data_types import Uploader, Site, Benchmark, Result, Tag

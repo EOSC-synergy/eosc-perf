@@ -1,7 +1,4 @@
-"""This module contains the factory to generate report review pages.
-Provided is:
- - ViewReportPageFactory
-"""
+"""This module contains the factory to generate report review pages."""
 
 import json
 

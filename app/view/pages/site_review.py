@@ -1,7 +1,4 @@
-"""This module contains the factory to generate site review pages.
-Provided is:
- - SiteReviewPageFactory
-"""
+"""This module contains the factory to generate site review pages."""
 
 from flask import request, Response, redirect
 from flask.blueprints import Blueprint

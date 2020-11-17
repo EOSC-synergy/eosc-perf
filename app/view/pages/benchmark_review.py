@@ -1,7 +1,4 @@
-"""This module contains the factory to generate information pages.
-Provided is:
- - ReviewPageFactory
-"""
+"""This module contains the factory to generate information pages."""
 
 import json
 import urllib.request

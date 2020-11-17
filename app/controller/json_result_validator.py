@@ -1,5 +1,4 @@
-'''This module provides the service of syntactical
-validation of JSON benchmark result strings'''
+"""This module provides the service of syntactical validation of JSON benchmark result strings."""
 
 import os
 import json

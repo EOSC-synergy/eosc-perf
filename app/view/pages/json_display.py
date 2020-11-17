@@ -1,7 +1,4 @@
-"""This module contains the factory to generate a Page displaying a result.
-Provided is:
- - DisplayJsonFactory
-"""
+"""This module contains the factory to generate a Page displaying a result."""
 import json
 from typing import Any
 

@@ -1,6 +1,7 @@
 """This exposes the flask app singleton and creation function."""
 
 from flask import Flask, redirect
+import sys
 from .configuration import configuration
 from .controller.authenticator import (configure_authenticator,
                                        authenticator_blueprint)
@@ -26,6 +27,9 @@ def create_app():
     Args:
         config (dict): A dictionary containing the configuration values."""
     flask_app = Flask(__name__)
+
+    if 'sphinx' in sys.modules:
+        return flask_app
 
     configuration.reload()
 

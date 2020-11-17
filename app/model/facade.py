@@ -1,8 +1,4 @@
-""""This module contains the implementation of the Model facade.
-Provided are:
-  - DatabaseFacade
-And as helpers:
-  - DatabaseFacade.NotFoundError"""
+""""This module contains the implementation of the Model facade."""
 from typing import List
 import json
 from sqlalchemy.exc import SQLAlchemyError

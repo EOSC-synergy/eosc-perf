@@ -1,6 +1,4 @@
-"""
-This module contains unit tests for the IOController class
-"""
+"""This module contains unit tests for the IOController class"""
 from time import time
 import unittest
 import json

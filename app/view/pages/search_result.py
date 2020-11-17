@@ -1,7 +1,4 @@
-"""This module contains the factory to generate result search pages
-Provided is:
-- SearchResultFactory
-"""
+"""This module contains the factory to generate result search pages."""
 import json
 from flask import request, Response
 from flask.blueprints import Blueprint

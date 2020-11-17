@@ -1,13 +1,5 @@
-""""This module contains all data types and associated helpers from the model.
-Provided are:
-  - Result
-  - Uploader
-  - Benchmark
-  - Tag
-  - Site
-  - Report
-And as helper:
-  - ResultIterator"""
+""""This module contains all data types and associated helpers from the model."""
+
 from __future__ import annotations
 from typing import List
 import uuid

@@ -1,7 +1,4 @@
-"""This module contains the factory to generate the result upload page.
-Provided is:
- - UploadJSONFactory
-"""
+"""This module contains the factory to generate the result upload page."""
 
 import json
 from pathlib import Path

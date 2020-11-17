@@ -1,6 +1,4 @@
-"""
-This module contains unit tests for the JSONResultValidator class
-"""
+"""This module contains unit tests for the JSONResultValidator class"""
 
 import json
 import unittest

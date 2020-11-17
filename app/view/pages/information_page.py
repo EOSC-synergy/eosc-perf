@@ -1,9 +1,4 @@
-"""This module contains the factory to generate information pages.
-Provided is:
- - InformationPageFactory
- - Http endpoint code guidelines
- - Http endpoint upload instructions
-"""
+"""This module contains the factory to generate information pages."""
 import json
 import os
 from typing import Any

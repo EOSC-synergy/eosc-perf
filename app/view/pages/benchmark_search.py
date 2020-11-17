@@ -1,8 +1,4 @@
-"""This module contains the factory to generate pages used to search
-benchmarks.
-Provided is:
- - BenchmarkSearchFactory
-"""
+"""This module contains the factory to generate pages used to search benchmarks."""
 
 from flask import Response
 from flask.blueprints import Blueprint

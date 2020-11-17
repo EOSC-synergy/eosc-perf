@@ -1,7 +1,4 @@
-"""This module contains the factroyclasses generating the HTMLpages.
-Provided are:
- - PageFactory
-"""
+"""This module contains the factory classes generating the HTML pages."""
 from os.path import isfile
 from abc import abstractmethod
 from typing import Any
@@ -14,17 +11,8 @@ from ..controller.io_controller import controller
 class PageFactory:
 
     """The PageFactory abstract class serves as a generator for pages.
-    Members
-    ------
-    _environment: jinja2.Environment
-        the environment to handel the combination of the final html file.
-    template: jinja2.Template
-        the template used for the combination of the final html file.
-    content: str
-        the content parsed into the final html file.
-        consisting of java script code.
-    info: HTML
-        the default information displayed of the final html page
+    Attributes:
+        _environment (jinja2.Environment): the environment to handle the combination of the final html file.
     """
 
     _environment: jj.Environment

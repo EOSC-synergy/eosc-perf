@@ -1,2 +1,1 @@
-"""In this submodule are provided the classes implementing Model
-functionality."""
+"""In this submodule are provided the classes implementing Model functionality."""

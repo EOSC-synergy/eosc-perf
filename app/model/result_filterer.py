@@ -1,6 +1,4 @@
-""""This module contains the result filterer class used by the model.
-Provided are:
-  - ResultFilterer"""
+""""This module contains the result filterer class used by the model."""
 from typing import List
 from app.model.data_types import Result, ResultIterator
 from app.model.filters import Filter

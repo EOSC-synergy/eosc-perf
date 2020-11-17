@@ -1,10 +1,4 @@
-"""This module contains the classes responsible for AJAX queries.
-Provided are:
- - AjaxHandler (abstract)
- - SearchAjaxHandler (abstract)
- - ResultSearchAJAX
- - BenchmarkSearchAJAX
- """
+"""This module contains the classes responsible for AJAX queries."""
 
 import json
 from abc import ABC, abstractmethod

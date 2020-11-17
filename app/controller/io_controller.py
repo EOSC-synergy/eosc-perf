@@ -1,6 +1,4 @@
-"""
-This module acts as a facade between view and model.
-"""
+"""This module acts as a facade between view and model."""
 import json
 import urllib.request
 from typing import List
@@ -10,6 +8,7 @@ from .authenticator import authenticator, AuthenticateError
 from .type_aliases import JSON
 from ..model.facade import DatabaseFacade, facade
 from ..model.data_types import Site, Report
+
 
 class IOController:
     """This class acts as a facade between view and model and validates user input.
@@ -28,12 +27,14 @@ class IOController:
 
     def submit_result(self, result_json: str, metadata: str) -> bool:
         """Submit a new benchmark result to the system.
-           Fails if the user isn't authenticated or the result json is invalid.
+
+        Fails if the user isn't authenticated or the result json is invalid.
+
         Args:
-        result_json  (JSON): The benchmark result to be uploaded.
-        metadata      (str): The metadata associated with the benchmark result.
+            result_json  (JSON): The benchmark result to be uploaded.
+            metadata (str): The metadata associated with the benchmark result.
         Returns:
-        bool: True if the benchmark was successfully added, false otherwise.
+            bool: True if the benchmark was successfully added, false otherwise.
         """
         # Check if user is authenticated
         if self.is_authenticated():
@@ -49,16 +50,16 @@ class IOController:
 
     def submit_benchmark(self, docker_name: str, comment: str) -> bool:
         """Submit a new Benchmark to the system.
+
         Args:
-        uploader_id  (str): The id of the uploader.
-        docker_name     (str): The name of the dockerhub repository and sub url.
-                               https://hub.docker.com/_/[docker_name] or
-                               https://hub.docker.com/_/[docker_name] should be a valid url.
-        check_for_page (bool): If true, it will be checked whether docker_name corresponds to
-                               an existing image on docker hub. Can lead to problems if
-                               chromium isn't installed and takes a considerable amount of time (5-10s).
+            docker_name (str): The name of the dockerhub repository and sub url.
+                https://hub.docker.com/_/[docker_name] or
+                https://hub.docker.com/_/[docker_name] should be a valid url.
+            comment (str): Comment to add to benchmark submission
+
         Returns:
-        bool: True if the benchmark was successfully submitted, false othwe
+            bool: True if the benchmark was successfully submitted, false otherweise.
+
         """
         # Check if user is authenticated.
         if not self.is_authenticated():
@@ -116,20 +117,19 @@ class IOController:
             if description is not None:
                 message += ", description: {}".format(description)
             return self.report(json.dumps({
-                    'message': message,
-                    'type': 'site',
-                    'value': short_name,
-                    'uploader': self.get_user_id()
-                }))
+                'message': message,
+                'type': 'site',
+                'value': short_name,
+                'uploader': self.get_user_id()
+            }))
         return False
-
 
     def submit_tag(self, tag: str) -> bool:
         """Submit a new tag
         Args:
-        metadata_json (str): The tag to be submitted.
+            metadata_json (str): The tag to be submitted.
         Returns:
-        bool: True if the submission was successful, false otherwise.
+            bool: True if the submission was successful, false otherwise.
         """
         if tag is None:
             raise ValueError("Tag must not be None")
@@ -139,11 +139,13 @@ class IOController:
 
     def get_site(self, short_name) -> Site:
         """Get a single site by it's short name.
-           Args:
+        Args:
            short_name (str): short name of a site
-           Returns:
+        Returns:
            Site: The site with the given short name.
-                 None if no site with given name is found."""
+                 None if no site with given name is found.
+
+        """
         try:
             site = facade.get_site(short_name)
         except facade.NotFoundError:
@@ -152,10 +154,12 @@ class IOController:
 
     def remove_site(self, short_name) -> bool:
         """Removes a single site by it's short name.
-           Args:
+        Args:
            short_name (str): short name of a site
-           Returns:
-           bool: True if removal was successful, false otherwise"""
+        Returns:
+           bool: True if removal was successful, false otherwise
+
+        """
         if self.is_authenticated():
             if self._site_result_amount(short_name) == 0:
                 return facade.remove_site(short_name)
@@ -166,11 +170,13 @@ class IOController:
 
     def report(self, metadata: JSON) -> bool:
         """Add a Report to the model and notify an admin about it.
+
         Args:
-        metadata     (JSON): The metadata in json format containing the
-                             benchmark 'result_id' and the associated 'user_message'.
+            metadata (JSON): The metadata in json format containing the benchmark 'result_id'
+                and the associated 'user_message'.
+
         Returns:
-        bool: True If the report was successfully added, false otherwise
+            bool: True If the report was successfully added, false otherwise
         """
         if self.is_authenticated():
             # if the user is not in the database, add them
@@ -195,10 +201,10 @@ class IOController:
     def get_reports(self, only_unanswered: bool = False) -> List[Report]:
         """Provide a list of all reports, require the user to be an admin.
         Args:
-        only_unanswered (bool): Whether all or only the unanswered, reports get provided.
+            only_unanswered (bool): Whether all or only the unanswered, reports get provided.
         Returns:
-        List[Reports]: List of all the requested reports, throws an AuthenticationError if
-                       the authentication failed."""
+            List[Reports]: List of all the requested reports, throws an AuthenticationError if
+                           the authentication failed."""
         if authenticator.is_admin():
             return facade.get_reports(only_unanswered=only_unanswered)
         raise AuthenticateError(
@@ -207,11 +213,12 @@ class IOController:
     def process_report(self, verdict: bool, uuid: str) -> bool:
         """Add verdict to report with given uuid. If verdict is False, the item with given uuid
            will stay hidden or become hidden.
+
         Args:
             verdict (bool): The verdict; True when approving the reported item, which means
-                            it stays/becomes visible. If false, the reported item will
-                            stay/become hidden.
+                            it stays/becomes visible. If false, the reported item will stay/become hidden.
             uuid (str): The uuid of the judged report.
+
         Returns:
             bool: If the process was successful.
         """
@@ -236,12 +243,12 @@ class IOController:
             return True
         raise AuthenticateError("Only admins can process reports")
 
-    def remove_result(self, uuid:str):
+    def remove_result(self, uuid: str):
         """Make a result invisible.
         Args:
             uuid (str): The uuid of the result.
-        Resturns:
-            bool: If the process was successfull."""
+        Returns:
+            bool: If the process was successful."""
         if authenticator.is_admin():
             try:
                 result = facade.get_result(uuid)
@@ -252,7 +259,6 @@ class IOController:
             return True
         raise AuthenticateError("Only admins can remove results")
 
-    
     def _add_current_user_if_missing(self):
         """Add the current user as an uploader if they do not exist yet."""
         if authenticator.is_authenticated():
@@ -303,7 +309,7 @@ class IOController:
     def _valid_docker_hub_name(self, docker_name: str) -> bool:
         """Check if a benchmark exists with the given name on dockerhub.
         Args:
-            docker_name      (str): The name to be checked.
+            docker_name (str): The name to be checked.
         Returns:
             bool: True if the image exists.
         """
@@ -339,9 +345,8 @@ class IOController:
     @staticmethod
     def get_email():
         """Get current user's unique identifier, if logged in.
-           Returns:
-           Id: The urrent user's email.
-               Is None if no user is logged in."""
+        Returns:
+           id: The current user's email, is None if no user is logged in."""
         try:
             return session['user']['info']['email']
         except KeyError:
@@ -350,9 +355,8 @@ class IOController:
     @staticmethod
     def get_full_name():
         """Get current user's full name, if logged in.
-           Returns:
-           Name: The urrent user's full name.
-                 Is None if no user is logged in."""
+        Returns:
+           Name: The current user's full name, is None if no user is logged in."""
         try:
             return session['user']['info']['name']
         except KeyError:
@@ -361,9 +365,8 @@ class IOController:
     @staticmethod
     def get_user_id() -> str:
         """Get current user's unique identifier, if logged in.
-           Returns:
-           Id: The urrent user's unique identifier.
-               Is None if no user is logged in."""
+        Returns:
+           Id: The current user's unique identifier, is None if no user is logged in."""
         try:
             return session['user']['sub']
         except KeyError:
@@ -372,12 +375,13 @@ class IOController:
     @staticmethod
     def is_admin() -> bool:
         """Checks if current user has admin right, if one is logged on.
-           Returns: True if current user is admin, otherwise False."""
+        Returns: True if current user is admin, otherwise False."""
         return authenticator.is_admin()
 
     @staticmethod
     def is_authenticated() -> bool:
         """Check if the current user is authenticated."""
         return authenticator.is_authenticated()
+
 
 controller = IOController()

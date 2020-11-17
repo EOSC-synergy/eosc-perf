@@ -1,7 +1,4 @@
-"""This module contains the factory to generate the privacy policy page.
-Provided is:
- - PrivacyPolicyFactory
-"""
+"""This module contains the factory to generate the privacy policy page."""
 
 from flask import Response
 from flask.blueprints import Blueprint

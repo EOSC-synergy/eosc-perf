@@ -1,7 +1,4 @@
-"""This module contains the factory to generate benchmark submission pages.
-Provided is:
- - AddBenchmarkPageFactory
-"""
+"""This module contains the factory to generate benchmark submission pages."""
 
 from flask import request, Response
 from flask.blueprints import Blueprint

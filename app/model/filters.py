@@ -1,10 +1,4 @@
-""""This module contains all the filters.
-Provided are:
-  - Filter
-  - BenchmarkFilter
-  - UploaderFilter
-  - TagFilter
-  - JsonValueFilter"""
+"""This module contains all search filters."""
 from abc import abstractmethod
 import json
 from functools import reduce
