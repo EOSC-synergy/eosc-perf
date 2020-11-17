@@ -1,4 +1,5 @@
 """This module contains the factory to generate benchmark submission pages."""
+from typing import Tuple, Dict, Any
 
 from flask import request, Response
 from flask.blueprints import Blueprint
@@ -13,8 +14,8 @@ from .helpers import error_json_redirect, error_redirect
 class AddBenchmarkPageFactory(PageFactory):
     """A factory to build information pages."""
 
-    def _generate_content(self, args: JSON) -> HTML:
-        pass
+    def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
+        return "", {}
 
 add_benchmark_blueprint = Blueprint('add-benchmark-factory', __name__)
 

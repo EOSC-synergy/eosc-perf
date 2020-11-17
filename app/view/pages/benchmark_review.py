@@ -2,6 +2,7 @@
 
 import json
 import urllib.request
+from typing import Tuple, Dict, Any
 
 from flask import request, Response, redirect
 from flask.blueprints import Blueprint
@@ -18,23 +19,32 @@ from ...controller.authenticator import AuthenticateError
 
 from .helpers import error_json_redirect, error_redirect, info_redirect
 
+
+def report_exists(uuid: str) -> bool:
+    """Helper to determine whether a benchmark exists.
+
+    Args:
+        uuid (str): Report UUID
+    """
+    try:
+        facade.get_report(uuid)
+        return True
+    except facade.NotFoundError:
+        return False
+
+
 class BenchmarkReviewPageFactory(PageFactory):
     """A factory to build benchmark report view pages."""
+    def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
+        return "", {}
 
-    def _generate_content(self, args: JSON) -> HTML:
-        pass
 
-    def report_exists(self, name: str) -> bool:
-        """Helper to determine whether a benchmark exists."""
+def decompose_dockername(docker_name: str) -> Tuple[str, str, str]:
+    """Helper to break a model-docker_name into a tuple.
 
-        try:
-            facade.get_report(name)
-            return True
-        except facade.NotFoundError:
-            return False
-
-def decompose_dockername(docker_name):
-    """Helper to break a model-docker_name into a tuple."""
+    Args:
+        docker_name (str): full docker name
+    """
     slash = docker_name.find('/')
     if slash == -1:
         # this should not have passed input validation
@@ -43,28 +53,32 @@ def decompose_dockername(docker_name):
     colon = docker_name.find(':')
     if colon == -1:
         image = docker_name[slash + 1:]
-        tag = ''
+        tag = None
     else:
         image = docker_name[slash + 1:colon]
         tag = docker_name[colon + 1:]
 
-    return (username, image)
+    return username, image, tag
+
 
 def build_dockerhub_url(docker_name):
     """Helper function to build a link to a docker hub page."""
-    (username, image) = decompose_dockername(docker_name)
+    (username, image, tag) = decompose_dockername(docker_name)
 
     url = 'https://hub.docker.com/r/{}/{}'.format(username, image)
     return url
 
+
 def build_dockerregistry_url(docker_name):
     """Helper function to build a link to the docker hub registry api."""
-    (username, image) = decompose_dockername(docker_name)
+    (username, image, tag) = decompose_dockername(docker_name)
 
     url = 'https://registry.hub.docker.com/v2/repositories/{}/{}/'.format(username, image)
     return url
 
+
 benchmark_review_blueprint = Blueprint('benchmark-review', __name__)
+
 
 @benchmark_review_blueprint.route('/benchmark_review_fetch_first', methods=['GET'])
 def get_benchmark_review():
@@ -81,6 +95,7 @@ def get_benchmark_review():
                 '/benchmark_review?' + url_encode({'uuid': report.get_uuid()}), code=302)
     return info_redirect('No benchmark to review')
 
+
 @benchmark_review_blueprint.route('/benchmark_review', methods=['GET'])
 def review_benchmark():
     """HTTP endpoint for the benchmark review page"""
@@ -96,7 +111,7 @@ def review_benchmark():
         return error_redirect('Benchmark review page opened with no uuid')
 
     factory = BenchmarkReviewPageFactory()
-    if not factory.report_exists(uuid):
+    if not report_exists(uuid):
         return error_redirect('Report given to review page does not exist')
 
     try:
@@ -122,8 +137,8 @@ def review_benchmark():
         dockerhub_content = urllib.request.urlopen(build_dockerregistry_url(docker_name)).read()
         content = json.loads(dockerhub_content)
         dockerhub_desc = content['full_description']
-        dockerhub_desc_formatted = markdown2.markdown(
-            dockerhub_desc, extras=["fenced-code-blocks", "tables", "break-on-newline", "cuddled-lists"])
+        dockerhub_desc_formatted = markdown2.markdown(dockerhub_desc, extras=[
+            "fenced-code-blocks", "tables", "break-on-newline", "cuddled-lists"])
     except:
         dockerhub_desc_formatted = "Could not load description"
 
@@ -140,6 +155,7 @@ def review_benchmark():
         uuid=uuid)
     return Response(page, mimetype='text/html')
 
+
 @benchmark_review_blueprint.route('/benchmark_review_submit', methods=['POST'])
 def review_benchmark_submit():
     """HTTP endpoint to take in the reports"""
@@ -155,7 +171,7 @@ def review_benchmark_submit():
     # validate input
     if uuid is None:
         return error_json_redirect('Incomplete review form submitted (missing UUID)')
-    if not 'action' in request.form:
+    if 'action' not in request.form:
         return error_json_redirect('Incomplete report form submitted (missing verdict)')
 
     remove = None

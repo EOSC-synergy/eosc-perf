@@ -1,4 +1,5 @@
 """This module contains the factory to generate site review pages."""
+from typing import Tuple, Any, Dict
 
 from flask import request, Response, redirect
 from flask.blueprints import Blueprint
@@ -16,8 +17,8 @@ from .helpers import error_json_redirect, error_redirect, info_redirect
 class SiteReviewPageFactory(PageFactory):
     """A factory to build site report view pages."""
 
-    def _generate_content(self, args: JSON) -> HTML:
-        pass
+    def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
+        return "", {}
 
     def report_exists(self, name: str) -> bool:
         """Helper to determine whether a site exists."""

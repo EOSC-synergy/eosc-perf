@@ -1,6 +1,6 @@
 """This module contains the factory to generate a Page displaying a result."""
 import json
-from typing import Any
+from typing import Any, Tuple, Dict
 
 from flask import request, Response, Markup
 from flask.blueprints import Blueprint
@@ -15,7 +15,7 @@ from .helpers import error_redirect
 class DisplayJsonFactory(PageFactory):
     """A factory to build information pages."""
 
-    def _generate_content(self, uuid: Any) -> HTML:
+    def _generate_content(self, uuid: Any) -> Tuple[HTML, Dict]:
         """Generate page body code.
 
         This contains the result json for the template.
@@ -29,7 +29,7 @@ class DisplayJsonFactory(PageFactory):
         result_json = json.loads(result.get_json())
         # pretty-print with HTML newlines
         string = json.dumps(result_json, indent=2).replace('\n', '<br/>')
-        return Markup(string)
+        return Markup(string), {}
 
     def result_exists(self, uuid: str) -> bool:
         """Helper to determine whether a result exists.

@@ -1,5 +1,7 @@
 """This module contains the factory to generate result search pages."""
 import json
+from typing import Tuple, Any, Dict
+
 from flask import request, Response
 from flask.blueprints import Blueprint
 
@@ -14,7 +16,7 @@ from .helpers import error_redirect
 class SearchResultFactory(PageFactory):
     """ A factory to create search result pages."""
 
-    def _generate_content(self, args: JSON) -> HTML:
+    def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
         """Generate js code containing information reqired for searchpage.
         Args:
             args (JSON): A json containing a 'benchmark' and 'admin' value
@@ -28,7 +30,7 @@ class SearchResultFactory(PageFactory):
         except KeyError as error:
             print(error)
             result = ""
-        return result
+        return result, {}
 
 
 result_search_blueprint = Blueprint('result_search', __name__)

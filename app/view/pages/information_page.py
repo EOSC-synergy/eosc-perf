@@ -1,7 +1,6 @@
 """This module contains the factory to generate information pages."""
 import json
-import os
-from typing import Any
+from typing import Tuple, Any, Dict
 
 from flask import request, Response
 from flask.blueprints import Blueprint
@@ -16,8 +15,8 @@ from .helpers import error_redirect
 class InformationPageFactory(PageFactory):
     """A factory to build information pages."""
 
-    def _generate_content(self, args: Any) -> HTML:
-        return args
+    def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
+        return args, {}
 
 
 info_blueprint = Blueprint('information-page-factory', __name__)

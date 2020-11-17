@@ -1,15 +1,17 @@
 """This module contains the factory classes generating the HTML pages."""
 from os.path import isfile
 from abc import abstractmethod
-from typing import Any
+from typing import Any, Tuple
 
 import jinja2 as jj
+
+from .pages.helpers import error_redirect
 from .type_aliases import HTML, JSON
 from ..configuration import configuration
 from ..controller.io_controller import controller
 
-class PageFactory:
 
+class PageFactory:
     """The PageFactory abstract class serves as a generator for pages.
     Attributes:
         _environment (jinja2.Environment): the environment to handle the combination of the final html file.
@@ -47,23 +49,26 @@ class PageFactory:
             HTML: The finished HTML page displaying the content and information.
         """
         template_content = self._environment.get_template(template)
+        (content, extra_args) = self._generate_content(args)
         return template_content.render(
-            content=self._generate_content(args),
+            content=content,
             admin=controller.is_admin(),
             debug=configuration.get('debug'),
             im_link=configuration.get('infrastructure_href'),
             user_name=controller.get_full_name(),
             logged_in=controller.is_authenticated(),
+            **extra_args,
             **jinja_args)
 
     @abstractmethod
-    def _generate_content(self, args: Any) -> HTML:
+    def _generate_content(self, args: Any) -> Tuple[HTML, Any]:
         """(abstract) Pattern function to generate the content of a given page.
 
         Args:
-            args (JSON): Parameters used by some childclasses to generate the
-                right content.
+            args (JSON): Parameters used by child classes to generate the right content.
 
         Returns:
-            HTML: The Content part, consisting of JavaScript.
+            (tuple): tuple containing:
+                page content (HTML): The Content part, consisting of JavaScript.
+                args (Any): Extra arguments for jinja
         """

@@ -2,6 +2,7 @@
 
 import json
 from pathlib import Path
+from typing import Tuple, Any, Dict
 
 from flask import request, Response
 from flask.blueprints import Blueprint
@@ -17,8 +18,8 @@ from .helpers import error_json_redirect, error_redirect
 class UploadJSONFactory(PageFactory):
     """A factory to build upload pages."""
 
-    def _generate_content(self, args: JSON) -> HTML:
-        pass
+    def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
+        return "", {}
 
     @staticmethod
     def get_license_string() -> str:

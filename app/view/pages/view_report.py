@@ -1,6 +1,7 @@
 """This module contains the factory to generate report review pages."""
 
 import json
+from typing import Tuple, Any, Dict
 
 from flask import request, Response, redirect
 from flask.blueprints import Blueprint
@@ -19,7 +20,7 @@ from .helpers import error_json_redirect, error_redirect, info_redirect
 class ViewReportPageFactory(PageFactory):
     """A factory to build result report view pages."""
 
-    def _generate_content(self, args: JSON) -> HTML:
+    def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
         pass
 
     def report_exists(self, uuid: str) -> bool:

@@ -1,6 +1,7 @@
 """This module contains the factory to generate result-comparison diagram pages."""
 
 import json
+from typing import Tuple, Dict, Any
 
 from flask import request, Response, redirect
 from flask.blueprints import Blueprint
@@ -17,8 +18,8 @@ from .helpers import error_redirect
 class DiagramFactory(PageFactory):
     """A factory to build diagram pages."""
 
-    def _generate_content(self, args: JSON) -> HTML:
-        pass
+    def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
+        return "", {}
 
     def generate_script_content(self, uuids) -> HTML:
         """Generate script data for the diagram."""
