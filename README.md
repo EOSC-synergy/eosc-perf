@@ -32,4 +32,4 @@ Tips:
   -subj '/CN=localhost' -extensions EXT -config <( \
    printf "[dn]\nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:localhost\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")`
 - To run the included unit tests, the unittest package can be used:
-  `python -m unittest discover app "*_test.py"`
+  `python -m unittest discover eosc_perf "*_test.py"`
