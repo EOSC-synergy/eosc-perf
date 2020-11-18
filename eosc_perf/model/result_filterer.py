@@ -3,18 +3,26 @@ from typing import List
 from eosc_perf.model.data_types import Result, ResultIterator
 from eosc_perf.model.filters import Filter
 
+
 class ResultFilterer:
-    """Applies a list of filters to a set of results and returns the results that match all
-    filters."""
+    """Applies a list of filters to a set of results and returns the results that match all filters."""
+
     def __init__(self):
+        """Initialize a new ResultFilterer."""
         self._filters = []
 
-    def add_filter(self, filter_: Filter):
-        """Adds a filter to the ResultFilterer."""
-        self._filters.append(filter_)
+    def add_filter(self, new_filter: Filter):
+        """Add a filter to the ResultFilterer.
+        Args:
+            new_filter (Filter): A new filter to apply to the query.
+        """
+        self._filters.append(new_filter)
 
     def filter(self, results: ResultIterator) -> List[Result]:
-        """Applies all filters to the given list and returns the results that match all of them."""
+        """Apply all filters to the given list and returns the results that match all of them.
+        Args:
+            results (ResultIterator): A ResultIterator that supplies benchmark results.
+        """
         filtered = []
         while len(filtered) < 100:
             try:

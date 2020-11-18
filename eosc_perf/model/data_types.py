@@ -1,7 +1,7 @@
 """"This module contains all data types and associated helpers from the model."""
 
 from __future__ import annotations
-from typing import List
+from typing import List, Optional, Type
 import uuid
 from datetime import datetime
 from abc import abstractmethod
@@ -30,55 +30,28 @@ class ResultIterator:
     """Helper class to handle efficiently fetching a large number of
     benchmark results from the database."""
 
-    def __init__(self, session, **kwargs):
+    _batch_count: int = 0
+    _batch_offset: int = 0
+
+    def __init__(self, session, *, tags: Optional[List[Tag]] = None, site: Optional[Site] = None,
+                 benchmark: Optional[Benchmark] = None, uploader: Optional[Uploader] = None):
         """Build a new result query iterator.
 
         Args:
-            tags (List[Tag]): The tags the result must be associated to.
-            site (Site): The site the result must belong to.
-            benchmark (Benchmark): The benchmark the result must belong to.
-            uploader (Uploader): The uploader the result must belong to.
+            session (db.Session): SQLAlchemy session.
+            tags (Optional[List[Tag]]): Optional: The tags the result must be associated to.
+            site (Optional[Site]): Optional: The site the result must belong to.
+            benchmark (Optional[Benchmark]): Optional: The benchmark the result must belong to.
+            uploader (Optional[Uploader]): Optional: The uploader the result must belong to.
         """
-        # position within cached results
-        self._batch_count: int = 0
-        self._batch_offset: int = 0
-
         # SQLAlchemy session
         self._session = session
 
         # filter by tags
-        self._tags = None
-        if 'tags' in kwargs:
-            # test if list
-            if isinstance(kwargs['tags'], list):
-                tags = kwargs['tags']
-                if not len(tags) <= 0:
-                    # test if list of Tag
-                    for tag in tags:
-                        if not isinstance(tag, Tag):
-                            raise TypeError('"[{}]" is not a Tag'.format(tag))
-                self._tags = tags
-
-        # filter by site
-        self._site = None
-        if 'site' in kwargs:
-            if not isinstance(kwargs['site'], Site):
-                raise TypeError('"site" is not a Site')
-            self._site = kwargs['site']
-
-        # filter by benchmark
-        self._benchmark = None
-        if 'benchmark' in kwargs:
-            if not isinstance(kwargs['benchmark'], Benchmark):
-                raise TypeError('"benchmark" is not a Benchmark')
-            self._benchmark = kwargs['benchmark']
-
-        # filter by uploader
-        self._uploader = None
-        if 'uploader' in kwargs:
-            if not isinstance(kwargs['uploader'], Uploader):
-                raise TypeError('"uploader" is not a Uploader')
-            self._uploader = kwargs['uploader']
+        self._tags = tags
+        self._site = site
+        self._benchmark = benchmark
+        self._uploader = uploader
 
         self._fetch(self._batch_count)
 
@@ -88,7 +61,6 @@ class ResultIterator:
 
     def _fetch(self, batch_number: int, batch_size: int = BATCH_SIZE):
         """Load a new batch of cached query results from the database.
-
         Args:
             batch_number (int): The index of the batch to get.
             batch_size (int): The size of each batch.
@@ -96,34 +68,36 @@ class ResultIterator:
         results = self._session.query(Result)
 
         # build query by filters
-        if not self._tags is None:
+        if self._tags is not None:
             # this is the best way I found to do this, should work given not too many tags requested
             # based on: https://stackoverflow.com/a/36975507
 
             results = results.join(Tag, Result._tags)
             # go through every single tag and check if it is present
             for tag in self._tags:
-                results = results.filter(
-                    Result._tags.any(Tag._name == tag._name))
-        if not self._site is None:
+                results = results.filter(Result._tags.any(Tag._name == tag._name))
+        if self._site is not None:
             results = results.filter(Result._site == self._site)
-        if not self._benchmark is None:
+        if self._benchmark is not None:
             results = results.filter(Result._benchmark == self._benchmark)
-        if not self._uploader is None:
+        if self._uploader is not None:
             results = results.filter(Result._uploader == self._uploader)
 
         # get batch_number'th batch
         self._cache = results.offset(batch_number * batch_size).limit(batch_size).all()
 
-    def __next__(self):
-        """Fetch the next result from cache."""
+    def __next__(self) -> Result:
+        """Fetch the next result from cache.
+        Returns:
+            Result: The next result.
+        """
         # if current batch empty, fetch new batch
         if self._batch_offset == BATCH_SIZE:
             self._batch_count = self._batch_count + 1
             self._fetch(self._batch_count)
             self._batch_offset = 0
 
-        # if arrived at the very end, stop
+        # if arrived at the very end (=> still no items left), stop
         if self._batch_offset >= len(self._cache):
             raise StopIteration
 
@@ -133,9 +107,8 @@ class ResultIterator:
 
 
 class Uploader(db.Model):
-    """The Uploader class represents an authenticated user that has made usage
-    of the system. They may have uploaded benchmarks or benchmark results, or
-    added tags or sites."""
+    """The Uploader class represents an authenticated user that has made usage of the system. They may have uploaded
+    benchmarks or benchmark results, or added tags or sites."""
 
     __tablename__ = 'uploader'
 
@@ -144,42 +117,74 @@ class Uploader(db.Model):
     _email = db.Column(db.Text, nullable=False)
     _name = db.Column(db.Text, nullable=False)
 
+    _benchmarks: db.Column
+
     def __init__(self, identifier: str, email: str, name: str):
-        """Create a new uploader entry object."""
+        """Create a new uploader entry object.
+        Args:
+            identifier (str): The unique identifier for this uploader.
+            email (str): The uploader's email address.
+            name (str): The uploader's name.
+        """
         super(Uploader, self).__init__(_identifier=identifier, _email=email, _name=name)
 
     def get_id(self) -> str:
-        """Get the unique identifier for this uploader."""
+        """Get the unique identifier for this uploader.
+        Returns:
+            str: This uploader's UUID.
+        """
         return self._identifier
 
     def get_email(self) -> str:
-        """Get the email address associated with this uploader."""
+        """Get the email address associated with this uploader.
+        Returns:
+            str: The uploader's email address.
+        """
         return self._email
 
     def set_email(self, email: str):
-        """Update the email address associated with the uploader."""
+        """Update the email address associated with the uploader.
+        Args:
+            email (str): The new email address.
+        """
         self._email = email
         db.session.commit()
 
     def get_name(self) -> str:
-        """Get a human-readable human name."""
+        """Get a human-readable human name.
+        Returns:
+            str: The uploader's name.
+        """
         return self._name
 
     def set_name(self, name: str):
-        """Update the human-readable human human name."""
+        """Update the human-readable human human name.
+        Args:
+            name (str): The new name.
+        """
         self._name = name
         db.session.commit()
 
     def get_results(self) -> ResultIterator:
-        """Get an iterator for all the results associated with this uploader."""
+        """Get an iterator for all the results associated with this uploader.
+        Returns:
+            ResultIterator: A ResultIterator configured for all results of this uploader.
+        """
+
         return ResultIterator(Session.object_session(self), uploader=self)
 
     def get_benchmarks(self) -> List[Benchmark]:
-        """Get all benchmarks associated with this uploader."""
+        """Get all benchmarks associated with this uploader.
+        Returns:
+            List[Benchmark]: All benchmarks associated with this uploader.
+        """
         return self._benchmarks
 
-    def __repr__(self):
-        """Get a human-readable representation string of the uploader."""
+    def __repr__(self) -> str:
+        """Get a human-readable representation string of the uploader.
+        Returns:
+            str: A human readable representation string.
+        """
         return '<{} {}>'.format(self.__class__.__name__, self._email)
 
 
@@ -198,32 +203,54 @@ class Benchmark(db.Model):
     _uploader = db.relationship('Uploader', backref=db.backref('_benchmarks', lazy=True))
 
     def __init__(self, docker_name: str, uploader: Uploader):
-        """Create a new benchmark entry object."""
+        """Create a new benchmark entry object.
+        Args:
+            docker_name (str): The docker name of the new benchmark.
+            uploader (Uploader): The uploader that added this benchmark.
+        """
         super(Benchmark, self).__init__(_docker_name=docker_name, _uploader=uploader)
 
     def get_docker_name(self) -> str:
-        """Get the docker hub identifier of the benchmark, formatted as \"user/image:tagname\"."""
+        """Get the docker hub identifier of the benchmark, formatted as \"user/image:tagname\".
+        Returns:
+            str: The docker name of the benchmark.
+        """
         return self._docker_name
 
     def get_uploader(self) -> Uploader:
-        """Get the user that submitted this benchmark."""
+        """Get the user that submitted this benchmark.
+        Returns:
+            Uploader: The uploader that added this benchmark.
+        """
         return self._uploader
 
     def get_results(self) -> ResultIterator:
-        """Get an iterator for all the results associated to this benchmark."""
+        """Get an iterator for all the results associated to this benchmark.
+        Returns:
+            ResultIterator: An iterator over the associated results.
+        """
         return ResultIterator(Session.object_session(self), benchmark=self)
 
     def set_hidden(self, state: bool):
-        """Set the hide state of the benchmark."""
+        """Set the hide state of the benchmark.
+        Args:
+            state (bool): The new hidden state.
+        """
         self._hidden = state
         db.session.commit()
 
     def get_hidden(self) -> bool:
-        """Get the hide state of the benchmark."""
+        """Get the hide state of the benchmark.
+        Returns:
+            bool: True if hidden.
+        """
         return self._hidden
 
-    def __repr__(self):
-        """Get a human-readable representation string of the benchmark."""
+    def __repr__(self) -> str:
+        """Get a human-readable representation string of the benchmark.
+        Returns:
+            str: A human-readable representation string of the benchmark.
+        """
         return '<{} {}>'.format(self.__class__.__name__, self._docker_name)
 
 
@@ -258,53 +285,82 @@ class Site(db.Model):
         super(Site, self).__init__(_short_name=short_name, _address=address, **new_args)
 
     def get_address(self) -> str:
-        """Get the network address of the site."""
+        """Get the network address of the site.
+        Returns:
+            str: The network address of the site.
+        """
         return self._address
 
-    def set_address(self, info: str):
-        """Update the current network address of the site."""
-        self._address = info
+    def set_address(self, address: str):
+        """Update the current network address of the site.
+        Args:
+            address (str): The new network address of the site.
+        """
+        self._address = address
         db.session.commit()
 
     def get_description(self) -> str:
-        """Get the human-readable description of the site."""
+        """Get the human-readable description of the site.
+        Returns:
+            str: A human-readable description of the site.
+        """
         return self._description
 
     def set_description(self, desc: str):
-        """Update the current description of the site."""
+        """Update the current description of the site.
+        Args:
+            desc (str): The new description of the site.
+        """
         self._description = desc
         db.session.commit()
 
     def get_results(self) -> ResultIterator:
-        """Get an iterator for all results associated to this site."""
+        """Get an iterator for all results associated to this site.
+        Returns:
+            ResultIterator: An iterator over all results associated with the site.
+        """
         return ResultIterator(Session.object_session(self), site=self)
 
     def get_name(self) -> str:
-        """Get the human-readable name of the site."""
+        """Get the human-readable name of the site.
+        Returns:
+            str: The human-readable name of the site.
+        """
         return self._name
 
     def get_short_name(self) -> str:
-        """Get the site's identifier."""
+        """Get the site's identifier.
+        Returns:
+            str: The site's identifier.
+        """
         return self._short_name
 
     def set_hidden(self, state: bool):
-        """Set the hide state of the site."""
+        """Set the hide state of the site.
+        Args:
+            state (bool): Set to true if the site should be hidden.
+        """
         self._hidden = state
         db.session.commit()
 
     def get_hidden(self) -> bool:
-        """Get the hide state of the site."""
+        """Get the hide state of the site.
+        Returns:
+            bool: True if the site is hidden.
+        """
         return self._hidden
 
     @abstractmethod
-    def __repr__(self):
-        """Get a human-readable representation string of the site."""
+    def __repr__(self) -> str:
+        """Get a human-readable representation string of the site.
+        Returns:
+            str: A human-readable representation string of the site.
+        """
         return '<{} {}>'.format(self.__class__.__name__, self._short_name)
 
 
 class Tag(db.Model):
-    """The Tag class represents a user-created label that can be used for
-    filtering a list of results."""
+    """The Tag class represents a user-created label that can be used for filtering a list of results."""
     __tablename__ = 'tag'
 
     # value columns
@@ -314,9 +370,10 @@ class Tag(db.Model):
     def __init__(self, name: str, **kwargs):
         """Create a new tag entry object.
 
-        Arguments:
-        name - Identifier for the tag.
-        description (Optional) - Human-readable description for the tag."""
+        Args:
+            name (str) - Identifier for the tag.
+            description (Optional) - Human-readable description for the tag.
+        """
         new_args = {}
         if 'description' in kwargs:
             new_args['_description'] = kwargs['description']
@@ -324,24 +381,39 @@ class Tag(db.Model):
         super(Tag, self).__init__(_name=name, **new_args)
 
     def get_description(self) -> str:
-        """Get the tag's human-readable description."""
+        """Get the tag's human-readable description.
+        Returns:
+            str: The tag's human-readable description.
+        """
         return self._description
 
     def set_description(self, description: str):
-        """Update the current tag's human-readable description."""
+        """Update the current tag's human-readable description.
+        Args:
+            description (str): The new description for the tag.
+        """
         self._description = description
         db.session.commit()
 
     def get_name(self) -> str:
-        """Get the name of the tag."""
+        """Get the name of the tag.
+        Returns:
+            str: The name of the tag.
+        """
         return self._name
 
     def get_results(self) -> ResultIterator:
-        """Get an iterator for all the results associated with this tag."""
+        """Get an iterator for all the results associated with this tag.
+        Returns:
+            ResultIterator: An iterator over all results associated with this tag.
+        """
         return ResultIterator(Session.object_session(self), tags=[self])
 
-    def __repr__(self):
-        """Get a human-readable representation string of the tag."""
+    def __repr__(self) -> str:
+        """Get a human-readable representation string of the tag.
+        Returns:
+            str: A human-readable representation string of the tag.
+        """
         return '<{} {}>'.format(self.__class__.__name__, self._name)
 
 
@@ -394,40 +466,69 @@ class Result(db.Model):
                                      _site=site, _benchmark=benchmark, **new_args)
 
     def get_json(self) -> str:
-        """Get the json data of the result."""
+        """Get the json data of the result.
+        Returns:
+            str: The benchmark result JSON data.
+        """
         return self._json
 
     def get_site(self) -> Site:
-        """Get the execution site associated with the result."""
+        """Get the execution site associated with the result.
+        Returns:
+            Site: The site associated with this result.
+        """
         return self._site
 
     def get_benchmark(self) -> Benchmark:
-        """Get the benchmark associated with the result."""
+        """Get the benchmark associated with the result.
+        Returns:
+            Benchmark: The benchmark associated with the result.
+        """
         return self._benchmark
 
     def get_uploader(self) -> Uploader:
-        """Get the uploader associated with the result."""
+        """Get the uploader associated with the result.
+        Returns:
+            Uploader: The uploader associated with the result.
+        """
         return self._uploader
 
     def get_tags(self) -> List[Tag]:
-        """Get all the tags associated with this result."""
+        """Get all the tags associated with this result.
+        Returns:
+            List[Tag]: A list of all tags associated with this result.
+        """
         return self._tags
 
     def set_hidden(self, state: bool):
-        """Set the hide state of the result."""
+        """Set the hide state of the result.
+        Args:
+            state (bool): True if the result should be hidden.
+        """
         self._hidden = state
         db.session.commit()
 
     def get_hidden(self) -> bool:
-        """Get the hide state of the result."""
+        """Get the hide state of the result.
+        Returns:
+            bool: True if the result is hidden.
+        """
         return self._hidden
 
     def get_uuid(self) -> str:
-        """Get the result's UUID."""
+        """Get the result's UUID.
+        Returns:
+            str: The UUID of the result.
+        """
         return self._uuid
 
     def add_tag(self, tag: Tag) -> bool:
-        """Add a new tag to the result."""
+        """Add a new tag to the result.
+        Args:
+            tag (Tag): A tag to be associated with the result.
+        Returns:
+            bool: True if adding the tag was successful.
+        """
         # do not add tag twice
         if tag in self._tags:
             return False
@@ -440,7 +541,12 @@ class Result(db.Model):
         return True
 
     def remove_tag(self, tag: Tag) -> bool:
-        """Remove a tag from the result."""
+        """Remove a tag from the result.
+        Args:
+            tag (Tag): A tag to disassociated from the result.
+        Returns:
+            bool: True if removing the tag from the result was successful.
+        """
         # do not remove not-associated tag
         if not tag in self._tags:
             return False
@@ -452,8 +558,11 @@ class Result(db.Model):
             return False
         return True
 
-    def __repr__(self):
-        """Get a human-readable representation string of the result."""
+    def __repr__(self) -> str:
+        """Get a human-readable representation string of the result.
+        Returns:
+            str: A human-readable representation string of the result.
+        """
         return '<{} {} ({} {} {} {})>\n'.format(
             self.__class__.__name__, self._uuid,
             self._uploader, self._benchmark, self._site, str(self._tags))
@@ -502,19 +611,31 @@ class Report(db.Model):
         super(Report, self).__init__(_verified=False, _verdict=False, **new_args)
 
     def get_date(self) -> datetime.datetime:
-        """Get the publication date of the report."""
+        """Get the publication date of the report.
+        Returns:
+            datetime.datetime: The publication date.
+        """
         return self._date
 
     def get_message(self) -> str:
-        """Get the description message of the report."""
+        """Get the description message of the report.
+        Returns:
+            str: The report description message.
+        """
         return self._message
 
     def get_reporter(self) -> Uploader:
-        """Get the user associated with the report that submitted this report."""
+        """Get the user that submitted this report.
+        Returns:
+            Uploader: The uploader that submitted this report.
+        """
         return self._uploader
 
     def get_status(self) -> str:
-        """Get the current status of the report."""
+        """Get the current status of the report.
+        Returns:
+            str: 'accepted', 'pending', or 'rejected'
+        """
         if not self._verified:
             return 'pending'
         if self._verdict:
@@ -522,25 +643,40 @@ class Report(db.Model):
         return 'rejected'
 
     def set_verdict(self, verdict: bool):
-        """Update the verdict on the report."""
+        """Update the verdict on the report.
+        Args:
+            verdict (bool): The new verdict to set.
+        """
         self._verdict = verdict
         self._verified = True
         db.session.commit()
 
     def get_uuid(self) -> str:
-        """Get the UUID of this report."""
+        """Get the UUID of this report.
+        Returns:
+            str: The UUID of the report.
+        """
         return self._uuid
 
     @abstractmethod
     def get_report_type(self) -> int:
-        """Get the enumerated type of the report."""
+        """Get the enumerated type of the report.
+        Returns:
+            int: The type of report.
+        """
 
     @abstractmethod
     def get_field_name(self) -> str:
-        """Get the name of the reference field for the constructor."""
+        """Get the key for the dictionary field to read for result reports.
+        Returns:
+            str: The key for the dictionary field.
+        """
 
-    def __repr__(self):
-        """Get a human-readable representation string of the report."""
+    def __repr__(self) -> str:
+        """Get a human-readable representation string of the report.
+        Returns:
+            str: A human-readable representation string of the report.
+        """
         return '<{} {}>'.format(self.__class__.__name__, self._uuid)
 
 
@@ -560,13 +696,24 @@ class ResultReport(Report):
     }
 
     def get_result(self) -> Result:
-        """Get the result associated with the report."""
+        """Get the result associated with the report.
+        Returns:
+            Result: The result associated with the report.
+        """
         return self._result
 
     def get_report_type(self) -> int:
+        """Get the enumerated type of report.
+        Returns:
+            int: The type of report.
+        """
         return Report.RESULT
 
     def get_field_name(self) -> str:
+        """Get the key for the dictionary field to read for result reports.
+        Returns:
+            str: The key for the dictionary field.
+        """
         return "result"
 
 
@@ -590,9 +737,17 @@ class BenchmarkReport(Report):
         return self._benchmark
 
     def get_report_type(self) -> int:
+        """Get the enumerated type of report.
+        Returns:
+            int: The type of report.
+        """
         return Report.BENCHMARK
 
     def get_field_name(self) -> str:
+        """Get the key for the dictionary field to read for benchmark reports.
+        Returns:
+            str: The key for the dictionary field.
+        """
         return "benchmark"
 
 
@@ -612,11 +767,22 @@ class SiteReport(Report):
     }
 
     def get_site(self) -> Site:
-        """Get the site associated with the report."""
+        """Get the site associated with the report.
+        Returns:
+            Site: The site associated with the report.
+        """
         return self._site
 
     def get_report_type(self) -> int:
+        """Get the enumerated type of report.
+        Returns:
+            int: The type of report.
+        """
         return Report.SITE
 
     def get_field_name(self) -> str:
+        """Get the key for the dictionary field to read for site reports.
+        Returns:
+            str: The key for the dictionary field.
+        """
         return "site"

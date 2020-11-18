@@ -1,5 +1,5 @@
 """"This module contains the implementation of the Model facade."""
-from typing import List
+from typing import List, Type
 import json
 from sqlalchemy.exc import SQLAlchemyError
 from eosc_perf.model.data_types import Result, Tag, Benchmark, Uploader, Site,\
@@ -17,7 +17,15 @@ class DatabaseFacade:
         """Helper exception type to represent queries with no results."""
 
     def get_result(self, uuid: str) -> Result:
-        """Fetch a single result by UUID."""
+        """Fetch a single result by UUID.
+
+        Throws DatabaseFacade.NotFoundError if no such result is found.
+
+        Args:
+            uuid (str): The UUID of the result to get.
+        Returns:
+            Result: The desired result.
+        """
         # prepare query
         results = db.session.query(Result).filter(Result._uuid == uuid).all()
 
@@ -29,7 +37,15 @@ class DatabaseFacade:
         return results[0]
 
     def get_tag(self, name: str) -> Tag:
-        """Fetch a single tag by name."""
+        """Fetch a single tag by name.
+
+        Throws DatabaseFacade.NotFoundError if no such tag is found.
+
+        Args:
+            name (str): The name of the tag to get.
+        Returns:
+            Tag: The desired tag.
+        """
         # prepare query
         results = db.session.query(Tag).filter(Tag._name == name).all()
 
@@ -41,7 +57,15 @@ class DatabaseFacade:
         return results[0]
 
     def get_benchmark(self, docker_name: str) -> Benchmark:
-        """Fetch a single benchmark by its docker hub name."""
+        """Fetch a single benchmark by its docker hub name.
+
+        Throws DatabaseFacade.NotFoundError if no such benchmark is found.
+
+        Args:
+            docker_name (str): The docker name of the benchmark to get.
+        Returns:
+            Benchmark: The desired benchmark.
+        """
         # prepare query
         results = db.session.query(Benchmark).filter(Benchmark._docker_name == docker_name).all()
 
@@ -53,7 +77,15 @@ class DatabaseFacade:
         return results[0]
 
     def get_uploader(self, identifier: str) -> Uploader:
-        """Fetch a single uploader by their unique identifier."""
+        """Fetch a single uploader by their unique identifier.
+
+        Throws DatabaseFacade.NotFoundError if no such uploader is found.
+
+        Args:
+            identifier (str): The identifier of the uploader to get.
+        Returns:
+            Uploader: The desired uploader.
+        """
         # prepare query
         results = db.session.query(Uploader).filter(Uploader._identifier == identifier).all()
 
@@ -65,7 +97,15 @@ class DatabaseFacade:
         return results[0]
 
     def get_site(self, short_name: str) -> Site:
-        """Fetch a single site by its short name."""
+        """Fetch a single site by its short name.
+
+        Throws DatabaseFacade.NotFoundError if no such site is found.
+
+        Args:
+            short_name (str): The short name of the site to get.
+        Returns:
+            Site: The desired site.
+        """
         # prepare query
         results = db.session.query(Site).filter(Site._short_name == short_name).all()
 
@@ -77,7 +117,10 @@ class DatabaseFacade:
         return results[0]
 
     def get_sites(self) -> List[Site]:
-        """Get all sites."""
+        """Get all sites.
+        Returns:
+            List[Site]: A list of all sites in the database.
+        """
         # prepare query
         results = db.session.query(Site).all()
 
@@ -85,7 +128,10 @@ class DatabaseFacade:
         return results
 
     def get_tags(self) -> List[Tag]:
-        """Get all tags."""
+        """Get all tags.
+        Returns:
+            List[Tag]: A list of all tags in the database.
+        """
         # prepare query
         results = db.session.query(Tag).all()
 
@@ -93,7 +139,10 @@ class DatabaseFacade:
         return results
 
     def get_benchmarks(self) -> List[Benchmark]:
-        """Get all benchmarks."""
+        """Get all benchmarks.
+        Returns:
+            List[Tag]: A list of all benchmarks in the database.
+        """
         # prepare query
         results = db.session.query(Benchmark).all()
 
@@ -101,7 +150,17 @@ class DatabaseFacade:
         return results
 
     def query_results(self, filter_json: str) -> List[Result]:
-        """Fetch results based on given filters formatted in JSON."""
+        """Fetch results based on given filters formatted in JSON.
+
+        "type": one of "benchmark", "uploader", "site", "tag", "json",
+        "value": the value to match,
+        if type == "json": "mode": one of "equals", "greater_than", or "lesser_than"
+
+        Args:
+            filter_json (str): A JSON string containing all query filters.
+        Returns:
+            List[Results]: A list containing the 100 first results in the database matching all filters.
+        """
         filterer = ResultFilterer()
         decoded_filters = json.loads(filter_json)
         filters = decoded_filters['filters']
@@ -120,7 +179,12 @@ class DatabaseFacade:
         return filterer.filter(ResultIterator(db.session))
 
     def query_benchmarks(self, keywords: List[str]) -> List[Benchmark]:
-        """Query all benchmarks containing all keywords in the name. Case insensitive."""
+        """Query all benchmarks containing all keywords in the name.
+        Args:
+            keywords (List[str]): A list of all keywords that need to be in the benchmark's docker name.
+        Returns:
+            List[Benchmark]: A list containing all matching benchmarks in the database.
+        """
         # prepare query
         results = db.session.query(Benchmark)
 
@@ -132,8 +196,13 @@ class DatabaseFacade:
 
         return results
 
-    def _add_to_db(self, obj: db.Model) -> bool:
-        """Add a new model object to the database."""
+    def _add_to_db(self, obj: Type[db.Model]) -> bool:
+        """Add a new model object to the database.
+        Args:
+            obj (db.Model): A SQLAlchemy-Model-based object to be added.
+        Returns:
+            bool: True if adding success.
+        """
         try:
             # try adding to session and committing it
             db.session.add(obj)
@@ -144,8 +213,13 @@ class DatabaseFacade:
             db.session.rollback()
             return False
 
-    def _remove_from_db(self, obj: db.Model) -> bool:
-        """Remove a model object from the database."""
+    def _remove_from_db(self, obj: Type[db.Model]) -> bool:
+        """Remove a model object from the database.
+        Args:
+            obj (db.Model): A SQLAlchemy-Model-based object to be removed.
+        Returns:
+            bool: True if removal successful.
+        """
         try:
             db.session.delete(obj)
             db.session.commit()
@@ -155,7 +229,12 @@ class DatabaseFacade:
             return False
 
     def _has_uploader(self, uploader: str) -> bool:
-        """Input validation helper."""
+        """Input validation helper.
+        Args:
+            uploader (str): The uploader identifier of the uploader to look for.
+        Returns:
+            bool: True if the uploader was found.
+        """
         if not isinstance(uploader, str):
             return False
         if len(uploader) < 1:
@@ -167,7 +246,12 @@ class DatabaseFacade:
         return True
 
     def _has_site(self, site: str) -> bool:
-        """Input validation helper."""
+        """Input validation helper.
+        Args:
+            site (str): The short name of the site to check for.
+        Returns:
+            bool: True if the site was found.
+        """
         if not isinstance(site, str):
             return False
         if len(site) < 1:
@@ -179,7 +263,12 @@ class DatabaseFacade:
         return True
 
     def _has_benchmark(self, benchmark: str) -> bool:
-        """Input validation helper."""
+        """Input validation helper.
+        Args:
+            benchmark (str): The docker_name of the benchmark to check for.
+        Returns:
+            bool: True of the benchmark was found.
+        """
         if not isinstance(benchmark, str):
             return False
         if len(benchmark) < 1:
@@ -191,7 +280,12 @@ class DatabaseFacade:
         return True
 
     def add_uploader(self, metadata_json: str) -> bool:
-        """Add new uploader using uploader metadata json."""
+        """Add new uploader using uploader metadata json.
+        Args:
+            metadata_json (str): The metadata about the new uploader.
+        Returns:
+            bool: True if adding the uploader was successful.
+        """
         #
         metadata = json.loads(metadata_json)
 
@@ -214,7 +308,13 @@ class DatabaseFacade:
         return self._add_to_db(uploader)
 
     def add_result(self, content_json: str, metadata_json: str) -> bool:
-        """Add new site using site metadata json."""
+        """Add new site using site metadata json.
+        Args:
+            content_json (str): The JSON of the benchmark result data.
+            metadata_json (str): The metadata about the new result.
+        Returns:
+            bool: True if adding successful.
+        """
         # content_json is assumed validated by the Controller
         metadata = json.loads(metadata_json)
 
@@ -247,13 +347,18 @@ class DatabaseFacade:
                     raise TypeError("at least one tag in results metadata is not a string")
                 try:
                     tags.append(self.get_tag(tag_name))
-                except:
+                except DatabaseFacade.NotFoundError:
                     raise ValueError("unknown tag")
 
         return self._add_to_db(Result(content_json, uploader, site, benchmark, tags=tags))
 
     def add_site(self, metadata_json: str) -> bool:
-        """Add new site using site metadata json."""
+        """Add new site using site metadata json.
+        Args:
+            metadata_json (str): The metadata about the site to be added.
+        Returns:
+            bool: True if adding the site was successful.
+        """
         #
         metadata = json.loads(metadata_json)
 
@@ -280,7 +385,12 @@ class DatabaseFacade:
         return self._add_to_db(site)
 
     def remove_site(self, short_name: str) -> bool:
-        """Remove a site by short name."""
+        """Remove a site by short name.
+        Args:
+            short_name (str): The short name of the site to be removed.
+        Returns:
+            bool: True if removal was successful.
+        """
         try:
             site = self.get_site(short_name)
             return self._remove_from_db(site)
@@ -288,13 +398,23 @@ class DatabaseFacade:
             return False
 
     def add_tag(self, name: str) -> bool:
-        """Add a new tag."""
+        """Add a new tag.
+        Args:
+            name (str): The name of the tag to add.
+        Returns:
+            bool: True if adding the tag was successful.
+        """
         if len(name) < 1:
             raise ValueError("tag name too short")
         return self._add_to_db(Tag(name=name))
 
     def add_report(self, metadata: str) -> bool:
-        """Add a new report."""
+        """Add a new report.
+        Args:
+            metadata (str): The metadata of the report to add.
+        Returns:
+            bool: True if adding the report was successful.
+        """
         #
         dictionary = json.loads(metadata)
 
@@ -304,49 +424,49 @@ class DatabaseFacade:
             message = dictionary['message']
 
         # sanity checks
-        if not 'type' in dictionary:
+        if 'type' not in dictionary:
             raise ValueError("report missing type")
-        if not 'value' in dictionary:
+        if 'value' not in dictionary:
             raise ValueError("report missing value")
         if 'uploader' not in dictionary:
             raise ValueError("no uploader in report")
 
-        # check if specified report target exists
-        if dictionary['type'] == 'site':
-            try:
-                site = self.get_site(dictionary['value'])
-            except self.NotFoundError:
-                raise ValueError("unknown site for report")
-        elif dictionary['type'] == 'benchmark':
-            try:
-                benchmark = self.get_benchmark(dictionary['value'])
-            except self.NotFoundError:
-                raise ValueError("unknown benchmark for report")
-        elif dictionary['type'] == 'result':
-            try:
-                result = self.get_result(dictionary['value'])
-            except self.NotFoundError:
-                raise ValueError("unknown result for report")
-
-        # can now add report
         try:
             uploader = self.get_uploader(dictionary['uploader'])
         except self.NotFoundError:
             raise ValueError("unknown uploader")
 
+        # check if specified report target exists
         success = False
         if dictionary['type'] == 'site':
+            try:
+                site = self.get_site(dictionary['value'])
+            except self.NotFoundError:
+                raise ValueError("unknown site for report")
             success = self._add_to_db(SiteReport(uploader=uploader, message=message, site=site))
         elif dictionary['type'] == 'benchmark':
-            success = self._add_to_db(BenchmarkReport(
-                uploader=uploader, message=message, benchmark=benchmark))
+            try:
+                benchmark = self.get_benchmark(dictionary['value'])
+            except self.NotFoundError:
+                raise ValueError("unknown benchmark for report")
+            success = self._add_to_db(BenchmarkReport(uploader=uploader, message=message, benchmark=benchmark))
         elif dictionary['type'] == 'result':
-            success = self._add_to_db(
-                ResultReport(uploader=uploader, message=message, result=result))
+            try:
+                result = self.get_result(dictionary['value'])
+            except self.NotFoundError:
+                raise ValueError("unknown result for report")
+            success = self._add_to_db(ResultReport(uploader=uploader, message=message, result=result))
+
         return success
 
     def add_benchmark(self, docker_name: str, uploader_id: str) -> bool:
-        """Add a new benchmark."""
+        """Add a new benchmark.
+        Args:
+            docker_name (str): The docker name of the benchmark to add.
+            uploader_id (str): The identifier of the uploader that added this benchmark.
+        Returns:
+            bool: True if adding the benchmark was successful.
+        """
         # 'a/b'
         if len(docker_name) < 3:
             raise ValueError("benchmark docker_name illegally short")
@@ -359,7 +479,15 @@ class DatabaseFacade:
         return self._add_to_db(Benchmark(docker_name, uploader))
 
     def get_report(self, uuid: str) -> Report:
-        """Fetch a single report by its UUID."""
+        """Fetch a single report by its UUID.
+
+        Throws DatabaseFacade.NotFoundError if the report was not found.
+
+        Args:
+            uuid (str): The UUID of the report to get.
+        Returns:
+            Report: The desired report.
+        """
         # query for every type of report
         report_classes = [ResultReport, BenchmarkReport, SiteReport]
         results = []
@@ -377,7 +505,12 @@ class DatabaseFacade:
         return results[0]
 
     def get_reports(self, only_unanswered: bool = False) -> List[Report]:
-        """Get all or only unanswered reports."""
+        """Get all or only unanswered reports.
+        Args:
+            only_unanswered (bool): True if it should only return reports with no verdict.
+        Returns:
+            List[Report]: The list containing the desired reports.
+        """
         # prepare query
         # pylint: disable=singleton-comparison
         results = db.session.query(ResultReport)
