@@ -84,3 +84,6 @@ disable=print-statement,
 
 [TYPECHECK]
 ignored-modules=flask_sqlalchemy
+
+[FORMAT]
+max-line-length=120
