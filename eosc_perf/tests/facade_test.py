@@ -2,9 +2,9 @@
 import unittest
 import json
 from flask import Flask
-from app.configuration import configuration
-from app.model.database import configure_database
-from app.model.facade import DatabaseFacade
+from eosc_perf.configuration import configuration
+from eosc_perf.model.database import configure_database
+from eosc_perf.model.facade import DatabaseFacade
 
 class FacadeTest(unittest.TestCase):
     """Tests for facade."""

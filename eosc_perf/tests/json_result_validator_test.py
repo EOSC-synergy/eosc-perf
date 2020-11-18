@@ -2,8 +2,8 @@
 
 import json
 import unittest
-from app.controller.json_result_validator import JSONResultValidator
-from app.configuration import configuration
+from eosc_perf.controller.json_result_validator import JSONResultValidator
+from eosc_perf.configuration import configuration
 
 class JSONResultValidatorTest(unittest.TestCase):
 

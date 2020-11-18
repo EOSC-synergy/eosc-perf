@@ -2,10 +2,10 @@
 from typing import List
 import json
 from sqlalchemy.exc import SQLAlchemyError
-from app.model.data_types import Result, Tag, Benchmark, Uploader, Site,\
+from eosc_perf.model.data_types import Result, Tag, Benchmark, Uploader, Site,\
     ResultIterator, Report, ResultReport, BenchmarkReport, SiteReport
-from app.model.result_filterer import ResultFilterer
-from app.model.filters import BenchmarkFilter, UploaderFilter, SiteFilter, TagFilter,\
+from eosc_perf.model.result_filterer import ResultFilterer
+from eosc_perf.model.filters import BenchmarkFilter, UploaderFilter, SiteFilter, TagFilter,\
     JsonValueFilter
 from .database import db
 

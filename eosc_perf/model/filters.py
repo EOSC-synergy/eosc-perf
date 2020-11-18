@@ -2,7 +2,7 @@
 from abc import abstractmethod
 import json
 from functools import reduce
-from app.model.data_types import Result
+from eosc_perf.model.data_types import Result
 
 class Filter:
     """Abstract filter that all concrete Filter implementations inherit from."""

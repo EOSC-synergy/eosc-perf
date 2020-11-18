@@ -3,13 +3,13 @@ from time import time
 import unittest
 import json
 from flask import Flask, session
-from app.model.database import configure_database
-from app.model.facade import DatabaseFacade
-from app.controller.authenticator import configure_authenticator
-from app.controller.io_controller import controller
-from app.controller.authenticator import AuthenticateError
-from app.configuration import configuration
-from app.model.data_types import Report
+from eosc_perf.model.database import configure_database
+from eosc_perf.model.facade import DatabaseFacade
+from eosc_perf.controller.authenticator import configure_authenticator
+from eosc_perf.controller.io_controller import controller
+from eosc_perf.controller.authenticator import AuthenticateError
+from eosc_perf.configuration import configuration
+from eosc_perf.model.data_types import Report
 
 USER = {'exp': time() + 3600,
         'sub': 'id',

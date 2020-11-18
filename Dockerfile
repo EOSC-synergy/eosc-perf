@@ -12,7 +12,7 @@ COPY ./requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 # copy the whole webapp
-COPY ./app/. .
+COPY ./eosc_perf/. .
 COPY ./templates/. .
 COPY ./uwsgi.ini .
 # TODO: keep the config here?

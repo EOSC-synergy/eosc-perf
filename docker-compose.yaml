@@ -1,7 +1,7 @@
 version: '3'
 services:
   flask:
-    image: flask-pse
+    image: flask-eosc-perf
     restart: unless-stopped
     build:
       context: .
@@ -9,12 +9,12 @@ services:
     # override app folder during development
     volumes:
       # development mounts, if these do not change, they should be copied in the dockerfile
-      - ${PWD}/app:/app/app
-      - ${PWD}/templates:/app/templates
-      - ${PWD}/uwsgi.ini:/app/uwsgi.ini
-      - ${PWD}/upload_license.txt:/app/upload_license.txt
+      - ./eosc_perf:/app/eosc_perf
+      - ./templates:/app/templates
+      - ./uwsgi.ini:/app/uwsgi.ini
+      - ./upload_license.txt:/app/upload_license.txt
       # production config
-      - ${PWD}/config.yaml:/app/config.yaml
+      - ./config.yaml:/app/config.yaml
 
   nginx:
     image: nginx:1.14.2-alpine
@@ -23,9 +23,9 @@ services:
       - "8080:80"
       - "443:443"
     volumes:
-      - ${PWD}/certs:/etc/nginx/certs
-      - ${PWD}/nginx:/etc/nginx/conf.d
-      - ${PWD}/static:/var/www/web/
+      - ./certs:/etc/nginx/certs
+      - ./nginx:/etc/nginx/conf.d
+      - ./static:/var/www/web/
     #command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
     depends_on:
       - flask

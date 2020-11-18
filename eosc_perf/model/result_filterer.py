@@ -1,7 +1,7 @@
 """"This module contains the result filterer class used by the model."""
 from typing import List
-from app.model.data_types import Result, ResultIterator
-from app.model.filters import Filter
+from eosc_perf.model.data_types import Result, ResultIterator
+from eosc_perf.model.filters import Filter
 
 class ResultFilterer:
     """Applies a list of filters to a set of results and returns the results that match all

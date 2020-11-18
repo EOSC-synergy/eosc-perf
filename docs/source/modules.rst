@@ -1,7 +1,7 @@
-app
+eosc_perf
 ===
 
 .. toctree::
    :maxdepth: 4
 
-   app
+   eosc_perf
