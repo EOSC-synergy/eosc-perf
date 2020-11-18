@@ -20,7 +20,7 @@ class PageFactory:
     _environment: jj.Environment
 
     def __init__(self):
-        """constructor initialises the environment."""
+        """Set up a new PageFactory."""
         self._environment = jj.Environment(
             loader=jj.FileSystemLoader('templates/'),
             autoescape=jj.select_autoescape(['html', 'xml'])
@@ -34,16 +34,11 @@ class PageFactory:
         template provided in the class.
 
         Args:
-            args (JSON): Parameters used by some child classes to generate
-                the right content.
-            template (HTML): A template can be used instead of the default
-                should contain variables for content and info,
-                doesn't change the template lasting,
-                can be left empty.
-            info (str): Information displayed on the returned HTML page
-                # todo may contain extra html formatting,
-                doesn't change the info lasting,
-                can be left empty.
+            args (JSON): Parameters used by some child classes to generate the right content.
+            template (HTML): A template can be used instead of the default should contain variables for content and
+                info, doesn't change the template lasting, can be left empty.
+            info (str): Information displayed on the returned HTML page doesn't change the info lasting, can be left
+                empty.
             jinja_args (kwargs): Extra arguments for the jinja template.
         Returns:
             HTML: The finished HTML page displaying the content and information.
@@ -62,13 +57,11 @@ class PageFactory:
 
     @abstractmethod
     def _generate_content(self, args: Any) -> Tuple[HTML, Any]:
-        """(abstract) Pattern function to generate the content of a given page.
+        """Pattern function to generate the content of a given page.
 
         Args:
             args (JSON): Parameters used by child classes to generate the right content.
 
         Returns:
-            (tuple): tuple containing:
-                page content (HTML): The Content part, consisting of JavaScript.
-                args (Any): Extra arguments for jinja
+            Tuple[HTML, Any]: A tuple containing page content to fill in and extra arguments for Jinja.
         """

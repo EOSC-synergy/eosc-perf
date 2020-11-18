@@ -14,22 +14,30 @@ from ...controller.io_controller import controller
 
 from .helpers import error_json_redirect, error_redirect, info_redirect
 
+
 class SiteReviewPageFactory(PageFactory):
     """A factory to build site report view pages."""
 
     def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
         return "", {}
 
-    def report_exists(self, name: str) -> bool:
-        """Helper to determine whether a site exists."""
+    def report_exists(self, uuid: str) -> bool:
+        """Helper to determine whether a report exists.
+        Args:
+            uuid (str): The UUID of the report to check for.
+        Returns:
+            bool: True if the report exists.
+        """
 
         try:
-            facade.get_report(name)
+            facade.get_report(uuid)
             return True
         except facade.NotFoundError:
             return False
 
+
 site_review_blueprint = Blueprint('site-review', __name__)
+
 
 @site_review_blueprint.route('/site_review_fetch_first', methods=['GET'])
 def review_site_helper():
@@ -44,9 +52,10 @@ def review_site_helper():
             return redirect('/site_review?' + url_encode({'uuid': report.get_uuid()}), code=302)
     return info_redirect('No site to review')
 
+
 @site_review_blueprint.route('/site_review', methods=['GET'])
 def review_site():
-    """HTTP endpoint for the site review page"""
+    """HTTP endpoint for the site review page."""
 
     if not controller.is_authenticated():
         return error_redirect('Not logged in')
@@ -86,9 +95,10 @@ def review_site():
         uuid=uuid)
     return Response(page, mimetype='text/html')
 
+
 @site_review_blueprint.route('/site_review_submit', methods=['POST'])
 def review_site_submit():
-    """HTTP endpoint to take in the reports"""
+    """HTTP endpoint to take in the reports."""
 
     if not controller.is_authenticated():
         return error_json_redirect('Not logged in')

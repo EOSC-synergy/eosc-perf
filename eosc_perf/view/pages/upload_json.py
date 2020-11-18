@@ -15,6 +15,7 @@ from ...controller.io_controller import controller
 
 from .helpers import error_json_redirect, error_redirect
 
+
 class UploadJSONFactory(PageFactory):
     """A factory to build upload pages."""
 
@@ -23,18 +24,23 @@ class UploadJSONFactory(PageFactory):
 
     @staticmethod
     def get_license_string() -> str:
-        """Helper: Get result upload license as string:"""
+        """Helper: Get result upload license as string.
+        Returns:
+            str: The license text.
+        """
         filename = configuration.get("upload_license_filename")
         path = str(Path(__file__).parent) + "/../../../" + filename
         with open(path, "r") as license_file:
             license_string = license_file.read()
         return license_string
 
+
 upload_json_blueprint = Blueprint('upload_json_blueprint', __name__)
+
 
 @upload_json_blueprint.route('/upload', methods=['GET'])
 def upload_result():
-    """HTTP endpoint for the result upload page"""
+    """HTTP endpoint for the result upload page."""
 
     if not controller.is_authenticated():
         return error_redirect('Not logged in')
@@ -47,9 +53,10 @@ def upload_result():
         license=factory.get_license_string().replace('\n', '<br/>'))
     return Response(page, mimetype='text/html')
 
+
 @upload_json_blueprint.route('/upload_submit', methods=['POST'])
 def upload_result_submit():
-    """HTTP endpoint to take in results"""
+    """HTTP endpoint to take in results."""
     if not controller.is_authenticated():
         return error_json_redirect('Not logged in')
     # check if the post request has the file part
@@ -112,9 +119,10 @@ def upload_result_submit():
 
     return Response('{}', mimetype='application/json', status=200)
 
+
 @upload_json_blueprint.route('/upload_tag', methods=['POST'])
 def upload_tag():
-    """HTTP endpoint to take in new tags"""
+    """HTTP endpoint to take in new tags."""
     tag = request.form['new_tag']
     if tag == "":
         return error_json_redirect('No name entered for new tag')

@@ -17,11 +17,12 @@ class SearchResultFactory(PageFactory):
     """ A factory to create search result pages."""
 
     def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
-        """Generate js code containing information reqired for searchpage.
+        """Generate js code containing information required for the search page.
         Args:
-            args (JSON): A json containing a 'benchmark' and 'admin' value
+            args (JSON): A json containing a 'benchmark' and 'admin' value.
         Returns:
-            HTML: The finished content."""
+            HTML: JS variables for 'benchmark' and 'admin'.
+        """
         arguments = json.loads(args)
         try:
             result = "admin = {}; benchmark = '{}';".format(
@@ -38,7 +39,7 @@ result_search_blueprint = Blueprint('result_search', __name__)
 
 @result_search_blueprint.route('/result_search')
 def make_search_page():
-    """Http endpoint for resultsearch genration."""
+    """Http endpoint for result search generation."""
     benchmark = request.args.get('benchmark')
     if benchmark is None:
         benchmark = ""
@@ -55,8 +56,7 @@ def make_search_page():
 
 @result_search_blueprint.route('/delete_result')
 def delete_result():
-    """Http endpoint for result deletion ajax fetch.
-    """
+    """Http endpoint for result deletion ajax fetch."""
     if not controller.is_admin():
         return Response('You not authenticated for this action.', mimetype='text/html')
 

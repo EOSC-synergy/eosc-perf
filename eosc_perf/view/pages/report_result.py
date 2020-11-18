@@ -23,10 +23,16 @@ class ResultReportPageFactory(PageFactory):
     def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
         return "", {}
 
-    def generate_page_content(self, uuid) -> HTML:
+    def generate_page_content(self, uuid: str) -> HTML:
         """Generate page body code.
 
-        This contains the result json for the template."""
+        This contains the result json for the template.
+
+        Args:
+            uuid (str): The UUID of the result to report.
+        Returns:
+            HTML: HTML content with the result JSON.
+        """
         result = facade.get_result(uuid)
 
         # return a pretty-printed version
@@ -35,7 +41,12 @@ class ResultReportPageFactory(PageFactory):
         return string
 
     def result_exists(self, uuid: str) -> bool:
-        """Helper to determine whether a result exists."""
+        """Helper to determine whether a result exists.
+        Args:
+            uuid (str): The UUID of the result to look for.
+        Returns:
+            bool: True if the result exists.
+        """
         try:
             facade.get_result(uuid)
             return True
@@ -47,7 +58,7 @@ result_report_blueprint = Blueprint('result-report-factory', __name__)
 # temporary helper function for testing
 @result_report_blueprint.route('/test_report_result', methods=['GET'])
 def test_report_result():
-    """Mock helper."""
+    """Testing helper."""
     if not configuration.get('debug'):
         return error_redirect('This endpoint is not available in production')
     iterator = ResultIterator(db.session)
@@ -58,7 +69,7 @@ def test_report_result():
 
 @result_report_blueprint.route('/report_result', methods=['GET'])
 def report_result():
-    """HTTP endpoint for the result report submission page"""
+    """HTTP endpoint for the result report submission page."""
 
     if not controller.is_authenticated():
         return error_redirect('Not logged in')
@@ -80,7 +91,7 @@ def report_result():
 
 @result_report_blueprint.route('/report_result_submit', methods=['POST'])
 def report_result_submit():
-    """HTTP endpoint to take in the reports"""
+    """HTTP endpoint to take in the reports."""
 
     if not controller.is_authenticated():
         return error_json_redirect('Not logged in')

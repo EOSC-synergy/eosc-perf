@@ -24,7 +24,7 @@ def report_exists(uuid: str) -> bool:
     """Helper to determine whether a benchmark exists.
 
     Args:
-        uuid (str): Report UUID
+        uuid (str): The UUID to check for.
     """
     try:
         facade.get_report(uuid)
@@ -43,7 +43,9 @@ def decompose_dockername(docker_name: str) -> Tuple[str, str, str]:
     """Helper to break a model-docker_name into a tuple.
 
     Args:
-        docker_name (str): full docker name
+        docker_name (str): Docker name to decompose.
+    Returns:
+        Tuple[str, str, str]: A tuple containing the username, the image name and the tag.
     """
     slash = docker_name.find('/')
     if slash == -1:
@@ -61,16 +63,26 @@ def decompose_dockername(docker_name: str) -> Tuple[str, str, str]:
     return username, image, tag
 
 
-def build_dockerhub_url(docker_name):
-    """Helper function to build a link to a docker hub page."""
+def build_dockerhub_url(docker_name: str) -> str:
+    """Helper function to build a link to a docker hub page.
+    Args:
+        docker_name (str): The docker name to build a dockerhub url for.
+    Returns:
+        str: An URL to the given docker container on dockerhub.
+    """
     (username, image, tag) = decompose_dockername(docker_name)
 
     url = 'https://hub.docker.com/r/{}/{}'.format(username, image)
     return url
 
 
-def build_dockerregistry_url(docker_name):
-    """Helper function to build a link to the docker hub registry api."""
+def build_dockerregistry_url(docker_name: str) -> str:
+    """Helper function to build a link to the docker hub registry api.
+    Args:
+        docker_name (str): The docker name to build a link to the docker registry for.
+    Returns:
+        str: An URL to the given docker container on the docker registry.
+    """
     (username, image, tag) = decompose_dockername(docker_name)
 
     url = 'https://registry.hub.docker.com/v2/repositories/{}/{}/'.format(username, image)
@@ -98,7 +110,7 @@ def get_benchmark_review():
 
 @benchmark_review_blueprint.route('/benchmark_review', methods=['GET'])
 def review_benchmark():
-    """HTTP endpoint for the benchmark review page"""
+    """HTTP endpoint for the benchmark review page."""
 
     if not controller.is_authenticated():
         return error_redirect('Not logged in')
@@ -158,7 +170,7 @@ def review_benchmark():
 
 @benchmark_review_blueprint.route('/benchmark_review_submit', methods=['POST'])
 def review_benchmark_submit():
-    """HTTP endpoint to take in the reports"""
+    """HTTP endpoint to take in the reports."""
 
     if not controller.is_authenticated():
         return error_json_redirect('Not logged in')

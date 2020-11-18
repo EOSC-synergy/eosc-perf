@@ -24,7 +24,7 @@ info_blueprint = Blueprint('information-page-factory', __name__)
 
 @info_blueprint.route('/info')
 def info_page():
-    """HTTP endpoint for information page"""
+    """HTTP endpoint for information page."""
     info = request.args.get('text')
     if info is None:
         return error_redirect('Information page called with invalid arguments')
@@ -44,7 +44,7 @@ def privacy_page():
 
 @info_blueprint.route('/code_guidelines')
 def code_guidelines():
-    """HTTP endpoint for code guidelines page"""
+    """HTTP endpoint for code guidelines page."""
     factory = InformationPageFactory()
     info = json.loads("{}")
     with open('controller/' + DEFAULT_TEMPLATE_PATH) as min_template:
@@ -57,7 +57,7 @@ def code_guidelines():
 
 @info_blueprint.route('/error')
 def error():
-    """HTTP endpoint for information page"""
+    """HTTP endpoint for information page."""
     info = request.args.get('text')
     if info is None:
         info = "Unknown error"

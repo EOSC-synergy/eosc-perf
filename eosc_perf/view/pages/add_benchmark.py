@@ -11,17 +11,20 @@ from ...controller.io_controller import controller
 
 from .helpers import error_json_redirect, error_redirect
 
+
 class AddBenchmarkPageFactory(PageFactory):
     """A factory to build information pages."""
 
     def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
         return "", {}
 
+
 add_benchmark_blueprint = Blueprint('add-benchmark-factory', __name__)
+
 
 @add_benchmark_blueprint.route('/add_benchmark', methods=['GET'])
 def add_benchmark():
-    """HTTP endpoint for the benchmark submission page"""
+    """HTTP endpoint for the benchmark submission page."""
 
     if not controller.is_authenticated():
         return error_redirect('Not logged in')
@@ -31,9 +34,10 @@ def add_benchmark():
     page = factory.generate_page(template='add_benchmark.html')
     return Response(page, mimetype='text/html')
 
+
 @add_benchmark_blueprint.route('/add_benchmark_submit', methods=['POST'])
 def add_benchmark_submit():
-    """HTTP endpoint to take in the reports"""
+    """HTTP endpoint to take in the reports."""
 
     if not controller.is_authenticated():
         return error_json_redirect('Not logged in')
