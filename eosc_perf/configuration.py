@@ -1,23 +1,32 @@
 """Configuration structure for config files to the application."""
 import os
+from typing import Any
+
 import yaml
+
 
 class ConfigHandler:
     """Helper for config state."""
+
+    config: dict = {}
+
     def __init__(self):
-        self.config = {}
+        """Set up a new configuration."""
         self.reset()
 
-    def _get_defaults(self):
-        """Get default configuration values."""
+    def _get_defaults(self) -> dict:
+        """Get default configuration values.
+        Returns:
+            dict: A dictionary containing default configuration values.
+        """
         defaults = {
             'debug': False,
             'debug-db-reset': True,
             'debug-db-dummy-items': True,
             'database-path': '',
             'admin_affiliations': ['example@kit.edu'],
-            'secret_key': '!secret',
             'debug_admin_affiliations': ['example2@kit.edu'],
+            'secret_key': '!secret',
             'oidc_client_secret': '',
             'oidc_redirect_hostname': 'localhost',
             'upload_license_filename': 'upload_license.txt',
@@ -26,8 +35,13 @@ class ConfigHandler:
 
         return defaults
 
-    def _load_config(self, load_file: bool = False):
-        """Load the config file from 'config.ini'."""
+    def _load_config(self, load_file: bool = False) -> dict:
+        """Load the config file from 'config.ini'.
+        Args:
+            load_file (bool): True if the configuration should be read from `config.ini`.
+        Returns:
+            dict: A dictionary containing all loaded configuration values.
+        """
         defaults = self._get_defaults()
         if load_file and os.path.exists('config.yaml'):
             with open('config.yaml') as file:
@@ -42,12 +56,21 @@ class ConfigHandler:
 
         return defaults
 
-    def set(self, tag, value):
-        """Set a value."""
+    def set(self, tag: str, value: Any):
+        """Set a value.
+        Args:
+            tag (str): The configuration value to change.
+            value (Any): The new value to set it to.
+        """
         self.config[tag] = value
 
-    def get(self, tag):
-        """Get a value."""
+    def get(self, tag: str) -> Any:
+        """Get a value.
+        Args:
+            tag (str): The configuration value to get.
+        Returns:
+            Any: The value of the requested configuration value.
+        """
         if not tag in self.config:
             raise ValueError("unknown config value requested")
         return self.config[tag]
@@ -59,5 +82,6 @@ class ConfigHandler:
     def reload(self):
         """Reset and reload values from file."""
         self.config = self._load_config(True)
+
 
 configuration: ConfigHandler = ConfigHandler()
