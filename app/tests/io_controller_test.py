@@ -501,21 +501,21 @@ class IOControllerTest(unittest.TestCase):
             session['user']['info']['edu_person_scoped_affiliations'] = ["student@mit.edu"]
             self.assertFalse(self.controller.is_admin())
 
-    def test_is_admin_one_afilliation(self):
+    def test_is_admin_one_entitlement(self):
         with self.app.test_request_context():
             self._login_admin()
             self.assertTrue(self.controller.is_admin())
 
-    def test_is_admin_all_afilliations(self):
-        admin_affiliations = configuration.get('debug_admin_affiliations')
-        admin_affiliations += ["test@test.edu", "hacker@1337.ccc"]
-        # Extending admin affiliations
-        configuration.set("debug_admin_affiliations", admin_affiliations)
-        with self.app.test_request_context():
-            # User has all admin affiliations
-            self._login_standard_user()
-            session['user']['info']['edu_person_scoped_affiliations'] = admin_affiliations
-            self.assertTrue(self.controller.is_admin())
+    #def test_is_admin_all_affilliations(self):
+    #    admin_affiliations = configuration.get('debug_admin_affiliations')
+    #    admin_affiliations += ["test@test.edu", "hacker@1337.ccc"]
+    #    # Extending admin affiliations
+    #    configuration.set("debug_admin_affiliations", admin_affiliations)
+    #    with self.app.test_request_context():
+    #        # User has all admin affiliations
+    #        self._login_standard_user()
+    #        session['user']['info']['edu_person_scoped_affiliations'] = admin_affiliations
+    #        self.assertTrue(self.controller.is_admin())
 
     def test_authenticated(self):
         """Tests if IOController returns True when logged
@@ -532,12 +532,13 @@ class IOControllerTest(unittest.TestCase):
 
     def _login_standard_user(self):
         session['user'] = USER
-        session['user']['info'].pop('edu_person_scoped_affiliations', None)
+        session['user']['info'].pop('eduperson_entitlement', None)
 
     def _login_admin(self):
         self._login_standard_user()
-        admin_afill = configuration.get('debug_admin_affiliations')[:1]
-        session['user']['info']['edu_person_scoped_affiliations'] = admin_afill
+        admin_entitlement = configuration.get('debug_admin_entitlements')[:1]
+        admin_entitlement[0] += '#aai.egi.eu'
+        session['user']['info']['eduperson_entitlement'] = admin_entitlement
 
     def _logout(self):
         session.pop('user', None)
