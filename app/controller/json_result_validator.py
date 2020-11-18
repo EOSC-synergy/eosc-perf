@@ -3,6 +3,8 @@
 import os
 import json
 
+from app.controller.type_aliases import JSON
+
 DEFAULT_TEMPLATE_PATH = 'config/result_template.json'
 
 
@@ -15,8 +17,11 @@ class JSONResultValidator:
         with open(template_abs_path) as template:
             self.template_json = json.load(template)
 
-    def validate_json(self, result_string):
-        """Validate the json."""
+    def validate_json(self, result_string: JSON) -> bool:
+        """Validate a json string.
+        Returns:
+            bool: True if valid JSON.
+        """
         try:
             result_json = json.loads(result_string)
         except json.JSONDecodeError:
@@ -28,7 +33,15 @@ class JSONResultValidator:
         return _subset_keys(result_json, self.template_json)
 
 
-def _subset_keys(json_result, json_template, check_subkeys=True):
+def _subset_keys(json_result: JSON, json_template: JSON, check_subkeys: bool = True) -> bool:
+    """Check if a result contains the keys from the template.
+    Args:
+        json_result (JSON): The result to check.
+        json_template (JSON): The template to compare against.
+        check_subkeys (bool): Whether to check subkeys.
+    Return:
+        bool: True if result contains all keys of template.
+    """
     # Check if both parameters are dictionaries
     if not (isinstance(json_result, dict) and isinstance(json_template, dict)):
         return False

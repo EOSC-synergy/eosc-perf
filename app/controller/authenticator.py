@@ -6,7 +6,7 @@ from urllib.request import urlopen
 import requests
 from aarc_g002_entitlement import Aarc_g002_entitlement
 
-from flask import session
+from flask import session, Response
 from flask.blueprints import Blueprint
 from authlib.integrations.flask_client import OAuth
 from ..configuration import configuration
@@ -30,7 +30,7 @@ class Authenticator:
 
     Attributes:
         oauth (OAuth): The used Flask OAuth registry for oauth clients.
-        admin_entitlements (list of str): If a user has one entitlement that is included in this list,
+        admin_entitlements (List[str]): If a user has one entitlement that is included in this list,
             they have admin rights.
         hostname (str): The hostname used for redirection after authentication.
         client_secret (str): The oauth client secret.
@@ -47,7 +47,7 @@ class Authenticator:
         self.userinfo_url = ""
 
     def configure_authenticator(self, flask_app):
-        """Sets up OIDC authentication functionality for the web app.
+        """Set up OIDC authentication functionality for the web app.
         Args:
             flask_app (Flask): The flask app for which to set up OIDC functionality.
         """
@@ -81,20 +81,20 @@ class Authenticator:
         )
 
     def authenticate_user(self):
-        """Redirects user to EGI Check-In for authentication"""
+        """Redirect user to EGI Check-In for authentication."""
         redirect_uri = 'https://' + self.hostname + '/oidc-redirect'
         return self.oauth.eosc_perf.authorize_redirect(redirect_uri)
 
-    def authentication_redirect(self):
-        """Validates user authentication after login through EGI Check-In"""
+    def authentication_redirect(self) -> Response:
+        """Validate user authentication after login through EGI Check-In."""
         if self.is_authenticated():
             return info_redirect('Logged in successfully')
         return error_redirect('Login failed')
 
-    def is_authenticated(self):
-        """Checks if the current user is authenticated. Will return true
-           if the user just logged in through EGI Check-In or if the user
-           still has a token that is not expired.
+    def is_authenticated(self) -> bool:
+        """Check if the current user is authenticated.
+        Returns:
+            bool: True if logged in through EGI Check-In or token not expired.
         """
         if not self._token_expired():
             return True
@@ -110,8 +110,11 @@ class Authenticator:
             return False
         return True
 
-    def is_admin(self):
-        """Checks whether the current user has admin rights"""
+    def is_admin(self) -> bool:
+        """Check whether the current user has admin rights.
+        Returns:
+            bool: True if the user is an admin.
+        """
         try:
             entitlements = session['user']['info']['eduperson_entitlement']
         except KeyError:
@@ -122,8 +125,11 @@ class Authenticator:
                     return True
         return False
 
-    def logout(self):
-        """Signs out the current user"""
+    def logout(self) -> bool:
+        """Sign out the current user.
+        Returns:
+            bool: True if logout successful
+        """
         try:
             token = session['user']['info']
         except KeyError:
@@ -136,9 +142,12 @@ class Authenticator:
         session.pop('user', None)
         return True
 
-    def _refresh_token(self):
-        """Tries to refresh token of current user.
-           Returns True if refresh succeeds, False otherwise."""
+    def _refresh_token(self) -> bool:
+        """Try to refresh token of current user.
+        Returns:
+            bool: True if refresh succeeds.
+        """
+
         endpoint = json.loads(urlopen(self.conf_url).read())["token_endpoint"]
         try:
             refresh_token = session['user']['token']['refresh_token']
@@ -166,8 +175,11 @@ class Authenticator:
             return True
         return False
 
-    def _token_expired(self):
-        """Checks if the current user has a valid authentication token"""
+    def _token_expired(self) -> bool:
+        """Check if the current user has a valid authentication token.
+        Returns:
+            True if there is *no* valid token.
+        """
         try:
             user = session['user']
         except KeyError:
@@ -179,15 +191,18 @@ class Authenticator:
         return user['exp'] < time()
 
     @staticmethod
-    def _match_entitlement(required, actual):
-        """Matches an AARC G002 entitlement"""
+    def _match_entitlement(required, actual) -> bool:
+        """Match an AARC G002 entitlement.
+        Returns:
+            bool: True if the actual entitlements contain the required one.
+        """
         required_entitlement = Aarc_g002_entitlement(required, strict=False)
         actual_entitlement = Aarc_g002_entitlement(actual)
         return required_entitlement.is_contained_in(actual_entitlement)
 
     @staticmethod
     def __update_user_info():
-        """If current user is in db, saved email and name are updated"""
+        """Update saved email and name if current user is in db."""
         uid = session['user']['sub']
         try:
             uploader = facade.get_uploader(uid)
@@ -206,25 +221,25 @@ authenticator_blueprint = Blueprint('authenticator', __name__)
 
 
 def configure_authenticator(app):
-    """Configures the authenticator for given app and config"""
+    """Configures the authenticator for given app and config."""
     authenticator.configure_authenticator(app)
 
 
 @authenticator_blueprint.route('/login')
 def authenticate_user():
-    """"Authenticates user through authenticator singleton"""
+    """"Authenticates user through authenticator singleton."""
     return authenticator.authenticate_user()
 
 
 @authenticator_blueprint.route('/oidc-redirect')
 def authentication_redirect():
-    """"OIDC-Authentication redirect through authenticator singleton"""
+    """"OIDC-Authentication redirect through authenticator singleton."""
     return authenticator.authentication_redirect()
 
 
 @authenticator_blueprint.route('/logout')
 def logout():
-    """"Revoke current user's authentication"""
+    """"Revoke current user's authentication."""
     if authenticator.logout():
         return info_redirect('Logged out')
     else:

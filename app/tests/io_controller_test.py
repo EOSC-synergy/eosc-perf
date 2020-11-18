@@ -85,7 +85,7 @@ class IOControllerTest(unittest.TestCase):
         with self.app.test_request_context():
             self._login_standard_user()
             self.assertRaises(RuntimeError, self.controller.submit_benchmark, ":", "")
-            self.assertRaises(ValueError, self.controller.submit_benchmark, None, "")
+            self.assertRaises(RuntimeError, self.controller.submit_benchmark, None, "")
 
     def test_submit_benchmark_success(self):
         uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + USER['info']['name'] + '"}'
@@ -199,7 +199,7 @@ class IOControllerTest(unittest.TestCase):
         self.facade.add_uploader(uploader_metadata)
         with self.app.test_request_context():
             self._login_standard_user()
-            self.controller.submit_site("name", "127.0.0.1")
+            self.assertTrue(self.controller.submit_site("name", "127.0.0.1"))
             self.assertTrue(self.controller.remove_site("name"))
             # make sure that site is removed
             self.assertFalse(self.controller.remove_site("name"))
