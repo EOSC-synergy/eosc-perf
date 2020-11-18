@@ -62,7 +62,7 @@ class JSONResultValidatorTest(unittest.TestCase):
         self.assertTrue(self.validator.validate_json(json.dumps(js)))
 
     def _load_template(self):
-        with open("app/controller/config/result_template.json") as file:
+        with open("eosc_perf/controller/config/result_template.json") as file:
             return file.read()
 
 if __name__ == '__main__':
