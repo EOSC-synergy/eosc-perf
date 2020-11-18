@@ -12,10 +12,6 @@ Welcome to eosc-perf's documentation!
 
    intro
    modules
-   app
-   app.model
-   app.controller
-   app.view
 
 Indices and tables
 ==================
