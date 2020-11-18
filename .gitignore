@@ -138,4 +138,4 @@ test.db
 *.db
 config.yaml
 upload_license.txt
-certs/*
+nginx/certs/*

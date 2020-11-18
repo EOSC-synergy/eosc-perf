@@ -15,7 +15,7 @@ To launch the webapp entirely:
     * Set `secret_key` to something long with much entropy
     * Set `infrastructure_href` to the website of your infrastructure manager
 1. Write a license for uploaded results to `upload_license.txt` or copy `uploading_license.txt.placeholder` for testing
-1. Move your SSL certificate and key to certs/ (Make sure they are called `certificate.crt` and `private_key.key`)
+1. Move your SSL certificate and key to nginx/certs/ (Make sure they are called `certificate.crt` and `private_key.key`)
 1. Run `docker-compose build`
 1. Run `docker-compose up`
 

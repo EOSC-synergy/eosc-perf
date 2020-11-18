@@ -23,7 +23,7 @@ services:
       - "8080:80"
       - "443:443"
     volumes:
-      - ./certs:/etc/nginx/certs
+      - ./nginx/certs:/etc/nginx/certs
       - ./nginx:/etc/nginx/conf.d
       - ./static:/var/www/web/
     #command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
