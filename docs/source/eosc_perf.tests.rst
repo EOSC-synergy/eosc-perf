@@ -1,5 +1,13 @@
-eosc\_perf.tests package
-========================
+Tests
+=====
+
+Module contents
+---------------
+
+.. automodule:: eosc_perf.tests
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Submodules
 ----------
@@ -24,14 +32,6 @@ eosc\_perf.tests.json\_result\_validator\_test module
 -----------------------------------------------------
 
 .. automodule:: eosc_perf.tests.json_result_validator_test
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: eosc_perf.tests
    :members:
    :undoc-members:
    :show-inheritance:

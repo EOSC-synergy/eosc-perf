@@ -1,5 +1,13 @@
-eosc\_perf.controller package
-=============================
+Controller
+==========
+
+Module contents
+---------------
+
+.. automodule:: eosc_perf.controller
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Submodules
 ----------
@@ -32,14 +40,6 @@ eosc\_perf.controller.type\_aliases module
 ------------------------------------------
 
 .. automodule:: eosc_perf.controller.type_aliases
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: eosc_perf.controller
    :members:
    :undoc-members:
    :show-inheritance:

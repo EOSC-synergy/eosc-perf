@@ -1,6 +1,14 @@
 eosc\_perf.view.pages package
 =============================
 
+Module contents
+---------------
+
+.. automodule:: eosc_perf.view.pages
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Submodules
 ----------
 
@@ -104,14 +112,6 @@ eosc\_perf.view.pages.view\_report module
 -----------------------------------------
 
 .. automodule:: eosc_perf.view.pages.view_report
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: eosc_perf.view.pages
    :members:
    :undoc-members:
    :show-inheritance:

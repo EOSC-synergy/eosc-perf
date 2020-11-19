@@ -1,5 +1,13 @@
-eosc\_perf.view package
-=======================
+View
+====
+
+Module contents
+---------------
+
+.. automodule:: eosc_perf.view
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Subpackages
 -----------
@@ -32,14 +40,6 @@ eosc\_perf.view.type\_aliases module
 ------------------------------------
 
 .. automodule:: eosc_perf.view.type_aliases
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: eosc_perf.view
    :members:
    :undoc-members:
    :show-inheritance:

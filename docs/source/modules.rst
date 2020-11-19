@@ -1,7 +1,10 @@
-eosc_perf
-===
+Module Documentation
+====================
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 3
 
    eosc_perf
+   eosc_perf.model
+   eosc_perf.controller
+   eosc_perf.view

@@ -1,5 +1,13 @@
-eosc\_perf.model package
-========================
+Model
+=====
+
+Module contents
+---------------
+
+.. automodule:: eosc_perf.model
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Submodules
 ----------
@@ -48,14 +56,6 @@ eosc\_perf.model.sandbox module
 -------------------------------
 
 .. automodule:: eosc_perf.model.sandbox
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: eosc_perf.model
    :members:
    :undoc-members:
    :show-inheritance:

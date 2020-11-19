@@ -11,6 +11,7 @@ Welcome to eosc-perf's documentation!
    :caption: Contents:
 
    intro
+   instructions
    modules
 
 Indices and tables
