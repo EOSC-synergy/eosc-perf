@@ -31,6 +31,14 @@ select {
     margin: 4px;
 }
 
+.textbox {
+    width: 100%;
+}
+
+.inputbox.small {
+    max-width: 25em;
+}
+
 @media (min-width: 576px) {
     .card-columns.upload-form  {
         column-count: 2;
@@ -40,5 +48,9 @@ select {
 @media (min-width: 992px) {
     .card-columns.upload-form  {
         column-count: 3;
+    }
+
+    .textbox {
+        width: 50em;
     }
 }
