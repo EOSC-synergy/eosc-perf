@@ -6,9 +6,9 @@ from typing import List
 
 from flask import request, Response
 from flask.blueprints import Blueprint
-from .type_aliases import JSON
+from eosc_perf.utility.type_aliases import JSON
 from ..model.data_types import Benchmark
-from ..model.facade import DatabaseFacade, facade
+from ..model.facade import facade
 
 
 class AJAXHandler(ABC):

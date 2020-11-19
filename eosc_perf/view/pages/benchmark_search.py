@@ -5,7 +5,7 @@ from flask import Response
 from flask.blueprints import Blueprint
 
 from ..page_factory import PageFactory
-from ..type_aliases import HTML, JSON
+from eosc_perf.utility.type_aliases import HTML
 
 
 class BenchmarkSearchFactory(PageFactory):
@@ -16,6 +16,7 @@ class BenchmarkSearchFactory(PageFactory):
 
 
 benchmark_search_blueprint = Blueprint('benchmark-search', __name__)
+
 
 @benchmark_search_blueprint.route('/', methods=['GET'])
 def search_benchmark():

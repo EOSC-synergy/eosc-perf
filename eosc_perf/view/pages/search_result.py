@@ -6,7 +6,7 @@ from flask import request, Response
 from flask.blueprints import Blueprint
 
 from ..page_factory import PageFactory
-from ..type_aliases import HTML, JSON
+from eosc_perf.utility.type_aliases import HTML, JSON
 from ...controller.io_controller import controller
 from ...model.facade import facade
 

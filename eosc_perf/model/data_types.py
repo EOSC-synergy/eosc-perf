@@ -1,9 +1,9 @@
 """"This module contains all data types and associated helpers from the model."""
 
 from __future__ import annotations
-from typing import List, Optional, Type
+from typing import List, Optional
 import uuid
-from datetime import datetime
+import datetime
 from abc import abstractmethod
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm.session import Session
@@ -591,7 +591,7 @@ class Result(db.Model):
             bool: True if removing the tag from the result was successful.
         """
         # do not remove not-associated tag
-        if not tag in self._tags:
+        if tag not in self._tags:
             return False
         self._tags.remove(tag)
         try:
@@ -617,7 +617,7 @@ class Report(db.Model):
 
     # value columns
     _uuid = db.Column(UUID, primary_key=True, default=new_uuid)
-    _date = db.Column(db.DateTime(), nullable=False, default=datetime.now)
+    _date = db.Column(db.DateTime(), nullable=False, default=datetime.datetime.now)
     _verified = db.Column(db.Boolean(), nullable=False)
     _verdict = db.Column(db.Boolean(), nullable=False)
     _message = db.Column(db.Text(), nullable=True)
@@ -636,17 +636,12 @@ class Report(db.Model):
         'polymorphic_on': _type
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, uploader: Uploader, message: Optional[str] = None, **kwargs):
         """Create a new result report entry object."""
-        new_args = {}
-        # report message
-        if 'message' in kwargs:
-            new_args['_message'] = kwargs['message']
-        # report uploader
-        if 'uploader' in kwargs:
-            new_args['_uploader'] = kwargs['uploader']
-        else:
-            raise ValueError("missing uploader in report")
+        new_args = {
+            '_message': message if message is not None else "No reason submitted",
+            '_uploader': uploader
+        }
         # specific associations, respective members are added by children
         if self.get_field_name() in kwargs:
             new_args['_' + self.get_field_name()] = kwargs[self.get_field_name()]
@@ -748,6 +743,15 @@ class ResultReport(Report):
         'polymorphic_identity': 'result_report',
     }
 
+    def __init__(self, uploader: Uploader, result: Result, message: Optional[str] = None):
+        """Create a new report result.
+        Args:
+            uploader (Uploader): The uploader that submitted this report.
+            result (Result): The result to report.
+            message (Optional[str]): Optional report reason.
+        """
+        super(ResultReport, self).__init__(uploader=uploader, result=result, message=message)
+
     def get_result(self) -> Result:
         """Get the result associated with the report.
 
@@ -788,6 +792,15 @@ class BenchmarkReport(Report):
         'polymorphic_identity': 'benchmark_report',
     }
 
+    def __init__(self, uploader: Uploader, benchmark: Benchmark, message: Optional[str] = None):
+        """Create a new report result.
+        Args:
+            uploader (Uploader): The uploader that submitted this report.
+            benchmark (Benchmark): The benchmark to report.
+            message (Optional[str]): Optional report reason.
+        """
+        super(BenchmarkReport, self).__init__(uploader=uploader, benchmark=benchmark, message=message)
+
     def get_benchmark(self) -> Benchmark:
         """Get the benchmark associated with the report."""
         return self._benchmark
@@ -823,6 +836,15 @@ class SiteReport(Report):
     __mapper_args__ = {
         'polymorphic_identity': 'site_report',
     }
+
+    def __init__(self, uploader: Uploader, site: Site, message: Optional[str] = None):
+        """Create a new report result.
+        Args:
+            uploader (Uploader): The uploader that submitted this report.
+            site (Site): The site to report.
+            message (Optional[str]): Optional report reason.
+        """
+        super(SiteReport, self).__init__(uploader=uploader, site=site, message=message)
 
     def get_site(self) -> Site:
         """Get the site associated with the report.

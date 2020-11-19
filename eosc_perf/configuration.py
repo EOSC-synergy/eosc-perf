@@ -75,7 +75,7 @@ class ConfigHandler:
         Returns:
             Any: The value of the requested configuration value.
         """
-        if not tag in self.config:
+        if tag not in self.config:
             raise ValueError("unknown config value requested")
         return self.config[tag]
 

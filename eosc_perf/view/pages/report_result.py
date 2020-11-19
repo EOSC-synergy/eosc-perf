@@ -7,7 +7,7 @@ from flask import request, Response, redirect
 from flask.blueprints import Blueprint
 
 from ..page_factory import PageFactory
-from ..type_aliases import HTML, JSON
+from eosc_perf.utility.type_aliases import HTML
 
 from ...model.facade import facade
 from ...controller.io_controller import controller
@@ -16,6 +16,7 @@ from ...model.database import db
 from ...model.data_types import ResultIterator
 
 from .helpers import error_json_redirect, error_redirect
+
 
 class ResultReportPageFactory(PageFactory):
     """A factory to build information pages."""
@@ -54,7 +55,9 @@ class ResultReportPageFactory(PageFactory):
         except facade.NotFoundError:
             return False
 
+
 result_report_blueprint = Blueprint('result-report-factory', __name__)
+
 
 # temporary helper function for testing
 @result_report_blueprint.route('/test_report_result', methods=['GET'])
@@ -67,6 +70,7 @@ def test_report_result():
     for value in iterator:
         results.append(value)
     return redirect('/report_result?uuid=' + results[0].get_uuid())
+
 
 @result_report_blueprint.route('/report_result', methods=['GET'])
 def report_result():
@@ -89,6 +93,7 @@ def report_result():
         page_content=factory.generate_page_content(uuid),
         uuid=uuid)
     return Response(page, mimetype='text/html')
+
 
 @result_report_blueprint.route('/report_result_submit', methods=['POST'])
 def report_result_submit():

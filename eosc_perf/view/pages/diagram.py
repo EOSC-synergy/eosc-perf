@@ -8,12 +8,13 @@ from flask.blueprints import Blueprint
 from werkzeug.urls import url_encode
 
 from ..page_factory import PageFactory
-from ..type_aliases import HTML, JSON
+from eosc_perf.utility.type_aliases import HTML
 
 from ...model.facade import facade
 from ...configuration import configuration
 
 from .helpers import error_redirect
+
 
 class DiagramFactory(PageFactory):
     """A factory to build diagram pages."""
@@ -44,7 +45,7 @@ class DiagramFactory(PageFactory):
                 })
 
         # sort them by core_count
-        results.sort(key=lambda result: result['core_count'])
+        results.sort(key=lambda r: r['core_count'])
         script_content = ', '.join([json.dumps(result) for result in results])
         return script_content
 
@@ -59,15 +60,15 @@ class DiagramFactory(PageFactory):
             HTML: HTML code to display a list of all results in the diagram.
         """
         list_start = '<div class="card"><div class="card-header">' \
-            'Compared results: site, benchmark, num_gpus' \
-            '</div><ul class="list-group list-group-flush">'
+                     'Compared results: site, benchmark, num_gpus' \
+                     '</div><ul class="list-group list-group-flush">'
         list_end = '</ul></div>'
         list_elements = []
         results = [facade.get_result(uuid) for uuid in uuids]
 
         # sort list in same order as diagram
-        results.sort(key=lambda result: int(json.loads(result.get_json())['user_args']['num_gpus']))
-        
+        results.sort(key=lambda r: int(json.loads(r.get_json())['user_args']['num_gpus']))
+
         for result in results:
             core_count = json.loads(result.get_json())['user_args']['num_gpus']
             list_elements.append('<li class="list-group-item result-info">{}, {}, {}</li>'.format(
@@ -94,6 +95,7 @@ class DiagramFactory(PageFactory):
 
 diagram_blueprint = Blueprint('diagram-factory', __name__)
 
+
 @diagram_blueprint.route('/test_make_diagram', methods=['GET'])
 def make_diagram_example():
     """Testing helper."""
@@ -114,6 +116,7 @@ def make_diagram_example():
     return redirect(
         '/make_diagram?' + url_encode({
             'result_uuids': [result.get_uuid() for result in results]}), code=302)
+
 
 @diagram_blueprint.route('/make_diagram')
 def query_results():

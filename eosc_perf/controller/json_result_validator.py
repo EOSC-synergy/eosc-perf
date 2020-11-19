@@ -3,7 +3,7 @@
 import os
 import json
 
-from eosc_perf.controller.type_aliases import JSON
+from eosc_perf.utility.type_aliases import JSON
 
 DEFAULT_TEMPLATE_PATH = 'config/result_template.json'
 

@@ -9,7 +9,7 @@ from flask.blueprints import Blueprint
 
 from ...configuration import configuration
 from ..page_factory import PageFactory
-from ..type_aliases import HTML, JSON
+from eosc_perf.utility.type_aliases import HTML
 
 from ...controller.io_controller import controller
 
@@ -77,7 +77,6 @@ def upload_result_submit():
     if "--No Tag--" in tags:
         tags.remove("--No Tag--")
 
-    site_name = ""
     custom_site = (request.form["custom_site"] == 'true')
     if not custom_site:
         site_name = request.form['site']

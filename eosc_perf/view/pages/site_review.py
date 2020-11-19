@@ -6,7 +6,7 @@ from flask.blueprints import Blueprint
 from werkzeug.urls import url_encode
 
 from ..page_factory import PageFactory
-from ..type_aliases import HTML, JSON
+from eosc_perf.utility.type_aliases import HTML
 
 from ...model.facade import facade
 from ...model.data_types import Report, SiteReport
@@ -111,7 +111,7 @@ def review_site_submit():
     # validate input
     if uuid is None:
         return error_json_redirect('Incomplete review form submitted (missing UUID)')
-    if not 'action' in request.form:
+    if 'action' not in request.form:
         return error_json_redirect('Incomplete report form submitted (missing verdict)')
 
     remove = None

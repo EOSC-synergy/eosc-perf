@@ -1,11 +1,11 @@
 """This exposes the flask app singleton and creation function."""
 
-from flask import Flask, redirect
+from flask import Flask
 import sys
 from .configuration import configuration
 from .controller.authenticator import (configure_authenticator,
                                        authenticator_blueprint)
-from .model.database import db, configure_database
+from .model.database import configure_database
 from .model.sandbox import add_demo, add_filler
 from .view.ajax import ajax_blueprint
 from .view.pages.diagram import diagram_blueprint

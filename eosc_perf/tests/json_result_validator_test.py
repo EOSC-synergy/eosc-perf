@@ -5,6 +5,7 @@ import unittest
 from eosc_perf.controller.json_result_validator import JSONResultValidator
 from eosc_perf.configuration import configuration
 
+
 class JSONResultValidatorTest(unittest.TestCase):
 
     def setUp(self):
@@ -64,6 +65,7 @@ class JSONResultValidatorTest(unittest.TestCase):
     def _load_template(self):
         with open("eosc_perf/controller/config/result_template.json") as file:
             return file.read()
+
 
 if __name__ == '__main__':
     unittest.main()

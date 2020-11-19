@@ -1,12 +1,10 @@
 """This module contains the factory classes generating the HTML pages."""
-from os.path import isfile
 from abc import abstractmethod
 from typing import Any, Tuple
 
 import jinja2 as jj
 
-from .pages.helpers import error_redirect
-from .type_aliases import HTML, JSON
+from eosc_perf.utility.type_aliases import HTML, JSON
 from ..configuration import configuration
 from ..controller.io_controller import controller
 
@@ -34,11 +32,8 @@ class PageFactory:
         template provided in the class.
 
         Args:
+            template (str): The filename of the template to use.
             args (JSON): Parameters used by some child classes to generate the right content.
-            template (HTML): A template can be used instead of the default should contain variables for content and
-                info, doesn't change the template lasting, can be left empty.
-            info (str): Information displayed on the returned HTML page doesn't change the info lasting, can be left
-                empty.
             jinja_args (kwargs): Extra arguments for the jinja template.
         Returns:
             HTML: The finished HTML page displaying the content and information.

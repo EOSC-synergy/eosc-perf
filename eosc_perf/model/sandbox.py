@@ -4,6 +4,16 @@ import json
 from .data_types import Uploader, Site, Benchmark, Result, Tag
 from .facade import facade
 
+
+def _add_result(result):
+    facade.add_result(result.get_json(), json.dumps({
+        'uploader': result.get_uploader().get_id(),
+        'site': result.get_site().get_short_name(),
+        'benchmark': result.get_benchmark().get_docker_name(),
+        'tags': [tag.get_name() for tag in result.get_tags()]
+    }))
+
+
 def add_filler():
     """Add filler data that can be used to test search filtering."""
 
@@ -104,20 +114,16 @@ def add_filler():
     # only add test results if there aren't any results
     if len(results) <= 0:
         for test_result in filler_results:
-            facade.add_result(test_result.get_json(), json.dumps({
-                'uploader': test_result.get_uploader().get_id(),
-                'site': test_result.get_site().get_short_name(),
-                'benchmark': test_result.get_benchmark().get_docker_name(),
-                'tags': [tag.get_name() for tag in test_result.get_tags()]
-            }))
+            _add_result(test_result)
+
 
 def add_demo():
     """Add data that is good for demonstration."""
 
     demo_uploader = Uploader(
-    identifier='DIAGRAM_USER',
-    email='diagram@example.com',
-    name='Diagram (Do not use)')
+        identifier='DIAGRAM_USER',
+        email='diagram@example.com',
+        name='Diagram (Do not use)')
 
     demo_site = Site(
         short_name='diagram_site',
@@ -140,7 +146,7 @@ def add_demo():
             'training': {
                 'result': {
                     # generated following amdahl's law
-                    'average_examples_per_sec': 1/(1-speedup+speedup/i) * 100
+                    'average_examples_per_sec': 1 / (1 - speedup + speedup / i) * 100
                 }
             }
         }
@@ -184,9 +190,4 @@ def add_demo():
     # only add test results if there aren't any results
     if len(results) <= 0:
         for result in demo_results:
-            facade.add_result(result.get_json(), json.dumps({
-                'uploader': result.get_uploader().get_id(),
-                'site': result.get_site().get_short_name(),
-                'benchmark': result.get_benchmark().get_docker_name(),
-                'tags': [test_tag.get_name() for test_tag in result.get_tags()]
-            }))
+            _add_result(result)

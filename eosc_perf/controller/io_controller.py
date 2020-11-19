@@ -2,16 +2,17 @@
 import json
 import urllib.request
 from json import JSONDecodeError
-from typing import List, Union, Optional, Tuple
+from typing import List, Optional
 from urllib.error import URLError
 
 from flask import session, redirect, Response
 
 from .json_result_validator import JSONResultValidator
 from .authenticator import authenticator, AuthenticateError
-from .type_aliases import JSON
+from eosc_perf.utility.type_aliases import JSON
 from ..model.facade import DatabaseFacade, facade
 from ..model.data_types import Site, Report
+from ..utility.dockerhub import decompose_dockername, build_dockerregistry_url, build_dockerregistry_tag_url
 
 
 class IOController:
@@ -273,51 +274,6 @@ class IOController:
                     'name': name
                 }))
 
-    def _decompose_dockername(self, docker_name: str) -> Tuple[str, str, str]:
-        """Helper to break a model-docker_name into a tuple.
-
-        Args:
-            docker_name (str): The docker identifier to decompose.
-        Returns:
-            Tuple[str, str, str]: A tuple containing the username, image name and tag name.
-        """
-        slash = docker_name.find('/')
-        if slash == -1:
-            # this should not have passed input validation
-            pass
-        username = docker_name[:slash]
-        colon = docker_name.find(':')
-        if colon == -1:
-            image = docker_name[slash + 1:]
-            tag = None
-        else:
-            image = docker_name[slash + 1:colon]
-            tag = docker_name[colon + 1:]
-
-        return username, image, tag
-
-    def _build_dockerregistry_url(self, docker_name: str) -> str:
-        """Helper function to build a link to the docker hub registry api.
-
-        Returns:
-            str: URL for the given image in the docker hub registry.
-        """
-        (username, image, tag) = self._decompose_dockername(docker_name)
-
-        url = 'https://registry.hub.docker.com/v2/repositories/{}/{}'.format(username, image)
-        return url
-
-    def _build_dockerregistry_tag_url(self, docker_name: str) -> str:
-        """Helper function to build a link to the docker hub registry api.
-
-        Returns:
-            str: URL for the list of tags associated with the given image name from the docker hub registry.
-        """
-        (username, image, tag) = self._decompose_dockername(docker_name)
-
-        url = 'https://registry.hub.docker.com/v2/repositories/{}/{}/tags'.format(username, image)
-        return url
-
     def _valid_docker_hub_name(self, docker_name: str) -> bool:
         """Check if a benchmark exists with the given name on docker hub.
 
@@ -329,14 +285,14 @@ class IOController:
         if docker_name is None or len(docker_name) == 0:
             return False
         try:
-            dockerhub_content = urllib.request.urlopen(self._build_dockerregistry_url(docker_name)).read()
-            (username, image, tag) = self._decompose_dockername(docker_name)
+            dockerhub_content = urllib.request.urlopen(build_dockerregistry_url(docker_name)).read()
+            (username, image, tag) = decompose_dockername(docker_name)
             meta = json.loads(dockerhub_content)
             if meta['is_private']:
                 return False
             if tag is not None:
                 # check tag as well
-                dockerhub_tags = urllib.request.urlopen(self._build_dockerregistry_tag_url(docker_name)).read()
+                dockerhub_tags = urllib.request.urlopen(build_dockerregistry_tag_url(docker_name)).read()
                 tags = json.loads(dockerhub_tags)
                 # search result with correct tag name
                 for result in tags['results']:

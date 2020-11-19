@@ -6,7 +6,7 @@ from flask import request, Response
 from flask.blueprints import Blueprint
 
 from ..page_factory import PageFactory
-from ..type_aliases import HTML, JSON
+from eosc_perf.utility.type_aliases import HTML
 from ...controller.json_result_validator import DEFAULT_TEMPLATE_PATH
 
 from .helpers import error_redirect
@@ -46,12 +46,10 @@ def privacy_page():
 def code_guidelines():
     """HTTP endpoint for code guidelines page."""
     factory = InformationPageFactory()
-    info = json.loads("{}")
     with open('controller/' + DEFAULT_TEMPLATE_PATH) as min_template:
         info = json.loads(min_template.read())
-    info = json.dumps(info, indent=4, sort_keys=True)
-    with open('templates/code_guidelines.html') as file:
-        page = factory.generate_page(template='code_guidelines.html', args=info)
+    info_str = json.dumps(info, indent=4, sort_keys=True)
+    page = factory.generate_page(template='code_guidelines.html', args=info_str)
     return Response(page, mimetype='text/html')
 
 

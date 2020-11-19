@@ -44,6 +44,13 @@ class IOControllerTest(unittest.TestCase):
         del self.facade
         del self.app
 
+    def _add_test_data(self):
+        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + \
+                            USER['info']['name'] + '"}'
+        self.facade.add_uploader(uploader_metadata)
+        self.facade.add_benchmark("name/name:tag", USER['sub'])
+        self.facade.add_site('{"short_name": "name", "address": "100"  }')
+
     def test_authenticate_not_authenticated(self):
         with self.app.test_request_context():
             self.assertIsNotNone(self.controller.authenticate())
@@ -63,11 +70,7 @@ class IOControllerTest(unittest.TestCase):
             self.assertRaises(ValueError, self.controller.submit_result, "---", "")
 
     def test_submit_result_success(self):
-        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + \
-                            USER['info']['name'] + '"}'
-        self.facade.add_uploader(uploader_metadata)
-        self.facade.add_benchmark("name/name:tag", USER['sub'])
-        self.facade.add_site('{"short_name": "name", "address": "100"  }')
+        self._add_test_data()
         with self.app.test_request_context():
             with open("eosc_perf/controller/config/result_template.json") as file:
                 template = file.read()
@@ -186,11 +189,7 @@ class IOControllerTest(unittest.TestCase):
             self.assertFalse(self.controller.remove_site("not existing"))
 
     def test_remove_site_with_results(self):
-        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + \
-                            USER['info']['name'] + '"}'
-        self.facade.add_uploader(uploader_metadata)
-        self.facade.add_benchmark("name/name:tag", USER['sub'])
-        self.facade.add_site('{"short_name": "name", "address": "100"  }')
+        self._add_test_data()
         with self.app.test_request_context():
             with open("eosc_perf/controller/config/result_template.json") as file:
                 template = file.read()
@@ -344,11 +343,7 @@ class IOControllerTest(unittest.TestCase):
             self.assertEqual(self.controller.process_report(True, uuid), True)
 
     def test_process_report_result(self):
-        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + \
-                            USER['info']['name'] + '"}'
-        self.facade.add_uploader(uploader_metadata)
-        self.facade.add_benchmark("name/name:tag", USER['sub'])
-        self.facade.add_site('{"short_name": "name", "address": "100"  }')
+        self._add_test_data()
         with self.app.test_request_context():
             with open("eosc_perf/controller/config/result_template.json") as file:
                 template = file.read()
@@ -388,11 +383,7 @@ class IOControllerTest(unittest.TestCase):
             self.assertRaises(AuthenticateError, self.controller.remove_result, "name")
 
     def test_remove_result_not_found(self):
-        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + \
-                            USER['info']['name'] + '"}'
-        self.facade.add_uploader(uploader_metadata)
-        self.facade.add_benchmark("name/name:tag", USER['sub'])
-        self.facade.add_site('{"short_name": "name", "address": "100"  }')
+        self._add_test_data()
         with self.app.test_request_context():
             with open("eosc_perf/controller/config/result_template.json") as file:
                 template = file.read()
@@ -406,11 +397,7 @@ class IOControllerTest(unittest.TestCase):
             self.assertFalse(self.controller.remove_result("wrong_uuid"))
 
     def test_remove_result(self):
-        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + \
-                            USER['info']['name'] + '"}'
-        self.facade.add_uploader(uploader_metadata)
-        self.facade.add_benchmark("name/name:tag", USER['sub'])
-        self.facade.add_site('{"short_name": "name", "address": "100"  }')
+        self._add_test_data()
         with self.app.test_request_context():
             with open("eosc_perf/controller/config/result_template.json") as file:
                 template = file.read()
@@ -468,11 +455,7 @@ class IOControllerTest(unittest.TestCase):
 
     def test_site_result_amount(self):
         self.assertEqual(self.controller._site_result_amount("name"), 0)
-        uploader_metadata = '{"id": "' + USER['sub'] + '", "email": "' + USER['info']['email'] + '", "name": "' + \
-                            USER['info']['name'] + '"}'
-        self.facade.add_uploader(uploader_metadata)
-        self.facade.add_benchmark("name/name:tag", USER['sub'])
-        self.facade.add_site('{"short_name": "name", "address": "100"  }')
+        self._add_test_data()
         with self.app.test_request_context():
             with open("eosc_perf/controller/config/result_template.json") as file:
                 template = file.read()

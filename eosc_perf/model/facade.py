@@ -458,19 +458,19 @@ class DatabaseFacade:
                 site = self.get_site(dictionary['value'])
             except self.NotFoundError:
                 raise ValueError("unknown site for report")
-            success = self._add_to_db(SiteReport(uploader=uploader, message=message, site=site))
+            success = self._add_to_db(SiteReport(uploader=uploader, site=site, message=message))
         elif dictionary['type'] == 'benchmark':
             try:
                 benchmark = self.get_benchmark(dictionary['value'])
             except self.NotFoundError:
                 raise ValueError("unknown benchmark for report")
-            success = self._add_to_db(BenchmarkReport(uploader=uploader, message=message, benchmark=benchmark))
+            success = self._add_to_db(BenchmarkReport(uploader=uploader, benchmark=benchmark, message=message))
         elif dictionary['type'] == 'result':
             try:
                 result = self.get_result(dictionary['value'])
             except self.NotFoundError:
                 raise ValueError("unknown result for report")
-            success = self._add_to_db(ResultReport(uploader=uploader, message=message, result=result))
+            success = self._add_to_db(ResultReport(uploader=uploader, result=result, message=message))
 
         return success
 
