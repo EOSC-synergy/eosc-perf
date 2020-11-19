@@ -18,6 +18,7 @@ class SearchResultFactory(PageFactory):
 
     def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
         """Generate js code containing information required for the search page.
+
         Args:
             args (JSON): A json containing a 'benchmark' and 'admin' value.
         Returns:

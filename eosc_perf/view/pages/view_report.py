@@ -25,12 +25,12 @@ class ViewReportPageFactory(PageFactory):
 
     def report_exists(self, uuid: str) -> bool:
         """Helper to determine whether a result exists.
+
         Args:
             uuid (str): The result to check existence for.
         Returns:
             bool: True if the result exists.
         """
-
         try:
             facade.get_report(uuid)
             return True
@@ -58,7 +58,6 @@ def test_view_report():
 @view_report_blueprint.route('/view_report', methods=['GET'])
 def view_report():
     """HTTP endpoint for the view report page."""
-
     if not controller.is_authenticated():
         return error_redirect('Not logged in')
 
@@ -116,7 +115,6 @@ def view_report():
 @view_report_blueprint.route('/view_report_submit', methods=['POST'])
 def view_report_submit():
     """HTTP endpoint to take in the reports."""
-
     if not controller.is_authenticated():
         return error_json_redirect('Not logged in')
 

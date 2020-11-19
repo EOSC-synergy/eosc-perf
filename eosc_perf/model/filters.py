@@ -13,6 +13,7 @@ class Filter:
     @abstractmethod
     def filter(self, result: Result) -> bool:
         """Returns whether an element matches the filter or not.
+
         Args:
             result (Result): The result to check the filter for.
         Returns:
@@ -25,6 +26,7 @@ class BenchmarkFilter(Filter):
 
     def __init__(self, docker_name: str):
         """Create a new filter by benchmark name.
+
         Args:
             docker_name (str): The docker name of the benchmark to check for.
         """
@@ -32,6 +34,7 @@ class BenchmarkFilter(Filter):
 
     def filter(self, result: Result) -> bool:
         """Returns whether the result belongs to the benchmark the filter was primed with.
+
         Args:
             result (Result): The result to check the filter for.
         Returns:
@@ -45,6 +48,7 @@ class UploaderFilter(Filter):
 
     def __init__(self, email: str):
         """Create a new filter by uploader email address.
+
         Args:
             email (str): The email of the uploader to check for.
         """
@@ -52,6 +56,7 @@ class UploaderFilter(Filter):
 
     def filter(self, result: Result) -> bool:
         """Returns whether the result was uploaded by the user the filter was primed with.
+
         Args:
             result (Result): The result to check the filter for.
         Returns:
@@ -65,6 +70,7 @@ class SiteFilter(Filter):
 
     def __init__(self, site: str):
         """Create a new filter by site name.
+
         Args:
             site (str): The short_name of the site to check for.
         """
@@ -72,6 +78,7 @@ class SiteFilter(Filter):
 
     def filter(self, result: Result) -> bool:
         """Returns whether the result was uploaded by the user the filter was primed with.
+
         Args:
             result (Result): The result to check the filter for.
         Returns:
@@ -85,6 +92,7 @@ class TagFilter(Filter):
 
     def __init__(self, tag: str):
         """Create a new filter by required tag.
+
         Args:
             tag (str): The name of the tag to check for.
         """
@@ -92,6 +100,7 @@ class TagFilter(Filter):
 
     def filter(self, result: Result) -> bool:
         """Returns whether the result has the tag the filter was primed with.
+
         Args:
             result (Result): The result to check the filter for.
         Returns:
@@ -105,6 +114,7 @@ class JsonValueFilter(Filter):
 
     def _deep_get(self, dictionary: Dict, keys: str, default: Optional[str] = None):
         """Helper to get element based on JSON template.
+
         Args:
             dictionary (Dict): The dictionary to search the key in.
             keys (str): The nested keys to search.
@@ -116,6 +126,7 @@ class JsonValueFilter(Filter):
 
     def __init__(self, template: str, value: str, mode: str):
         """Create a new filter by JSON sub-value.
+
         Args:
             template (str): The nested key-sequence to check.
             value (str): The value to compare against.
@@ -127,6 +138,7 @@ class JsonValueFilter(Filter):
 
     def filter(self, result: Result) -> bool:
         """Returns whether the result has the property the filter was primed with.
+
         Args:
             result (Result): The result to check the filter for.
         Returns:

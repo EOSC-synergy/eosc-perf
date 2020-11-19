@@ -33,6 +33,7 @@ class DisplayJsonFactory(PageFactory):
 
     def result_exists(self, uuid: str) -> bool:
         """Helper to determine whether a result exists.
+
         Args:
             uuid (str): The result uuid to check.
         Returns:

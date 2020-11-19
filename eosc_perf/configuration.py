@@ -16,6 +16,7 @@ class ConfigHandler:
 
     def _get_defaults(self) -> dict:
         """Get default configuration values.
+
         Returns:
             dict: A dictionary containing default configuration values.
         """
@@ -37,6 +38,7 @@ class ConfigHandler:
 
     def _load_config(self, load_file: bool = False) -> dict:
         """Load the config file from 'config.ini'.
+
         Args:
             load_file (bool): True if the configuration should be read from `config.ini`.
         Returns:
@@ -58,6 +60,7 @@ class ConfigHandler:
 
     def set(self, tag: str, value: Any):
         """Set a value.
+
         Args:
             tag (str): The configuration value to change.
             value (Any): The new value to set it to.
@@ -66,6 +69,7 @@ class ConfigHandler:
 
     def get(self, tag: str) -> Any:
         """Get a value.
+
         Args:
             tag (str): The configuration value to get.
         Returns:

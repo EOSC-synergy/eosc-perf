@@ -23,12 +23,12 @@ class SiteReviewPageFactory(PageFactory):
 
     def report_exists(self, uuid: str) -> bool:
         """Helper to determine whether a report exists.
+
         Args:
             uuid (str): The UUID of the report to check for.
         Returns:
             bool: True if the report exists.
         """
-
         try:
             facade.get_report(uuid)
             return True

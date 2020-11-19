@@ -61,7 +61,6 @@ class PageFactory:
 
         Args:
             args (JSON): Parameters used by child classes to generate the right content.
-
         Returns:
             Tuple[HTML, Any]: A tuple containing page content to fill in and extra arguments for Jinja.
         """

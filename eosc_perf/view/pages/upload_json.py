@@ -25,6 +25,7 @@ class UploadJSONFactory(PageFactory):
     @staticmethod
     def get_license_string() -> str:
         """Helper: Get result upload license as string.
+
         Returns:
             str: The license text.
         """

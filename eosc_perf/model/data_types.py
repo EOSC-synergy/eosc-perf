@@ -61,6 +61,7 @@ class ResultIterator:
 
     def _fetch(self, batch_number: int, batch_size: int = BATCH_SIZE):
         """Load a new batch of cached query results from the database.
+
         Args:
             batch_number (int): The index of the batch to get.
             batch_size (int): The size of each batch.
@@ -88,6 +89,7 @@ class ResultIterator:
 
     def __next__(self) -> Result:
         """Fetch the next result from cache.
+
         Returns:
             Result: The next result.
         """
@@ -121,6 +123,7 @@ class Uploader(db.Model):
 
     def __init__(self, identifier: str, email: str, name: str):
         """Create a new uploader entry object.
+
         Args:
             identifier (str): The unique identifier for this uploader.
             email (str): The uploader's email address.
@@ -130,6 +133,7 @@ class Uploader(db.Model):
 
     def get_id(self) -> str:
         """Get the unique identifier for this uploader.
+
         Returns:
             str: This uploader's UUID.
         """
@@ -137,6 +141,7 @@ class Uploader(db.Model):
 
     def get_email(self) -> str:
         """Get the email address associated with this uploader.
+
         Returns:
             str: The uploader's email address.
         """
@@ -144,6 +149,7 @@ class Uploader(db.Model):
 
     def set_email(self, email: str):
         """Update the email address associated with the uploader.
+
         Args:
             email (str): The new email address.
         """
@@ -152,6 +158,7 @@ class Uploader(db.Model):
 
     def get_name(self) -> str:
         """Get a human-readable human name.
+
         Returns:
             str: The uploader's name.
         """
@@ -159,6 +166,7 @@ class Uploader(db.Model):
 
     def set_name(self, name: str):
         """Update the human-readable human human name.
+
         Args:
             name (str): The new name.
         """
@@ -167,6 +175,7 @@ class Uploader(db.Model):
 
     def get_results(self) -> ResultIterator:
         """Get an iterator for all the results associated with this uploader.
+
         Returns:
             ResultIterator: A ResultIterator configured for all results of this uploader.
         """
@@ -175,6 +184,7 @@ class Uploader(db.Model):
 
     def get_benchmarks(self) -> List[Benchmark]:
         """Get all benchmarks associated with this uploader.
+
         Returns:
             List[Benchmark]: All benchmarks associated with this uploader.
         """
@@ -182,6 +192,7 @@ class Uploader(db.Model):
 
     def __repr__(self) -> str:
         """Get a human-readable representation string of the uploader.
+
         Returns:
             str: A human readable representation string.
         """
@@ -204,6 +215,7 @@ class Benchmark(db.Model):
 
     def __init__(self, docker_name: str, uploader: Uploader):
         """Create a new benchmark entry object.
+
         Args:
             docker_name (str): The docker name of the new benchmark.
             uploader (Uploader): The uploader that added this benchmark.
@@ -212,6 +224,7 @@ class Benchmark(db.Model):
 
     def get_docker_name(self) -> str:
         """Get the docker hub identifier of the benchmark, formatted as \"user/image:tagname\".
+
         Returns:
             str: The docker name of the benchmark.
         """
@@ -219,6 +232,7 @@ class Benchmark(db.Model):
 
     def get_uploader(self) -> Uploader:
         """Get the user that submitted this benchmark.
+
         Returns:
             Uploader: The uploader that added this benchmark.
         """
@@ -226,6 +240,7 @@ class Benchmark(db.Model):
 
     def get_results(self) -> ResultIterator:
         """Get an iterator for all the results associated to this benchmark.
+
         Returns:
             ResultIterator: An iterator over the associated results.
         """
@@ -233,6 +248,7 @@ class Benchmark(db.Model):
 
     def set_hidden(self, state: bool):
         """Set the hide state of the benchmark.
+
         Args:
             state (bool): The new hidden state.
         """
@@ -241,6 +257,7 @@ class Benchmark(db.Model):
 
     def get_hidden(self) -> bool:
         """Get the hide state of the benchmark.
+
         Returns:
             bool: True if hidden.
         """
@@ -248,6 +265,7 @@ class Benchmark(db.Model):
 
     def __repr__(self) -> str:
         """Get a human-readable representation string of the benchmark.
+
         Returns:
             str: A human-readable representation string of the benchmark.
         """
@@ -286,6 +304,7 @@ class Site(db.Model):
 
     def get_address(self) -> str:
         """Get the network address of the site.
+
         Returns:
             str: The network address of the site.
         """
@@ -293,6 +312,7 @@ class Site(db.Model):
 
     def set_address(self, address: str):
         """Update the current network address of the site.
+
         Args:
             address (str): The new network address of the site.
         """
@@ -301,6 +321,7 @@ class Site(db.Model):
 
     def get_description(self) -> str:
         """Get the human-readable description of the site.
+
         Returns:
             str: A human-readable description of the site.
         """
@@ -308,6 +329,7 @@ class Site(db.Model):
 
     def set_description(self, desc: str):
         """Update the current description of the site.
+
         Args:
             desc (str): The new description of the site.
         """
@@ -316,6 +338,7 @@ class Site(db.Model):
 
     def get_results(self) -> ResultIterator:
         """Get an iterator for all results associated to this site.
+
         Returns:
             ResultIterator: An iterator over all results associated with the site.
         """
@@ -323,6 +346,7 @@ class Site(db.Model):
 
     def get_name(self) -> str:
         """Get the human-readable name of the site.
+
         Returns:
             str: The human-readable name of the site.
         """
@@ -330,6 +354,7 @@ class Site(db.Model):
 
     def get_short_name(self) -> str:
         """Get the site's identifier.
+
         Returns:
             str: The site's identifier.
         """
@@ -337,6 +362,7 @@ class Site(db.Model):
 
     def set_hidden(self, state: bool):
         """Set the hide state of the site.
+
         Args:
             state (bool): Set to true if the site should be hidden.
         """
@@ -345,6 +371,7 @@ class Site(db.Model):
 
     def get_hidden(self) -> bool:
         """Get the hide state of the site.
+
         Returns:
             bool: True if the site is hidden.
         """
@@ -353,6 +380,7 @@ class Site(db.Model):
     @abstractmethod
     def __repr__(self) -> str:
         """Get a human-readable representation string of the site.
+
         Returns:
             str: A human-readable representation string of the site.
         """
@@ -382,6 +410,7 @@ class Tag(db.Model):
 
     def get_description(self) -> str:
         """Get the tag's human-readable description.
+
         Returns:
             str: The tag's human-readable description.
         """
@@ -389,6 +418,7 @@ class Tag(db.Model):
 
     def set_description(self, description: str):
         """Update the current tag's human-readable description.
+
         Args:
             description (str): The new description for the tag.
         """
@@ -397,6 +427,7 @@ class Tag(db.Model):
 
     def get_name(self) -> str:
         """Get the name of the tag.
+
         Returns:
             str: The name of the tag.
         """
@@ -404,6 +435,7 @@ class Tag(db.Model):
 
     def get_results(self) -> ResultIterator:
         """Get an iterator for all the results associated with this tag.
+
         Returns:
             ResultIterator: An iterator over all results associated with this tag.
         """
@@ -411,6 +443,7 @@ class Tag(db.Model):
 
     def __repr__(self) -> str:
         """Get a human-readable representation string of the tag.
+
         Returns:
             str: A human-readable representation string of the tag.
         """
@@ -467,6 +500,7 @@ class Result(db.Model):
 
     def get_json(self) -> str:
         """Get the json data of the result.
+
         Returns:
             str: The benchmark result JSON data.
         """
@@ -474,6 +508,7 @@ class Result(db.Model):
 
     def get_site(self) -> Site:
         """Get the execution site associated with the result.
+
         Returns:
             Site: The site associated with this result.
         """
@@ -481,6 +516,7 @@ class Result(db.Model):
 
     def get_benchmark(self) -> Benchmark:
         """Get the benchmark associated with the result.
+
         Returns:
             Benchmark: The benchmark associated with the result.
         """
@@ -488,6 +524,7 @@ class Result(db.Model):
 
     def get_uploader(self) -> Uploader:
         """Get the uploader associated with the result.
+
         Returns:
             Uploader: The uploader associated with the result.
         """
@@ -495,6 +532,7 @@ class Result(db.Model):
 
     def get_tags(self) -> List[Tag]:
         """Get all the tags associated with this result.
+
         Returns:
             List[Tag]: A list of all tags associated with this result.
         """
@@ -502,6 +540,7 @@ class Result(db.Model):
 
     def set_hidden(self, state: bool):
         """Set the hide state of the result.
+
         Args:
             state (bool): True if the result should be hidden.
         """
@@ -510,6 +549,7 @@ class Result(db.Model):
 
     def get_hidden(self) -> bool:
         """Get the hide state of the result.
+
         Returns:
             bool: True if the result is hidden.
         """
@@ -517,6 +557,7 @@ class Result(db.Model):
 
     def get_uuid(self) -> str:
         """Get the result's UUID.
+
         Returns:
             str: The UUID of the result.
         """
@@ -524,6 +565,7 @@ class Result(db.Model):
 
     def add_tag(self, tag: Tag) -> bool:
         """Add a new tag to the result.
+
         Args:
             tag (Tag): A tag to be associated with the result.
         Returns:
@@ -542,6 +584,7 @@ class Result(db.Model):
 
     def remove_tag(self, tag: Tag) -> bool:
         """Remove a tag from the result.
+
         Args:
             tag (Tag): A tag to disassociated from the result.
         Returns:
@@ -560,6 +603,7 @@ class Result(db.Model):
 
     def __repr__(self) -> str:
         """Get a human-readable representation string of the result.
+
         Returns:
             str: A human-readable representation string of the result.
         """
@@ -612,6 +656,7 @@ class Report(db.Model):
 
     def get_date(self) -> datetime.datetime:
         """Get the publication date of the report.
+
         Returns:
             datetime.datetime: The publication date.
         """
@@ -619,6 +664,7 @@ class Report(db.Model):
 
     def get_message(self) -> str:
         """Get the description message of the report.
+
         Returns:
             str: The report description message.
         """
@@ -626,6 +672,7 @@ class Report(db.Model):
 
     def get_reporter(self) -> Uploader:
         """Get the user that submitted this report.
+
         Returns:
             Uploader: The uploader that submitted this report.
         """
@@ -633,6 +680,7 @@ class Report(db.Model):
 
     def get_status(self) -> str:
         """Get the current status of the report.
+
         Returns:
             str: 'accepted', 'pending', or 'rejected'
         """
@@ -644,6 +692,7 @@ class Report(db.Model):
 
     def set_verdict(self, verdict: bool):
         """Update the verdict on the report.
+
         Args:
             verdict (bool): The new verdict to set.
         """
@@ -653,6 +702,7 @@ class Report(db.Model):
 
     def get_uuid(self) -> str:
         """Get the UUID of this report.
+
         Returns:
             str: The UUID of the report.
         """
@@ -661,6 +711,7 @@ class Report(db.Model):
     @abstractmethod
     def get_report_type(self) -> int:
         """Get the enumerated type of the report.
+
         Returns:
             int: The type of report.
         """
@@ -668,12 +719,14 @@ class Report(db.Model):
     @abstractmethod
     def get_field_name(self) -> str:
         """Get the key for the dictionary field to read for result reports.
+
         Returns:
             str: The key for the dictionary field.
         """
 
     def __repr__(self) -> str:
         """Get a human-readable representation string of the report.
+
         Returns:
             str: A human-readable representation string of the report.
         """
@@ -697,6 +750,7 @@ class ResultReport(Report):
 
     def get_result(self) -> Result:
         """Get the result associated with the report.
+
         Returns:
             Result: The result associated with the report.
         """
@@ -704,6 +758,7 @@ class ResultReport(Report):
 
     def get_report_type(self) -> int:
         """Get the enumerated type of report.
+
         Returns:
             int: The type of report.
         """
@@ -711,6 +766,7 @@ class ResultReport(Report):
 
     def get_field_name(self) -> str:
         """Get the key for the dictionary field to read for result reports.
+
         Returns:
             str: The key for the dictionary field.
         """
@@ -738,6 +794,7 @@ class BenchmarkReport(Report):
 
     def get_report_type(self) -> int:
         """Get the enumerated type of report.
+
         Returns:
             int: The type of report.
         """
@@ -745,6 +802,7 @@ class BenchmarkReport(Report):
 
     def get_field_name(self) -> str:
         """Get the key for the dictionary field to read for benchmark reports.
+
         Returns:
             str: The key for the dictionary field.
         """
@@ -768,6 +826,7 @@ class SiteReport(Report):
 
     def get_site(self) -> Site:
         """Get the site associated with the report.
+
         Returns:
             Site: The site associated with the report.
         """
@@ -775,6 +834,7 @@ class SiteReport(Report):
 
     def get_report_type(self) -> int:
         """Get the enumerated type of report.
+
         Returns:
             int: The type of report.
         """
@@ -782,6 +842,7 @@ class SiteReport(Report):
 
     def get_field_name(self) -> str:
         """Get the key for the dictionary field to read for site reports.
+
         Returns:
             str: The key for the dictionary field.
         """

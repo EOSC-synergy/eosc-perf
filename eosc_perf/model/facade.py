@@ -118,6 +118,7 @@ class DatabaseFacade:
 
     def get_sites(self) -> List[Site]:
         """Get all sites.
+
         Returns:
             List[Site]: A list of all sites in the database.
         """
@@ -129,6 +130,7 @@ class DatabaseFacade:
 
     def get_tags(self) -> List[Tag]:
         """Get all tags.
+
         Returns:
             List[Tag]: A list of all tags in the database.
         """
@@ -140,6 +142,7 @@ class DatabaseFacade:
 
     def get_benchmarks(self) -> List[Benchmark]:
         """Get all benchmarks.
+
         Returns:
             List[Tag]: A list of all benchmarks in the database.
         """
@@ -180,6 +183,7 @@ class DatabaseFacade:
 
     def query_benchmarks(self, keywords: List[str]) -> List[Benchmark]:
         """Query all benchmarks containing all keywords in the name.
+
         Args:
             keywords (List[str]): A list of all keywords that need to be in the benchmark's docker name.
         Returns:
@@ -198,6 +202,7 @@ class DatabaseFacade:
 
     def _add_to_db(self, obj: Type[db.Model]) -> bool:
         """Add a new model object to the database.
+
         Args:
             obj (db.Model): A SQLAlchemy-Model-based object to be added.
         Returns:
@@ -215,6 +220,7 @@ class DatabaseFacade:
 
     def _remove_from_db(self, obj: Type[db.Model]) -> bool:
         """Remove a model object from the database.
+
         Args:
             obj (db.Model): A SQLAlchemy-Model-based object to be removed.
         Returns:
@@ -230,6 +236,7 @@ class DatabaseFacade:
 
     def _has_uploader(self, uploader: str) -> bool:
         """Input validation helper.
+
         Args:
             uploader (str): The uploader identifier of the uploader to look for.
         Returns:
@@ -247,6 +254,7 @@ class DatabaseFacade:
 
     def _has_site(self, site: str) -> bool:
         """Input validation helper.
+
         Args:
             site (str): The short name of the site to check for.
         Returns:
@@ -264,6 +272,7 @@ class DatabaseFacade:
 
     def _has_benchmark(self, benchmark: str) -> bool:
         """Input validation helper.
+
         Args:
             benchmark (str): The docker_name of the benchmark to check for.
         Returns:
@@ -281,6 +290,7 @@ class DatabaseFacade:
 
     def add_uploader(self, metadata_json: str) -> bool:
         """Add new uploader using uploader metadata json.
+
         Args:
             metadata_json (str): The metadata about the new uploader.
         Returns:
@@ -309,6 +319,7 @@ class DatabaseFacade:
 
     def add_result(self, content_json: str, metadata_json: str) -> bool:
         """Add new site using site metadata json.
+
         Args:
             content_json (str): The JSON of the benchmark result data.
             metadata_json (str): The metadata about the new result.
@@ -354,6 +365,7 @@ class DatabaseFacade:
 
     def add_site(self, metadata_json: str) -> bool:
         """Add new site using site metadata json.
+
         Args:
             metadata_json (str): The metadata about the site to be added.
         Returns:
@@ -386,6 +398,7 @@ class DatabaseFacade:
 
     def remove_site(self, short_name: str) -> bool:
         """Remove a site by short name.
+
         Args:
             short_name (str): The short name of the site to be removed.
         Returns:
@@ -399,6 +412,7 @@ class DatabaseFacade:
 
     def add_tag(self, name: str) -> bool:
         """Add a new tag.
+
         Args:
             name (str): The name of the tag to add.
         Returns:
@@ -410,6 +424,7 @@ class DatabaseFacade:
 
     def add_report(self, metadata: str) -> bool:
         """Add a new report.
+
         Args:
             metadata (str): The metadata of the report to add.
         Returns:
@@ -461,6 +476,7 @@ class DatabaseFacade:
 
     def add_benchmark(self, docker_name: str, uploader_id: str) -> bool:
         """Add a new benchmark.
+
         Args:
             docker_name (str): The docker name of the benchmark to add.
             uploader_id (str): The identifier of the uploader that added this benchmark.
@@ -506,6 +522,7 @@ class DatabaseFacade:
 
     def get_reports(self, only_unanswered: bool = False) -> List[Report]:
         """Get all or only unanswered reports.
+
         Args:
             only_unanswered (bool): True if it should only return reports with no verdict.
         Returns:

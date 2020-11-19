@@ -19,6 +19,7 @@ class JSONResultValidator:
 
     def validate_json(self, result_string: JSON) -> bool:
         """Validate a json string.
+
         Returns:
             bool: True if valid JSON.
         """
@@ -35,6 +36,7 @@ class JSONResultValidator:
 
 def _subset_keys(json_result: JSON, json_template: JSON, check_subkeys: bool = True) -> bool:
     """Check if a result contains the keys from the template.
+
     Args:
         json_result (JSON): The result to check.
         json_template (JSON): The template to compare against.

@@ -48,6 +48,7 @@ class Authenticator:
 
     def configure_authenticator(self, flask_app):
         """Set up OIDC authentication functionality for the web app.
+
         Args:
             flask_app (Flask): The flask app for which to set up OIDC functionality.
         """
@@ -93,6 +94,7 @@ class Authenticator:
 
     def is_authenticated(self) -> bool:
         """Check if the current user is authenticated.
+
         Returns:
             bool: True if logged in through EGI Check-In or token not expired.
         """
@@ -112,6 +114,7 @@ class Authenticator:
 
     def is_admin(self) -> bool:
         """Check whether the current user has admin rights.
+
         Returns:
             bool: True if the user is an admin.
         """
@@ -127,6 +130,7 @@ class Authenticator:
 
     def logout(self) -> bool:
         """Sign out the current user.
+
         Returns:
             bool: True if logout successful
         """
@@ -144,6 +148,7 @@ class Authenticator:
 
     def _refresh_token(self) -> bool:
         """Try to refresh token of current user.
+
         Returns:
             bool: True if refresh succeeds.
         """
@@ -177,6 +182,7 @@ class Authenticator:
 
     def _token_expired(self) -> bool:
         """Check if the current user has a valid authentication token.
+
         Returns:
             True if there is *no* valid token.
         """
@@ -193,6 +199,7 @@ class Authenticator:
     @staticmethod
     def _match_entitlement(required, actual) -> bool:
         """Match an AARC G002 entitlement.
+
         Returns:
             bool: True if the actual entitlements contain the required one.
         """

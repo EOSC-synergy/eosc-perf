@@ -24,6 +24,7 @@ class SearchAJAXHandler(AJAXHandler):
 
     def fetch_data(self, query: JSON) -> JSON:
         """Fetch data corresponding to given query.
+
         Args:
             query (JSON): The metadata containing the query to fulfill.
         Returns:
@@ -35,6 +36,7 @@ class SearchAJAXHandler(AJAXHandler):
     @abstractmethod
     def find_results(self, query: JSON) -> JSON:
         """Fetch search results corresponding to given query.
+
         Args:
             query (JSON): The metadata containing the query to fulfill.
         Returns:
@@ -65,6 +67,7 @@ class ResultSearchAJAX(SearchAJAXHandler):
 
 def _pack_benchmarks(benchmarks: List[Benchmark]) -> JSON:
     """Generate JSON data containing info about all supplied benchmarks.
+
     Args:
         benchmarks (List[Benchmark]): All benchmarks to fill into the response.
     Returns:
@@ -89,6 +92,7 @@ class BenchmarkSearchAJAX(SearchAJAXHandler):
 
     def find_results(self, query: JSON) -> JSON:
         """Fetch benchmarks corresponding to given query.
+
         Args:
             query (JSON): The metadata containing the keywords to filter by.
         Returns:
@@ -109,6 +113,7 @@ class BenchmarkFetchAJAXHandler(AJAXHandler):
 
     def fetch_benchmarks(self) -> JSON:
         """Fetch all benchmarks.
+
         Returns:
             JSON: JSON data containing details about all known benchmarks.
         """
@@ -126,6 +131,7 @@ class SiteFetchAJAXHandler(AJAXHandler):
 
     def fetch_sites(self) -> JSON:
         """Fetch all sites.
+
         Returns:
             JSON: JSON data containing details about every site.
         """
@@ -149,6 +155,7 @@ class TagFetchAJAXHandler(AJAXHandler):
 
     def fetch_data(self, query: JSON = None) -> JSON:
         """Fetch all tags independent of given query.
+
         Returns:
             JSON: JSON data containing all known tags.
         """
@@ -156,6 +163,7 @@ class TagFetchAJAXHandler(AJAXHandler):
 
     def fetch_tags(self) -> JSON:
         """Fetch all tags.
+
         Returns:
             JSON: JSON data containing all known tags.
         """

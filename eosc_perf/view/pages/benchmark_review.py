@@ -65,6 +65,7 @@ def decompose_dockername(docker_name: str) -> Tuple[str, str, str]:
 
 def build_dockerhub_url(docker_name: str) -> str:
     """Helper function to build a link to a docker hub page.
+
     Args:
         docker_name (str): The docker name to build a dockerhub url for.
     Returns:
@@ -78,6 +79,7 @@ def build_dockerhub_url(docker_name: str) -> str:
 
 def build_dockerregistry_url(docker_name: str) -> str:
     """Helper function to build a link to the docker hub registry api.
+
     Args:
         docker_name (str): The docker name to build a link to the docker registry for.
     Returns:

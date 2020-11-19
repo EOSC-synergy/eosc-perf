@@ -23,6 +23,7 @@ class DiagramFactory(PageFactory):
 
     def generate_script_content(self, uuids: List[str]) -> HTML:
         """Generate script data for the diagram.
+
         Args:
             uuids (List[str]): A list containing multiple UUIDs of results to display.
         Returns:
@@ -77,6 +78,7 @@ class DiagramFactory(PageFactory):
 
     def check_if_results_exist(self, uuids: List[str]) -> bool:
         """Helper method.
+
         Args:
             uuids (List[str]): A list of UUIDs of results to check existence for.
         Returns:

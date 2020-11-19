@@ -27,6 +27,7 @@ class IOController:
     def authenticate(self) -> Optional[Response]:
         """Authenticate the current user. Redirects user to '/login' which again redirects the user to EGI Check-In
         for authentication.
+
         Returns:
             Optional[Response]: A redirect to the login page, if necessary.
         """
@@ -59,7 +60,6 @@ class IOController:
         Args:
             docker_name (str): The name of the dockerhub image.
             comment (str): Comment to add to benchmark submission.
-
         Returns:
             bool: True if the benchmark was successfully submitted.
         """
@@ -83,6 +83,7 @@ class IOController:
 
     def submit_site(self, short_name: str, address: str, name: str = None, description: str = None) -> bool:
         """Submit a new site to the system for review.
+
         Args:
             short_name (str): Machine-readable site identifier.
             address (str): Network address of the site.
@@ -129,6 +130,7 @@ class IOController:
 
     def submit_tag(self, tag: str) -> bool:
         """Submit a new tag.
+
         Args:
             tag (str): The tag to be submitted.
         Returns:
@@ -142,6 +144,7 @@ class IOController:
 
     def get_site(self, short_name: str) -> Optional[Site]:
         """Get a single site by it's short name.
+
         Args:
            short_name (str): Short name of the site.
         Returns:
@@ -156,6 +159,7 @@ class IOController:
 
     def remove_site(self, short_name: str) -> bool:
         """Remove a single site by it's short name.
+
         Args:
            short_name (str): Short name of the site.
         Returns:
@@ -175,7 +179,6 @@ class IOController:
         Args:
             metadata (JSON): The metadata in json format containing the benchmark 'result_id' and
                 the associated 'user_message'.
-
         Returns:
             bool: True If the report was successfully added.
         """
@@ -188,6 +191,7 @@ class IOController:
 
     def get_report(self, uuid: str) -> Report:
         """Get a report by UUID. Requires the user to be an admin.
+
         Args:
             uuid (str): The unique identifier of the report.
         Returns:
@@ -213,6 +217,7 @@ class IOController:
 
     def process_report(self, verdict: bool, uuid: str) -> bool:
         """Set verdict of report with given uuid. If verdict is False, the item is hidden.
+
         Args:
             verdict (bool): The verdict; True makes the item visible, False hides it.
             uuid (str): The UUID of the judged report.
@@ -237,6 +242,7 @@ class IOController:
 
     def remove_result(self, uuid: str) -> bool:
         """Make a result invisible.
+
         Args:
             uuid (str): The uuid of the result.
         Returns:
@@ -269,6 +275,7 @@ class IOController:
 
     def _decompose_dockername(self, docker_name: str) -> Tuple[str, str, str]:
         """Helper to break a model-docker_name into a tuple.
+
         Args:
             docker_name (str): The docker identifier to decompose.
         Returns:
@@ -291,6 +298,7 @@ class IOController:
 
     def _build_dockerregistry_url(self, docker_name: str) -> str:
         """Helper function to build a link to the docker hub registry api.
+
         Returns:
             str: URL for the given image in the docker hub registry.
         """
@@ -301,6 +309,7 @@ class IOController:
 
     def _build_dockerregistry_tag_url(self, docker_name: str) -> str:
         """Helper function to build a link to the docker hub registry api.
+
         Returns:
             str: URL for the list of tags associated with the given image name from the docker hub registry.
         """
@@ -311,6 +320,7 @@ class IOController:
 
     def _valid_docker_hub_name(self, docker_name: str) -> bool:
         """Check if a benchmark exists with the given name on docker hub.
+
         Args:
             docker_name (str): The name to be checked.
         Returns:
@@ -340,6 +350,7 @@ class IOController:
     @staticmethod
     def _site_result_amount(short_name: str) -> int:
         """Get the number of results associated with a site.
+
         Args:
             short_name (str): The site to check.
         Result:
@@ -354,6 +365,7 @@ class IOController:
     @staticmethod
     def get_email() -> Optional[str]:
         """Get current user's unique identifier, if logged in.
+
         Returns:
            Optional[str]: The current user's email, or None if no user is logged in.
         """
@@ -365,6 +377,7 @@ class IOController:
     @staticmethod
     def get_full_name() -> Optional[str]:
         """Get current user's full name, if logged in.
+
         Returns:
            Optional[str]: The current user's full name, or None if no user is logged in.
         """
@@ -376,6 +389,7 @@ class IOController:
     @staticmethod
     def get_user_id() -> Optional[str]:
         """Get current user's unique identifier, if logged in.
+
         Returns:
            Optional[str]: The current user's unique identifier, or None if no user is logged in.
         """
@@ -387,6 +401,7 @@ class IOController:
     @staticmethod
     def is_admin() -> bool:
         """Checks if current user has admin right, if one is logged on.
+
         Returns:
             bool: True if current user is admin.
         """
@@ -395,6 +410,7 @@ class IOController:
     @staticmethod
     def is_authenticated() -> bool:
         """Check if the current user is authenticated.
+
         Returns:
             bool: True if the user is authenticated.
         """

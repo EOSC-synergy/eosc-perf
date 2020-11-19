@@ -42,6 +42,7 @@ class ResultReportPageFactory(PageFactory):
 
     def result_exists(self, uuid: str) -> bool:
         """Helper to determine whether a result exists.
+
         Args:
             uuid (str): The UUID of the result to look for.
         Returns:

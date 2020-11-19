@@ -20,6 +20,7 @@ def error_json_redirect(message: str) -> Response:
 
 def error_redirect(message: str) -> Response:
     """Builder for redirect responses.
+
     Args:
         message (str): The error message to display.
     Returns:
@@ -31,6 +32,7 @@ def error_redirect(message: str) -> Response:
 
 def info_redirect(message: str) -> Response:
     """Builder for redirect responses.
+
     Args:
         message (str): Info message to display:
     Returns:

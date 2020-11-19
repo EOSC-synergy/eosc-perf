@@ -13,6 +13,7 @@ class ResultFilterer:
 
     def add_filter(self, new_filter: Filter):
         """Add a filter to the ResultFilterer.
+
         Args:
             new_filter (Filter): A new filter to apply to the query.
         """
@@ -20,6 +21,7 @@ class ResultFilterer:
 
     def filter(self, results: ResultIterator) -> List[Result]:
         """Apply all filters to the given list and returns the results that match all of them.
+
         Args:
             results (ResultIterator): A ResultIterator that supplies benchmark results.
         """
