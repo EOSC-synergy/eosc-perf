@@ -490,8 +490,8 @@ class ResultSearch extends Content {
                 uuids += "result_uuids=" + selected_results[index]["uuid"] + "&";
             }
         }
-        //let url = '/make_diagram?' + uuids.slice(0, -1);
-        //let new_tab = window.open(url, '_blank');
+        let url = '/make_diagram?' + uuids.slice(0, -1);
+        /*let new_tab =*/ window.open(url, '_blank');
         //window.focus(new_tab);
     }
 
