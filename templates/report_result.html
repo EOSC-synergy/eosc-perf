@@ -3,26 +3,25 @@
 {% block title %}Report Result{% endblock %}
 
 {% block head %}
-{{ super() }}
-<script src="static/scripts/view/report_result.js"></script>
-<style>
-    #message-box {
-        width: 80%
-    }
-</style>
+    {{ super() }}
+    <script src="static/scripts/view/report_result.js"></script>
+    <style>
+        #message-box {
+            width: 80%
+        }
+    </style>
 {% endblock %}
 
 {% block info %}
     <h1>Report result</h1>
-    <h4>Result content:</h2>
-    <code>
-    {{ page_content }}
-    </code>
+    <h4>Result content:</h4>
+    <code>{{ page_content }}</code>
     <br/>
     <form id="form" action="/report_result_submit" method="POST">
         <input type="hidden" name="uuid" value="{{ uuid }}" />
+        <label for="message-box">Explanation:</label>
         <input type="text" id="message-box" class="form-control" name="message" value=""
-            placeholder="Enter an explanation for your report here." />
+               placeholder="Enter an explanation for your report here." />
         <input type="submit" name="submit" class="btn btn-danger" value="Submit report" />
     </form>
 {% endblock %}

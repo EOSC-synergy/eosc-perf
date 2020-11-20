@@ -1,10 +1,10 @@
-var results_per_page = 25;
-var results = [];
-var result_amount = 0;
-var page = 0;
+let results_per_page = 25;
+let results = [];
+let result_amount = 0;
+let page = 0;
 
 $(function () {
-    form = $('#form');
+    let form = $('#form');
     form.submit(function (e) {
         search_benchmarks(form.find('input[name="query"]').val().trim());
         return false;
@@ -15,30 +15,28 @@ function search_benchmarks(query) {
     results = [];
     result_amount = 0;
     page = 0;
-    keywords = query.split(" ");
+    let keywords = query.split(" ");
     $.ajax('/query_benchmarks?query_json='
-        + encodeURI(JSON.stringify(
-            { 'keywords': keywords })))
+        + encodeURI(JSON.stringify({ 'keywords': keywords })))
         .done(function (data) {
             results = data.results;
             result_amount = results.length;
             update_result_table();
-        })
+        });
 }
 
 function update_result_table() {
     // clear result
-    var table_body = document.getElementById("result_table_body");
+    let table_body = document.getElementById("result_table_body");
     table_body.innerHTML = '';
-    var start_index = results_per_page * page;
-    var limit = Math.min(result_amount, start_index + 25);
+    let start_index = results_per_page * page;
+    let limit = Math.min(result_amount, start_index + 25);
     if (result_amount === 0) {
         table_body.innerHTML = '<p class="text-center">No benchmarks found.</p>';
-
     }
-    for (index = start_index; index < limit; ++index) {
-        var result_row = table_body.insertRow(-1);
-        var docker_name_cell = result_row.insertCell(0);
+    for (let index = start_index; index < limit; ++index) {
+        let result_row = table_body.insertRow(-1);
+        let docker_name_cell = result_row.insertCell(0);
         let docker_name = results[index].docker_name;
 
         // add a 'a' with href
@@ -52,13 +50,12 @@ function update_result_table() {
         docker_name_cell.appendChild(a);
     }
     if (result_amount > results_per_page) {
-        show_nav_buttons()
-        var amount_pages = (Math.floor(result_amount / results_per_page) + 1)
-        var page_info = "Page " + (page + 1) + " of " + amount_pages
-        document.getElementById("page_info").innerHTML = page_info
+        show_nav_buttons();
+        let amount_pages = (Math.floor(result_amount / results_per_page) + 1);
+        document.getElementById("page_info").innerHTML = "Page " + (page + 1) + " of " + amount_pages;
     } else {
-        hide_nav_buttons()
-        document.getElementById("page_info").innerHTML = ""
+        hide_nav_buttons();
+        document.getElementById("page_info").innerHTML = "";
     }
 }
 
@@ -87,7 +84,7 @@ function show_nav_buttons() {
 }
 
 window.onload = function () {
-    hide_nav_buttons()
+    hide_nav_buttons();
     document.getElementById("page_info").style.display = "inline-block";
     search_benchmarks("")
 }

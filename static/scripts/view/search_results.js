@@ -1,31 +1,29 @@
+let query = "";
+let results = [];
+let current_page = 1;
+let filters = [];
+let results_per_page = 10;
+let ordered_by = null;
+let columns = ["Select", "Benchmark", "Location", "Uploader", "Data", "Tags", "Report"];
+let filter_uuid = 0;
+let filter_types = ["Benchmark", "Uploader", "Site", "Tag", "Value greater than", "Value equal to", "Value less than"].sort();
+let filter_dic = {
+    "Benchmark": 'benchmark', "Uploader": "uploader", "Site": "site", "Tag": "tag", "Value greater than": "greater_than",
+    "Value equal to": "equals", "Value less than": "lesser_than"
+};
+
+let values = ["selected", "benchmark", "site", "uploader", "data", "tags"];
+let msg = "";
 
 // parameters represented as external state, so ResultSearch has no internal state, instead of a mix.
 window.addEventListener("load", function () {
     onload();
 });
 
-
 function onload() {
-    // initializes state not contained in the html.
-    query = "";
-    results = [];
-    current_page = 1;
-    filters = [];
-    results_per_page = 10;
-    ordered_by = null;
-    columns = ["Select", "Benchmark", "Location", "Uploader", "Data", "Tags", "Report"];
-    filter_uuid = 0;
-    filter_types = ["Benchmark", "Uploader", "Site", "Tag", "Value greater than", "Value equal to", "Value less than"].sort();
-    filter_dic = {
-        "Benchmark": 'benchmark', "Uploader": "uploader", "Site": "site", "Tag": "tag", "Value greater than": "greater_than",
-        "Value equal to": "equals", "Value less than": "lesser_than"
-    };
     if (admin) {
         columns.push("Delete");
     }
-    values = ["selected", "benchmark", "site", "uploader", "data", "tags"];
-    filter_uuid = 0;
-    msg = "";
 
     // Case it got initialed with a Benchmark.
     if (benchmark) {
@@ -43,8 +41,6 @@ function onload() {
  * get the search results and string them.
  */
 class ResultSearch extends Content {
-
-
     static update() {
         // Update table.
         this.set_result_table();
@@ -68,33 +64,23 @@ class ResultSearch extends Content {
             html: true
         });
 
-        if (this.get_page() > 1) {
-            document.getElementById("prevpage").disabled = false;
-        }
-        else {
-            document.getElementById("prevpage").disabled = true;
-        }
-        if (this.get_page() < document.getElementById("pages").length) {
-            document.getElementById("nextpage").disabled = false;
-        }
-        else {
-            document.getElementById("nextpage").disabled = true;
-        }
+        document.getElementById("prevpage").disabled = this.get_page() <= 1;
+        document.getElementById("nextpage").disabled = this.get_page() >=
+            document.getElementById("pages").length;
     }
-
 
     static set_result_table() {
         /**create the result table from current results */
         // Empty existing table.
-        var table = document.getElementById("result_table");
+        let table = document.getElementById("result_table");
         while (table.firstChild != null) {
             table.firstChild.remove();
         }
         // Create head.
-        var head = document.createElement("THEAD");
-        for (var index in columns) {
+        let head = document.createElement("THEAD");
+        for (let index in columns) {
             const col = columns[index]
-            var cell = document.createElement("TH");
+            let cell = document.createElement("TH");
             cell.textContent = col;
             switch (col) {
                 case ("Select"):
@@ -108,6 +94,7 @@ class ResultSearch extends Content {
                     cell.addEventListener("click", function () {
                         ResultSearch.sort_by((x, y) => x["benchmark"] < y["benchmark"], col)
                     });
+                    break;
                 case ("Location"):
                     // Sort by location alphabetical.
                     cell.addEventListener("click", function () {
@@ -133,23 +120,23 @@ class ResultSearch extends Content {
         }
         table.appendChild(head);
         // Create Body.
-        var results_amount = results.length;
-        var start = (current_page - 1) * results_per_page;
-        var end = Math.min(start + parseInt(results_per_page), results_amount);
-        for (var i = start; i < end; i++) {
-            var row = document.createElement("TR")
+        let results_amount = results.length;
+        let start = (current_page - 1) * results_per_page;
+        let end = Math.min(start + parseInt(results_per_page), results_amount);
+        for (let i = start; i < end; i++) {
+            let row = document.createElement("TR")
             const res = results[i];
             // First column ins select box
-            for (index in values) {
+            for (const index in values) {
                 const col = values[index];
-                var cell = document.createElement("TD");
+                let cell = document.createElement("TD");
                 switch (col) {
-                    case ("selected"):
-                        var select = document.createElement("input");
+                    case ("selected"): {
+                        let select = document.createElement("input");
                         select.setAttribute("type", "checkbox");
                         select.setAttribute("id", "selected" + i);
                         if (res["selected"]) {
-                            // 
+                            //
                             select.setAttribute("checked", "");
                         }
                         // Event Listener to keep presentation and data in sync.
@@ -158,32 +145,23 @@ class ResultSearch extends Content {
                             ResultSearch.select_result(num);
                         });
                         cell.appendChild(select);
-                        break;
-                    case ("site"):
-                        cell.textContent = res[col];
-                        break;
-                    case ("uploader"):
-                        cell.textContent = res[col];
-                        break;
-                    case ("data"):
-                        var view_data = document.createElement("A");
+                    } break;
+
+                    case ("data"): {
+                        let view_data = document.createElement("A");
                         view_data.textContent = "view JSON";
                         let href = "./result" + "?uuid=" + res["uuid"];
                         view_data.setAttribute("href", href);
                         view_data.setAttribute("target", "_blank");
                         view_data.setAttribute("title", JSON.stringify(res[col], null, "\t"));
                         cell.appendChild(view_data);
-                        break;
+                    } break;
+                    case ("site"):
+                    case ("uploader"):
                     case ("tags"):
+                    case ("benchmark"): {
                         cell.textContent = res[col];
-                        break;
-                    case ("benchmark"):
-                        cell.textContent = res[col];
-                        break;
-                    default:
-                        if (res[col] = ! null) {
-                            cell.textContent = res[col];
-                        }
+                    } break;
 
                 }
                 row.appendChild(cell);
@@ -201,7 +179,7 @@ class ResultSearch extends Content {
             // Add delete col
             if (columns.includes("Delete")) {
                 let cell = document.createElement("TD");
-                var delete_btn = document.createElement("input");
+                let delete_btn = document.createElement("input");
                 delete_btn.setAttribute("type", "submit");
                 delete_btn.setAttribute("value", "Delete Result");
                 delete_btn.setAttribute("data-toggle", "popover");
@@ -220,13 +198,14 @@ class ResultSearch extends Content {
             table.appendChild(row);
         }
     }
+
     static set_page_selection() {
         /** Set Page selection to fit the amount of  results.*/
         // Calc amount of pages.
-        var pages = (results.length - (results.length % results_per_page))
+        let pages = (results.length - (results.length % results_per_page))
             / results_per_page;
         // If div rounded down.
-        if ((results.length % results_per_page) != 0) {
+        if ((results.length % results_per_page) !== 0) {
             pages++;
         }
         // If no result sill page 1 selectable.
@@ -234,13 +213,13 @@ class ResultSearch extends Content {
             pages = 1;
         }
         // Get pages Selection.
-        var pages_select = document.getElementById("pages");
+        let pages_select = document.getElementById("pages");
         // Remove Previous options.
         while (pages_select.firstChild != null) {
             pages_select.firstChild.remove();
         }
         // Add the new options.
-        for (var i = 1; i <= pages; i++) {
+        for (let i = 1; i <= pages; i++) {
             let p = document.createElement("OPTION");
             p.setAttribute("value", i);
             p.textContent = "Page: " + i;
@@ -254,16 +233,19 @@ class ResultSearch extends Content {
     static get_page() {
         return document.getElementById("pages").value;
     }
+
     static prev_page() {
         document.getElementById("pages").selectedIndex -= 1;
         current_page = document.getElementById("pages").value;
         this.update();
     }
+
     static set_page() {
         /** Change the page displayed. */
         current_page = document.getElementById("pages").value;
         this.update();
     }
+
     static next_page() {
         document.getElementById("pages").selectedIndex += 1;
         current_page = document.getElementById("pages").value;
@@ -274,38 +256,37 @@ class ResultSearch extends Content {
         /** Search the database using selected filters. */
         // Generate query.
         let filters = [];
-        var html_filter = document.getElementById("filters").children;
+        let html_filter = document.getElementById("filters").children;
         // Add filters.
-        for (var index = 0; index < html_filter.length; index++) {
+        for (let index = 0; index < html_filter.length; index++) {
             let type = html_filter[index].firstChild.value;
             let element = "";
             if (type.includes("Value")) {
                 let key = html_filter[index].firstChild.nextSibling.value;
                 let value = html_filter[index].firstChild.nextSibling.nextSibling.value;
                 // Remove spaces and " characters.
-                key = key.replace(/(\s+)/g, '').replace(/\"+/g, "'");
+                key = key.replace(/(\s+)/g, '').replace(/"+/g, "'");
                 type = filter_dic[type] + "";
-                if (key != "" && value != "" && type != "") {
+                if (key !== "" && value !== "" && type !== "") {
                     element = { 'type': 'json', 'key': key, 'value': value, 'mode': type };
 
                 }
             } else {
                 let value = html_filter[index].firstChild.nextSibling.value;
                 type = filter_dic[type];
-                if (type != "" && value != "") {
+                if (type !== "" && value !== "") {
                     element = { 'type': type, 'value': value };
                 }
             }
             // Append if not empty
-            if (element != "") {
+            if (element !== "") {
                 filters = filters.concat([element]);
             }
         }
         // Finish query.
         query = { "filters": filters };
         // Find get new results via ajax query.
-        $.ajax('/query_results?query_json='
-            + encodeURI(JSON.stringify(query)))
+        $.ajax('/query_results?query_json=' + encodeURI(JSON.stringify(query)))
             .done(function (data) {
                 results = data["results"];
                 if (results.length > 0) {
@@ -321,6 +302,7 @@ class ResultSearch extends Content {
             });
         return false;
     }
+
     static add_filter_field(input_values) {
         /**Add an filter filed consisting of an selection of filter type,
          * one or tow input fields and the option of removing the created filter field.
@@ -330,18 +312,18 @@ class ResultSearch extends Content {
          *                - input (input value of corresponding filter),
          *                - num_input (numeric input value of corresponding filter).
          */
-        var filter_id = "f" + filter_uuid++;
+        let filter_id = "f" + filter_uuid++;
         // Get the filter section.
-        var filter_list = document.getElementById('filters');
+        let filter_list = document.getElementById('filters');
         // Creat the new filter.
-        var new_filter = document.createElement('LI');
+        let new_filter = document.createElement('LI');
         new_filter.setAttribute("id", filter_id);
         new_filter.setAttribute("class", "flexbox filter");
         let filter_type = document.createElement("select");
         // Add the different types.
-        for (var i = 0; i < filter_types.length; i++) {
+        for (let i = 0; i < filter_types.length; i++) {
             // Create options with their name as value.
-            var type = document.createElement("OPTION");
+            let type = document.createElement("OPTION");
             type.setAttribute("value", filter_types[i]);
             type.textContent = filter_types[i];
             filter_type.appendChild(type);
@@ -398,19 +380,19 @@ class ResultSearch extends Content {
         });
         filter_type.setAttribute("class", "form-control");
         // Create input.
-        var input = document.createElement("input");
+        let input = document.createElement("input");
         input.setAttribute("type", "text");
         input.setAttribute("id", "filter_value" + filter_id);
         input.setAttribute("placeholder", "Filter Value");
         input.setAttribute("class", "form-control");
         // Create number field.
-        var num_input = document.createElement("input");
+        let num_input = document.createElement("input");
         num_input.setAttribute("id", "number" + filter_id);
         num_input.setAttribute("min", "0");
         num_input.setAttribute("class", "form-control");
         num_input.style.visibility = "hidden";
         // Create button to remove given filter.
-        var remove_filter = document.createElement("input");
+        let remove_filter = document.createElement("input");
         remove_filter.setAttribute("type", "button");
         remove_filter.setAttribute("class", "btn btn-danger");
         remove_filter.setAttribute("value", "Remove Filter");
@@ -418,7 +400,7 @@ class ResultSearch extends Content {
             ResultSearch.remove_filter(filter_id);
         })
         // Create info button.
-        var type_info = document.createElement("input");
+        let type_info = document.createElement("input");
         type_info.setAttribute("type", "button");
         type_info.setAttribute("id", "info" + filter_id);
         type_info.setAttribute("class", "btn btn-warning");
@@ -471,7 +453,7 @@ class ResultSearch extends Content {
             criteria
         )
         // reverse order if double clicked.
-        if (ordered_by == column) {
+        if (ordered_by === column) {
             results = results.reverse();
             ordered_by = "";
         } else {
@@ -494,20 +476,19 @@ class ResultSearch extends Content {
         results[result_number]["selected"] = !(results[result_number]["selected"]);
     }
 
-
     static make_diagram() {
         /**Link to the Diagram-page, with selected results.*/
         // Store data in href
         let selected_results = results.filter(x => x["selected"]);
         let uuids = "";
         if (selected_results.length > 0) {
-            for (var index in selected_results) {
+            for (let index in selected_results) {
                 uuids += "result_uuids=" + selected_results[index]["uuid"] + "&";
             }
         }
-        let url = '/make_diagram?' + uuids.slice(0, -1);
-        let new_tab = window.open(url, '_blank');
-        window.focus(new_tab);
+        //let url = '/make_diagram?' + uuids.slice(0, -1);
+        //let new_tab = window.open(url, '_blank');
+        //window.focus(new_tab);
     }
 
     static generate_tag_cont() {
@@ -516,20 +497,20 @@ class ResultSearch extends Content {
          * Returns:
          *      A string containing the html formatted text.
          */
-        var msg = "";
+        let msg = "";
         // Collect all tags
         let tags = "";
-        for (var i = 0; i < results.length; i++) {
+        for (let i = 0; i < results.length; i++) {
             if (results[i].tags) {
                 tags += results[i].tags + ",";
             }
         }
         // Count double tags
-        var tag_tuple = {};
+        let tag_tuple = {};
         tags.split(",").filter(Boolean).forEach(function (i) { tag_tuple[i] = (tag_tuple[i] || 0) + 1; });
-        var tag_tmp = [];
+        let tag_tmp = [];
         // Convert to List.
-        for (var tag in tag_tuple) {
+        for (let tag in tag_tuple) {
             tag_tmp.push([tag, tag_tuple[tag]]);
         }
         tag_tmp.sort(function (x, y) {
@@ -556,7 +537,7 @@ class ResultSearch extends Content {
             alert(data);
             if (data.toLowerCase.includes("success")) {
                 results.filter(function (r) {
-                    return r["uuid"] == result;
+                    return r["uuid"] === result;
                 });
                 ResultSearch.update();
             }
@@ -566,11 +547,11 @@ class ResultSearch extends Content {
 
     static invert_selection() {
         /**Invert the result selection. */
-        if(results.length == 0) {
+        if(results.length === 0) {
             return false;
         }
         results.forEach(r => {
-            r.selected = r.selected ? false : true;
+            r.selected = !r.selected;
         });
         ResultSearch.update();
         return false;

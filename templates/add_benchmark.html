@@ -3,22 +3,28 @@
 {% block title %}Submit new benchmark{% endblock %}
 
 {% block head %}
-{{ super() }}
-<script src="static/scripts/view/add_benchmark.js"></script>
+    {{ super() }}
+    <script src="static/scripts/view/add_benchmark.js"></script>
 {% endblock %}
 
 {% block info %}
-<h1>Add Benchmark</h1>
-<form id="form" action="/add_benchmark_submit" method="POST">
-    Docker image name:<br/>
-    <input type="text" name="docker_name" id="docker_name" class="form-control inputbox small" placeholder="user/image:tag"
-        onkeyup="stopped_typing()" />
-    Benchmark description (optional):<br/>
-    <textarea type="text" id="message-box" class="form-control textbox" name="message" value=""
-        placeholder="Enter a description of the new benchmark here."></textarea>
-    Benchmark result JSON template (optional):<br/>
-    <textarea type="text" id="template" class="form-control textbox" name="template" value=""
-        placeholder="{ &quot;template&quot;: true, &quot;required_argument&quot;: 1, &quot;!required_and_notable_argument&quot;: 2 }"></textarea>
-    <input type="submit" class="btn btn-success" name="submit" id="submit" value="Submit" disabled />
-</form>
+    <h1>Add Benchmark</h1>
+    <form id="form" action="/add_benchmark_submit" method="POST">
+        <div class="m-2">
+            <label for="docker_name">Docker image name:<br/></label>
+            <input type="text" name="docker_name" id="docker_name" class="form-control inputbox small"
+                   placeholder="user/image:tag" onkeyup="stopped_typing()" />
+        </div>
+        <div class="m-2">
+            <label for="message-box">Benchmark description (optional):<br/></label>
+            <textarea type="text" id="message-box" class="form-control textbox" name="message" value=""
+                      placeholder="Enter a description of the new benchmark here."></textarea>
+        </div>
+        <div class="m-2">
+            <label for="template">Benchmark result JSON template (optional):<br/></label>
+            <textarea type="text" id="template" class="form-control textbox" name="template" value=""
+                      placeholder="{ &quot;required_arg&quot;: 5, &quot;!notable_argument&quot;: 10 }"></textarea>
+        </div>
+        <input type="submit" class="btn btn-success" name="submit" id="submit" value="Submit" disabled />
+    </form>
 {% endblock %}

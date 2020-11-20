@@ -21,7 +21,7 @@ class Diagram extends Content {
         for (const value of data) {
             scores.push(value.score);
         }
-        let dataSet = {
+        return {
             label: 'score',
             backgroundColor: color(chartColors[index]).alpha(0.5).rgbString(),
             borderColor: chartColors[index],
@@ -29,7 +29,6 @@ class Diagram extends Content {
             data: scores,
             spanGaps: true
         };
-        return dataSet;
     }
 
     // todo: sum of all datasets' core_counts
@@ -38,7 +37,7 @@ class Diagram extends Content {
         let sameSite = true;
         let siteName = data[0].site;
         for (const keypoint of data) {
-            sameSite &&= (keypoint.site == siteName);
+            sameSite &&= (keypoint.site === siteName);
         }
         for (const value of data) {
             if (sameSite) {
@@ -110,13 +109,12 @@ class Diagram extends Content {
 }
 
 window.onload = function () {
-    var diagram = new Diagram();
+    let diagram = new Diagram();
 
     let canvas = document.getElementById('speedup');
     let downloadButton = document.getElementById('download-button')
     downloadButton.addEventListener('click', function (e) {
-        let dataURL = canvas.toDataURL('image/png');
-        downloadButton.href = dataURL;
+        downloadButton.href = canvas.toDataURL('image/png');
     });
 
     diagram.update();
@@ -125,8 +123,7 @@ window.onload = function () {
     csvButton.addEventListener('click', function (e) {
         // TODO: defaults to dataset 0, selection not implemented due to
         // multiple-dataset functionality being absent
-        let dataURI = encodeURI(diagram.generateCSV(0));
-        csvButton.href = dataURI;
+        csvButton.href = encodeURI(diagram.generateCSV(0));
     });
 
 };

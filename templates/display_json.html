@@ -3,13 +3,11 @@
 {% block title %}Inspect Data{% endblock %}
 
 {% block head %}
-{{ super() }}
+    {{ super() }}
 {% endblock %}
 
 {% block info %}
-<h1>Result {{uuid}}</h1>
+    <h1>Result {{uuid}}</h1>
     <h4>Result content:</h4>
-    <pre><code>
-{{ content }}
-    </code></pre>
+    <pre><code>{{ content }}</code></pre>
 {% endblock %}
