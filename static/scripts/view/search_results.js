@@ -285,6 +285,9 @@ class ResultSearch extends Content {
         }
         // Finish query.
         query = { "filters": filters };
+
+        document.getElementById('loading-icon').classList.add('loading');
+
         // Find get new results via ajax query.
         $.ajax('/query_results?query_json=' + encodeURI(JSON.stringify(query)))
             .done(function (data) {
@@ -299,6 +302,7 @@ class ResultSearch extends Content {
                 document.getElementById("pages").value = current_page;
                 ResultSearch.set_page_selection();
                 ResultSearch.update();
+                document.getElementById('loading-icon').classList.remove('loading');
             });
         return false;
     }
