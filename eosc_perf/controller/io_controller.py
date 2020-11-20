@@ -87,6 +87,11 @@ class IOController:
         if not facade.add_benchmark(docker_name=docker_name, uploader_id=self.get_user_id(), template=template):
             raise RuntimeError("A benchmark with the given name was already submitted.")
 
+        # if user is an admin, skip review process
+        if self.is_admin():
+            facade.get_benchmark(docker_name=docker_name).set_hidden(False)
+            return True
+
         return self.report(json.dumps({
             'message': "New Benchmark. Submit comment: {}".format(comment),
             'type': 'benchmark',
@@ -129,6 +134,11 @@ class IOController:
             message += ", name: {}".format(name)
         if description is not None:
             message += ", description: {}".format(description)
+
+        # if admin, skip review process
+        if self.is_admin():
+            facade.get_site(short_name).set_hidden(False)
+            return True
 
         if not self.report(json.dumps({
             'message': message,
