@@ -187,7 +187,7 @@ class ResultSearch extends Content {
                 delete_btn.setAttribute("data-content", "Deleting the result will remove it from the database <b>not (just) the search selection</b>.");
                 delete_btn.setAttribute("data-placement", "right");
                 delete_btn.setAttribute("data-trigger", "hover");
-                delete_btn.setAttribute("class", "btn btn-danger");
+                delete_btn.setAttribute("class", "btn btn-danger btn-sm");
                 // add delete function
                 delete_btn.addEventListener("click", function () {
                     ResultSearch.delete_result(res["uuid"]);
