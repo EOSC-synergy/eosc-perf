@@ -47,7 +47,15 @@ class IOController:
             bool: True if the benchmark was successfully added.
         """
         if self.is_authenticated():
-            if not self._result_validator.validate_json(result_json):
+            if 'benchmark' not in metadata:
+                raise ValueError("Missing benchmark identifier")
+            try:
+                benchmark = facade.get_benchmark(json.loads(metadata)['benchmark'])
+            except facade.NotFoundError:
+                raise ValueError("Unknown benchmark")
+            template = benchmark.get_template() if benchmark.has_template() else None
+
+            if not self._result_validator.validate_json(result_json, template):
                 raise ValueError("No valid result JSON")
 
             self._add_current_user_if_missing()
@@ -55,12 +63,13 @@ class IOController:
 
         raise AuthenticateError("Only authenticated users can submit results")
 
-    def submit_benchmark(self, docker_name: str, comment: str) -> bool:
+    def submit_benchmark(self, docker_name: str, comment: str, template: Optional[JSON] = None) -> bool:
         """Submit a new benchmark to the system.
 
         Args:
             docker_name (str): The name of the dockerhub image.
             comment (str): Comment to add to benchmark submission.
+            template (JSON): Optional JSON template for benchmark results.
         Returns:
             bool: True if the benchmark was successfully submitted.
         """
@@ -68,11 +77,14 @@ class IOController:
             raise AuthenticateError("You need to be logged in to submit a benchmark.")
 
         if not self._valid_docker_hub_name(docker_name):
-            raise RuntimeError("Could not verify {} as a valid docker hub name.".format(docker_name))
+            raise RuntimeError("Could not verify '{}' as a valid docker hub name.".format(docker_name))
 
         self._add_current_user_if_missing()
 
-        if not facade.add_benchmark(docker_name=docker_name, uploader_id=self.get_user_id()):
+        if template is not None and not self._result_validator.validate_json(template, skip_keycheck=True):
+            raise ValueError("Template is not valid JSON")
+
+        if not facade.add_benchmark(docker_name=docker_name, uploader_id=self.get_user_id(), template=template):
             raise RuntimeError("A benchmark with the given name was already submitted.")
 
         return self.report(json.dumps({

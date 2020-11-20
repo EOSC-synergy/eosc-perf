@@ -1,5 +1,5 @@
 """"This module contains the implementation of the Model facade."""
-from typing import List, Type
+from typing import List, Type, Optional
 import json
 from sqlalchemy.exc import SQLAlchemyError
 from eosc_perf.model.data_types import Result, Tag, Benchmark, Uploader, Site,\
@@ -8,6 +8,7 @@ from eosc_perf.model.result_filterer import ResultFilterer
 from eosc_perf.model.filters import BenchmarkFilter, UploaderFilter, SiteFilter, TagFilter,\
     JsonValueFilter
 from .database import db
+from ..utility.type_aliases import JSON
 
 
 class DatabaseFacade:
@@ -474,12 +475,13 @@ class DatabaseFacade:
 
         return success
 
-    def add_benchmark(self, docker_name: str, uploader_id: str) -> bool:
+    def add_benchmark(self, docker_name: str, uploader_id: str, template: Optional[JSON] = None) -> bool:
         """Add a new benchmark.
 
         Args:
             docker_name (str): The docker name of the benchmark to add.
             uploader_id (str): The identifier of the uploader that added this benchmark.
+            template (JSON): An optional JSON data template to use for the results of this benchmark.
         Returns:
             bool: True if adding the benchmark was successful.
         """
@@ -492,7 +494,7 @@ class DatabaseFacade:
 
         uploader = self.get_uploader(uploader_id)
 
-        return self._add_to_db(Benchmark(docker_name, uploader))
+        return self._add_to_db(Benchmark(docker_name, uploader, template=template))
 
     def get_report(self, uuid: str) -> Report:
         """Fetch a single report by its UUID.

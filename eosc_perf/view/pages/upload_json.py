@@ -109,8 +109,8 @@ def upload_result_submit():
     try:
         success = controller.submit_result(result_json, json.dumps(metadata))
     except (ValueError, TypeError) as error:
-        if custom_site:
-            controller.remove_site(site_name)
+        #if custom_site:
+        #    controller.remove_site(site_name)
         return error_json_redirect('Failed to submit result: ' + str(error))
     if not success:
         if custom_site:

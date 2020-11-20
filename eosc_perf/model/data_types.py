@@ -8,6 +8,7 @@ from abc import abstractmethod
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm.session import Session
 from .database import db
+from ..utility.type_aliases import JSON
 
 
 class UUID(db.String):
@@ -213,14 +214,16 @@ class Benchmark(db.Model):
     _uploader_id = db.Column(db.Text, db.ForeignKey('uploader._email'), nullable=False)
     _uploader = db.relationship('Uploader', backref=db.backref('_benchmarks', lazy=True))
 
-    def __init__(self, docker_name: str, uploader: Uploader):
+    _template = db.Column(db.Text, nullable=True)
+
+    def __init__(self, docker_name: str, uploader: Uploader, template: JSON = None):
         """Create a new benchmark entry object.
 
         Args:
             docker_name (str): The docker name of the new benchmark.
             uploader (Uploader): The uploader that added this benchmark.
         """
-        super(Benchmark, self).__init__(_docker_name=docker_name, _uploader=uploader)
+        super(Benchmark, self).__init__(_docker_name=docker_name, _uploader=uploader, _template=template)
 
     def get_docker_name(self) -> str:
         """Get the docker hub identifier of the benchmark, formatted as \"user/image:tagname\".
@@ -262,6 +265,28 @@ class Benchmark(db.Model):
             bool: True if hidden.
         """
         return self._hidden
+
+    def set_template(self, template: JSON):
+        """Set a new JSON data template for this benchmark.
+        Returns:
+            template (JSON): The new JSON data template to use.
+        """
+        self._template = template
+        db.session.commit()
+
+    def has_template(self) -> bool:
+        """Check if this benchmark has a specific result template.
+        Returns:
+            bool: True if this benchmark has a unique template.
+        """
+        return self._template is not None
+
+    def get_template(self) -> JSON:
+        """Get the JSON data template for this benchmark.
+        Returns:
+            JSON: The template for this benchmark.
+        """
+        return self._template
 
     def __repr__(self) -> str:
         """Get a human-readable representation string of the benchmark.

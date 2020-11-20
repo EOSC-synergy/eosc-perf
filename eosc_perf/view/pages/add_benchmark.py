@@ -6,6 +6,7 @@ from flask.blueprints import Blueprint
 
 from ..page_factory import PageFactory
 from eosc_perf.utility.type_aliases import HTML
+from ...controller.authenticator import AuthenticateError
 
 from ...controller.io_controller import controller
 
@@ -38,21 +39,19 @@ def add_benchmark():
 @add_benchmark_blueprint.route('/add_benchmark_submit', methods=['POST'])
 def add_benchmark_submit():
     """HTTP endpoint to take in the reports."""
+    docker_name = request.form['docker_name'] if 'docker_name' in request.form else None
+    message = request.form['message'] if 'message' in request.form else "No description given."
+    template = request.form['template'] if 'template' in request.form and len(request.form['template']) > 2 else None
 
-    if not controller.is_authenticated():
-        return error_json_redirect('Not logged in')
-
-    docker_name = request.form['docker_name']
-    message = request.form['message']
     # validate input
     if docker_name is None:
-        return error_json_redirect('Incomplete report form submitted (missing Docker name)')
+        return error_json_redirect('⚠ Incomplete report form submitted (missing Docker name)')
 
     # handle redirect in a special way because ajax
     try:
-        if not controller.submit_benchmark(docker_name, message):
+        if not controller.submit_benchmark(docker_name, message, template):
             return error_json_redirect('Failed to submit benchmark')
-    except (RuntimeError, ValueError) as exception:
-        return error_json_redirect(str(exception))
+    except (RuntimeError, ValueError, AuthenticateError) as exception:
+        return error_json_redirect('⚠ ' + str(exception))
 
     return Response('{}', mimetype='application/json', status=200)
