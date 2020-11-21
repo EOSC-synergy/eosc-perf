@@ -47,17 +47,26 @@ const JSON_KEYS = new Map([
 ]);
 
 class Table {
+    /**
+     * Construct a new table handler.
+     */
     constructor() {
         this.table = document.getElementById("result_table");
     }
 
-    clear() {
+    /**
+     * Remove all entries from the table.
+     */
+    _clear() {
         while (this.table.firstChild != null) {
             this.table.firstChild.remove();
         }
     }
 
-    create_head() {
+    /**
+     * Set up the top row of the table.
+     */
+    _create_head() {
         let head = document.createElement("THEAD");
         for (const column in COLUMNS) {
             const column_name = COLUMNS[column];
@@ -109,7 +118,11 @@ class Table {
         this.table.appendChild(head);
     }
 
-    fill_table(results) {
+    /**
+     * Fill in results into the table.
+     * @param results The results to fill the table with.
+     */
+    _fill_table(results) {
         for (let i = 0; i < results.length; i++) {
             let row = document.createElement("TR");
             const result = results[i];
@@ -131,8 +144,7 @@ class Table {
                             search_page.select_result(i);
                         });
                         cell.appendChild(select);
-                    }
-                        break;
+                    } break;
 
                     case (COLUMNS.DATA): {
                         let view_button = document.createElement("input");
@@ -146,15 +158,15 @@ class Table {
                         // set hover-text to content
                         //view_data.setAttribute("title", JSON.stringify(result[column], null, "\t"));
                         cell.appendChild(view_button);
-                    }
-                        break;
+                    } break;
+
                     case (COLUMNS.SITE):
                     case (COLUMNS.UPLOADER):
                     case (COLUMNS.TAGS):
                     case (COLUMNS.BENCHMARK): {
                         cell.textContent = result[JSON_KEYS.get(column)];
-                    }
-                        break;
+                    } break;
+
                     case COLUMNS.ACTIONS: {
                         // actions
                         let cell = document.createElement("TD");
@@ -183,8 +195,7 @@ class Table {
                         }
                         cell.appendChild(div);
                         row.appendChild(cell);
-                    }
-                        break;
+                    } break;
                 }
                 row.appendChild(cell);
             }
@@ -193,20 +204,30 @@ class Table {
         }
     }
 
+    /**
+     * Display a list of results.
+     * @param results
+     */
     display(results) {
-        this.clear();
-        this.create_head();
-        this.fill_table(results);
+        this._clear();
+        this._create_head();
+        this._fill_table(results);
     }
 }
 
 class PageNavigation {
+    /**
+     * Set up page navigation handler.
+     */
     constructor() {
         this.current_page = 0;
         this.results_per_page = 10;
         this.page_count = 1;
     }
 
+    /**
+     * Update pagination buttons.
+     */
     update() {
         // clear away all page buttons
         let it = document.getElementById('prevPageButton');
@@ -251,6 +272,10 @@ class PageNavigation {
         }
     }
 
+    /**
+     * Update the current number of results.
+     * @param result_count The new number of results.
+     */
     set_result_count(result_count) {
         this.page_count = Math.max(Math.ceil(result_count / this.results_per_page), 1);
         if (this.current_page >= this.page_count) {
@@ -287,19 +312,26 @@ class PageNavigation {
         search_page.update();
     }
 
-    get_page() {
-        return this.current_page;
-    }
-
+    /**
+     * Get the index of the first result displayed on page.
+     * @returns {number} The index of the first result displayed on page.
+     */
     get_start_index() {
         return this.current_page * this.results_per_page;
     }
 
+    /**
+     * Get the index of one past the last result displayed on page.
+     * @returns {number} The index of one past the last result displayed on page.
+     */
     get_end_index() {
         return (this.current_page + 1) * this.results_per_page;
     }
 
-    set_results_per_page() {
+    /**
+     * Update the number of results displayed per page.
+     */
+    update_page_result_count() {
         /** Reads the selected results per page and updates teh site accordingly. */
         this.results_per_page = document.getElementById("results_on_page").value;
         // Restart at page 1;
@@ -313,6 +345,9 @@ class PageNavigation {
  * The ResultSearch class is responsible to communicate with the backend to get the search results and display them.
  */
 class ResultSearch extends Content {
+    /**
+     * Set up result search.
+     */
     constructor() {
         super();
         this.query = "";
@@ -325,6 +360,9 @@ class ResultSearch extends Content {
         this.table = new Table();
     }
 
+    /**
+     * Function called on page load.
+     */
     onload() {
         // Case it got initialed with a Benchmark.
         if (benchmark) {
@@ -338,6 +376,9 @@ class ResultSearch extends Content {
         });
     }
 
+    /**
+     * Update the view.
+     */
     update() {
         // Update table.
         let start = paginator.get_start_index();
@@ -365,6 +406,10 @@ class ResultSearch extends Content {
         });
     }
 
+    /**
+     * Display the specified JSON in a popup.
+     * @param json The JSON data to display.
+     */
     display_json(json) {
         document.getElementById('jsonPreviewContent').textContent = json;
         //hljs.highlightBlock(json_block);
@@ -374,10 +419,18 @@ class ResultSearch extends Content {
         $('#jsonPreviewModal').modal('show');
     }
 
+    /**
+     * Get the current amount of results.
+     * @returns {number} The current amount of results.
+     */
     get_result_count() {
         return this.results.length;
     }
 
+    /**
+     * Execute a new search query.
+     * @returns {boolean} false (skip other event handlers)
+     */
     search() {
         /** Search the database using selected filters. */
         // Generate query.
@@ -432,14 +485,13 @@ class ResultSearch extends Content {
         return false;
     }
 
-        /**Add an filter filed consisting of an selection of filter type,
-         * one or tow input fields and the option of removing the created filter field.
-         * Args:
-         *  input_values: An optional object witch should contain a subset of following attributes
-         *                - filter_type (the type of filter, the value should be element of filter_types),
-         *                - input (input value of corresponding filter),
-         *                - num_input (numeric input value of corresponding filter).
-         */
+    /**
+     * Add a filter field consisting of a selection of filter type, one or two input fields and the option of removing
+     * the created filter field.
+     * @param input_values An optional object witch should contain a subset of following attributes filter_type (the
+     *                     type of filter, the value should be element of filter_types), input (input value of
+     *                     corresponding filter), num_input (numeric input value of corresponding filter).
+     */
     add_filter_field(input_values) {
         let filter_id = "f" + this.filter_ids++;
 
@@ -572,18 +624,21 @@ class ResultSearch extends Content {
         });
     }
 
+    /**
+     * Remove a filter field by id.
+     * @param filter_id The id of the filter field to remove.
+     */
     remove_filter(filter_id) {
         /** Remove the filter*/
         document.getElementById(filter_id).remove();
     }
 
+    /**
+     * Sort the results by a given column.
+     * @param callback A function taking tow results and returning a bool, in  a way a order is defined.
+     * @param column Which column to sort by.
+     */
     sort_by(callback, column) {
-        /** Sort result table by a criteria and a given column.
-         * Args:
-         *     criteria: A function taking tow results and returning a bool, in  a way
-         *               a order is defined.
-         *     column:   Which column to sort by.
-         */
         this.results.sort(callback);
         // reverse order if double clicked.
         if (this.ordered_by === column) {
@@ -595,17 +650,26 @@ class ResultSearch extends Content {
         this.update();
     }
 
+    /**
+     * Select a specific result.
+     * @param result_number The index of the result to select.
+     */
     select_result(result_number) {
-        /**Select result if unselected otherwise unselect.*/
         this.results[result_number]["selected"] = !(this.results[result_number]["selected"]);
     }
 
+    /**
+     * Open a URL in a new tab.
+     * @param url URL to open in a new tab.
+     */
     open_new_tab(url) {
         window.open(url, '_blank');
     }
 
+    /**
+     * Generate a diagram page to display currently selected results.
+     */
     make_diagram() {
-        /**Link to the Diagram-page, with selected results.*/
         // Store data in href
         let selected_results = this.results.filter(x => x["selected"]);
         let uuids = "";
@@ -617,11 +681,10 @@ class ResultSearch extends Content {
         this.open_new_tab('/make_diagram?' + uuids.slice(0, -1));
     }
 
-        /**
-         * Helper method generating the tag input field info according to the current results.
-         * Returns:
-         *      A string containing the html formatted text.
-         */
+    /**
+     * Helper method generating the tag input field info according to the current results.
+     * @returns {string} A string containing the html formatted text.
+     */
     generate_tag_cont() {
         let msg = "";
         // Collect all tags
@@ -654,6 +717,10 @@ class ResultSearch extends Content {
         return msg;
     }
 
+    /**
+     * Report a given result.
+     * @param result The result to report.
+     */
     report_result(result) {
         this.open_new_tab('./report_result' + '?uuid=' + result['uuid']);
     }
