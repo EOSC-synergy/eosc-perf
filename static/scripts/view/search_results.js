@@ -69,44 +69,55 @@ class ResultSearch extends Content {
             document.getElementById("pages").length;
     }
 
-    static set_result_table() {
-        /**create the result table from current results */
-        // Empty existing table.
+    static clear_table() {
         let table = document.getElementById("result_table");
         while (table.firstChild != null) {
             table.firstChild.remove();
         }
-        // Create head.
+    }
+
+    static display_json(json) {
+        console.log(json);
+        let json_block = document.getElementById('jsonPreviewContent').textContent = json;
+        //hljs.highlightBlock(json_block);
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+        });
+        $('#jsonPreviewModal').modal('show');
+    }
+
+    static create_table_head() {
+        let table = document.getElementById("result_table");
         let head = document.createElement("THEAD");
-        for (let index in columns) {
-            const col = columns[index]
+        for (const index in columns) {
+            const column_name = columns[index];
             let cell = document.createElement("TH");
-            cell.textContent = col;
-            switch (col) {
-                case ("Select"):
-                    // Sort top if Selected.
+            cell.textContent = column_name;
+            switch (column_name) {
+                case ("Select"): {
+                    // sort by selected results
                     cell.addEventListener("click", function () {
-                        ResultSearch.sort_by((x, y) => x["selected"] < y["selected"], col)
+                        ResultSearch.sort_by((x, y) => x["selected"] < y["selected"], column_name);
                     });
-                    break;
-                case ("Benchmark"):
-                    // Sort by benchmarks alphabetical.
+                } break;
+                case ("Benchmark"): {
+                    // alphabetically sort by benchmark
                     cell.addEventListener("click", function () {
-                        ResultSearch.sort_by((x, y) => x["benchmark"] < y["benchmark"], col)
+                        ResultSearch.sort_by((x, y) => x["benchmark"] < y["benchmark"], column_name);
                     });
-                    break;
-                case ("Location"):
-                    // Sort by location alphabetical.
+                } break;
+                case ("Location"): {
+                    // alphabetically sort by site
                     cell.addEventListener("click", function () {
-                        ResultSearch.sort_by((x, y) => x["site"] < y["site"], col)
+                        ResultSearch.sort_by((x, y) => x["site"] < y["site"], column_name);
                     });
-                    break;
-                case ("Uploader"):
-                    // Sort by uploader alphabetical.
+                } break;
+                case ("Uploader"): {
+                    // alphabetically sort by uploader
                     cell.addEventListener("click", function () {
                         ResultSearch.sort_by((x, y) => x["uploader"] < y["uploader"], col)
                     });
-                    break;
+                } break;
                 case ("Data"):
                     // Not clear what to sort after.
                     break;
@@ -119,48 +130,52 @@ class ResultSearch extends Content {
             head.appendChild(cell);
         }
         table.appendChild(head);
-        // Create Body.
-        let results_amount = results.length;
+    }
+
+    static fill_table () {
+        let table = document.getElementById("result_table");
         let start = (current_page - 1) * results_per_page;
-        let end = Math.min(start + parseInt(results_per_page), results_amount);
+        let end = Math.min(start + parseInt(results_per_page), results.length);
         for (let i = start; i < end; i++) {
-            let row = document.createElement("TR")
-            const res = results[i];
+            let row = document.createElement("TR");
+            const result = results[i];
             // First column ins select box
             for (const index in values) {
-                const col = values[index];
+                const column = values[index];
                 let cell = document.createElement("TD");
-                switch (col) {
+                switch (column) {
                     case ("selected"): {
                         let select = document.createElement("input");
                         select.setAttribute("type", "checkbox");
                         select.setAttribute("id", "selected" + i);
-                        if (res["selected"]) {
-                            //
+                        if (result["selected"]) {
                             select.setAttribute("checked", "");
                         }
-                        // Event Listener to keep presentation and data in sync.
-                        let num = i;// bc js.
+                        // when clicked, select
                         select.addEventListener("click", function () {
-                            ResultSearch.select_result(num);
+                            ResultSearch.select_result(i);
                         });
                         cell.appendChild(select);
                     } break;
 
                     case ("data"): {
-                        let view_data = document.createElement("A");
-                        view_data.textContent = "view JSON";
-                        let href = "./result" + "?uuid=" + res["uuid"];
-                        view_data.setAttribute("href", href);
-                        view_data.setAttribute("target", "_blank");
-                        view_data.setAttribute("title", JSON.stringify(res[col], null, "\t"));
-                        cell.appendChild(view_data);
+                        let view_button = document.createElement("input");
+                        view_button.setAttribute("type", "submit");
+                        view_button.setAttribute("value", "View JSON");
+                        view_button.setAttribute("class", "btn btn-secondary btn-sm");
+                        view_button.addEventListener("click", function() {
+                            ResultSearch.display_json(JSON.stringify(result[column], null, 4));
+                        });
+
+                        // set hover-text to content
+                        //view_data.setAttribute("title", JSON.stringify(result[column], null, "\t"));
+                        cell.appendChild(view_button);
                     } break;
                     case ("site"):
                     case ("uploader"):
                     case ("tags"):
                     case ("benchmark"): {
-                        cell.textContent = res[col];
+                        cell.textContent = result[column];
                     } break;
 
                 }
@@ -169,9 +184,9 @@ class ResultSearch extends Content {
             // Add report col
             if (columns.includes("Report")) {
                 let cell = document.createElement("TD");
-                var report_result = document.createElement("A");
+                let report_result = document.createElement("A");
                 report_result.textContent = "Report";
-                let href = "./report_result" + "?uuid=" + res["uuid"];
+                let href = "./report_result" + "?uuid=" + result["uuid"];
                 report_result.setAttribute("href", href);
                 cell.appendChild(report_result);
                 row.appendChild(cell);
@@ -190,13 +205,23 @@ class ResultSearch extends Content {
                 delete_btn.setAttribute("class", "btn btn-danger btn-sm");
                 // add delete function
                 delete_btn.addEventListener("click", function () {
-                    ResultSearch.delete_result(res["uuid"]);
+                    ResultSearch.delete_result(result["uuid"]);
                 });
                 cell.appendChild(delete_btn);
                 row.appendChild(cell);
             }
             table.appendChild(row);
         }
+    }
+
+    static set_result_table() {
+        //create the result table from current results */
+        ResultSearch.clear_table();
+        // Create head.
+        ResultSearch.create_table_head();
+
+        // Create Body.
+        ResultSearch.fill_table();
     }
 
     static set_page_selection() {
@@ -446,16 +471,14 @@ class ResultSearch extends Content {
         document.getElementById(filter_id).remove();
     }
 
-    static sort_by(criteria, column) {
+    static sort_by(callback, column) {
         /** Sort result table by a criteria and a given column.
          * Args:
          *     criteria: A function taking tow results and returning a bool, in  a way
          *               a order is defined.
          *     column:   Which column to sort by.
          */
-        results.sort(
-            criteria
-        )
+        results.sort(callback);
         // reverse order if double clicked.
         if (ordered_by === column) {
             results = results.reverse();
