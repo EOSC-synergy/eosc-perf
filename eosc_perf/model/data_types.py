@@ -1,7 +1,9 @@
 """"This module contains all data types and associated helpers from the model."""
 
 from __future__ import annotations
-from typing import List, Optional
+
+import json
+from typing import List, Optional, Dict
 import uuid
 import datetime
 from abc import abstractmethod
@@ -287,6 +289,36 @@ class Benchmark(db.Model):
             JSON: The template for this benchmark.
         """
         return self._template
+
+    def determine_notable_keys(self) -> List[str]:
+        """Get a list containing all notable keys in the template.
+        Returns:
+            List[str]: All notable keys from this benchmarks template, [] if there is no template.
+        """
+        if not self.has_template():
+            return []
+        dictionary: Dict = json.loads(self.get_template())
+
+        def folder(key: str, keydict: Dict) -> List[str]:
+            if key.startswith('!') and not isinstance(keydict[key], dict):
+                return [key[1:]]
+
+            # recurse into other dicts
+            if isinstance(keydict[key], dict):
+                # handle '!key': {dict} edge/error case
+                if key.startswith('!'):
+                    print_key = key[1:]
+                else:
+                    print_key = key
+
+                # prepend print_key + '.' to all deeper detected notable keys to get full path
+                return [*map(lambda subkey: print_key + '.' + subkey,
+                             sum([folder(k, keydict[key]) for k in keydict[key].keys()], []))]
+
+            return []
+
+        # start recursion
+        return sum([*map(lambda k: folder(k, dictionary), dictionary.keys())], [])
 
     def __repr__(self) -> str:
         """Get a human-readable representation string of the benchmark.
