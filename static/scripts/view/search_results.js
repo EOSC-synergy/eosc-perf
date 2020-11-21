@@ -1,6 +1,7 @@
 let query = "";
 let results = [];
 let current_page = 1;
+let page_count = 1;
 let filters = [];
 let results_per_page = 10;
 let ordered_by = null;
@@ -36,6 +37,7 @@ function onload() {
         html: true
     });
 }
+
 /**
  * The ResultSearch class is responsible to communicate with the backend to 
  * get the search results and string them.
@@ -63,10 +65,6 @@ class ResultSearch extends Content {
         $('[data-toggle="popover"]').popover({
             html: true
         });
-
-        document.getElementById("prevpage").disabled = this.get_page() <= 1;
-        document.getElementById("nextpage").disabled = this.get_page() >=
-            document.getElementById("pages").length;
     }
 
     static clear_table() {
@@ -200,11 +198,6 @@ class ResultSearch extends Content {
                 let delete_btn = document.createElement("input");
                 delete_btn.setAttribute("type", "submit");
                 delete_btn.setAttribute("value", "Delete Result");
-                delete_btn.setAttribute("data-toggle", "popover");
-                delete_btn.setAttribute("title", "Delete result from system.");
-                delete_btn.setAttribute("data-content", "Deleting the result will remove it from the database <b>not (just) the search selection</b>.");
-                delete_btn.setAttribute("data-placement", "right");
-                delete_btn.setAttribute("data-trigger", "hover");
                 delete_btn.setAttribute("class", "btn btn-danger btn-sm");
                 // add delete function
                 delete_btn.addEventListener("click", function () {
@@ -227,11 +220,52 @@ class ResultSearch extends Content {
         ResultSearch.fill_table();
     }
 
+    static update_pagination() {
+        // Get pages Selection
+        let it = document.getElementById('prevPageButton');
+        it = it.nextElementSibling;
+        // clear out page buttons
+        while (it.id !== 'nextPageButton') {
+            let it_next = it.nextElementSibling;
+            it.parentElement.removeChild(it);
+            it = it_next;
+        }
+        // Add the new options.
+        let next_page_button = document.getElementById('nextPageButton');
+        for (let i = 1; i <= page_count; i++) {
+            let new_page_link_slot = document.createElement('li');
+            new_page_link_slot.classList.add('page-item');
+            let new_page_link = document.createElement('a');
+            new_page_link.textContent = i.toString();
+            new_page_link.classList.add('page-link');
+            new_page_link.addEventListener("click", function() {
+                ResultSearch.set_page(i);
+            });
+            if (i === current_page) {
+                new_page_link_slot.classList.add('active');
+            }
+            new_page_link_slot.appendChild(new_page_link);
+            it.parentElement.insertBefore(new_page_link_slot, next_page_button);
+        }
+
+        if (current_page <= 1) {
+            document.getElementById("prevPageButton").classList.add('disabled');
+        }
+        else {
+            document.getElementById("prevPageButton").classList.remove('disabled');
+        }
+        if (current_page >= page_count) {
+            document.getElementById("nextPageButton").classList.add('disabled');
+        }
+        else {
+            document.getElementById("nextPageButton").classList.remove('disabled');
+        }
+    }
+
     static set_page_selection() {
-        /** Set Page selection to fit the amount of  results.*/
+        // Set Page selection to fit the amount of results.
         // Calc amount of pages.
-        let pages = (results.length - (results.length % results_per_page))
-            / results_per_page;
+        let pages = (results.length - (results.length % results_per_page)) / results_per_page;
         // If div rounded down.
         if ((results.length % results_per_page) !== 0) {
             pages++;
@@ -240,44 +274,38 @@ class ResultSearch extends Content {
         if (pages <= 0) {
             pages = 1;
         }
-        // Get pages Selection.
-        let pages_select = document.getElementById("pages");
-        // Remove Previous options.
-        while (pages_select.firstChild != null) {
-            pages_select.firstChild.remove();
-        }
-        // Add the new options.
-        for (let i = 1; i <= pages; i++) {
-            let p = document.createElement("OPTION");
-            p.setAttribute("value", i);
-            p.textContent = "Page: " + i;
-            p.addEventListener("click", function () {
-                ResultSearch.set_page(i);
-            });
-            pages_select.appendChild(p);
-        }
+        page_count = pages;
+
+        this.update_pagination();
     }
 
-    static get_page() {
-        return document.getElementById("pages").value;
-    }
-
+    /**
+     * Go to the previous page.
+     */
     static prev_page() {
-        document.getElementById("pages").selectedIndex -= 1;
-        current_page = document.getElementById("pages").value;
+        current_page--;
         this.update();
+        this.update_pagination();
     }
 
-    static set_page() {
+    /**
+     * Go to the specified page.
+     * @param page page number
+     */
+    static set_page(page) {
         /** Change the page displayed. */
-        current_page = document.getElementById("pages").value;
+        current_page = page;
         this.update();
+        this.update_pagination();
     }
 
+    /**
+     * Go to the previous page.
+     */
     static next_page() {
-        document.getElementById("pages").selectedIndex += 1;
-        current_page = document.getElementById("pages").value;
+        current_page++;
         this.update();
+        this.update_pagination();
     }
 
     static search() {
@@ -327,7 +355,6 @@ class ResultSearch extends Content {
                     });
                 }
                 current_page = 1;
-                document.getElementById("pages").value = current_page;
                 ResultSearch.set_page_selection();
                 ResultSearch.update();
                 document.getElementById('loading-icon').classList.remove('loading');

@@ -33,19 +33,22 @@
             <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
         </div>
     </div>
-    <div class="flexbox">
-        <div class="flexbox">
-            <input type="button" id="prevpage" class="btn btn-secondary" value="<-" onclick="ResultSearch.prev_page()"
-                disabled />
-            <select id="pages" class="form-control" onchange="ResultSearch.set_page()">
-            </select>
-            <input type="button" id="nextpage" class="btn btn-secondary" value="->" onclick="ResultSearch.next_page()" />
+    <div style="display:flex;align-content: center;justify-content: space-between">
+        <div>
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item disabled" id="prevPageButton">
+                        <a class="page-link" href="#" onclick="ResultSearch.prev_page()" aria-disabled="true">&laquo;</a>
+                    </li>
+                    <li class="page-item" id="nextPageButton">
+                        <a class="page-link" href="#" onclick="ResultSearch.next_page()">&raquo;</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
-        <div style="flex-grow: 2"></div>
-        <div style="flex-grow: 1" class="flexbox">
-            <h5>Results on page:</h5>
+        <div style="display:flex">
+            <label for="results_on_page">Results on page:</label>
             <select id="results_on_page" class="form-control" onchange="ResultSearch.set_results_per_page()">
-                <option value="1">1</option>
                 <option value="10" selected>10</option>
                 <option value="15">15</option>
                 <option value="20">20</option>
