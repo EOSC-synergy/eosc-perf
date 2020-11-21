@@ -17,12 +17,13 @@
 {% block info %}
     <h1>Result Search</h1>
     <div class="flexbox">
-        <input type="button" class="btn btn-info" value="Find Results" onclick="ResultSearch.search()">
+        <input type="button" class="btn btn-info" value="Find Results" onclick="search_page.search()">
         <input type="button" class="btn btn-success" id="add_filter" value="Add Filter"
-            onclick="ResultSearch.add_filter_field()">
+               onclick="search_page.add_filter_field()">
         <input type="button" class="btn btn-info" id="invert_selection" value="Invert Selection"
-            onclick="ResultSearch.invert_selection()">
-        <input type="button" class="btn btn-secondary" id="diagram" value="Visualize" onclick="ResultSearch.make_diagram()">
+               onclick="search_page.invert_selection()">
+        <input type="button" class="btn btn-secondary" id="diagram" value="Visualize"
+               onclick="search_page.make_diagram()">
     </div>
     <ul id="filters" class="list-unstyled">
     </ul>
@@ -38,17 +39,17 @@
             <nav aria-label="Page navigation">
                 <ul class="pagination">
                     <li class="page-item disabled" id="prevPageButton">
-                        <a class="page-link" href="#" onclick="ResultSearch.prev_page()" aria-disabled="true">&laquo;</a>
+                        <a class="page-link" href="#" onclick="search_page.prev_page()" aria-disabled="true">&laquo;</a>
                     </li>
                     <li class="page-item" id="nextPageButton">
-                        <a class="page-link" href="#" onclick="ResultSearch.next_page()">&raquo;</a>
+                        <a class="page-link" href="#" onclick="search_page.next_page()">&raquo;</a>
                     </li>
                 </ul>
             </nav>
         </div>
         <div style="display:flex">
             <label for="results_on_page">Results on page:</label>
-            <select id="results_on_page" class="form-control" onchange="ResultSearch.set_results_per_page()">
+            <select id="results_on_page" class="form-control" onchange="search_page.set_results_per_page()">
                 <option value="10" selected>10</option>
                 <option value="15">15</option>
                 <option value="20">20</option>
