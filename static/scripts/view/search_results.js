@@ -93,6 +93,7 @@ class ResultSearch extends Content {
             const column_name = columns[index];
             let cell = document.createElement("TH");
             cell.textContent = column_name;
+            cell.setAttribute("scope", "col");
             switch (column_name) {
                 case ("Select"): {
                     // sort by selected results
@@ -151,6 +152,7 @@ class ResultSearch extends Content {
                         if (result["selected"]) {
                             select.setAttribute("checked", "");
                         }
+                        select.setAttribute('style', 'height: 1.5em');
                         // when clicked, select
                         select.addEventListener("click", function () {
                             ResultSearch.select_result(i);
