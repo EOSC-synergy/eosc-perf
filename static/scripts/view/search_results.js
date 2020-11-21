@@ -185,6 +185,7 @@ class ResultSearch extends Content {
             if (columns.includes("Report")) {
                 let cell = document.createElement("TD");
                 let report_result = document.createElement("A");
+                report_result.setAttribute("class", "btn btn-warning btn-sm");
                 report_result.textContent = "Report";
                 let href = "./report_result" + "?uuid=" + result["uuid"];
                 report_result.setAttribute("href", href);
