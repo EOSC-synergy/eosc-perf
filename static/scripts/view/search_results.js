@@ -46,16 +46,168 @@ const JSON_KEYS = new Map([
     [COLUMNS.TAGS, "tags"]
 ]);
 
+class Table {
+    constructor() {
+        this.table = document.getElementById("result_table");
+    }
+
+    clear() {
+        while (this.table.firstChild != null) {
+            this.table.firstChild.remove();
+        }
+    }
+
+    create_head() {
+        let head = document.createElement("THEAD");
+        for (const column in COLUMNS) {
+            const column_name = COLUMNS[column];
+
+            let cell = document.createElement("TH");
+            cell.textContent = column_name;
+            cell.setAttribute("scope", "col");
+
+            switch (column_name) {
+                case (COLUMNS.CHECKBOX): {
+                    // sort by selected results
+                    cell.addEventListener("click", function () {
+                        search_page.sort_by((x, y) => x["selected"] < y["selected"], column_name);
+                    });
+                }
+                    break;
+                case (COLUMNS.BENCHMARK): {
+                    // alphabetically sort by benchmark
+                    cell.addEventListener("click", function () {
+                        search_page.sort_by((x, y) => x["benchmark"] < y["benchmark"], column_name);
+                    });
+                }
+                    break;
+                case (COLUMNS.SITE): {
+                    // alphabetically sort by site
+                    cell.addEventListener("click", function () {
+                        search_page.sort_by((x, y) => x["site"] < y["site"], column_name);
+                    });
+                }
+                    break;
+                case (COLUMNS.UPLOADER): {
+                    // alphabetically sort by uploader
+                    cell.addEventListener("click", function () {
+                        search_page.sort_by((x, y) => x["uploader"] < y["uploader"], column_name);
+                    });
+                }
+                    break;
+                case (COLUMNS.DATA):
+                    // Not clear what to sort after.
+                    break;
+                case (COLUMNS.TAGS):
+                    // todo find order on tags
+                    break;
+                default:
+                    break;
+            }
+            head.appendChild(cell);
+        }
+        this.table.appendChild(head);
+    }
+
+    fill_table(results) {
+        for (let i = 0; i < results.length; i++) {
+            let row = document.createElement("TR");
+            const result = results[i];
+            // First column ins select box
+            for (const key in COLUMNS) {
+                const column = COLUMNS[key];
+                let cell = document.createElement("TD");
+                switch (column) {
+                    case (COLUMNS.CHECKBOX): {
+                        let select = document.createElement("input");
+                        select.setAttribute("type", "checkbox");
+                        select.setAttribute("id", "selected" + i);
+                        if (result[JSON_KEYS.get(column)]) {
+                            select.setAttribute("checked", "");
+                        }
+                        select.setAttribute('style', 'height: 1.5em');
+                        // when clicked, select
+                        select.addEventListener("click", function () {
+                            search_page.select_result(i);
+                        });
+                        cell.appendChild(select);
+                    }
+                        break;
+
+                    case (COLUMNS.DATA): {
+                        let view_button = document.createElement("input");
+                        view_button.setAttribute("type", "submit");
+                        view_button.setAttribute("value", "View JSON");
+                        view_button.setAttribute("class", "btn btn-secondary btn-sm");
+                        view_button.addEventListener("click", function () {
+                            search_page.display_json(JSON.stringify(result[JSON_KEYS.get(column)], null, 4));
+                        });
+
+                        // set hover-text to content
+                        //view_data.setAttribute("title", JSON.stringify(result[column], null, "\t"));
+                        cell.appendChild(view_button);
+                    }
+                        break;
+                    case (COLUMNS.SITE):
+                    case (COLUMNS.UPLOADER):
+                    case (COLUMNS.TAGS):
+                    case (COLUMNS.BENCHMARK): {
+                        cell.textContent = result[JSON_KEYS.get(column)];
+                    }
+                        break;
+                    case COLUMNS.ACTIONS: {
+                        // actions
+                        let cell = document.createElement("TD");
+
+                        let div = document.createElement('div');
+                        div.classList.add('btn-group');
+
+                        let actions_report = document.createElement("button");
+                        actions_report.textContent = 'Report';
+                        actions_report.classList.add('btn', 'btn-warning', 'btn-sm');
+                        actions_report.setAttribute('type', 'button');
+                        actions_report.addEventListener('click', function () {
+                            search_page.report_result(result);
+                        });
+                        div.appendChild(actions_report);
+
+                        if (admin) {
+                            let actions_delete = document.createElement('button');
+                            actions_delete.textContent = 'Delete';
+                            actions_delete.classList.add('btn', 'btn-danger', 'btn-sm');
+                            actions_delete.setAttribute('type', 'button');
+                            actions_delete.addEventListener('click', function () {
+                                search_page.delete_result(result);
+                            });
+                            div.appendChild(actions_delete);
+                        }
+                        cell.appendChild(div);
+                        row.appendChild(cell);
+                    }
+                        break;
+                }
+                row.appendChild(cell);
+            }
+
+            this.table.appendChild(row);
+        }
+    }
+
+    display(results) {
+        this.clear();
+        this.create_head();
+        this.fill_table(results);
+    }
+}
+
 /**
- * The ResultSearch class is responsible to communicate with the backend to 
- * get the search results and string them.
+ * The ResultSearch class is responsible to communicate with the backend to get the search results and display them.
  */
 class ResultSearch extends Content {
     constructor() {
         super();
         this.query = "";
         this.results = [];
-
         this.current_page = 1;
         this.page_count = 1;
         this.filters = [];
@@ -64,10 +216,10 @@ class ResultSearch extends Content {
         this.filter_ids = 0;
 
         this.msg = "";
-        this.table = document.getElementById("result_table");
+        this.table = new Table();
     }
 
-     onload() {
+    onload() {
         // Case it got initialed with a Benchmark.
         if (benchmark) {
             this.add_filter_field({ 'filter_type': 'Benchmark', 'input': benchmark });
@@ -82,7 +234,9 @@ class ResultSearch extends Content {
 
     update() {
         // Update table.
-        this.set_result_table();
+        let start = (this.current_page - 1) * this.results_per_page;
+        let end = Math.min(start + this.results_per_page, this.results.length);
+        this.table.display(this.results.slice(start, end));
         this.generate_tag_cont();
         // Update tag info description.
         let filters = document.getElementById("filters").childNodes;
@@ -104,155 +258,13 @@ class ResultSearch extends Content {
         });
     }
 
-    clear_table() {
-        while (this.table.firstChild != null) {
-            this.table.firstChild.remove();
-        }
-    }
-
     display_json(json) {
-        let json_block = document.getElementById('jsonPreviewContent').textContent = json;
+        document.getElementById('jsonPreviewContent').textContent = json;
         //hljs.highlightBlock(json_block);
         document.querySelectorAll('pre code').forEach((block) => {
             hljs.highlightBlock(block);
         });
         $('#jsonPreviewModal').modal('show');
-    }
-
-    create_table_head() {
-        let head = document.createElement("THEAD");
-        for (const column in COLUMNS) {
-            const column_name = COLUMNS[column];
-
-            let cell = document.createElement("TH");
-            cell.textContent = column_name;
-            cell.setAttribute("scope", "col");
-
-            switch (column_name) {
-                case (COLUMNS.CHECKBOX): {
-                    // sort by selected results
-                    cell.addEventListener("click", function () {
-                        search_page.sort_by((x, y) => x["selected"] < y["selected"], column_name);
-                    });
-                } break;
-                case (COLUMNS.BENCHMARK): {
-                    // alphabetically sort by benchmark
-                    cell.addEventListener("click", function () {
-                        search_page.sort_by((x, y) => x["benchmark"] < y["benchmark"], column_name);
-                    });
-                } break;
-                case (COLUMNS.SITE): {
-                    // alphabetically sort by site
-                    cell.addEventListener("click", function () {
-                        search_page.sort_by((x, y) => x["site"] < y["site"], column_name);
-                    });
-                } break;
-                case (COLUMNS.UPLOADER): {
-                    // alphabetically sort by uploader
-                    cell.addEventListener("click", function () {
-                        search_page.sort_by((x, y) => x["uploader"] < y["uploader"], column_name);
-                    });
-                } break;
-                case (COLUMNS.DATA):
-                    // Not clear what to sort after.
-                    break;
-                case (COLUMNS.TAGS):
-                    // todo find order on tags
-                    break;
-                default:
-                    break;
-            }
-            head.appendChild(cell);
-        }
-        this.table.appendChild(head);
-    }
-
-    fill_table () {
-        let start = (this.current_page - 1) * this.results_per_page;
-        let end = Math.min(start + this.results_per_page, this.results.length);
-        for (let i = start; i < end; i++) {
-            let row = document.createElement("TR");
-            const result = this.results[i];
-            // First column ins select box
-            for (const key in COLUMNS) {
-                const column = COLUMNS[key];
-                let cell = document.createElement("TD");
-                switch (column) {
-                    case (COLUMNS.CHECKBOX): {
-                        let select = document.createElement("input");
-                        select.setAttribute("type", "checkbox");
-                        select.setAttribute("id", "selected" + i);
-                        if (result[JSON_KEYS.get(column)]) {
-                            select.setAttribute("checked", "");
-                        }
-                        select.setAttribute('style', 'height: 1.5em');
-                        // when clicked, select
-                        select.addEventListener("click", function () {
-                            search_page.select_result(i);
-                        });
-                        cell.appendChild(select);
-                    } break;
-
-                    case (COLUMNS.DATA): {
-                        let view_button = document.createElement("input");
-                        view_button.setAttribute("type", "submit");
-                        view_button.setAttribute("value", "View JSON");
-                        view_button.setAttribute("class", "btn btn-secondary btn-sm");
-                        view_button.addEventListener("click", function() {
-                            search_page.display_json(JSON.stringify(result[JSON_KEYS.get(column)], null, 4));
-                        });
-
-                        // set hover-text to content
-                        //view_data.setAttribute("title", JSON.stringify(result[column], null, "\t"));
-                        cell.appendChild(view_button);
-                    } break;
-                    case (COLUMNS.SITE):
-                    case (COLUMNS.UPLOADER):
-                    case (COLUMNS.TAGS):
-                    case (COLUMNS.BENCHMARK): {
-                        cell.textContent = result[JSON_KEYS.get(column)];
-                    } break;
-                    case COLUMNS.ACTIONS: {
-                        // actions
-                        let cell = document.createElement("TD");
-
-                        let div = document.createElement('div');
-                        div.classList.add('btn-group');
-
-                        let actions_report = document.createElement("button");
-                        actions_report.textContent = 'Report';
-                        actions_report.classList.add('btn',  'btn-warning', 'btn-sm');
-                        actions_report.setAttribute('type', 'button');
-                        actions_report.addEventListener('click', function() {
-                            search_page.report_result(result);
-                        });
-                        div.appendChild(actions_report);
-
-                        if (admin) {
-                            let actions_delete = document.createElement('button');
-                            actions_delete.textContent = 'Delete';
-                            actions_delete.classList.add('btn', 'btn-danger', 'btn-sm');
-                            actions_delete.setAttribute('type', 'button');
-                            actions_delete.addEventListener('click', function() {
-                                search_page.delete_result(result);
-                            });
-                            div.appendChild(actions_delete);
-                        }
-                        cell.appendChild(div);
-                        row.appendChild(cell);
-                    } break;
-                }
-                row.appendChild(cell);
-            }
-
-            this.table.appendChild(row);
-        }
-    }
-
-    set_result_table() {
-        this.clear_table();
-        this.create_table_head();
-        this.fill_table();
     }
 
     update_pagination() {
