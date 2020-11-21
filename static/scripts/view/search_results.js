@@ -200,6 +200,115 @@ class Table {
     }
 }
 
+class PageNavigation {
+    constructor() {
+        this.current_page = 0;
+        this.results_per_page = 10;
+        this.page_count = 1;
+    }
+
+    update() {
+        // clear away all page buttons
+        let it = document.getElementById('prevPageButton');
+        it = it.nextElementSibling;
+        while (it.id !== 'nextPageButton') {
+            let it_next = it.nextElementSibling;
+            it.parentElement.removeChild(it);
+            it = it_next;
+        }
+        // (re-)add them
+        let next_page_button = document.getElementById('nextPageButton');
+        for (let i = 0; i < this.page_count; i++) {
+            // link box
+            let new_page_link_slot = document.createElement('li');
+            new_page_link_slot.classList.add('page-item');
+            // page link button
+            let new_page_link = document.createElement('a');
+            new_page_link.textContent = (i + 1).toString();
+            new_page_link.classList.add('page-link');
+            new_page_link.addEventListener("click", function() {
+                paginator.set_page(i);
+            });
+            // highlight current page
+            if (i === this.current_page) {
+                new_page_link_slot.classList.add('active');
+            }
+            new_page_link_slot.appendChild(new_page_link);
+            it.parentElement.insertBefore(new_page_link_slot, next_page_button);
+        }
+
+        if (this.current_page === 0) {
+            document.getElementById("prevPageButton").classList.add('disabled');
+        }
+        else {
+            document.getElementById("prevPageButton").classList.remove('disabled');
+        }
+        if (this.current_page === this.page_count - 1) {
+            document.getElementById("nextPageButton").classList.add('disabled');
+        }
+        else {
+            document.getElementById("nextPageButton").classList.remove('disabled');
+        }
+    }
+
+    set_result_count(result_count) {
+        this.page_count = Math.max(Math.ceil(result_count / this.results_per_page), 1);
+        if (this.current_page >= this.page_count) {
+            this.current_page = this.page_count - 1;
+        }
+        this.update();
+    }
+
+    /**
+     * Go to the previous page.
+     */
+    prev_page() {
+        this.current_page = Math.max(0, this.current_page - 1);
+        this.update();
+        search_page.update();
+    }
+
+    /**
+     * Go to the specified page.
+     * @param page page number
+     */
+    set_page(page) {
+        this.current_page = Math.max(0, Math.min(page, this.page_count - 1));
+        this.update();
+        search_page.update();
+    }
+
+    /**
+     * Go to the previous page.
+     */
+    next_page() {
+        this.current_page = Math.min(this.page_count - 1, this.current_page + 1);
+        this.update();
+        search_page.update();
+    }
+
+    get_page() {
+        return this.current_page;
+    }
+
+    get_start_index() {
+        return this.current_page * this.results_per_page;
+    }
+
+    get_end_index() {
+        return (this.current_page + 1) * this.results_per_page;
+    }
+
+    set_results_per_page() {
+        /** Reads the selected results per page and updates teh site accordingly. */
+        this.results_per_page = document.getElementById("results_on_page").value;
+        // Restart at page 1;
+        this.current_page = 0;
+        this.update();
+        search_page.update();
+    }
+}
+
 /**
  * The ResultSearch class is responsible to communicate with the backend to get the search results and display them.
  */
@@ -208,10 +317,7 @@ class ResultSearch extends Content {
         super();
         this.query = "";
         this.results = [];
-        this.current_page = 1;
-        this.page_count = 1;
         this.filters = [];
-        this.results_per_page = 10;
         this.ordered_by = null;
         this.filter_ids = 0;
 
@@ -234,10 +340,11 @@ class ResultSearch extends Content {
 
     update() {
         // Update table.
-        let start = (this.current_page - 1) * this.results_per_page;
-        let end = Math.min(start + this.results_per_page, this.results.length);
+        let start = paginator.get_start_index();
+        let end = Math.min(paginator.get_end_index(), this.results.length);
         this.table.display(this.results.slice(start, end));
         this.generate_tag_cont();
+
         // Update tag info description.
         let filters = document.getElementById("filters").childNodes;
         filters.forEach(function (f) {
@@ -267,93 +374,8 @@ class ResultSearch extends Content {
         $('#jsonPreviewModal').modal('show');
     }
 
-    update_pagination() {
-        // clear away all page buttons
-        let it = document.getElementById('prevPageButton');
-        it = it.nextElementSibling;
-        while (it.id !== 'nextPageButton') {
-            let it_next = it.nextElementSibling;
-            it.parentElement.removeChild(it);
-            it = it_next;
-        }
-        // (re-)add them
-        let next_page_button = document.getElementById('nextPageButton');
-        for (let i = 1; i <= this.page_count; i++) {
-            // link box
-            let new_page_link_slot = document.createElement('li');
-            new_page_link_slot.classList.add('page-item');
-            // page link button
-            let new_page_link = document.createElement('a');
-            new_page_link.textContent = i.toString();
-            new_page_link.classList.add('page-link');
-            new_page_link.addEventListener("click", function() {
-                search_page.set_page(i);
-            });
-            // highlight current page
-            if (i === this.current_page) {
-                new_page_link_slot.classList.add('active');
-            }
-            new_page_link_slot.appendChild(new_page_link);
-            it.parentElement.insertBefore(new_page_link_slot, next_page_button);
-        }
-
-        if (this.current_page <= 1) {
-            document.getElementById("prevPageButton").classList.add('disabled');
-        }
-        else {
-            document.getElementById("prevPageButton").classList.remove('disabled');
-        }
-        if (this.current_page >= this.page_count) {
-            document.getElementById("nextPageButton").classList.add('disabled');
-        }
-        else {
-            document.getElementById("nextPageButton").classList.remove('disabled');
-        }
-    }
-
-    set_page_selection() {
-        // Set Page selection to fit the amount of results.
-        // Calc amount of pages.
-        let pages = (this.results.length - (this.results.length % this.results_per_page)) / this.results_per_page;
-        // If div rounded down.
-        if ((this.results.length % this.results_per_page) !== 0) {
-            pages++;
-        }
-        // If no result sill page 1 selectable.
-        if (pages <= 0) {
-            pages = 1;
-        }
-        this.page_count = pages;
-
-        this.update_pagination();
-    }
-
-    /**
-     * Go to the previous page.
-     */
-    prev_page() {
-        this.current_page--;
-        this.update();
-        this.update_pagination();
-    }
-
-    /**
-     * Go to the specified page.
-     * @param page page number
-     */
-    set_page(page) {
-        this.current_page = page;
-        this.update();
-        this.update_pagination();
-    }
-
-    /**
-     * Go to the previous page.
-     */
-    next_page() {
-        this.current_page++;
-        this.update();
-        this.update_pagination();
+    get_result_count() {
+        return this.results.length;
     }
 
     search() {
@@ -377,9 +399,7 @@ class ResultSearch extends Content {
                 }
             } else {
                 let value = html_filter[index].firstChild.nextSibling.value;
-                console.log(type, value);
                 type = FILTER_KEYS.get(type);
-                console.log(type, value);
                 if (type !== "" && value !== "") {
                     element = { 'type': type, 'value': value };
                 }
@@ -405,7 +425,7 @@ class ResultSearch extends Content {
                     });
                 }
                 search_page.current_page = 1;
-                search_page.set_page_selection();
+                paginator.set_result_count(search_page.get_result_count());
                 search_page.update();
                 document.getElementById('loading-icon').classList.remove('loading');
             });
@@ -575,15 +595,6 @@ class ResultSearch extends Content {
         this.update();
     }
 
-    set_results_per_page() {
-        /** Reads the selected results per page and updates teh site accordingly. */
-        this.results_per_page = document.getElementById("results_on_page").value;
-        // Restart at page 1;
-        this.current_page = 1;
-        this.set_page_selection();
-        this.update();
-    }
-
     select_result(result_number) {
         /**Select result if unselected otherwise unselect.*/
         this.results[result_number]["selected"] = !(this.results[result_number]["selected"]);
@@ -683,9 +694,11 @@ class ResultSearch extends Content {
 
 //
 let search_page = null;
+let paginator = null;
 
 window.addEventListener("load", function () {
     search_page = new ResultSearch();
+    paginator = new PageNavigation();
     search_page.onload();
 });
 

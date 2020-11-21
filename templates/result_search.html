@@ -39,17 +39,17 @@
             <nav aria-label="Page navigation">
                 <ul class="pagination">
                     <li class="page-item disabled" id="prevPageButton">
-                        <a class="page-link" href="#" onclick="search_page.prev_page()" aria-disabled="true">&laquo;</a>
+                        <a class="page-link" href="#" onclick="paginator.prev_page()" aria-disabled="true">&laquo;</a>
                     </li>
                     <li class="page-item" id="nextPageButton">
-                        <a class="page-link" href="#" onclick="search_page.next_page()">&raquo;</a>
+                        <a class="page-link" href="#" onclick="paginator.next_page()">&raquo;</a>
                     </li>
                 </ul>
             </nav>
         </div>
         <div style="display:flex">
             <label for="results_on_page">Results on page:</label>
-            <select id="results_on_page" class="form-control" onchange="search_page.set_results_per_page()">
+            <select id="results_on_page" class="form-control" onchange="paginator.set_results_per_page()">
                 <option value="10" selected>10</option>
                 <option value="15">15</option>
                 <option value="20">20</option>
