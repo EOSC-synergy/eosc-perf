@@ -25,6 +25,15 @@
         <input type="button" class="btn btn-secondary" id="diagram" value="Visualize"
                onclick="search_page.make_diagram()">
     </div>
+    <div style="display:flex;align-content: center;justify-content: space-between">
+        <div class="flexbox" style="width: 14em">
+            <label for="benchmark_selection">Benchmark:</label>
+            <select class="form-control" id="benchmark_selection" onchange="search_page.update_benchmark_selection()">
+                <option></option>
+            </select>
+        </div>
+    <div></div>
+    </div>
     <ul id="filters" class="list-unstyled">
     </ul>
     <div style="position: relative">

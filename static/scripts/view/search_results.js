@@ -17,7 +17,6 @@ const COLUMNS = {
 };
 
 const FILTERS = {
-    BENCHMARK: FIELDS.BENCHMARK,
     UPLOADER: FIELDS.UPLOADER,
     SITE: FIELDS.SITE,
     TAG: FIELDS.TAGS,
@@ -358,6 +357,8 @@ class ResultSearch extends Content {
 
         this.msg = "";
         this.table = new Table();
+
+        this.benchmark_name = "";
     }
 
     /**
@@ -365,9 +366,7 @@ class ResultSearch extends Content {
      */
     onload() {
         // Case it got initialed with a Benchmark.
-        if (benchmark) {
-            this.add_filter_field({ 'filter_type': 'Benchmark', 'input': benchmark });
-        }
+        this.fetch_all_benchmarks(true);
         this.add_filter_field();
         this.search();
         // Enable popover.
@@ -435,6 +434,12 @@ class ResultSearch extends Content {
         /** Search the database using selected filters. */
         // Generate query.
         let filters = [];
+        if (this.benchmark_name !== '') {
+            filters.push({
+                'type': 'benchmark',
+                'value': this.benchmark_name
+            });
+        }
         let html_filter = document.getElementById("filters").children;
         // Add filters.
         for (let index = 0; index < html_filter.length; index++) {
@@ -756,6 +761,72 @@ class ResultSearch extends Content {
         });
         this.update();
         return false;
+    }
+
+    /**
+     * Set the named benchmark to the active one.
+     * @param benchmark_name The name of the benchmark to set as active.
+     */
+    set_benchmark(benchmark_name) {
+        this.benchmark_name = benchmark_name;
+        let selection = document.getElementById("benchmark_selection");
+        for (let i = 0; i < selection.options.length; i++) {
+            if (selection.options[i].value.localeCompare(benchmark_name) === 0) {
+                selection.selectedIndex = i;
+            }
+        }
+    }
+
+    /**
+     * Callback for benchmark selection dropdown.
+     */
+    update_benchmark_selection() {
+        let selected_benchmark = document.getElementById("benchmark_selection").value;
+        this.set_benchmark(selected_benchmark);
+        this.search();
+    }
+
+    /**
+     * Get a list of all benchmarks from the server.
+     * @param first_run True if this is on page load.
+     */
+    fetch_all_benchmarks(first_run = false) {
+        $.ajax('/fetch_benchmarks').done(function (data) {
+            let benchmarks = data.results;
+            console.log(data, benchmarks);
+            search_page.update_benchmark_list(benchmarks, first_run);
+        });
+    }
+
+    /**
+     * Handle the list of all benchmarks from the server.
+     * @param benchmarks The list of all benchmarks.
+     * @param first_run True if this is on page load.
+     */
+    update_benchmark_list(benchmarks, first_run = false) {
+        // clear out previous values
+        let selection = document.getElementById("benchmark_selection");
+        while (selection.options.length > 0) {
+            selection.remove(0);
+        }
+
+        let default_option = document.createElement('option');
+        default_option.value = '';
+        default_option.text = '';
+        selection.add(default_option);
+
+        for (const benchmark of benchmarks) {
+            let option = document.createElement('option');
+            option.value = benchmark['docker_name'];
+            option.text = benchmark['docker_name'];
+            selection.add(option);
+        }
+
+        if (first_run) {
+            if (BENCHMARK_QUERY.length) {
+                this.set_benchmark(BENCHMARK_QUERY);
+            }
+        }
     }
 }
 

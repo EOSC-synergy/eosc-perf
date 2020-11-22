@@ -26,7 +26,7 @@ class SearchResultFactory(PageFactory):
         """
         arguments = json.loads(args)
         try:
-            result = "admin = {}; benchmark = '{}';".format(
+            result = "admin = {}; BENCHMARK_QUERY = '{}';".format(
                 'true' if arguments['admin'] else 'false',
                 arguments['benchmark'])
         except KeyError as error:
