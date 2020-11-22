@@ -139,3 +139,4 @@ test.db
 config.yaml
 upload_license.txt
 nginx/certs/*
+certbot/
