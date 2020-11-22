@@ -7,7 +7,7 @@ EOSC-Perf is a webapp made to host, search, compare and analyze benchmark result
 
 ## Instructions
 
-To launch the webapp entirely:
+To deploy the application:
 1. Create a 'config.yaml': `cp config.yaml.example config.yaml`
     * Setup debug and production admin entitlements: `debug_admin_entitlements`, `admin_entitlements`
     * Add OIDC client secret: `oidc_client_secret`
@@ -15,7 +15,9 @@ To launch the webapp entirely:
     * Set `secret_key` to something long with much entropy
     * Set `infrastructure_href` to the website of your infrastructure manager
 1. Write a license for uploaded results to `upload_license.txt` or copy `uploading_license.txt.placeholder` for testing
-1. Move your SSL certificate and key to nginx/certs/ (Make sure they are called `certificate.crt` and `private_key.key`)
+1. To generate HTTPS certs & nginx configuration:
+    * If you want to deploy to production: Run `bash init-lentsencrypt.sh`
+    * If you want to develop locally (on `localhost`): Run `bash init-dev-certs.sh`
 1. Run `docker-compose build`
 1. Run `docker-compose up`
 
@@ -26,10 +28,5 @@ To generate the documentation:
 
 Tips:
 - To enable debug mode, set `debug: true` in the config.yaml
-- To generate a certificate and key for your localhost, use:
-`openssl req -x509 -out localhost.crt -keyout localhost.key \
-  -newkey rsa:2048 -nodes -sha256 \
-  -subj '/CN=localhost' -extensions EXT -config <( \
-   printf "[dn]\nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:localhost\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")`
 - To run the included unit tests, the unittest package can be used:
   `python -m unittest discover eosc_perf "*_test.py"`
