@@ -91,6 +91,7 @@ def add_filler():
                 'name': test_site.get_name(),
                 'description': test_site.get_description()
             }))
+            facade.get_site(test_site.get_short_name()).set_hidden(False)
 
     for test_tag in tags:
         try:
@@ -105,6 +106,7 @@ def add_filler():
             facade.add_benchmark(
                 test_benchmark.get_docker_name(),
                 test_benchmark.get_uploader().get_id())
+            facade.get_benchmark(test_benchmark.get_docker_name()).set_hidden(False)
 
     filters = {'filters': [
         {'type': 'site', 'value': filler_sites[0].get_short_name()},
@@ -174,6 +176,7 @@ def add_demo():
             'name': demo_site.get_name(),
             'description': demo_site.get_description()
         }))
+        facade.get_site(demo_site.get_short_name()).set_hidden(False)
 
     try:
         facade.get_benchmark(demo_benchmark.get_docker_name())
@@ -181,6 +184,7 @@ def add_demo():
         facade.add_benchmark(
             demo_benchmark.get_docker_name(),
             demo_benchmark.get_uploader().get_id())
+        facade.get_benchmark(demo_benchmark.get_docker_name()).set_hidden(False)
 
     filters = {'filters': [
         {'type': 'site', 'value': demo_site.get_short_name()},
