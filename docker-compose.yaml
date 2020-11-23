@@ -20,6 +20,7 @@ services:
     image: nginx:1.14.2-alpine
     restart: unless-stopped
     depends_on:
+      - flask
       - certbot
     ports:
       - "80:80"
@@ -31,8 +32,6 @@ services:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot/
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
-    depends_on:
-      - flask
 
   certbot:
     image: certbot/certbot
