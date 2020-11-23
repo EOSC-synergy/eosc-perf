@@ -14,6 +14,7 @@ To deploy the application:
     * Set your domain in `oidc_redirect_hostname`
     * Set `secret_key` to something long with much entropy
     * Set `infrastructure_href` to the website of your infrastructure manager
+    * Set `oidc_client_id` to your EGI-AAI OIDC client id
 1. Write a license for uploaded results to `upload_license.txt` or copy `uploading_license.txt.placeholder` for testing
 1. To generate HTTPS certs & nginx configuration:
     * If you want to deploy to production: Run `bash init-lentsencrypt.sh`

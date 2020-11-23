@@ -54,10 +54,13 @@ class Authenticator:
         """
         if len(configuration.get('oidc_client_secret')) == 0:
             raise ValueError("missing openID client secret in configuration")
+        if len(configuration.get('oidc_client_id')) == 0 \
+                or configuration.get('oidc_client_id') in ['ENTER CLIENTID HERE', 'SET_ME']:
+            raise ValueError("Please configure the oidc_client_id in config.yaml")
         self.client_secret = configuration.get('oidc_client_secret')
 
         flask_app.secret_key = configuration.get('secret_key')
-        flask_app.config["EOSC_PERF_CLIENT_ID"] = 'eosc-perf'
+        flask_app.config["EOSC_PERF_CLIENT_ID"] = configuration.get('oidc_client_id')  # 'eosc-perf'
         flask_app.config["EOSC_PERF_CLIENT_SECRET"] = self.client_secret
 
         if configuration.get('debug'):

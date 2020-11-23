@@ -4,9 +4,10 @@ debug-db-demo-items: true
 debug-db-filler-items: true
 admin_entitlements: ["urn:mace:egi.eu:group:mteam.data.kit.edu:role=member"]
 debug_admin_entitlements: ["urn:mace:egi.eu:group:mteam.data.kit.edu:role=member"]
-secret_key: 'ENTER YOUR SECRET KEY HERE' # used for flask session cookie encryption
+secret_key: "ENTER YOUR SECRET KEY HERE" # used for flask session cookie encryption
 oidc_client_secret: Enter secret here
 oidc_redirect_hostname: "localhost"
+oidc_client_id: "ENTER CLIENTID HERE"
 upload_license_filename: "upload_license.txt"
 infrastructure_href: "https://example.com"
 database-path: "sqlite.db"

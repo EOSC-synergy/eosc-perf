@@ -30,6 +30,7 @@ class ConfigHandler:
             'secret_key': '!secret',
             'oidc_client_secret': '',
             'oidc_redirect_hostname': 'localhost',
+            'oidc_client_id': 'SET_ME',
             'upload_license_filename': 'upload_license.txt',
             'infrastructure_href': 'https://example.com'
         }
