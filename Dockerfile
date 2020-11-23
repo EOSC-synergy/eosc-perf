@@ -1,22 +1,36 @@
 # use base python image
 FROM python:3.8.4
+
 # keep all webapp data in /app
 ENV APP /app
-# set up file structure
+
+# Install system updates and tools
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+# Install system updates and tools
+        && \
+# Clean up & back to dialog front end
+    apt-get autoremove -y && \
+    apt-get clean -y && \
+    rm -rf /var/lib/apt/lists/*
+ENV DEBIAN_FRONTEND=dialog
+
+# Install application & set up file structure
 RUN mkdir $APP
 WORKDIR $APP
-# open port 5000 for nginx
-EXPOSE 5000
-# install python dependencies
-COPY ./requirements.txt .
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
-# copy the whole webapp
 COPY ./eosc_perf/. .
+COPY ./setup.py .
+COPY ./setup.cfg .
 COPY ./templates/. .
 COPY ./uwsgi.ini .
-# TODO: keep the config here?
-COPY ./upload_license.txt .
-COPY ./config.yaml .
+# Install python application
+RUN pip install --upgrade pip && \ 
+    pip3 install --no-cache-dir -e . && \
+# Clean up
+    rm -rf /root/.cache/pip/* && \
+    rm -rf /tmp/*
+
 # set launch command
+EXPOSE 5000
 CMD [ "uwsgi", "--ini", "uwsgi.ini" ]
+
