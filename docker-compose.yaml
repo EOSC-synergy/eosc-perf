@@ -1,4 +1,5 @@
 version: '3'
+
 services:
   flask:
     image: flask-eosc-perf
@@ -28,8 +29,8 @@ services:
       #- ./nginx/certs:/etc/nginx/certs
       - ./nginx:/etc/nginx/conf.d
       - ./static:/var/www/web/
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot/
+      - letsencrypt:/etc/letsencrypt:ro
+      - www_certbot:/var/www/certbot:ro
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
     depends_on:
       - flask
@@ -38,7 +39,11 @@ services:
     image: certbot/certbot
     restart: unless-stopped
     volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
+      - letsencrypt:/etc/letsencrypt
+      - www_certbot:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot/; sleep 12h & wait $${!}; done;'"
+
+volumes:
+  letsencrypt:
+  www_certbot:
 
