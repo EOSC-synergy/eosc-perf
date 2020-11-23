@@ -22,12 +22,22 @@ To deploy the application:
 1. Run `docker-compose build`
 1. Run `docker-compose up`
 
+To set up a development environment:
+1. Set up a virtual environment: `python -m venv venv`
+1. Enable the virtual environment: `. ./venv/bin/activate`
+1. Install requirements: `pip install -r requirements.txt`
+    * The requirements will only be installed within the virtual environment.
+
 To generate the documentation:
+1. Enable the virtual environment: `. ./venv/bin/activate`
 1. Go to `docs/`
-2. (Optional) Run `make clean`
-3. Run `make html`
+1. (Optional) Run `make clean`
+1. Run `make html`
+
+To run tests (requires environment):
+1. Enable the virtual environment: `. ./venv/bin/activate`
+1. Run `python -m unittest discover eosc_perf "*_test.py"`
 
 Tips:
 - To enable debug mode, set `debug: true` in the config.yaml
-- To run the included unit tests, the unittest package can be used:
-  `python -m unittest discover eosc_perf "*_test.py"`
+
