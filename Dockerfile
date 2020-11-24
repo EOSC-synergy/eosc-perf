@@ -6,8 +6,9 @@ ENV APP /app
 
 # Install system updates and tools
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get upgrade -y && \
 # Install system updates and tools
+    apt-get install -y --no-install-recommends \
         && \
 # Clean up & back to dialog front end
     apt-get autoremove -y && \
