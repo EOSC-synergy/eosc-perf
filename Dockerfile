@@ -19,10 +19,10 @@ ENV DEBIAN_FRONTEND=dialog
 # Install application & set up file structure
 RUN mkdir $APP
 WORKDIR $APP
-COPY ./eosc_perf/. .
+COPY ./eosc_perf ./eosc_perf
+COPY ./templates ./templates
 COPY ./setup.py .
 COPY ./setup.cfg .
-COPY ./templates/. .
 COPY ./uwsgi.ini .
 # Install python application
 RUN pip install --upgrade pip && \ 
