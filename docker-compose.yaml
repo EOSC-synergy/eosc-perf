@@ -8,31 +8,25 @@ services:
       dockerfile: Dockerfile
     # override app folder during development
     volumes:
-      # development mounts, if these do not change, they should be copied in the dockerfile
-      - ./eosc_perf:/app/eosc_perf
-      - ./templates:/app/templates
-      - ./uwsgi.ini:/app/uwsgi.ini
+      # production config & license
       - ./upload_license.txt:/app/upload_license.txt
-      # production config
       - ./config.yaml:/app/config.yaml
 
   nginx:
     image: nginx:1.14.2-alpine
     restart: unless-stopped
     depends_on:
+      - flask
       - certbot
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      #- ./nginx/certs:/etc/nginx/certs
       - ./nginx:/etc/nginx/conf.d
       - ./static:/var/www/web/
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot/
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
-    depends_on:
-      - flask
 
   certbot:
     image: certbot/certbot
