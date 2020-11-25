@@ -1,14 +1,37 @@
-debug: false
-debug-db-reset: false
-debug-db-demo-items: false
-debug-db-filler-items: false
-debug-logged-in-is-admin: false
+# encryption key for flask session cookie encryption
+secret_key: "SET_ME"
+
+# EGI-AAI OIDC configuration
+#  Client secret to use
+oidc_client_secret: "SET_ME"
+#  Application ID
+oidc_client_id: "SET_ME"
+#  Redirection hostname after login
+oidc_redirect_hostname: "SET_ME"
+#  List of admissible entitlements for administrator rights
 admin_entitlements: ["urn:mace:egi.eu:group:mteam.data.kit.edu:role=member"]
-debug_admin_entitlements: ["urn:mace:egi.eu:group:mteam.data.kit.edu:role=member"]
-secret_key: "ENTER YOUR SECRET KEY HERE" # used for flask session cookie encryption
-oidc_client_secret: Enter secret here
-oidc_redirect_hostname: "localhost"
-oidc_client_id: "ENTER CLIENTID HERE"
+
+# general configuration
+#  License text to display when uploading results
 upload_license_filename: "upload_license.txt"
+#  Navbar-link to infrastructure manager
 infrastructure_href: "https://example.com"
+#  Default path for the database
+#  Note: this is relative to the project folder (eosc_perf)
 database-path: "sqlite.db"
+
+# Development options.
+#  Enable debug mode.
+#  DO NOT RUN THIS IN PRODUCTION!
+debug: false
+#  Reset the database on every launch
+debug-db-reset: false
+#  Populate the database with demo items (diagram, etc)
+debug-db-demo-items: false
+#  Populate the database with filler items (good for testing filtering)
+debug-db-filler-items: false
+#  Give admin rights to anyone logged in in debug mode
+#  DO NOT RUN THIS IN PRODUCTION!
+debug-logged-in-is-admin: false
+# This is used instead of the regular admin_entitlements key
+debug_admin_entitlements: ["urn:mace:egi.eu:group:mteam.data.kit.edu:role=member"]
