@@ -41,6 +41,7 @@ class Authenticator:
         self.oauth = None
         self.admin_entitlements = []
         self.hostname = None
+        self.client_id = None
         self.client_secret = None
         self.scope = 'openid email profile eduperson_entitlement offline_access'
         self.conf_url = ""
@@ -52,15 +53,22 @@ class Authenticator:
         Args:
             flask_app (Flask): The flask app for which to set up OIDC functionality.
         """
-        if len(configuration.get('oidc_client_secret')) == 0:
-            raise ValueError("missing openID client secret in configuration")
-        if len(configuration.get('oidc_client_id')) == 0 \
-                or configuration.get('oidc_client_id') in ['ENTER CLIENTID HERE', 'SET_ME']:
-            raise ValueError("Please configure the oidc_client_id in config.yaml")
-        self.client_secret = configuration.get('oidc_client_secret')
 
+        self.client_id = configuration.get('oidc_client_id')
+        self.client_secret = configuration.get('oidc_client_secret')
         flask_app.secret_key = configuration.get('secret_key')
-        flask_app.config["EOSC_PERF_CLIENT_ID"] = configuration.get('oidc_client_id')  # 'eosc-perf'
+        self.hostname = configuration.get('oidc_redirect_hostname')
+
+        if len(self.client_id) == 0 or self.client_id == 'SET_ME':
+            raise ValueError("Please configure the oidc_client_id in config.yaml")
+        if len(self.client_secret) == 0 or self.client_secret == 'SET_ME':
+            raise ValueError("Please configure the oidc_client_secret in config.yaml")
+        if len(flask_app.secret_key) == 0 or flask_app.secret_key == 'SET_ME':
+            raise ValueError("Please configure the secret_key in config.yaml")
+        if len(self.hostname) == 0 or self.hostname == 'SET_ME':
+            raise ValueError("Please configure the oidc_redirect_hostname in config.yaml")
+
+        flask_app.config["EOSC_PERF_CLIENT_ID"] = self.client_id
         flask_app.config["EOSC_PERF_CLIENT_SECRET"] = self.client_secret
 
         if configuration.get('debug'):
@@ -73,7 +81,6 @@ class Authenticator:
             self.userinfo_url = USERINFO_URL
 
         self.oauth = OAuth(flask_app)
-        self.hostname = configuration.get('oidc_redirect_hostname')
         self.oauth.register(
             name='eosc_perf',
             userinfo_endpoint=self.userinfo_url,

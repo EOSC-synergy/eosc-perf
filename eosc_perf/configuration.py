@@ -20,21 +20,22 @@ class ConfigHandler:
         Returns:
             dict: A dictionary containing default configuration values.
         """
+        # refer to config.yaml.example tor more description
         defaults = {
+            'secret_key': 'SET_ME',
+            'oidc_client_secret': 'SET_ME',
+            'oidc_client_id': 'SET_ME',
+            'oidc_redirect_hostname': 'localhost',
+            'admin_entitlements': ['urn:mace:egi.eu:group:mteam.data.kit.edu:role=member'],
+            'upload_license_filename': 'upload_license.txt',
+            'infrastructure_href': 'https://example.com',
+            'database-path': '',  # diverge from example to use in-memory database
             'debug': False,
-            'debug-db-reset': True,
-            'debug-db-dummy-items': True,
+            'debug-db-reset': False,
+            'debug-db-demo-items': False,
             'debug-db-filler-items': False,
             'debug-logged-in-is-admin': False,
-            'database-path': '',
-            'admin_entitlements': [],
-            'debug_admin_entitlements': ['urn:mace:egi.eu:group:mteam.data.kit.edu:role=member'],
-            'secret_key': '!secret',
-            'oidc_client_secret': '',
-            'oidc_redirect_hostname': 'localhost',
-            'oidc_client_id': 'SET_ME',
-            'upload_license_filename': 'upload_license.txt',
-            'infrastructure_href': 'https://example.com'
+            'debug_admin_entitlements': ['urn:mace:egi.eu:group:mteam.data.kit.edu:role=member']
         }
 
         return defaults

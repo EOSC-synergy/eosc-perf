@@ -34,6 +34,7 @@ class IOControllerTest(unittest.TestCase):
         configuration.set('debug-db-reset', True)
         configuration.set('oidc_client_id', 'test-app')
         configuration.set('oidc_client_secret', 'longspaghettistring')
+        configuration.set('secret_key', 'lorem ipsum dolor sir amet')
         configure_authenticator(self.app)
         configure_database(self.app)
 

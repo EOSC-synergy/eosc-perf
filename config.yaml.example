@@ -17,7 +17,7 @@ upload_license_filename: "upload_license.txt"
 #  Navbar-link to infrastructure manager
 infrastructure_href: "https://example.com"
 #  Default path for the database
-#  Note: this is relative to the project folder (eosc_perf)
+#  Note: this is relative to the python package folder (eosc_perf)
 database-path: "sqlite.db"
 
 # Development options.
