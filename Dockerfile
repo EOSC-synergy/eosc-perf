@@ -3,7 +3,6 @@ FROM python:3.8.4
 # keep all webapp data in /app
 ENV APP /app
 # set up file structure
-RUN mkdir $APP
 WORKDIR $APP
 # open port 5000 for nginx
 EXPOSE 5000
@@ -11,9 +10,10 @@ EXPOSE 5000
 COPY ./requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
-# add user for uwsgi
+# set up user
 RUN groupadd uwsgi && useradd -g uwsgi uwsgi
-RUN mkdir -p $APP/data && chown uwsgi $APP/data
+RUN mkdir -p $APP $APP/data && chown -R uwsgi $APP
+USER uwsgi
 # copy the whole webapp
 COPY ./uwsgi.ini upload_license.txt config.yaml ./
 COPY ./templates/ templates/
