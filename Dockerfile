@@ -34,7 +34,7 @@ WORKDIR $APP
 
 # Copy the released application
 COPY --from=0 /buildroot/dist dist
-COPY ./templates /app/templates
+COPY ./templates templates
 COPY ./uwsgi.ini .
 # Install python application
 RUN pip install --upgrade pip && \ 
