@@ -121,6 +121,10 @@ class Authenticator:
         Returns:
             bool: True if the user is an admin.
         """
+        # skip auth check if configured in debug mode
+        if configuration.get('debug') and configuration.get('debug-logged-in-is-admin') and self.is_authenticated():
+            return True
+
         try:
             entitlements = session['user']['info']['eduperson_entitlement']
         except KeyError:

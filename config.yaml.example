@@ -1,7 +1,8 @@
-debug: true
-debug-db-reset: true
-debug-db-demo-items: true
-debug-db-filler-items: true
+debug: false
+debug-db-reset: false
+debug-db-demo-items: false
+debug-db-filler-items: false
+debug-logged-in-is-admin: false
 admin_entitlements: ["urn:mace:egi.eu:group:mteam.data.kit.edu:role=member"]
 debug_admin_entitlements: ["urn:mace:egi.eu:group:mteam.data.kit.edu:role=member"]
 secret_key: "ENTER YOUR SECRET KEY HERE" # used for flask session cookie encryption

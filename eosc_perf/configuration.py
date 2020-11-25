@@ -24,6 +24,8 @@ class ConfigHandler:
             'debug': False,
             'debug-db-reset': True,
             'debug-db-dummy-items': True,
+            'debug-db-filler-items': False,
+            'debug-logged-in-is-admin': False,
             'database-path': '',
             'admin_entitlements': [],
             'debug_admin_entitlements': ['urn:mace:egi.eu:group:mteam.data.kit.edu:role=member'],
