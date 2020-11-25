@@ -178,6 +178,16 @@ class TagFetchAJAXHandler(AJAXHandler):
         return json.dumps(results_dict)
 
 
+class BenchmarkNotableKeysFetchAJAXHandler(AJAXHandler):
+    """AJAX handler for queries about notable benchmark keys."""
+
+    def fetch_data(self, query: JSON) -> JSON:
+        if query == '{}':
+            return '{}'
+        return json.dumps(
+            {'notable_keys': facade.get_benchmark(json.loads(query)['docker_name']).determine_notable_keys()})
+
+
 ajax_blueprint = Blueprint('ajax', __name__)
 
 
@@ -220,3 +230,13 @@ def fetch_benchmarks():
     """HTTP endpoint for benchmark AJAX fetches."""
     handler = BenchmarkFetchAJAXHandler()
     return Response(handler.fetch_data(), mimetype='application/json')
+
+
+@ajax_blueprint.route('/fetch_notable_benchmark_keys')
+def fetch_notable_benchmark_keys():
+    """HTTP endpoint for notable benchmark keys AJAX queries."""
+    query_json = request.args.get('query_json')
+    if query_json is None:
+        query_json = "{}"
+    handler = BenchmarkNotableKeysFetchAJAXHandler()
+    return Response(handler.fetch_data(query_json), mimetype='application/json')
