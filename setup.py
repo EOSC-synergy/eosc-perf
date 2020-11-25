@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
-"""The setup script."""
+from setuptools import setup
 
-from setuptools import setup, find_packages
-setup()
+setup(
+    setup_requires=['pbr>=5.5.1'],
+    pbr=True,
+)
