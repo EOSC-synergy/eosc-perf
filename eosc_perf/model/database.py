@@ -27,8 +27,6 @@ def configure_database(app):
         with app.app_context():
             db.drop_all()
 
-    # create database if it does not exist
-    if len(configuration.get('database-path')) == 0 \
-            or not os.path.exists(configuration.get('database-path')):
-        with app.app_context():
-            db.create_all()
+    # create database tables if they do not exist
+    with app.app_context():
+        db.create_all()

@@ -11,6 +11,9 @@ EXPOSE 5000
 COPY ./requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
+# add user for uwsgi
+RUN groupadd uwsgi && useradd -g uwsgi uwsgi
+RUN mkdir -p $APP/data && chown uwsgi $APP/data
 # copy the whole webapp
 COPY ./eosc_perf/. .
 COPY ./templates/. .
