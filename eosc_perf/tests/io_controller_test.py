@@ -28,10 +28,12 @@ class IOControllerTest(unittest.TestCase):
         self.app.secret_key = '!secret'
 
         # use memory database, reset entirely every time
-        configuration.reload()
+        configuration.reset()
         configuration.set('database-path', '')
         configuration.set('debug', True)
         configuration.set('debug-db-reset', True)
+        configuration.set('oidc_client_id', 'test-app')
+        configuration.set('oidc_client_secret', 'longspaghettistring')
         configure_authenticator(self.app)
         configure_database(self.app)
 
