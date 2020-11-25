@@ -8,13 +8,9 @@ services:
       dockerfile: Dockerfile
     # override app folder during development
     volumes:
-      # development mounts, if these do not change, they should be copied in the dockerfile
-      - ./eosc_perf:/app/eosc_perf
-      - ./templates:/app/templates
-      - ./uwsgi.ini:/app/uwsgi.ini
-      - ./upload_license.txt:/app/upload_license.txt
       # production config
       - ./config.yaml:/app/config.yaml
+      # access to database file
       - ./data:/app/data/
 
   nginx:

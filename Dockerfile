@@ -15,11 +15,8 @@ RUN pip install -r requirements.txt
 RUN groupadd uwsgi && useradd -g uwsgi uwsgi
 RUN mkdir -p $APP/data && chown uwsgi $APP/data
 # copy the whole webapp
-COPY ./eosc_perf/. .
-COPY ./templates/. .
-COPY ./uwsgi.ini .
-# TODO: keep the config here?
-COPY ./upload_license.txt .
-COPY ./config.yaml .
+COPY ./uwsgi.ini upload_license.txt config.yaml ./
+COPY ./templates/ templates/
+COPY ./eosc_perf/ eosc_perf/
 # set launch command
 CMD [ "uwsgi", "--ini", "uwsgi.ini" ]
