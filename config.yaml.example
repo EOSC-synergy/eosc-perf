@@ -18,7 +18,7 @@ upload_license_filename: "upload_license.txt"
 infrastructure_href: "https://example.com"
 #  Default path for the database
 #  Note: this is relative to the python package folder (eosc_perf)
-database-path: "sqlite.db"
+database-path: "/app/data/sqlite.db"
 
 # Development options.
 #  Enable debug mode.
