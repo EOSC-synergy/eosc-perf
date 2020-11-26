@@ -133,7 +133,8 @@ def add_demo():
         address='127.0.0.1',
         description='Diagram test site entry (Do not use)')
 
-    demo_benchmark = Benchmark(docker_name='donotuse/diagram:test', uploader=demo_uploader)
+    with open('eosc_perf/controller/config/result_template.json') as file:
+        demo_benchmark = Benchmark(docker_name='donotuse/diagram:test', uploader=demo_uploader, template=file.read())
 
     # generate a series of results with values for testing the diagram
     demo_results = []
@@ -183,7 +184,8 @@ def add_demo():
     except facade.NotFoundError:
         facade.add_benchmark(
             demo_benchmark.get_docker_name(),
-            demo_benchmark.get_uploader().get_id())
+            demo_benchmark.get_uploader().get_id(),
+            demo_benchmark.get_template())
         facade.get_benchmark(demo_benchmark.get_docker_name()).set_hidden(False)
 
     filters = {'filters': [
