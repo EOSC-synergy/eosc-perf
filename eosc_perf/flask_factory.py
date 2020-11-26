@@ -21,14 +21,19 @@ from .view.pages.search_result import result_search_blueprint
 from .view.pages.privacy_policy import privacy_blueprint
 
 
-def create_app():
+def create_app(custom_configuration: dict = None):
     """Create the flask app object."""
     flask_application = Flask(__name__)
 
     if 'sphinx' in sys.modules:
         return flask_application
 
-    configuration.reload()
+    if custom_configuration is None:
+        configuration.reload()
+    else:
+        configuration.reset()
+        for key, value in custom_configuration.items():
+            configuration.set(key, value)
 
     if configuration.get('debug'):
         flask_application.config['DEBUG'] = True
@@ -61,6 +66,3 @@ def create_app():
     flask_application.register_blueprint(privacy_blueprint)
 
     return flask_application
-
-
-flask_app: Flask = create_app()
