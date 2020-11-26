@@ -2,21 +2,18 @@
 FROM python:3.8.4
 # keep all webapp data in /app
 ENV APP /app
-# set up file structure
 WORKDIR $APP
 # open port 5000 for nginx
 EXPOSE 5000
 # install python dependencies
 COPY ./requirements.txt .
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
-# set up user
-RUN groupadd uwsgi && useradd -g uwsgi uwsgi
-RUN mkdir -p $APP $APP/data && chown -R uwsgi $APP
+RUN pip install --upgrade --no-cache-dir -r requirements.txt pip
+# set launch command
+CMD [ "uwsgi", "--ini", "uwsgi.ini" ]
+# set up user, files and permissions
+RUN groupadd uwsgi && useradd -g uwsgi uwsgi && mkdir -p $APP $APP/data && chown -R uwsgi $APP
 USER uwsgi
 # copy the whole webapp
 COPY ./uwsgi.ini upload_license.txt config.yaml ./
 COPY ./templates/ templates/
 COPY ./eosc_perf/ eosc_perf/
-# set launch command
-CMD [ "uwsgi", "--ini", "uwsgi.ini" ]
