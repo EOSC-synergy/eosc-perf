@@ -36,7 +36,7 @@ def create_app(custom_configuration: dict = None):
             configuration.set(key, value)
 
     if configuration.get('debug'):
-        flask_application.config['DEBUG'] = True
+        # flask_application.config['DEBUG'] = True
         # app.config['SQLALCHEMY_ECHO'] = True
         print("Running in debug mode")
     else:
