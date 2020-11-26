@@ -20,21 +20,57 @@ const FILTERS = {
     UPLOADER: FIELDS.UPLOADER,
     SITE: FIELDS.SITE,
     TAG: FIELDS.TAGS,
-    JSON_GREATER_THAN: "Value greater than",
-    JSON_EQUAL: "Value equal to",
-    JSON_LESS_THAN: "Value less than"
+    JSON: "JSON-Key"
 };
 
 const FILTER_KEYS = new Map([
-    [FILTERS.BENCHMARK, 'benchmark'],
-    [FILTERS.UPLOADER, 'uploader'],
-    [FILTERS.SITE, 'site'],
-    [FILTERS.TAG, 'tag'],
-    [FILTERS.JSON_GREATER_THAN, 'greater_than'],
-    [FILTERS.JSON_EQUAL, 'equals'],
-    [FILTERS.JSON_LESS_THAN, 'lesser_than']
+    [FILTERS.UPLOADER, "uploader"],
+    [FILTERS.SITE, "site"],
+    [FILTERS.TAG, "tag"],
+    [FILTERS.JSON, "json"]
 ]);
 
+const FILTER_HINTS = new Map([
+    [FILTERS.UPLOADER, "user@example.com"],
+    [FILTERS.SITE, "site short_name"],
+    [FILTERS.TAG, "tag_name"],
+    [FILTERS.JSON, "path.to.value"]
+]);
+
+const FILTER_HELPS = new Map([
+    [FILTERS.UPLOADER, "The Uploader is described by the uploader's email. Different uploaders can be found in the table below in the <i>Uploader</i> column."],
+    [FILTERS.SITE, "This field requires the site's short_name, which is a form of identifier. Sites can be found in the <i>Site</i> column in the result table below."],
+    [FILTERS.TAG, "A tag is a short bit of text containing one or multiple keywords, such as <code>tensor</code> or <code>gpu_bound</code>."],
+    [FILTERS.JSON, 'The search value has to describe the exact path within the JSON, separated with a dot.<br/>\
+        <b>Example:</b><br/> \
+        <code>{"example":{"nested":{"json":"value"},"different":{"path":{"to":"otherValue"}}}</code><br/> \
+        <b>Correct:</b><br/> \
+        example.nested.json or different.path.to \
+        <b>Wrong:</b><br/> \
+        json or example.nested or different:path:to']
+]);
+
+const FILTER_ID_PREFIX = {
+    TYPE: "filter-type-",
+    VALUE: "filter-value-",
+    EXTRA_VALUE: "filter-extra-value-",
+    SUGGESTIONS: "filter-suggestions-",
+    COMPARISON: "filter-comparison-mode-",
+    INFO: "filter-info-",
+    EXTRA_FRAME: "filter-extra"
+};
+
+const JSON_MODES =  {
+    LESS_THAN: 'lesser_than',
+    EQUALS: 'equals',
+    GREATER_THAN: 'greater_than'
+};
+
+const JSON_MODE_SYMBOLS = new Map([
+    [JSON_MODES.LESS_THAN, '<'],
+    [JSON_MODES.EQUALS, '='],
+    [JSON_MODES.GREATER_THAN, '>']
+]);
 
 const JSON_KEYS = new Map([
     [COLUMNS.CHECKBOX, 'selected'],
@@ -353,7 +389,9 @@ class ResultSearch extends Content {
         this.results = [];
         this.filters = [];
         this.ordered_by = null;
-        this.filter_ids = 0;
+        this.current_filter_id = 0;
+        this.filter_ids = [];
+        this.notable_keys = [];
 
         this.msg = "";
         this.table = new Table();
@@ -383,23 +421,7 @@ class ResultSearch extends Content {
         let start = paginator.get_start_index();
         let end = Math.min(paginator.get_end_index(), this.results.length);
         this.table.display(this.results.slice(start, end));
-        this.generate_tag_cont();
 
-        // Update tag info description.
-        let filters = document.getElementById("filters").childNodes;
-        filters.forEach(function (f) {
-            if (f.firstChild && f.firstChild.value && f.firstChild.value.includes("Tag")) {
-                // Select the info element, and update content.
-                f.childNodes.forEach(function (x) {
-                    if (x.getAttribute("id") && x.getAttribute("id").includes("info")) {
-                        x.setAttribute("data-content",
-                            search_page.generate_tag_cont()
-                        );
-                    }
-                });
-            }
-
-        });
         $('[data-toggle="popover"]').popover({
             html: true
         });
@@ -440,33 +462,30 @@ class ResultSearch extends Content {
                 'value': this.benchmark_name
             });
         }
-        let html_filter = document.getElementById("filters").children;
-        // Add filters.
-        for (let index = 0; index < html_filter.length; index++) {
-            let type = html_filter[index].firstChild.value;
-            let element = "";
-            if (type.includes("Value")) {
-                let key = html_filter[index].firstChild.nextSibling.value;
-                let value = html_filter[index].firstChild.nextSibling.nextSibling.value;
-                // Remove spaces and " characters.
-                key = key.replace(/(\s+)/g, '').replace(/"+/g, "'");
-                type = FILTER_KEYS.get(type) + "";
-                if (key !== "" && value !== "" && type !== "") {
-                    element = { 'type': 'json', 'key': key, 'value': value, 'mode': type };
 
-                }
-            } else {
-                let value = html_filter[index].firstChild.nextSibling.value;
-                type = FILTER_KEYS.get(type);
-                if (type !== "" && value !== "") {
-                    element = { 'type': type, 'value': value };
+        for (let filter_id of this.filter_ids) {
+            let filter = {};
+            let filter_type = document.getElementById(FILTER_ID_PREFIX.TYPE + filter_id).value;
+            let filter_value = document.getElementById(FILTER_ID_PREFIX.VALUE + filter_id).value;
+            let filter_compare = document.getElementById(FILTER_ID_PREFIX.COMPARISON + filter_id).value;
+            let filter_extra_value = document.getElementById(FILTER_ID_PREFIX.EXTRA_VALUE + filter_id).value;
+            filter['type'] = FILTER_KEYS.get(filter_type);
+            if (filter_type.toString().localeCompare(FILTERS.JSON) === 0) {
+                filter['value'] = filter_extra_value;
+                filter['key'] = filter_value;
+                filter['mode'] = filter_compare;
+                if (filter_value && filter_extra_value) {
+                    filters.push(filter);
                 }
             }
-            // Append if not empty
-            if (element !== "") {
-                filters = filters.concat([element]);
+            else {
+                filter['value'] = filter_value;
+                if (filter_value) {
+                    filters.push(filter);
+                }
             }
         }
+
         // Finish query.
         this.query = { "filters": filters };
 
@@ -498,131 +517,180 @@ class ResultSearch extends Content {
      *                     corresponding filter), num_input (numeric input value of corresponding filter).
      */
     add_filter_field(input_values) {
-        let filter_id = "f" + this.filter_ids++;
+        let filter_id = "f" + this.current_filter_id++;
 
         let filter_list = document.getElementById('filters');
+
         // add line for the filter
         let new_filter = document.createElement('LI');
         new_filter.setAttribute("id", filter_id);
-        new_filter.setAttribute("class", "flexbox filter");
+        //new_filter.setAttribute("class", "flexbox filter");
+        new_filter.classList.add("form-inline");
+
+        // Remove this filter
+        let remove_filter = document.createElement("button");
+        remove_filter.setAttribute("type", "button");
+        remove_filter.classList.add("close");
+        remove_filter.setAttribute("aria-label", "Close");
+        {
+            let remove_filter_label = document.createElement("span");
+            remove_filter_label.setAttribute("aria-hidden", "true");
+            remove_filter_label.textContent = "×";
+            remove_filter.appendChild(remove_filter_label);
+        }
+        remove_filter.addEventListener("click", function () {
+            search_page.remove_filter(filter_id);
+        });
+        new_filter.appendChild(remove_filter);
+
         let filter_type = document.createElement("select");
-        // add filter types
+        filter_type.setAttribute("id", FILTER_ID_PREFIX.TYPE + filter_id);
         for (let filter in FILTERS) {
-            // Create options with their name as value.
             let type = document.createElement("OPTION");
             type.setAttribute("value", FILTERS[filter]);
             type.textContent = FILTERS[filter];
             filter_type.appendChild(type);
         }
+        new_filter.appendChild(filter_type);
 
-        // add callback to set type hints
+        // On change callback
         filter_type.addEventListener("change", function () {
-            if (filter_type.value.localeCompare(FILTERS.JSON_LESS_THAN) === 0
-                || filter_type.value.localeCompare(FILTERS.JSON_EQUAL) === 0
-                || filter_type.value.localeCompare(FILTERS.JSON_GREATER_THAN) === 0) {
-                // Give field for numeric value.
-                document.getElementById("number" + filter_id).style.visibility = "visible";
-                // Set descriptive placeholder.
-                document.getElementById("filter_value" + filter_id).placeholder = "path.to.value";
-                // Adjust info.
-                let info_element = document.getElementById("info" + filter_id);
-                info_element.setAttribute("data-content",
-                    'The search value has to describe the exact path within the JSON, separated with a dot.\
-                    (Only search for numeric values possible.) \
-                    <br/> <b>Example:</b> \
-                    <br/> <code>{"example":{"nested":{"json":"value"},"different":{"path":{"to":"otherValue"}}} </code> \
-                    <br/> <b>Correct:</b> \
-                    <br/> example.nested.json or different.path.to \
-                    <br/> <b>Wrong:</b> \
-                    <br/> json or example.nested or different:path:to'.replace("\n", "<br/>"));
-            }
-            else {
-                // hide value field
-                document.getElementById("number" + filter_id).style.visibility = "hidden";
-            }
-            if (filter_type.value.localeCompare(FILTERS.BENCHMARK) === 0) {
-                // Set descriptive placeholder.
-                document.getElementById("filter_value" + filter_id).placeholder = "User/Image";
-                document.getElementById("info" + filter_id).setAttribute("data-content",
-                    'The Benchmark name has to be complete, following the structure <i>Dockerhub username  <b> / </b>Image name </i> . \
-                    <br> The <a href="/" >Benchmark search</a> can be used to discover Benchmarks.'
-                );
-            }
-            if (filter_type.value.localeCompare(FILTERS.TAG) === 0) {
-                // Set descriptive placeholder.
-                document.getElementById("filter_value" + filter_id).placeholder = "SingleTag";
-                document.getElementById("info" + filter_id).setAttribute("data-content",
-                    search_page.generate_tag_cont()
-                );
-            }
-            if (filter_type.value.localeCompare(FILTERS.UPLOADER) === 0) {
-                // Set descriptive placeholder.
-                document.getElementById("filter_value" + filter_id).placeholder = "Uploader@provid.er";
-                document.getElementById("info" + filter_id).setAttribute("data-content",
-                    "The Uploader is described by the uploader's email. Different uploaders can be found in the table below in the <i>Uploader</i> column."
-                );
-            }
-            if (filter_type.value.localeCompare(FILTERS.SITE) === 0) {
-                // Set descriptive placeholder.
-                document.getElementById("filter_value" + filter_id).placeholder = "Site";
-                document.getElementById("info" + filter_id).setAttribute("data-content",
-                    'The site requires a single site as input. Sites can be found in the <i>Site</i> column in the result table below.'
-                );
+            document.getElementById(FILTER_ID_PREFIX.VALUE + filter_id).placeholder = FILTER_HINTS.get(filter_type.value);
+            document.getElementById(FILTER_ID_PREFIX.INFO + filter_id)
+                .setAttribute("data-content", FILTER_HELPS.get(filter_type.value));
+
+            // hide extra json input on other filters
+            document.getElementById(FILTER_ID_PREFIX.EXTRA_FRAME + filter_id).style.visibility = "hidden";
+            if (filter_type.value.localeCompare(FILTERS.JSON) === 0) {
+                document.getElementById(FILTER_ID_PREFIX.EXTRA_FRAME + filter_id).style.visibility = "visible";
             }
         });
-        filter_type.setAttribute("class", "form-control");
-        // Create input.
-        let input = document.createElement("input");
-        input.setAttribute("type", "text");
-        input.setAttribute("id", "filter_value" + filter_id);
-        input.setAttribute("placeholder", "Filter Value");
-        input.setAttribute("class", "form-control");
-        // Create number field.
-        let num_input = document.createElement("input");
-        num_input.setAttribute("id", "number" + filter_id);
-        num_input.setAttribute("min", "0");
-        num_input.setAttribute("class", "form-control");
-        num_input.style.visibility = "hidden";
-        // Create button to remove given filter.
-        let remove_filter = document.createElement("input");
-        remove_filter.setAttribute("type", "button");
-        remove_filter.setAttribute("class", "btn btn-danger");
-        remove_filter.setAttribute("value", "Remove Filter");
-        remove_filter.addEventListener("click", function () {
-            search_page.remove_filter(filter_id);
-        })
-        // Create info button.
-        let type_info = document.createElement("input");
-        type_info.setAttribute("type", "button");
-        type_info.setAttribute("id", "info" + filter_id);
-        type_info.setAttribute("class", "btn btn-warning");
-        type_info.setAttribute("value", "?");
-        type_info.setAttribute("data-toggle", "popover");
-        type_info.setAttribute("title", "Format Description");
-        type_info.setAttribute("data-content", "You find some Tips for the expected input values here.");
-        type_info.setAttribute("data-placement", "right");
-        // Add default parameters if given.
-        if (input_values) {
-            if (input_values["filter_type"]) {
-                filter_type.value = input_values["filter_type"];
-            }
-            if (input_values["input"]) {
-                input.value = input_values["input"];
-            }
-            if (input_values["num_input"]) {
-                num_input = input_values["num_input"];
-            }
+        filter_type.classList.add("form-control");
+
+        // Primary input
+        let input_div = document.createElement("div");
+        input_div.classList.add("input-group");
+        { // textbox
+            let input = document.createElement("input");
+            input.setAttribute("type", "text");
+            input.setAttribute("id", FILTER_ID_PREFIX.VALUE + filter_id);
+            input.setAttribute("placeholder", "Filter Value");
+            input.classList.add("form-control");
+            input_div.appendChild(input);
         }
-        // Add selection to row.
-        new_filter.appendChild(filter_type);
-        // Add input text field.
-        new_filter.appendChild(input);
-        // Add numeric input field.
-        new_filter.appendChild(num_input);
-        // Add remove filter button.
-        new_filter.appendChild(remove_filter);
-        new_filter.appendChild(type_info);
+        { // suggestions menu
+            let input_extras = document.createElement("div");
+            input_extras.classList.add("input-group-append");
+            {
+                let suggestions_button = document.createElement("button");
+                suggestions_button.classList.add("btn", "btn-outline-secondary", "dropdown-toggle", "dropdown-toggle-split");
+                suggestions_button.setAttribute("data-toggle", "dropdown");
+                suggestions_button.setAttribute("aria-haspopup", "true");
+                suggestions_button.setAttribute("aria-expanded", "false");
+                suggestions_button.setAttribute("type", "button");
+
+                {
+                    let suggestions_button_screenreader_hint = document.createElement("span");
+                    suggestions_button_screenreader_hint.classList.add("sr-only");
+                    suggestions_button_screenreader_hint.textContent = "Toggle Dropdown";
+                    suggestions_button.appendChild(suggestions_button_screenreader_hint);
+                }
+                input_extras.appendChild(suggestions_button);
+            }
+
+            {
+                // Info button
+                let type_info = document.createElement("input");
+                type_info.setAttribute("type", "button");
+                type_info.setAttribute("id", FILTER_ID_PREFIX.INFO + filter_id);
+                type_info.setAttribute("class", "btn", "btn-outline-warning");
+                type_info.setAttribute("value", "?");
+                type_info.setAttribute("data-toggle", "popover");
+                type_info.setAttribute("title", "Format Description");
+                type_info.setAttribute("data-content", "You find some Tips for the expected input values here.");
+                type_info.setAttribute("data-placement", "right");
+                input_extras.appendChild(type_info);
+            }
+
+            {
+                let suggestions = document.createElement("div");
+                suggestions.classList.add("dropdown-menu");
+                suggestions.setAttribute("id", FILTER_ID_PREFIX.SUGGESTIONS + filter_id);
+                if (this.notable_keys.length === 0) {
+                    let suggestion_option = document.createElement("a");
+                    suggestion_option.classList.add("dropdown-item");
+                    suggestion_option.textContent = "No suggestions found!";
+                    suggestions.append(suggestion_option);
+                } else {
+                    for (let notable of this.notable_keys) {
+                        let suggestion_option = document.createElement("a");
+                        suggestion_option.classList.add("dropdown-item");
+                        suggestion_option.textContent = notable;
+                        suggestion_option.addEventListener("click", function (event) {
+                            document.getElementById(FILTER_ID_PREFIX.VALUE + filter_id).value = suggestions.value;
+                            document.getElementById(FILTER_ID_PREFIX.VALUE + filter_id).textContent = suggestions.value;
+                        });
+                        suggestions.append(suggestion_option);
+                    }
+                }
+                input_extras.appendChild(suggestions);
+            }
+
+            input_div.appendChild(input_extras);
+        }
+        new_filter.appendChild(input_div);
+
+        // Extra JSON input
+        let extra_input_field = document.createElement("div");
+        extra_input_field.classList.add("input-group");
+        extra_input_field.setAttribute("id", FILTER_ID_PREFIX.EXTRA_FRAME + filter_id);
+        extra_input_field.style.visibility = "hidden";
+        { // comparison mode dropdown
+            let json_mode_prepend = document.createElement("div");
+            json_mode_prepend.classList.add("input-group-prepend");
+            {
+                let json_mode = document.createElement("button");
+                json_mode.classList.add("btn", "btn-outline-secondary", "dropdown-toggle");
+                json_mode.setAttribute("id", FILTER_ID_PREFIX.COMPARISON + filter_id);
+                json_mode.setAttribute("type", "button");
+                json_mode.setAttribute("data-toggle", "dropdown");
+                json_mode.setAttribute("aria-haspopup", "true");
+                json_mode.setAttribute("aria-expanded", "false");
+                json_mode.value = JSON_MODES.GREATER_THAN;
+                json_mode.textContent = JSON_MODE_SYMBOLS.get(JSON_MODES.GREATER_THAN);
+                json_mode_prepend.appendChild(json_mode);
+
+                let json_mode_dropdown = document.createElement("div");
+                json_mode_dropdown.classList.add("dropdown-menu");
+                for (let mode in JSON_MODES) {
+                    mode = JSON_MODES[mode];
+                    let mode_option = document.createElement("a");
+                    mode_option.classList.add("dropdown-item");
+                    mode_option.value = mode;
+                    mode_option.textContent = JSON_MODE_SYMBOLS.get(mode);
+                    mode_option.addEventListener("click", function() {
+                        json_mode.value = mode;
+                        json_mode.textContent = JSON_MODE_SYMBOLS.get(mode);
+                    });
+                    json_mode_dropdown.appendChild(mode_option);
+                }
+                json_mode_prepend.appendChild(json_mode_dropdown);
+            }
+            extra_input_field.appendChild(json_mode_prepend);
+        }
+        { // json value input
+            let num_input = document.createElement("input");
+            num_input.setAttribute("id", FILTER_ID_PREFIX.EXTRA_VALUE + filter_id);
+            num_input.setAttribute("min", "0");
+            num_input.classList.add("form-control");
+            extra_input_field.appendChild(num_input);
+        }
+        new_filter.appendChild(extra_input_field);
+
         filter_list.appendChild(new_filter);
+
+        this.filter_ids.push(filter_id);
+
         // Activate popover.
         $('[data-toggle="popover"]').popover({
             html: true
@@ -636,6 +704,9 @@ class ResultSearch extends Content {
     remove_filter(filter_id) {
         /** Remove the filter*/
         document.getElementById(filter_id).remove();
+        this.filter_ids.filter(function(value, index, arr) {
+            return value.localeCompare(filter_id) !== 0;
+        });
     }
 
     /**
@@ -684,42 +755,6 @@ class ResultSearch extends Content {
             }
         }
         this.open_new_tab('/make_diagram?' + uuids.slice(0, -1));
-    }
-
-    /**
-     * Helper method generating the tag input field info according to the current results.
-     * @returns {string} A string containing the html formatted text.
-     */
-    generate_tag_cont() {
-        let msg = "";
-        // Collect all tags
-        let tags = "";
-        for (let i = 0; i < this.results.length; i++) {
-            if (this.results[i].tags) {
-                tags += this.results[i].tags + ",";
-            }
-        }
-        // Count double tags
-        let tag_tuple = {};
-        tags.split(",").filter(Boolean).forEach(function (i) { tag_tuple[i] = (tag_tuple[i] || 0) + 1; });
-        let tag_tmp = [];
-        // Convert to List.
-        for (let tag in tag_tuple) {
-            tag_tmp.push([tag, tag_tuple[tag]]);
-        }
-        tag_tmp.sort(function (x, y) {
-            return x - y;
-        })
-        msg = 'The Tag value has to be a single tag.<br>';
-        if (this.results.length >= 100) {
-            // Most likely not all matching results loaded.
-            msg += "The below listed tags and occurrence amount are <b>not representative</b> of the result space.\n";
-        } else {
-            // All matching results loaded.
-            msg += "The list below lists all tags and occurrence amount from the result list matching your query. \n"
-        }
-        tag_tmp.forEach(function (x) { msg += "<br>" + x[0] + " <i>(" + x[1] + ")</i>"; });
-        return msg;
     }
 
     /**
@@ -775,6 +810,11 @@ class ResultSearch extends Content {
                 selection.selectedIndex = i;
             }
         }
+
+        $.ajax('/fetch_notable_benchmark_keys?query_json=' + encodeURI(JSON.stringify({docker_name: benchmark_name})))
+            .done(function (data) {
+                search_page.set_notable_keys(data['notable_keys']);
+            });
     }
 
     /**
@@ -787,13 +827,44 @@ class ResultSearch extends Content {
     }
 
     /**
+     * Set the list of notable keys regarding the current benchmark.
+     * @param keys The list of notable keys.
+     */
+    set_notable_keys(keys) {
+        this.notable_keys = keys;
+        for (let filter of this.filter_ids) {
+            let div = document.getElementById(FILTER_ID_PREFIX.SUGGESTIONS + filter);
+            while (div.firstChild) {
+                div.removeChild(div.firstChild);
+            }
+            if (this.notable_keys.length === 0) {
+                let suggestion_option = document.createElement("a");
+                suggestion_option.classList.add("dropdown-item");
+                suggestion_option.textContent = "No suggestions found!";
+                div.append(suggestion_option);
+            }
+            else {
+                for (let notable of this.notable_keys) {
+                    let suggestion_option = document.createElement("a");
+                    suggestion_option.classList.add("dropdown-item");
+                    suggestion_option.textContent = notable;
+                    suggestion_option.addEventListener("click", function (event) {
+                        document.getElementById(FILTER_ID_PREFIX.VALUE + filter).value = notable;
+                        document.getElementById(FILTER_ID_PREFIX.VALUE + filter).textContent = notable;
+                    });
+                    div.appendChild(suggestion_option);
+                }
+            }
+        }
+    }
+
+    /**
      * Get a list of all benchmarks from the server.
      * @param first_run True if this is on page load.
      */
     fetch_all_benchmarks(first_run = false) {
         $.ajax('/fetch_benchmarks').done(function (data) {
             let benchmarks = data.results;
-            console.log(data, benchmarks);
             search_page.update_benchmark_list(benchmarks, first_run);
         });
     }

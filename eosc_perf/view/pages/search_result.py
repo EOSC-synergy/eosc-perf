@@ -48,7 +48,7 @@ def make_search_page():
         try:
             facade.get_benchmark(docker_name=benchmark)
         except facade.NotFoundError:
-            return error_redirect('Result search reqires a valid Benchmark name')
+            return error_redirect('Result search requires a valid Benchmark name')
     args = json.dumps({'benchmark': benchmark, 'admin': controller.is_admin()})
     factory = SearchResultFactory()
     page = factory.generate_page(template='result_search.html', args=args)
@@ -64,6 +64,6 @@ def delete_result():
     uuid = request.args.get('uuid')
 
     if not controller.remove_result(uuid=uuid):
-        return Response('Result search reqires a valid Benchmark name', mimetype='text/html')
+        return Response('Result search requires a valid Benchmark name', mimetype='text/html')
 
-    return Response("Successfull removed result.", mimetype='text/html')
+    return Response("Successful removed result.", mimetype='text/html')
