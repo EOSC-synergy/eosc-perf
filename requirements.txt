@@ -7,5 +7,3 @@ requests-html==0.10.0
 PyYAML==5.3.1
 markdown2==2.3.9
 aarc-g002-entitlement==0.2.1
-Sphinx==3.3.1
-sphinx-rtd-theme==0.5.0
