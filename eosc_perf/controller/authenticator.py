@@ -1,6 +1,7 @@
 """This module acts as a facade between the IOController and the EGI Check-In authentication system."""
 
 import json
+from os import urandom
 from time import time
 from urllib.request import urlopen
 import requests
@@ -56,17 +57,18 @@ class Authenticator:
 
         self.client_id = configuration.get('oidc_client_id')
         self.client_secret = configuration.get('oidc_client_secret')
-        flask_app.secret_key = configuration.get('secret_key')
+        if len(configuration.get('secret_key')) > 0:
+            flask_app.secret_key = configuration.get('secret_key')
+        else:
+            flask_app.secret_key = urandom(16)
         self.hostname = configuration.get('oidc_redirect_hostname')
 
         if len(self.client_id) == 0 or self.client_id == 'SET_ME':
-            raise ValueError("Please configure the oidc_client_id in config.yaml")
+            raise ValueError("Please configure the OIDC client id")
         if len(self.client_secret) == 0 or self.client_secret == 'SET_ME':
-            raise ValueError("Please configure the oidc_client_secret in config.yaml")
-        if len(flask_app.secret_key) == 0 or flask_app.secret_key == 'SET_ME':
-            raise ValueError("Please configure the secret_key in config.yaml")
+            raise ValueError("Please configure OIDC client secret")
         if len(self.hostname) == 0 or self.hostname == 'SET_ME':
-            raise ValueError("Please configure the oidc_redirect_hostname in config.yaml")
+            raise ValueError("Please configure the domain")
 
         flask_app.config["EOSC_PERF_CLIENT_ID"] = self.client_id
         flask_app.config["EOSC_PERF_CLIENT_SECRET"] = self.client_secret

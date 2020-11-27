@@ -1,17 +1,15 @@
 version: '3'
 services:
   flask:
-    image: flask-eosc-perf
+    image: flask
     restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile
-    # override app folder during development
     volumes:
-      # production config
-      - ./config.yaml:/app/config.yaml
       # access to database file
       - ./data:/app/data/
+    env_file: .env
 
   nginx:
     image: nginx
