@@ -203,12 +203,14 @@ class Table {
     /**
      * Fill in results into the table.
      * @param results The results to fill the table with.
+     * @param columns The columns to display.
+     * @param startIndex The index of the first displayed item.
      */
-    _fill_table(results, columns) {
+    _fill_table(results, columns, startIndex) {
         for (let i = 0; i < results.length; i++) {
             let row = document.createElement("TR");
             const result = results[i];
-            // First column ins select box
+
             for (const key of columns) {
                 const column = (key in COLUMNS) ? COLUMNS[key] : key;
                 let cell = document.createElement("TD");
@@ -223,7 +225,7 @@ class Table {
                         select.setAttribute('style', 'height: 1.5em');
                         // when clicked, select
                         select.addEventListener("click", function () {
-                            search_page.select_result(i);
+                            search_page.select_result(i + startIndex);
                         });
                         cell.appendChild(select);
                     } break;
@@ -292,11 +294,12 @@ class Table {
      * Display a list of results.
      * @param results Results to display.
      * @param columns Columns to use.
+     * @param startIndex The index of the first displayed item.
      */
-    display(results, columns) {
+    display(results, columns, startIndex) {
         this._clear();
         this._create_head(columns);
-        this._fill_table(results, columns);
+        this._fill_table(results, columns, startIndex);
     }
 }
 
@@ -472,7 +475,7 @@ class ResultSearch extends Content {
         // Update table.
         let start = paginator.get_start_index();
         let end = Math.min(paginator.get_end_index(), this.results.length);
-        this.table.display(this.results.slice(start, end), this.active_columns);
+        this.table.display(this.results.slice(start, end), this.active_columns, start);
 
         $('[data-toggle="popover"]').popover({
             html: true
