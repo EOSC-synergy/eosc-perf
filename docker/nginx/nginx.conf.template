@@ -3,10 +3,16 @@ gzip on;
 root /var/www/web;
 
 server {
-  listen       80 default_server;
-  listen       [::]:80 default_server;
+  listen       80;
+  listen       [::]:80;
   
-  server_name _;
+  server_name ${DOMAIN};
+
+  location /nginx/reload {
+    auth_basic 'Access restriction';
+    auth_basic_user_file /tmp/.htpasswd;
+    proxy_pass http://localhost:9000;
+  }
 
   location /.well-known/acme-challenge/ {
     root /var/www/certbot;
@@ -18,13 +24,13 @@ server {
 }
 
 server {
-  listen       443 http2 ssl;
-  listen       [::]:443 http2 ssl;
+  listen       443 http2 ssl default_server;
+  listen       [::]:443 http2 ssl default_server;
   
-  ssl_certificate /etc/letsencrypt/live/perf.test.fedcloud.eu/fullchain.pem;
-  ssl_certificate_key /etc/letsencrypt/live/perf.test.fedcloud.eu/privkey.pem;
+  ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
 
-  server_name perf.test.fedcloud.eu;
+  server_name ${DOMAIN};
 
   include /etc/letsencrypt/options-ssl-nginx.conf;
   ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
@@ -43,6 +49,4 @@ server {
   location ~ /\.ht {
     deny  all;
   }
-
-  #error_page 404 /404.html;
 }

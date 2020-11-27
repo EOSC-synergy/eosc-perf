@@ -14,8 +14,11 @@ services:
       - ./data:/app/data/
 
   nginx:
-    image: nginx:1.14.2-alpine
+    image: nginx
     restart: unless-stopped
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
     depends_on:
       - flask
       - certbot
@@ -23,12 +26,10 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      #- ./nginx/certs:/etc/nginx/certs
-      - ./nginx:/etc/nginx/conf.d
       - ./static:/var/www/web/
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot/
-    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    env_file: .env
 
   certbot:
     image: certbot
