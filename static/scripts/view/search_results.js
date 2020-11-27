@@ -81,6 +81,49 @@ const JSON_KEYS = new Map([
     [COLUMNS.TAGS, "tags"]
 ]);
 
+/**
+ * Fetch a sub-key from an object, as noted by the filter JSON syntax.
+ * @param obj The object to get the value from.
+ * @param key_path The path to the value.
+ * @returns {*} Anything.
+ * @private
+ */
+function _fetch_subkey(obj, key_path) {
+    let keys = key_path.split('.');
+    let sub_item = obj;
+    for (let sub_key of keys) {
+        sub_item = sub_item[sub_key];
+    }
+    return sub_item;
+}
+
+/**
+ * Get the name of the specific key accessed by a key-path of the filter JSON syntax.
+ * @param key_path The path to the value.
+ * @returns {*|string} The name of the specified key.
+ * @private
+ */
+function _get_subkey_name(key_path) {
+    let keys = key_path.split('.');
+    return keys[keys.length - 1];
+}
+
+/**
+ * Prepare displayed data to be displayed prettily.
+ *
+ * This rounds floats et al to three decimals!
+ *
+ * @param item The items to display.
+ * @returns {string} A nice-looking string.
+ * @private
+ */
+function _format_nicely(item) {
+    if (typeof item === "number") {
+        return (Math.round(item * 1000) / 1000).toString();
+    }
+    return item.toString();
+}
+
 class Table {
     /**
      * Construct a new table handler.
@@ -101,10 +144,10 @@ class Table {
     /**
      * Set up the top row of the table.
      */
-    _create_head() {
+    _create_head(columns) {
         let head = document.createElement("THEAD");
-        for (const column in COLUMNS) {
-            const column_name = COLUMNS[column];
+        for (const column of columns) {
+            const column_name = (column in COLUMNS) ? COLUMNS[column] : _get_subkey_name(column);
 
             let cell = document.createElement("TH");
             cell.textContent = column_name;
@@ -146,6 +189,10 @@ class Table {
                     // todo find order on tags
                     break;
                 default:
+                    cell.addEventListener("click", function() {
+                        // TODO: sorting helpers
+                        search_page.sort_by( (x, y) => _fetch_subkey(x["data"], column_name) < _fetch_subkey(y["data"], column_name), column_name);
+                    });
                     break;
             }
             head.appendChild(cell);
@@ -157,13 +204,13 @@ class Table {
      * Fill in results into the table.
      * @param results The results to fill the table with.
      */
-    _fill_table(results) {
+    _fill_table(results, columns) {
         for (let i = 0; i < results.length; i++) {
             let row = document.createElement("TR");
             const result = results[i];
             // First column ins select box
-            for (const key in COLUMNS) {
-                const column = COLUMNS[key];
+            for (const key of columns) {
+                const column = (key in COLUMNS) ? COLUMNS[key] : key;
                 let cell = document.createElement("TD");
                 switch (column) {
                     case (COLUMNS.CHECKBOX): {
@@ -204,8 +251,6 @@ class Table {
 
                     case COLUMNS.ACTIONS: {
                         // actions
-                        let cell = document.createElement("TD");
-
                         let div = document.createElement('div');
                         div.classList.add('btn-group');
 
@@ -231,6 +276,10 @@ class Table {
                         cell.appendChild(div);
                         row.appendChild(cell);
                     } break;
+
+                    default: {
+                        cell.textContent = _format_nicely(_fetch_subkey(result["data"], column));
+                    } break;
                 }
                 row.appendChild(cell);
             }
@@ -241,12 +290,13 @@ class Table {
 
     /**
      * Display a list of results.
-     * @param results
+     * @param results Results to display.
+     * @param columns Columns to use.
      */
-    display(results) {
+    display(results, columns) {
         this._clear();
-        this._create_head();
-        this._fill_table(results);
+        this._create_head(columns);
+        this._fill_table(results, columns);
     }
 }
 
@@ -385,7 +435,7 @@ class ResultSearch extends Content {
      */
     constructor() {
         super();
-        this.query = "";
+
         this.results = [];
         this.filters = [];
         this.ordered_by = null;
@@ -393,7 +443,9 @@ class ResultSearch extends Content {
         this.filter_ids = [];
         this.notable_keys = [];
 
-        this.msg = "";
+        this.active_columns = [];
+        this._populate_active_columns();
+
         this.table = new Table();
 
         this.benchmark_name = "";
@@ -420,7 +472,7 @@ class ResultSearch extends Content {
         // Update table.
         let start = paginator.get_start_index();
         let end = Math.min(paginator.get_end_index(), this.results.length);
-        this.table.display(this.results.slice(start, end));
+        this.table.display(this.results.slice(start, end), this.active_columns);
 
         $('[data-toggle="popover"]').popover({
             html: true
@@ -487,12 +539,12 @@ class ResultSearch extends Content {
         }
 
         // Finish query.
-        this.query = { "filters": filters };
+        let query = { "filters": filters };
 
         document.getElementById('loading-icon').classList.add('loading');
 
         // Find get new results via ajax query.
-        $.ajax('/query_results?query_json=' + encodeURI(JSON.stringify(this.query)))
+        $.ajax('/query_results?query_json=' + encodeURI(JSON.stringify(query)))
             .done(function (data) {
                 search_page.results = data["results"];
                 if (search_page.results.length > 0) {
@@ -543,6 +595,7 @@ class ResultSearch extends Content {
         });
         new_filter.appendChild(remove_filter);
 
+        // filter type selection
         let filter_type = document.createElement("select");
         filter_type.setAttribute("id", FILTER_ID_PREFIX.TYPE + filter_id);
         for (let filter in FILTERS) {
@@ -827,11 +880,23 @@ class ResultSearch extends Content {
     }
 
     /**
-     * Set the list of notable keys regarding the current benchmark.
-     * @param keys The list of notable keys.
+     * Fill active column list with all default columns and notable keys
+     * @private
      */
-    set_notable_keys(keys) {
-        this.notable_keys = keys;
+    _populate_active_columns() {
+        for (let column in COLUMNS) {
+            this.active_columns.push(column);
+        }
+        for (let field of this.notable_keys) {
+            this.active_columns.push(field);
+        }
+    }
+
+    /**
+     * Update all notable-JSON-field suggestion dropdowns
+     * @private
+     */
+    _update_json_suggestions() {
         for (let filter of this.filter_ids) {
             let div = document.getElementById(FILTER_ID_PREFIX.SUGGESTIONS + filter);
             while (div.firstChild) {
@@ -856,6 +921,19 @@ class ResultSearch extends Content {
                 }
             }
         }
+    }
+
+    /**
+     * Set the list of notable keys regarding the current benchmark.
+     * @param keys The list of notable keys.
+     */
+    set_notable_keys(keys) {
+        this.notable_keys = keys;
+
+        this.active_columns = [];
+        this._populate_active_columns();
+
+        this._update_json_suggestions();
     }
 
     /**
