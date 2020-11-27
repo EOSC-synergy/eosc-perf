@@ -139,4 +139,4 @@ dmypy.json
 config.yaml
 upload_license.txt
 nginx/certs/*
-certbot/
+/certbot/
