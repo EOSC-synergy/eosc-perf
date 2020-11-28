@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="static/css/loading.css" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.0/styles/railscasts.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.0/highlight.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
 {% endblock %}
 {% block content %}
@@ -17,13 +18,15 @@
 {% block info %}
     <h1>Result Search</h1>
     <div class="flexbox">
-        <input type="button" class="btn btn-info" value="Find Results" onclick="search_page.search()">
+        <input type="button" class="btn btn-info" value="Find Results" onclick="search_page.search()"/>
         <input type="button" class="btn btn-success" id="add_filter" value="Add Filter"
-               onclick="search_page.add_filter_field()">
+               onclick="search_page.add_filter_field()"/>
+        <input type="button" class="btn btn-info" id="invert_selection" value="Select Columns"
+               onclick="search_page.make_column_select_prompt()"/>
         <input type="button" class="btn btn-info" id="invert_selection" value="Invert Selection"
-               onclick="search_page.invert_selection()">
+               onclick="search_page.invert_selection()"/>
         <input type="button" class="btn btn-secondary" id="diagram" value="Visualize"
-               onclick="search_page.make_diagram()">
+               onclick="search_page.make_diagram()"/>
     </div>
     <div style="display:flex;align-content: center;justify-content: space-between">
         <div class="flexbox" style="width: 14em">
@@ -84,6 +87,41 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
-          </div>
+        </div>
+    </div>
+    <div class="modal" id="columnSelectModal" tabindex="-1" role="dialog" aria-labelledby="columnSelectModalTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="columnSelectModalTitle">Choose columns to display (drag &amp; drop)</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col"><h4>Displayed columns:</h4><ul id="currentColumns" class="list-group"></ul></div>
+                        <div class="col"><h4>Unused columns:</h4><ul id="otherAvailableColumns" class="list-group"></ul></div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <h4>Add column</h4>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" id="newColumnName" placeholder="JSON.path.to"
+                                       aria-label="New Column"/>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-success" type="button" onclick="search_page.add_entered_column()">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

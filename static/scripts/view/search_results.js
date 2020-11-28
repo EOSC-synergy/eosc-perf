@@ -124,6 +124,31 @@ function _format_nicely(item) {
     return item.toString();
 }
 
+/**
+ * Get all attributes/keys from an object.
+ * @param obj The object to get the keys from.
+ * @returns {[]} The keys as a list.
+ * @private
+ */
+function _keys_from_object(obj) {
+    let keys = [];
+    for (let key in obj) {
+        keys.push(key);
+    }
+    return keys;
+}
+
+/**
+ * Check if a keypath has valid syntax
+ * @param key_path
+ * @returns {boolean}
+ * @private
+ */
+function _validate_keypath(key_path) {
+    // alpha_num(.alpha_num)*
+    return /^[\d\w_]+(\.[\d\w_]+)*$/.test(key_path);
+}
+
 class Table {
     /**
      * Construct a new table handler.
@@ -979,6 +1004,99 @@ class ResultSearch extends Content {
                 this.set_benchmark(BENCHMARK_QUERY);
             }
         }
+    }
+
+    /**
+     * Display the column selection prompt.
+     */
+    make_column_select_prompt() {
+        let activeColumns = document.getElementById("currentColumns");
+        let availableColumns = document.getElementById("otherAvailableColumns");
+
+        while (activeColumns.firstChild) {
+            activeColumns.removeChild(activeColumns.firstChild);
+        }
+        for (let column of this.active_columns) {
+            let columnOption = document.createElement("li");
+            columnOption.classList.add("list-group-item", "list-group-item-action");
+            if (column in COLUMNS) {
+                columnOption.classList.add("core_column", "list-group-item-secondary");
+            }
+            columnOption.textContent = column;
+            activeColumns.appendChild(columnOption);
+        }
+
+        while (availableColumns.firstChild) {
+            availableColumns.removeChild(availableColumns.firstChild);
+        }
+        let all_columns = _keys_from_object(COLUMNS).concat(this.notable_keys);
+        for (let column of all_columns) {
+            if (this.active_columns.includes(column)) {
+                continue;
+            }
+            let columnOption = document.createElement("li");
+            columnOption.classList.add("list-group-item");
+            columnOption.textContent = column;
+            availableColumns.appendChild(columnOption);
+        }
+
+        this.activeSortable = new Sortable(activeColumns, {
+            group: 'column_select',
+            filter: '.core_column'
+        });
+        this.availableSortable = new Sortable(availableColumns, {
+            group: 'column_select'
+        });
+
+        $('#columnSelectModal').on('hidden.bs.modal', function e() {
+            search_page.end_column_select_prompt();
+        });
+        $('#columnSelectModal').modal('show');
+    }
+
+    /**
+     * Handle closing the column selection prompt and parse selection.
+     */
+    end_column_select_prompt() {
+        let activeColumns = document.getElementById("currentColumns");
+
+        let selected_columns = [];
+        Array.from(activeColumns.children).forEach(function (option) {
+            selected_columns.push(option.textContent);
+        });
+
+        this.active_columns = selected_columns;
+        this.update();
+    }
+
+    /**
+     * Add adding a newly entered column name in #newColumnName
+     */
+    add_entered_column() {
+        let availableColumns = document.getElementById("otherAvailableColumns");
+        let newColumn = document.getElementById("newColumnName");
+        if (!_validate_keypath(newColumn.value)) {
+            newColumn.classList.add("is-invalid");
+            if (document.getElementById("columnNameHelp") === null) {
+                let helpDiv = document.createElement("div");
+                helpDiv.setAttribute("id", "columnNameHelp");
+                helpDiv.classList.add("invalid-feedback");
+                helpDiv.textContent = "Please use correct syntax! (see JSON filter usage)";
+                newColumn.parentElement.appendChild(helpDiv);
+            }
+            return;
+        }
+        else {
+            let helpDiv = document.getElementById("columnNameHelp");
+            if (helpDiv !== null) {
+                helpDiv.parentElement.removeChild(helpDiv);
+            }
+            newColumn.classList.remove("is-invalid");
+        }
+        let newColumnOption = document.createElement("li");
+        newColumnOption.classList.add("list-group-item");
+        newColumnOption.textContent = newColumn.value;
+        availableColumns.appendChild(newColumnOption);
     }
 }
 
