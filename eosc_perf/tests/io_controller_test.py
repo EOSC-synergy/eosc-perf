@@ -75,15 +75,15 @@ class IOControllerTest(unittest.TestCase):
     def test_submit_result_success(self):
         self._add_test_data()
         with self.app.test_request_context():
-            with open("eosc_perf/controller/config/result_template.json") as file:
-                template = file.read()
+            with open("eosc_perf/tests/sample_result.json") as file:
+                sample = file.read()
             self._login_standard_user()
             metadata = '{ \
                 "uploader": "' + USER["sub"] + '", \
                 "benchmark": "name/name:tag", \
                 "site": "name" \
             }'
-            self.assertTrue(self.controller.submit_result(template, metadata))
+            self.assertTrue(self.controller.submit_result(sample, metadata))
 
     def test_submit_benchmark_unauthenticated(self):
         with self.app.test_request_context():
@@ -194,15 +194,15 @@ class IOControllerTest(unittest.TestCase):
     def test_remove_site_with_results(self):
         self._add_test_data()
         with self.app.test_request_context():
-            with open("eosc_perf/controller/config/result_template.json") as file:
-                template = file.read()
+            with open("eosc_perf/tests/sample_result.json") as file:
+                sample = file.read()
             self._login_standard_user()
             metadata = {
                 "uploader": USER["sub"],
                 "benchmark": "name/name:tag",
                 "site": "name"
             }
-            self.controller.submit_result(template, json.dumps(metadata))
+            self.controller.submit_result(sample, json.dumps(metadata))
             self.assertRaises(RuntimeError, self.controller.remove_site, "name")
 
     def test_remove_site(self):
@@ -348,15 +348,15 @@ class IOControllerTest(unittest.TestCase):
     def test_process_report_result(self):
         self._add_test_data()
         with self.app.test_request_context():
-            with open("eosc_perf/controller/config/result_template.json") as file:
-                template = file.read()
+            with open("eosc_perf/tests/sample_result.json") as file:
+                sample = file.read()
             self._login_admin()
             metadata = '{ \
                 "uploader": "' + USER["sub"] + '", \
                 "benchmark": "name/name:tag", \
                 "site": "name" \
             }'
-            self.controller.submit_result(template, metadata)
+            self.controller.submit_result(sample, metadata)
             filters = {'filters': [
                 {'type': 'uploader', 'value': USER["info"]["email"]},
             ]}
@@ -388,29 +388,29 @@ class IOControllerTest(unittest.TestCase):
     def test_remove_result_not_found(self):
         self._add_test_data()
         with self.app.test_request_context():
-            with open("eosc_perf/controller/config/result_template.json") as file:
-                template = file.read()
+            with open("eosc_perf/tests/sample_result.json") as file:
+                sample = file.read()
             self._login_admin()
             metadata = '{ \
                 "uploader": "' + USER["sub"] + '", \
                 "benchmark": "name/name:tag", \
                 "site": "name" \
             }'
-            self.controller.submit_result(template, metadata)
+            self.controller.submit_result(sample, metadata)
             self.assertFalse(self.controller.remove_result("wrong_uuid"))
 
     def test_remove_result(self):
         self._add_test_data()
         with self.app.test_request_context():
-            with open("eosc_perf/controller/config/result_template.json") as file:
-                template = file.read()
+            with open("eosc_perf/tests/sample_result.json") as file:
+                sample = file.read()
             self._login_admin()
             metadata = {
                 "uploader": USER["sub"],
                 "benchmark": "name/name:tag",
                 "site": "name"
             }
-            self.controller.submit_result(template, json.dumps(metadata))
+            self.controller.submit_result(sample, json.dumps(metadata))
             filters = {'filters': [
                 {'type': 'uploader', 'value': USER["info"]["email"]},
             ]}
@@ -460,15 +460,15 @@ class IOControllerTest(unittest.TestCase):
         self.assertEqual(self.controller._site_result_amount("name"), 0)
         self._add_test_data()
         with self.app.test_request_context():
-            with open("eosc_perf/controller/config/result_template.json") as file:
-                template = file.read()
+            with open("eosc_perf/tests/sample_result.json") as file:
+                sample = file.read()
             self._login_standard_user()
             metadata = '{ \
                 "uploader": "' + USER["sub"] + '", \
                 "benchmark": "name/name:tag", \
                 "site": "name" \
             }'
-            self.controller.submit_result(template, metadata)
+            self.controller.submit_result(sample, metadata)
             self.assertEqual(self.controller._site_result_amount("name"), 1)
 
     def test_get_email(self):

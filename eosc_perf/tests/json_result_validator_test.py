@@ -25,15 +25,15 @@ class JSONResultValidatorTest(unittest.TestCase):
         self.assertRaises(TypeError, self.validator.validate_json, None)
 
     def test_missing_key(self):
-        template = self._load_template()
+        template = self._load_sample()
         js = json.loads(template)
         if len(js.keys()) > 0:
             js.pop(list(js.keys())[0], None)
             self.assertRaises(ValueError, self.validator.validate_json, json.dumps(js))
 
     def test_missing_subkey(self):
-        template = self._load_template()
-        js = json.loads(template)
+        sample = self._load_sample()
+        js = json.loads(sample)
         for key in js.keys():
             if isinstance(js[key], dict):
                 if len(js[key].keys()) > 0:
@@ -41,20 +41,20 @@ class JSONResultValidatorTest(unittest.TestCase):
                     self.assertRaises(ValueError, self.validator.validate_json, json.dumps(js))
 
     def test_wrong_value_type(self):
-        template = self._load_template()
-        js = json.loads(template)
+        sample = self._load_sample()
+        js = json.loads(sample)
         for key in js.keys():
             if isinstance(js[key], dict):
                 js[key] = [1, 2]
                 self.assertFalse(self.validator.validate_json(json.dumps(js)))
 
     def test_template(self):
-        template = self._load_template()
-        self.assertTrue(self.validator.validate_json(template))
+        sample = self._load_sample()
+        self.assertTrue(self.validator.validate_json(sample))
 
     def test_template_additional_keys(self):
-        template = self._load_template()
-        js = json.loads(template)
+        sample = self._load_sample()
+        js = json.loads(sample)
         for key in js.keys():
             if isinstance(js[key], dict):
                 js[key]["new_sub_key"] = 42
@@ -64,6 +64,10 @@ class JSONResultValidatorTest(unittest.TestCase):
 
     def _load_template(self):
         with open("eosc_perf/controller/config/result_template.json") as file:
+            return file.read()
+
+    def _load_sample(self):
+        with open("eosc_perf/tests/sample_result.json") as file:
             return file.read()
 
 
