@@ -175,7 +175,21 @@ class Table {
             const column_name = (column in COLUMNS) ? COLUMNS[column] : _get_subkey_name(column);
 
             let cell = document.createElement("TH");
-            cell.textContent = column_name;
+
+            if (!(column in COLUMNS)) {
+                cell.setAttribute("data-toggle", "tooltip");
+                cell.setAttribute("data-placement", "top");
+                cell.setAttribute("title", column);
+                if (column.includes(".")) {
+                    cell.textContent = "(...)" + column_name;
+                }
+                else {
+                    cell.textContent = column_name;
+                }
+            }
+            else {
+                cell.textContent = column_name;
+            }
             cell.setAttribute("scope", "col");
 
             switch (column_name) {
@@ -505,6 +519,8 @@ class ResultSearch extends Content {
         $('[data-toggle="popover"]').popover({
             html: true
         });
+
+        $('[data-toggle="tooltip"]').tooltip();
     }
 
     /**
