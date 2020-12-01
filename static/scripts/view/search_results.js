@@ -230,7 +230,7 @@ class Table {
                 default:
                     cell.addEventListener("click", function() {
                         // TODO: sorting helpers
-                        search_page.sort_by( (x, y) => _fetch_subkey(x["data"], column_name) < _fetch_subkey(y["data"], column_name), column_name);
+                        search_page.sort_by( (x, y) => _fetch_subkey(x["data"], column) < _fetch_subkey(y["data"], column), column);
                     });
                     break;
             }
