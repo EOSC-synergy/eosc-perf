@@ -92,6 +92,9 @@ function _fetch_subkey(obj, key_path) {
     let keys = key_path.split('.');
     let sub_item = obj;
     for (let sub_key of keys) {
+        if (typeof obj === "undefined") {
+            return "⚠ not found";
+        }
         sub_item = sub_item[sub_key];
     }
     return sub_item;
@@ -118,6 +121,9 @@ function _get_subkey_name(key_path) {
  * @private
  */
 function _format_nicely(item) {
+    if (typeof item === 'undefined') {
+        return "⚠ not found";
+    }
     if (typeof item === "number") {
         return (Math.round(item * 1000) / 1000).toString();
     }
