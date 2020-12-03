@@ -3,6 +3,7 @@
 import json
 from os import urandom
 from time import time
+from typing import Optional
 from urllib.request import urlopen
 import requests
 from aarc_g002_entitlement import Aarc_g002_entitlement
@@ -22,6 +23,19 @@ USERINFO_URL = 'https://aai.egi.eu/oidc/userinfo'
 
 class AuthenticateError(Exception):
     """Exception to signal a user isn't authenticated correctly."""
+
+
+def read_file_content(filename: str) -> Optional[str]:
+    """Get the contents of a file.
+
+    Returns:
+        Optional[str]: The contents of the file as string, or None if the file could not be read.
+    """
+    try:
+        with open(filename, 'r') as f:
+            return f.read()
+    except OSError:
+        return None
 
 
 class Authenticator:
@@ -55,18 +69,22 @@ class Authenticator:
             flask_app (Flask): The flask app for which to set up OIDC functionality.
         """
 
-        self.client_id = configuration.get('oidc_client_id')
-        self.client_secret = configuration.get('oidc_client_secret')
-        if len(configuration.get('secret_key')) > 0:
-            flask_app.secret_key = configuration.get('secret_key')
-        else:
-            flask_app.secret_key = urandom(16)
-        self.hostname = configuration.get('oidc_redirect_hostname')
+        if len(configuration.get('oidc_client_secret_file')) == 0\
+                or configuration.get('oidc_client_secret_file') == 'SET_ME':
+            raise ValueError("Please configure OIDC client secret")
+        self.client_secret = read_file_content(configuration.get('oidc_client_secret_file'))
+        if self.client_secret is None or len(self.client_secret) == 0:
+            raise ValueError("Invalid OIDC client secret file given")
 
+        flask_app.secret_key = read_file_content(configuration.get('secret_key_file'))
+        # generate random temporary key if none is given
+        if flask_app.secret_key is None or len(flask_app.secret_key) == 0:
+            flask_app.secret_key = urandom(16)
+
+        self.client_id = configuration.get('oidc_client_id')
+        self.hostname = configuration.get('oidc_redirect_hostname')
         if len(self.client_id) == 0 or self.client_id == 'SET_ME':
             raise ValueError("Please configure the OIDC client id")
-        if len(self.client_secret) == 0 or self.client_secret == 'SET_ME':
-            raise ValueError("Please configure OIDC client secret")
         if len(self.hostname) == 0 or self.hostname == 'SET_ME':
             raise ValueError("Please configure the domain")
 

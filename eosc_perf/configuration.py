@@ -41,8 +41,8 @@ class ConfigHandler:
     config: dict = {}
 
     DEFAULTS: dict = {
-        'secret_key': 'SET_ME',
-        'oidc_client_secret': 'SET_ME',
+        'secret_key_file': 'SET_ME',
+        'oidc_client_secret_file': 'SET_ME',
         'oidc_client_id': 'SET_ME',
         'oidc_redirect_hostname': 'localhost',
         'admin_entitlements': ['urn:mace:egi.eu:group:mteam.data.kit.edu:role=member'],
@@ -75,8 +75,8 @@ class ConfigHandler:
 
         if load_env:
             env_values: dict = {
-                'secret_key': _get_var('EOSC_PERF_COOKIE_CRYPT_KEY'),
-                'oidc_client_secret': _get_var('EOSC_PERF_OIDC_CLIENT_SECRET'),
+                'secret_key_file': _get_var('EOSC_PERF_COOKIE_CRYPT_KEY_PATH'),
+                'oidc_client_secret_file': _get_var('EOSC_PERF_OIDC_CLIENT_SECRET_PATH'),
                 'oidc_client_id': _get_var('EOSC_PERF_OIDC_CLIENT_ID'),
                 'oidc_redirect_hostname': _get_var('DOMAIN'),
                 'admin_entitlements': _get_var('EOSC_PERF_ADMIN_ENTITLEMENTS', list),

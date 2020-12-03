@@ -139,3 +139,6 @@ dmypy.json
 upload_license.txt
 nginx/certs/*
 /certbot/
+
+oidc_secret.txt
+cookie_secret.txt

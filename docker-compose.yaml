@@ -10,6 +10,15 @@ services:
       # access to database file
       - ./data:/app/data/
     env_file: .env
+    secrets:
+      - source: oidc_secret
+        target: oidc_client_secret
+        uid: 'uwsgi'
+        mode: 0400
+      - source: cookie_secret
+        target: cookie_secret
+        uid: 'uwsgi'
+        mode: 0400
 
   nginx:
     image: nginx
@@ -39,3 +48,9 @@ services:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     env_file: .env
+
+secrets:
+  oidc_secret:
+    file: ./oidc_secret.txt
+  cookie_secret:
+    file: ./cookie_secret.txt
