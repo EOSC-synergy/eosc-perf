@@ -7,7 +7,7 @@ EOSC-Perf is a webapp made to host, search, compare and analyze benchmark result
 
 ## Instructions
 
-To deploy the application:
+To deploy the application using docker-compose:
 1. Create a 'config.yaml': `cp config.yaml.example config.yaml`
     * Setup debug and production admin entitlements: `debug_admin_entitlements`, `admin_entitlements`
     * Add OIDC client secret: `oidc_client_secret`
@@ -22,6 +22,9 @@ To deploy the application:
 1. Run `docker-compose build`
 1. Run `docker-compose up`
 
+To install the application locally:
+1. Run `pip install .`
+
 To set up a development environment:
 1. Set up a virtual environment: `python -m venv venv`
 1. Enable the virtual environment: `. ./venv/bin/activate`
@@ -34,9 +37,10 @@ To generate the documentation:
 1. (Optional) Run `make clean`
 1. Run `make html`
 
-To run tests (requires environment):
+To run tests (requires virtual environment):
 1. Enable the virtual environment: `. ./venv/bin/activate`
-1. Run `python -m unittest discover eosc_perf "*_test.py"`
+1. Run `pip install tox`
+1. Run `tox` (it should install test requirements automatically)
 
 Tips:
 - To enable debug mode, set `debug: true` in the config.yaml
