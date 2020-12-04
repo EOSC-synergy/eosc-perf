@@ -92,7 +92,7 @@ function _fetch_subkey(obj, key_path) {
     let keys = key_path.split('.');
     let sub_item = obj;
     for (let sub_key of keys) {
-        if (typeof obj === "undefined") {
+        if (typeof sub_item === "undefined") {
             return "⚠ not found";
         }
         sub_item = sub_item[sub_key];
