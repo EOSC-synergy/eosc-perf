@@ -81,6 +81,18 @@ const JSON_KEYS = new Map([
     [COLUMNS.TAGS, "tags"]
 ]);
 
+const CHART_COLORS = [
+    'rgb(255, 99, 132)', // red
+    'rgb(255, 159, 64)', // orange
+    'rgb(255, 205, 86)', // yellow
+    'rgb(75, 192, 192)', // green
+    'rgb(54, 162, 235)', // blue
+    'rgb(153, 102, 255)', // purple
+    'rgb(201, 203, 207)' // gray
+];
+
+const SUBKEY_NOT_FOUND = "⚠ not found";
+
 /**
  * Fetch a sub-key from an object, as noted by the filter JSON syntax.
  * @param obj The object to get the value from.
@@ -93,7 +105,8 @@ function _fetch_subkey(obj, key_path) {
     let sub_item = obj;
     for (let sub_key of keys) {
         if (typeof sub_item === "undefined") {
-            return "⚠ not found";
+            console.error("Failed to fetch subkey", key_path, "from", obj);
+            return SUBKEY_NOT_FOUND;
         }
         sub_item = sub_item[sub_key];
     }
@@ -153,6 +166,17 @@ function _keys_from_object(obj) {
 function _validate_keypath(key_path) {
     // alpha_num(.alpha_num)*
     return /^[\d\w_]+(\.[\d\w_]+)*$/.test(key_path);
+}
+
+/**
+ * Clear all entries of a select dropdown.
+ * @param selectElement The dropdown to remove options from.
+ * @private
+ */
+function _clear_select(selectElement) {
+    while (selectElement.firstChild) {
+        selectElement.removeChild(selectElement.firstChild);
+    }
 }
 
 class Table {
@@ -381,7 +405,7 @@ class PageNavigation {
             new_page_link.textContent = (i + 1).toString();
             new_page_link.classList.add('page-link');
             new_page_link.addEventListener("click", function() {
-                paginator.set_page(i);
+                search_page.get_paginator().set_page(i);
             });
             // highlight current page
             if (i === this.current_page) {
@@ -474,8 +498,298 @@ class PageNavigation {
     }
 }
 
+class Diagram {
+    update_notable_keys(notable_keys) {
+    }
+    update(results) {
+    }
+    cleanup() {
+    }
+}
+
+class SpeedupDiagram extends Diagram {
+    /**
+     * Build a new speedup diagram
+     */
+    constructor() {
+        super();
+        this.results = [];
+        this.xAxis = "";
+        this.yAxis = "";
+        this.notable_keys = [];
+
+        let section = document.getElementById("diagramSection");
+        {
+            let xAxisDiv = document.createElement("div");
+            xAxisDiv.classList.add("form-inline");
+            {
+                let label = document.createElement("label");
+                label.setAttribute("for", "diagramX");
+                label.textContent = "X Axis:";
+                xAxisDiv.appendChild(label);
+
+                let dropdown = document.createElement("select");
+                dropdown.setAttribute("id", "diagramX");
+                dropdown.classList.add("form-control");
+                dropdown.onchange = function() {
+                    search_page.get_diagram().refresh();
+                };
+                xAxisDiv.appendChild(dropdown);
+            }
+            section.appendChild(xAxisDiv);
+
+            let yAxisDiv = document.createElement("div");
+            yAxisDiv.classList.add("form-inline");
+            {
+                let label = document.createElement("label");
+                label.setAttribute("for", "diagramY");
+                label.textContent = "Y Axis:";
+                yAxisDiv.appendChild(label);
+
+                let dropdown = document.createElement("select");
+                dropdown.setAttribute("id", "diagramY");
+                dropdown.classList.add("form-control");
+                dropdown.onchange = function() {
+                    search_page.get_diagram().refresh();
+                };
+                yAxisDiv.appendChild(dropdown);
+            }
+            section.appendChild(yAxisDiv);
+
+            let canvas = document.createElement("canvas");
+            canvas.setAttribute("id", "speedup");
+            section.appendChild(canvas);
+
+            let interactions = document.createElement("div");
+            {
+                let downloadButton = document.createElement("button");
+                downloadButton.setAttribute("id", "downloadButton");
+                downloadButton.setAttribute("type", "button");
+                downloadButton.classList.add("btn", "btn-light");
+                downloadButton.textContent = "Download as PNG";
+                downloadButton.onclick = function() {
+                    search_page.get_diagram().downloadPNG();
+                };
+                interactions.appendChild(downloadButton);
+
+                let csvButton = document.createElement("button");
+                csvButton.setAttribute("id", "csvButton");
+                csvButton.setAttribute("type", "button");
+                csvButton.classList.add("btn", "btn-light");
+                csvButton.textContent = "Download as CSV";
+                csvButton.onclick = function() {
+                    search_page.get_diagram().downloadCSV();
+                };
+                interactions.appendChild(csvButton);
+            }
+            section.appendChild(interactions);
+        }
+    }
+
+    /**
+     * Build a chart.js dataset off current data
+     *
+     * TODO: add nulls for columns this dataset has no value for
+     *
+     * @returns {{spanGaps: boolean, backgroundColor: (string|*), borderColor: (string|string), data: [], borderWidth: number, label: (*|string)}} Chart.js dataset
+     * @private
+     */
+    _buildDataset() {
+        let color = Chart.helpers.color;
+        let scores = [];
+        for (const value of this.results) {
+            scores.push(_fetch_subkey(value.data, this.yAxis));
+        }
+        return {
+            label: _get_subkey_name(this.yAxis),
+            backgroundColor: color(CHART_COLORS[0]).alpha(0.5).rgbString(),
+            borderColor: CHART_COLORS[0],
+            borderWidth: 1,
+            data: scores,
+            spanGaps: true
+        };
+    }
+
+    /**
+     * Build an array of chart column labels off current data
+     * @returns {[]} An array of labels.
+     * @private
+     */
+    _buildLabels() {
+        let labels = [];
+        let sameSite = true;
+        if (this.results.length !== 0) {
+            let siteName = _fetch_subkey(this.results[0].data, JSON_KEYS.get(COLUMNS.SITE));
+            for (const result of this.results) {
+                sameSite &&= (_fetch_subkey(result.data, JSON_KEYS.get(COLUMNS.SITE)) === siteName);
+                if (sameSite === false) {
+                    break;
+                }
+            }
+        }
+        else {
+            sameSite = false;
+        }
+        for (const value of this.results) {
+            let label = _fetch_subkey(value.data, this.xAxis);
+            if (sameSite) {
+                labels.push(label.toString());
+            }
+            else {
+                labels.push(_fetch_subkey(value, JSON_KEYS.get(COLUMNS.SITE)) + ', ' + label.toString());
+            }
+        }
+        return labels;
+    }
+
+    /**
+     * Download a csv file off current data
+     */
+    downloadCSV() {
+        let download = document.createElement("a");
+        let dataHeader = "data:text/csv;charset=utf-8,";
+        let rows = [this.xAxis + "," + this.yAxis + ",site"];
+        for (const row of this.results) {
+            let x = _fetch_subkey(row.data, this.xAxis);
+            let y = _fetch_subkey(row.data, this.yAxis);
+            let site = _fetch_subkey(row, JSON_KEYS.get(COLUMNS.SITE));
+            rows.push(x.toString() + "," + y.toString() + "," + site.toString());
+        }
+        download.href = encodeURI(dataHeader + rows.join("\r\n"));
+        download.download = "data.csv";
+        download.click();
+    }
+
+    /**
+     * Download a picture copy of the current diagram
+     */
+    downloadPNG() {
+        let download = document.createElement("a");
+        let context = document.getElementById('speedup');
+        download.href = context.toDataURL('image/png');
+        download.download = "diagram.png";
+        download.click();
+    }
+
+    /**
+     * Update the array of notable keys.
+     * @param notable_keys The notable keys to make selectable for axis.
+     */
+    update_notable_keys(notable_keys) {
+        this.notable_keys = notable_keys;
+
+        let xAxisSelect = document.getElementById("diagramX");
+        _clear_select(xAxisSelect);
+        let yAxisSelect = document.getElementById("diagramY");
+        _clear_select(yAxisSelect);
+        for (const key of notable_keys) {
+            let xOption = document.createElement("option");
+            xOption.setAttribute("value", key);
+            xOption.textContent = key;
+            xAxisSelect.appendChild(xOption);
+
+            let yOption = document.createElement("option");
+            yOption.setAttribute("value", key);
+            yOption.textContent = key;
+            yAxisSelect.appendChild(yOption);
+        }
+    }
+
+    /**
+     * Update diagram chart
+     */
+    refresh() {
+        console.log("hello!");
+        if (window.diagram !== null && window.diagram !== undefined) {
+            window.diagram.destroy();
+            delete window.diagram;
+        }
+        this.xAxis = document.getElementById("diagramX").value;
+        this.yAxis = document.getElementById("diagramY").value;
+        if (!_validate_keypath(this.xAxis) || !_validate_keypath(this.yAxis) || this.results.length === 0) {
+            document.getElementById("downloadButton").setAttribute("disabled", "true");
+            document.getElementById("csvButton").setAttribute("disabled", "true");
+            document.getElementById("speedup").style.display = "none";
+            return;
+        }
+        else {
+            document.getElementById("speedup").style.removeProperty("display");
+        }
+
+        let dataSets = [this._buildDataset()];
+        let labels = this._buildLabels();
+
+        let context = document.getElementById('speedup').getContext('2d');
+        window.diagram = new Chart(context, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: dataSets,
+            },
+            options: {
+                responsive: true,
+                legend: {
+                    position: 'bottom',
+                },
+                title: {
+                    display: true,
+                    text: 'SpeedupDiagram'
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: this.yAxis
+                        }
+                    }],
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: this.xAxis
+                        }
+                    }]
+                },
+                elements: {
+                    line: {
+                        tension: 0
+                    }
+                }
+            }
+        });
+
+        document.getElementById("downloadButton").removeAttribute("disabled");
+        document.getElementById("csvButton").removeAttribute("disabled");
+    }
+
+    /**
+     * Update diagram data
+     * @param data The new results to use.
+     */
+    update(data) {
+        this.results = data;
+
+        this.refresh();
+    }
+
+    /**
+     * Remove data associated to this component, such as chart.js objects and HTML elements.
+     */
+    cleanup() {
+        if (window.diagram) {
+            window.diagram.destroy();
+        }
+
+        // naïve purge
+        _clear_select(document.getElementById("diagramSection"));
+    }
+}
+
 /**
  * The ResultSearch class is responsible to communicate with the backend to get the search results and display them.
+ * TODO: split into smaller parts
  */
 class ResultSearch extends Content {
     /**
@@ -495,8 +809,11 @@ class ResultSearch extends Content {
         this._populate_active_columns();
 
         this.table = new Table();
+        this.paginator = new PageNavigation();
 
         this.benchmark_name = "";
+
+        this.diagram = null;
     }
 
     /**
@@ -505,6 +822,7 @@ class ResultSearch extends Content {
     onload() {
         // Case it got initialed with a Benchmark.
         this.fetch_all_benchmarks(true);
+        this.set_benchmark(BENCHMARK_QUERY);
         this.add_filter_field();
         this.search();
         // Enable popover.
@@ -518,9 +836,13 @@ class ResultSearch extends Content {
      */
     update() {
         // Update table.
-        let start = paginator.get_start_index();
-        let end = Math.min(paginator.get_end_index(), this.results.length);
+        let start = this.paginator.get_start_index();
+        let end = Math.min(this.paginator.get_end_index(), this.results.length);
         this.table.display(this.results.slice(start, end), this.active_columns, start);
+
+        if (this.diagram !== null) {
+            this.diagram.update(this.get_selected_results());
+        }
 
         $('[data-toggle="popover"]').popover({
             html: true
@@ -535,7 +857,6 @@ class ResultSearch extends Content {
      */
     display_json(json) {
         document.getElementById('jsonPreviewContent').textContent = json;
-        //hljs.highlightBlock(json_block);
         document.querySelectorAll('pre code').forEach((block) => {
             hljs.highlightBlock(block);
         });
@@ -600,11 +921,11 @@ class ResultSearch extends Content {
                 if (search_page.results.length > 0) {
                     // add selected col
                    search_page.results.forEach(element => {
-                        element["selected"] = false;
+                        element[JSON_KEYS.get(COLUMNS.CHECKBOX)] = false;
                     });
                 }
                 search_page.current_page = 1;
-                paginator.set_result_count(search_page.get_result_count());
+                search_page.get_paginator().set_result_count(search_page.get_result_count());
                 search_page.update();
                 document.getElementById('loading-icon').classList.remove('loading');
             });
@@ -634,6 +955,7 @@ class ResultSearch extends Content {
         remove_filter.setAttribute("type", "button");
         remove_filter.classList.add("close");
         remove_filter.setAttribute("aria-label", "Close");
+        // label
         {
             let remove_filter_label = document.createElement("span");
             remove_filter_label.setAttribute("aria-hidden", "true");
@@ -673,7 +995,8 @@ class ResultSearch extends Content {
         // Primary input
         let input_div = document.createElement("div");
         input_div.classList.add("input-group");
-        { // textbox
+        // textbox
+        {
             let input = document.createElement("input");
             input.setAttribute("type", "text");
             input.setAttribute("id", FILTER_ID_PREFIX.VALUE + filter_id);
@@ -681,7 +1004,8 @@ class ResultSearch extends Content {
             input.classList.add("form-control");
             input_div.appendChild(input);
         }
-        { // suggestions menu
+        // suggestions menu
+        {
             let input_extras = document.createElement("div");
             input_extras.classList.add("input-group-append");
             {
@@ -701,8 +1025,8 @@ class ResultSearch extends Content {
                 input_extras.appendChild(suggestions_button);
             }
 
+            // Info button
             {
-                // Info button
                 let type_info = document.createElement("input");
                 type_info.setAttribute("type", "button");
                 type_info.setAttribute("id", FILTER_ID_PREFIX.INFO + filter_id);
@@ -715,6 +1039,7 @@ class ResultSearch extends Content {
                 input_extras.appendChild(type_info);
             }
 
+            // Suggestions
             {
                 let suggestions = document.createElement("div");
                 suggestions.classList.add("dropdown-menu");
@@ -724,7 +1049,8 @@ class ResultSearch extends Content {
                     suggestion_option.classList.add("dropdown-item");
                     suggestion_option.textContent = "No suggestions found!";
                     suggestions.append(suggestion_option);
-                } else {
+                }
+                else {
                     for (let notable of this.notable_keys) {
                         let suggestion_option = document.createElement("a");
                         suggestion_option.classList.add("dropdown-item");
@@ -748,7 +1074,8 @@ class ResultSearch extends Content {
         extra_input_field.classList.add("input-group");
         extra_input_field.setAttribute("id", FILTER_ID_PREFIX.EXTRA_FRAME + filter_id);
         extra_input_field.style.visibility = "hidden";
-        { // comparison mode dropdown
+        // comparison mode dropdown
+        {
             let json_mode_prepend = document.createElement("div");
             json_mode_prepend.classList.add("input-group-prepend");
             {
@@ -781,7 +1108,8 @@ class ResultSearch extends Content {
             }
             extra_input_field.appendChild(json_mode_prepend);
         }
-        { // json value input
+        // json value input
+        {
             let num_input = document.createElement("input");
             num_input.setAttribute("id", FILTER_ID_PREFIX.EXTRA_VALUE + filter_id);
             num_input.setAttribute("min", "0");
@@ -834,7 +1162,8 @@ class ResultSearch extends Content {
      * @param result_number The index of the result to select.
      */
     select_result(result_number) {
-        this.results[result_number]["selected"] = !(this.results[result_number]["selected"]);
+        this.results[result_number][JSON_KEYS.get(COLUMNS.CHECKBOX)] ^= true;
+        this.diagram.update(this.get_selected_results());
     }
 
     /**
@@ -843,21 +1172,6 @@ class ResultSearch extends Content {
      */
     open_new_tab(url) {
         window.open(url, '_blank');
-    }
-
-    /**
-     * Generate a diagram page to display currently selected results.
-     */
-    make_diagram() {
-        // Store data in href
-        let selected_results = this.results.filter(x => x["selected"]);
-        let uuids = "";
-        if (selected_results.length > 0) {
-            for (let index in selected_results) {
-                uuids += "result_uuids=" + selected_results[index]["uuid"] + "&";
-            }
-        }
-        this.open_new_tab('/make_diagram?' + uuids.slice(0, -1));
     }
 
     /**
@@ -914,10 +1228,15 @@ class ResultSearch extends Content {
             }
         }
 
-        $.ajax('/fetch_notable_benchmark_keys?query_json=' + encodeURI(JSON.stringify({docker_name: benchmark_name})))
+        if (benchmark_name.length > 0) {
+            $.ajax('/fetch_notable_benchmark_keys?query_json=' + encodeURI(JSON.stringify({docker_name: benchmark_name})))
             .done(function (data) {
                 search_page.set_notable_keys(data['notable_keys']);
             });
+        }
+        else {
+            this.set_notable_keys([]);
+        }
     }
 
     /**
@@ -984,6 +1303,10 @@ class ResultSearch extends Content {
         this._populate_active_columns();
 
         this._update_json_suggestions();
+
+        if (this.diagram !== null) {
+            this.diagram.update_notable_keys(this.notable_keys);
+        }
     }
 
     /**
@@ -1120,15 +1443,58 @@ class ResultSearch extends Content {
         newColumnOption.textContent = newColumn.value;
         availableColumns.appendChild(newColumnOption);
     }
+
+    /**
+     * Get the current diagram.
+     * @returns {null} The current diagram, if any.
+     */
+    get_diagram() {
+        return this.diagram;
+    }
+
+    /**
+     * Get a list of the currently selected results.
+     * @returns {*[]} The current selected results.
+     */
+    get_selected_results() {
+        return this.results.filter(x => x[JSON_KEYS.get(COLUMNS.CHECKBOX)]);
+    }
+
+    /**
+     * Update diagram type selection.
+     */
+    select_diagram_type() {
+        let diagram_chooser = document.getElementById("diagramDropdown");
+        switch (diagram_chooser.value) {
+            case "speedup": {
+                this.diagram = new SpeedupDiagram();
+                this.diagram.update(this.get_selected_results());
+                this.diagram.update_notable_keys(this.notable_keys);
+            } break;
+            default: {
+                if (this.diagram !== null && this.diagram !== undefined) {
+                    this.diagram.cleanup();
+                }
+                delete this.diagram;
+                this.diagram = null;
+            } break;
+        }
+    }
+
+    /**
+     * Get the paginator.
+      * @returns {PageNavigation} The active PageNavigation instance.
+     */
+    get_paginator() {
+        return this.paginator;
+    }
 }
 
 //
 let search_page = null;
-let paginator = null;
 
 window.addEventListener("load", function () {
     search_page = new ResultSearch();
-    paginator = new PageNavigation();
     search_page.onload();
 });
 

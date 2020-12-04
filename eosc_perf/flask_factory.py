@@ -8,7 +8,6 @@ from .controller.authenticator import (configure_authenticator,
 from .model.database import configure_database
 from .model.sandbox import add_demo, add_filler
 from .view.ajax import ajax_blueprint
-from .view.pages.diagram import diagram_blueprint
 from .view.pages.information_page import info_blueprint
 from .view.pages.report_result import result_report_blueprint
 from .view.pages.benchmark_review import benchmark_review_blueprint
@@ -52,7 +51,6 @@ def create_app(custom_configuration: dict = None):
         add_filler()
 
     flask_application.register_blueprint(ajax_blueprint)
-    flask_application.register_blueprint(diagram_blueprint)
     flask_application.register_blueprint(info_blueprint)
     flask_application.register_blueprint(result_report_blueprint)
     flask_application.register_blueprint(benchmark_review_blueprint)

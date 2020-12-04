@@ -31,7 +31,7 @@ class SearchResultFactory(PageFactory):
                 arguments['benchmark'])
         except KeyError as error:
             print(error)
-            result = ""
+            result = "admin = false; BENCHMARK_QUERY = '';"
         return result, {}
 
 

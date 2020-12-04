@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.0/styles/railscasts.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.0/highlight.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
 {% endblock %}
 {% block content %}
@@ -25,49 +26,71 @@
                onclick="search_page.make_column_select_prompt()"/>
         <input type="button" class="btn btn-info" id="invert_selection" value="Invert Selection"
                onclick="search_page.invert_selection()"/>
-        <input type="button" class="btn btn-secondary" id="diagram" value="Visualize"
-               onclick="search_page.make_diagram()"/>
+        <!-- <input type="button" class="btn btn-secondary" id="diagram" value="Visualize"
+               onclick="search_page.make_diagram()"/> -->
     </div>
-    <div style="display:flex;align-content: center;justify-content: space-between">
-        <div class="flexbox" style="width: 14em">
-            <label for="benchmark_selection">Benchmark:</label>
-            <select class="form-control" id="benchmark_selection" onchange="search_page.update_benchmark_selection()">
-                <option></option>
-            </select>
+    <div class="card card-body">
+        <h5 class="card-title">
+            <div class="" data-toggle="collapse" href="#filterCardContent" role="button">
+                Filters <span class="dropdown-arrow"></span>
+            </div>
+        </h5>
+        <div id="filterCardContent" class="collapse show">
+            <div class="flexbox" style="width: 14em">
+                <label for="benchmark_selection">Benchmark:</label>
+                <select class="form-control" id="benchmark_selection" onchange="search_page.update_benchmark_selection()">
+                    <option></option>
+                </select>
+            </div>
+            <ul id="filters" class="list-unstyled d-flex flex-column">
+            </ul>
         </div>
-    <div></div>
     </div>
-    <ul id="filters" class="list-unstyled d-flex flex-column">
-    </ul>
-    <div style="position: relative">
-        <table id="result_table" class="table">
+    <div class="card card-body">
+        <h5 class="card-title">
+            <div class="" data-toggle="collapse" href="#diagramCardContent" role="button">
+                Comparison diagram <span class="dropdown-arrow"></span>
+            </div>
+        </h5>
+        <div id="diagramCardContent" class="collapse show">
+            <label for="diagramDropdown">Select diagram type:</label>
+            <select name="diagram-choice" id="diagramDropdown" onchange="search_page.select_diagram_type()">
+                <option value="null"></option>
+                <option value="speedup">Speedup Diagram</option>
+            </select>
+            <div id="diagramSection" class="d-flex flex-column lead"></div>
+        </div>
+    </div>
+    <div class="card card-body">
+        <table id="result_table" class="table" style="overflow-x: auto;display: inline-block">
         </table>
         <div class="overlay loading-background loading center-contents" id="loading-icon">
             <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
         </div>
-    </div>
-    <div style="display:flex;align-content: center;justify-content: space-between">
-        <div>
-            <nav aria-label="Page navigation">
-                <ul class="pagination">
-                    <li class="page-item disabled" id="prevPageButton">
-                        <a class="page-link" href="#" onclick="paginator.prev_page()" aria-disabled="true">&laquo;</a>
-                    </li>
-                    <li class="page-item" id="nextPageButton">
-                        <a class="page-link" href="#" onclick="paginator.next_page()">&raquo;</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        <div style="display:flex">
-            <label for="results_on_page">Results on page:</label>
-            <select id="results_on_page" class="form-control" onchange="paginator.update_page_result_count()">
-                <option value="10" selected>10</option>
-                <option value="15">15</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-            </select>
+        <div style="display:flex;align-content: center;justify-content: space-between">
+            <div>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <li class="page-item disabled" id="prevPageButton">
+                            <a class="page-link" href="#" onclick="search_page.get_paginator().prev_page()"
+                               aria-disabled="true">&laquo;</a>
+                        </li>
+                        <li class="page-item" id="nextPageButton">
+                            <a class="page-link" href="#" onclick="search_page.get_paginator().next_page()">&raquo;</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div style="display:flex">
+                <label for="results_on_page">Results on page:</label>
+                <select id="results_on_page" class="form-control" onchange="paginator.update_page_result_count()">
+                    <option value="10" selected>10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </div>
         </div>
     </div>
     <div class="modal" id="jsonPreviewModal" tabindex="-1" role="dialog" aria-labelledby="jsonPreviewModalTitle"
