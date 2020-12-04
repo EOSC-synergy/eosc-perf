@@ -66,12 +66,14 @@
                         </div>
                         <div class="m-2">
                             <label for="custom_tag">Custom tag</label>
-                            <div class="flexbox">
+                            <div class="input-group">
                                 <input type="text" id="custom_tag" placeholder="tensor" class="form-control"
                                                                        onkeyup="stopped_typing_tag_field()"/>
-                                <button type="button" id="add_tag_button" class="btn btn-info" onclick="add_tag()">
-                                    Add Tag
-                                </button>
+                                <div class="input-group-append">
+                                    <button type="button" id="add_tag_button" class="btn btn-outline-success"
+                                            onclick="add_tag()">Add Tag
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
