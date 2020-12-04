@@ -313,8 +313,17 @@ class Table {
                         cell.appendChild(view_button);
                     } break;
 
+                    case (COLUMNS.UPLOADER): {
+                        let mailLink = document.createElement("a");
+                        mailLink.href = "mailto:" + result[JSON_KEYS.get(column)];
+                        mailLink.setAttribute("data-toggle", "tooltip");
+                        mailLink.setAttribute("data-placement", "top");
+                        mailLink.setAttribute("title", result[JSON_KEYS.get(column)]);
+                        mailLink.textContent = "Contact";
+                        cell.appendChild(mailLink);
+                    } break;
+
                     case (COLUMNS.SITE):
-                    case (COLUMNS.UPLOADER):
                     case (COLUMNS.TAGS):
                     case (COLUMNS.BENCHMARK): {
                         cell.textContent = result[JSON_KEYS.get(column)];
