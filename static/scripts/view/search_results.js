@@ -708,7 +708,6 @@ class SpeedupDiagram extends Diagram {
      * Update diagram chart
      */
     refresh() {
-        console.log("hello!");
         if (window.diagram !== null && window.diagram !== undefined) {
             window.diagram.destroy();
             delete window.diagram;
