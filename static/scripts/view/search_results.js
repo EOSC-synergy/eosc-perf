@@ -830,7 +830,9 @@ class ResultSearch extends Content {
     onload() {
         // Case it got initialed with a Benchmark.
         this.fetch_all_benchmarks(true);
-        this.set_benchmark(BENCHMARK_QUERY);
+        // in case page was refreshed and something was auto-selected by the browser
+        // this can't be done for benchmarks for now because the list is re-populated every load
+        this.select_diagram_type();
         this.add_filter_field();
         this.search();
         // Enable popover.
