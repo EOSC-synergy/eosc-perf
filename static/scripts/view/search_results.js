@@ -1164,6 +1164,8 @@ class ResultSearch extends Content {
             this.ordered_by = column;
         }
         this.update();
+        // remove possible column hover tooltips
+        $('.tooltip').remove();
     }
 
     /**
