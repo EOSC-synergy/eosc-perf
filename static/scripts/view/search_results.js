@@ -1287,6 +1287,10 @@ class ResultSearch extends Content {
     _update_json_suggestions() {
         for (let filter of this.filter_ids) {
             let div = document.getElementById(FILTER_ID_PREFIX.SUGGESTIONS + filter);
+            // don't update other types of suggestions
+            if (document.getElementById(FILTER_ID_PREFIX.TYPE + filter).value.toLocaleString().localeCompare(FILTERS.JSON) !== 0) {
+                continue;
+            }
             while (div.firstChild) {
                 div.removeChild(div.firstChild);
             }
