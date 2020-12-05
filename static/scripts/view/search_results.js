@@ -55,6 +55,7 @@ const FILTER_ID_PREFIX = {
     VALUE: "filter-value-",
     EXTRA_VALUE: "filter-extra-value-",
     SUGGESTIONS: "filter-suggestions-",
+    SUGGESTIONS_BTN: "filter-suggestions-btn-",
     COMPARISON: "filter-comparison-mode-",
     INFO: "filter-info-",
     EXTRA_FRAME: "filter-extra"
@@ -995,8 +996,10 @@ class ResultSearch extends Content {
                 .setAttribute("data-content", FILTER_HELPS.get(filter_type.value));
 
             // hide extra json input on other filters
+            document.getElementById(FILTER_ID_PREFIX.SUGGESTIONS_BTN + filter_id).disabled = true;
             document.getElementById(FILTER_ID_PREFIX.EXTRA_FRAME + filter_id).style.visibility = "hidden";
             if (filter_type.value.localeCompare(FILTERS.JSON) === 0) {
+                document.getElementById(FILTER_ID_PREFIX.SUGGESTIONS_BTN + filter_id).disabled = false;
                 document.getElementById(FILTER_ID_PREFIX.EXTRA_FRAME + filter_id).style.visibility = "visible";
             }
         });
@@ -1014,26 +1017,10 @@ class ResultSearch extends Content {
             input.classList.add("form-control");
             input_div.appendChild(input);
         }
-        // suggestions menu
+        // suggestions & info
         {
             let input_extras = document.createElement("div");
             input_extras.classList.add("input-group-append");
-            {
-                let suggestions_button = document.createElement("button");
-                suggestions_button.classList.add("btn", "btn-outline-secondary", "dropdown-toggle", "dropdown-toggle-split");
-                suggestions_button.setAttribute("data-toggle", "dropdown");
-                suggestions_button.setAttribute("aria-haspopup", "true");
-                suggestions_button.setAttribute("aria-expanded", "false");
-                suggestions_button.type = "button";
-
-                {
-                    let suggestions_button_screenreader_hint = document.createElement("span");
-                    suggestions_button_screenreader_hint.classList.add("sr-only");
-                    suggestions_button_screenreader_hint.textContent = "Toggle Dropdown";
-                    suggestions_button.appendChild(suggestions_button_screenreader_hint);
-                }
-                input_extras.appendChild(suggestions_button);
-            }
 
             // Info button
             {
@@ -1047,6 +1034,25 @@ class ResultSearch extends Content {
                 type_info.setAttribute("data-content", "You find some Tips for the expected input values here.");
                 type_info.setAttribute("data-placement", "right");
                 input_extras.appendChild(type_info);
+            }
+
+            {
+                let suggestions_button = document.createElement("button");
+                suggestions_button.disabled = true;
+                suggestions_button.id = FILTER_ID_PREFIX.SUGGESTIONS_BTN + filter_id;
+                suggestions_button.classList.add("btn", "btn-outline-secondary", "dropdown-toggle", "dropdown-toggle-split");
+                suggestions_button.setAttribute("data-toggle", "dropdown");
+                suggestions_button.setAttribute("aria-haspopup", "true");
+                suggestions_button.setAttribute("aria-expanded", "false");
+                suggestions_button.type = "button";
+
+                {
+                    let suggestions_button_screenreader_hint = document.createElement("span");
+                    suggestions_button_screenreader_hint.classList.add("sr-only");
+                    suggestions_button_screenreader_hint.textContent = "Toggle Dropdown";
+                    suggestions_button.appendChild(suggestions_button_screenreader_hint);
+                }
+                input_extras.appendChild(suggestions_button);
             }
 
             // Suggestions
@@ -1074,6 +1080,7 @@ class ResultSearch extends Content {
                 }
                 input_extras.appendChild(suggestions);
             }
+
 
             input_div.appendChild(input_extras);
         }
