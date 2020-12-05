@@ -208,8 +208,8 @@ class Table {
             let cell = document.createElement("TH");
 
             if (!(column in COLUMNS)) {
-                cell.setAttribute("data-toggle", "tooltip");
-                cell.setAttribute("data-placement", "top");
+                cell.dataset.toggle = "tooltip";
+                cell.dataset.placement = "top";
                 cell.title = column;
                 if (column.includes(".")) {
                     cell.textContent = "(...)" + column_name;
@@ -317,8 +317,8 @@ class Table {
                     case (COLUMNS.UPLOADER): {
                         let mailLink = document.createElement("a");
                         mailLink.href = "mailto:" + result[JSON_KEYS.get(column)];
-                        mailLink.setAttribute("data-toggle", "tooltip");
-                        mailLink.setAttribute("data-placement", "top");
+                        mailLink.dataset.toggle = "tooltip";
+                        mailLink.dataset.placement = "top";
                         mailLink.setAttribute("title", result[JSON_KEYS.get(column)]);
                         mailLink.textContent = "Contact";
                         cell.appendChild(mailLink);
@@ -1029,10 +1029,10 @@ class ResultSearch extends Content {
                 type_info.id = FILTER_ID_PREFIX.INFO + filter_id;
                 type_info.classList.add("btn", "btn-outline-warning");
                 type_info.value = "?";
-                type_info.setAttribute("data-toggle", "popover");
+                type_info.dataset.toggle = "popover";
                 type_info.title = "Format Description";
-                type_info.setAttribute("data-content", "You find some Tips for the expected input values here.");
-                type_info.setAttribute("data-placement", "right");
+                type_info.dataset.content = "You find some Tips for the expected input values here.";
+                type_info.dataset.placement = "right";
                 input_extras.appendChild(type_info);
             }
 
@@ -1041,7 +1041,7 @@ class ResultSearch extends Content {
                 suggestions_button.disabled = true;
                 suggestions_button.id = FILTER_ID_PREFIX.SUGGESTIONS_BTN + filter_id;
                 suggestions_button.classList.add("btn", "btn-outline-secondary", "dropdown-toggle", "dropdown-toggle-split");
-                suggestions_button.setAttribute("data-toggle", "dropdown");
+                suggestions_button.dataset.toggle = "dropdown";
                 suggestions_button.setAttribute("aria-haspopup", "true");
                 suggestions_button.setAttribute("aria-expanded", "false");
                 suggestions_button.type = "button";
@@ -1100,7 +1100,7 @@ class ResultSearch extends Content {
                 json_mode.classList.add("btn", "btn-outline-secondary", "dropdown-toggle");
                 json_mode.id = FILTER_ID_PREFIX.COMPARISON + filter_id;
                 json_mode.type = "button";
-                json_mode.setAttribute("data-toggle", "dropdown");
+                json_mode.dataset.toggle = "dropdown";
                 json_mode.setAttribute("aria-haspopup", "true");
                 json_mode.setAttribute("aria-expanded", "false");
                 json_mode.value = JSON_MODES.GREATER_THAN;
