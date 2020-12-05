@@ -18,17 +18,6 @@
 {% endblock %}
 {% block info %}
     <h1>Result Search</h1>
-    <div class="flexbox">
-        <input type="button" class="btn btn-info" value="Find Results" onclick="search_page.search()"/>
-        <input type="button" class="btn btn-success" id="add_filter" value="Add Filter"
-               onclick="search_page.add_filter_field()"/>
-        <input type="button" class="btn btn-info" id="invert_selection" value="Select Columns"
-               onclick="search_page.make_column_select_prompt()"/>
-        <input type="button" class="btn btn-info" id="invert_selection" value="Invert Selection"
-               onclick="search_page.invert_selection()"/>
-        <!-- <input type="button" class="btn btn-secondary" id="diagram" value="Visualize"
-               onclick="search_page.make_diagram()"/> -->
-    </div>
     <div class="card card-body">
         <h5 class="card-title">
             <div class="" data-toggle="collapse" href="#filterCardContent" role="button">
@@ -44,6 +33,9 @@
             </div>
             <ul id="filters" class="list-unstyled d-flex flex-column">
             </ul>
+            <input type="button" class="btn btn-primary" value="Search" onclick="search_page.search()"/>
+            <input type="button" class="btn btn-success" id="add_filter" value="Add Filter"
+               onclick="search_page.add_filter_field()"/>
         </div>
     </div>
     <div class="card card-body">
@@ -91,6 +83,12 @@
                     <option value="100">100</option>
                 </select>
             </div>
+        </div>
+        <div>
+            <input type="button" class="btn btn-primary" value="Select Columns"
+               onclick="search_page.make_column_select_prompt()"/>
+            <input type="button" class="btn btn-primary" id="invert_selection" value="Invert Selection"
+               onclick="search_page.invert_selection()"/>
         </div>
     </div>
     <div class="modal" id="jsonPreviewModal" tabindex="-1" role="dialog" aria-labelledby="jsonPreviewModalTitle"
