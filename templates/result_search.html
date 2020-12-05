@@ -45,11 +45,14 @@
             </div>
         </h5>
         <div id="diagramCardContent" class="collapse show">
-            <label for="diagramDropdown">Select diagram type:</label>
-            <select name="diagram-choice" id="diagramDropdown" onchange="search_page.select_diagram_type()">
-                <option value="null"></option>
-                <option value="speedup">Speedup Diagram</option>
-            </select>
+            <div class="form-inline">
+                <label for="diagramDropdown">Select diagram type:</label>
+                <select name="diagram-choice" id="diagramDropdown" onchange="search_page.select_diagram_type()"
+                        class="form-control">
+                    <option value="null"></option>
+                    <option value="speedup">Speedup Diagram</option>
+                </select>
+            </div>
             <div id="diagramSection" class="d-flex flex-column lead"></div>
         </div>
     </div>
