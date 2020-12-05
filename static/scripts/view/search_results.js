@@ -1040,7 +1040,7 @@ class ResultSearch extends Content {
                 let type_info = document.createElement("input");
                 type_info.setAttribute("type", "button");
                 type_info.setAttribute("id", FILTER_ID_PREFIX.INFO + filter_id);
-                type_info.setAttribute("class", "btn", "btn-outline-warning");
+                type_info.classList.add("btn", "btn-outline-warning");
                 type_info.setAttribute("value", "?");
                 type_info.setAttribute("data-toggle", "popover");
                 type_info.setAttribute("title", "Format Description");
@@ -1065,7 +1065,7 @@ class ResultSearch extends Content {
                         let suggestion_option = document.createElement("a");
                         suggestion_option.classList.add("dropdown-item");
                         suggestion_option.textContent = notable;
-                        suggestion_option.addEventListener("click", function (event) {
+                        suggestion_option.addEventListener("click", function () {
                             document.getElementById(FILTER_ID_PREFIX.VALUE + filter_id).value = suggestions.value;
                             document.getElementById(FILTER_ID_PREFIX.VALUE + filter_id).textContent = suggestions.value;
                         });
@@ -1145,7 +1145,7 @@ class ResultSearch extends Content {
     remove_filter(filter_id) {
         /** Remove the filter*/
         document.getElementById(filter_id).remove();
-        this.filter_ids.filter(function(value, index, arr) {
+        this.filter_ids.filter(function(value) {
             return value.localeCompare(filter_id) !== 0;
         });
     }
@@ -1294,7 +1294,7 @@ class ResultSearch extends Content {
                     let suggestion_option = document.createElement("a");
                     suggestion_option.classList.add("dropdown-item");
                     suggestion_option.textContent = notable;
-                    suggestion_option.addEventListener("click", function (event) {
+                    suggestion_option.addEventListener("click", function () {
                         document.getElementById(FILTER_ID_PREFIX.VALUE + filter).value = notable;
                         document.getElementById(FILTER_ID_PREFIX.VALUE + filter).textContent = notable;
                     });
@@ -1340,9 +1340,7 @@ class ResultSearch extends Content {
     update_benchmark_list(benchmarks, first_run = false) {
         // clear out previous values
         let selection = document.getElementById("benchmark_selection");
-        while (selection.options.length > 0) {
-            selection.remove(0);
-        }
+        _clear_select(selection);
 
         let default_option = document.createElement('option');
         default_option.value = '';
@@ -1405,10 +1403,11 @@ class ResultSearch extends Content {
             group: 'column_select'
         });
 
-        $('#columnSelectModal').on('hidden.bs.modal', function e() {
+        let modal = $('#columnSelectModal');
+        modal.on('hidden.bs.modal', function e() {
             search_page.end_column_select_prompt();
         });
-        $('#columnSelectModal').modal('show');
+        modal.modal('show');
     }
 
     /**
@@ -1424,6 +1423,9 @@ class ResultSearch extends Content {
 
         this.active_columns = selected_columns;
         this.update();
+
+        delete this.activeSortable;
+        delete this.availableSortable;
     }
 
     /**
