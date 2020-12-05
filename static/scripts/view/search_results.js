@@ -308,9 +308,6 @@ class Table {
                         view_button.addEventListener("click", function () {
                             search_page.display_json(JSON.stringify(result[JSON_KEYS.get(column)], null, 4));
                         });
-
-                        // set hover-text to content
-                        //view_data.setAttribute("title", JSON.stringify(result[column], null, "\t"));
                         cell.appendChild(view_button);
                     } break;
 
@@ -319,7 +316,7 @@ class Table {
                         mailLink.href = "mailto:" + result[JSON_KEYS.get(column)];
                         mailLink.dataset.toggle = "tooltip";
                         mailLink.dataset.placement = "top";
-                        mailLink.setAttribute("title", result[JSON_KEYS.get(column)]);
+                        mailLink.title = result[JSON_KEYS.get(column)];
                         mailLink.textContent = "Contact";
                         cell.appendChild(mailLink);
                     } break;
@@ -769,8 +766,8 @@ class SpeedupDiagram extends Diagram {
             }
         });
 
-        document.getElementById("downloadButton").removeAttribute("disabled");
-        document.getElementById("csvButton").removeAttribute("disabled");
+        document.getElementById("downloadButton").disabled = false;
+        document.getElementById("csvButton").disabled = false;
     }
 
     /**
@@ -991,9 +988,10 @@ class ResultSearch extends Content {
 
         // On change callback
         filter_type.addEventListener("change", function () {
-            document.getElementById(FILTER_ID_PREFIX.VALUE + filter_id).placeholder = FILTER_HINTS.get(filter_type.value);
-            document.getElementById(FILTER_ID_PREFIX.INFO + filter_id)
-                .setAttribute("data-content", FILTER_HELPS.get(filter_type.value));
+            document.getElementById(FILTER_ID_PREFIX.VALUE + filter_id).placeholder =
+                FILTER_HINTS.get(filter_type.value);
+            document.getElementById(FILTER_ID_PREFIX.INFO + filter_id).dataset.content =
+                FILTER_HELPS.get(filter_type.value);
 
             // hide extra json input on other filters
             document.getElementById(FILTER_ID_PREFIX.SUGGESTIONS_BTN + filter_id).disabled = true;
