@@ -209,7 +209,7 @@ class Table {
             if (!(column in COLUMNS)) {
                 cell.setAttribute("data-toggle", "tooltip");
                 cell.setAttribute("data-placement", "top");
-                cell.setAttribute("title", column);
+                cell.title = column;
                 if (column.includes(".")) {
                     cell.textContent = "(...)" + column_name;
                 }
@@ -220,7 +220,7 @@ class Table {
             else {
                 cell.textContent = column_name;
             }
-            cell.setAttribute("scope", "col");
+            cell.scope = "col";
 
             switch (column_name) {
                 case (COLUMNS.CHECKBOX): {
@@ -286,12 +286,12 @@ class Table {
                 switch (column) {
                     case (COLUMNS.CHECKBOX): {
                         let select = document.createElement("input");
-                        select.setAttribute("type", "checkbox");
-                        select.setAttribute("id", "selected" + i);
+                        select.type = "checkbox";
+                        select.id = "selected" + i;
                         if (result[JSON_KEYS.get(column)]) {
-                            select.setAttribute("checked", "");
+                            select.checked = true;
                         }
-                        select.setAttribute('style', 'height: 1.5em');
+                        select.style.height = "1.5em";
                         // when clicked, select
                         select.addEventListener("click", function () {
                             search_page.select_result(i + startIndex);
@@ -301,9 +301,9 @@ class Table {
 
                     case (COLUMNS.DATA): {
                         let view_button = document.createElement("input");
-                        view_button.setAttribute("type", "submit");
-                        view_button.setAttribute("value", "View JSON");
-                        view_button.setAttribute("class", "btn btn-secondary btn-sm");
+                        view_button.type = "submit";
+                        view_button.value = "View JSON";
+                        view_button.classList.add("btn", "btn-secondary", "btn-sm");
                         view_button.addEventListener("click", function () {
                             search_page.display_json(JSON.stringify(result[JSON_KEYS.get(column)], null, 4));
                         });
@@ -337,7 +337,7 @@ class Table {
                         let actions_report = document.createElement("button");
                         actions_report.textContent = 'Report';
                         actions_report.classList.add('btn', 'btn-warning', 'btn-sm');
-                        actions_report.setAttribute('type', 'button');
+                        actions_report.type = "button";
                         actions_report.addEventListener('click', function () {
                             search_page.report_result(result);
                         });
@@ -347,7 +347,7 @@ class Table {
                             let actions_delete = document.createElement('button');
                             actions_delete.textContent = 'Delete';
                             actions_delete.classList.add('btn', 'btn-danger', 'btn-sm');
-                            actions_delete.setAttribute('type', 'button');
+                            actions_delete.type = "button";
                             actions_delete.addEventListener('click', function () {
                                 search_page.delete_result(result);
                             });
@@ -533,12 +533,12 @@ class SpeedupDiagram extends Diagram {
             xAxisDiv.classList.add("form-inline");
             {
                 let label = document.createElement("label");
-                label.setAttribute("for", "diagramX");
+                label.for = "diagramX";
                 label.textContent = "X Axis:";
                 xAxisDiv.appendChild(label);
 
                 let dropdown = document.createElement("select");
-                dropdown.setAttribute("id", "diagramX");
+                dropdown.id = "diagramX";
                 dropdown.classList.add("form-control");
                 dropdown.onchange = function() {
                     search_page.get_diagram().refresh();
@@ -551,12 +551,12 @@ class SpeedupDiagram extends Diagram {
             yAxisDiv.classList.add("form-inline");
             {
                 let label = document.createElement("label");
-                label.setAttribute("for", "diagramY");
+                label.for = "diagramY";
                 label.textContent = "Y Axis:";
                 yAxisDiv.appendChild(label);
 
                 let dropdown = document.createElement("select");
-                dropdown.setAttribute("id", "diagramY");
+                dropdown.id = "diagramY";
                 dropdown.classList.add("form-control");
                 dropdown.onchange = function() {
                     search_page.get_diagram().refresh();
@@ -566,14 +566,14 @@ class SpeedupDiagram extends Diagram {
             section.appendChild(yAxisDiv);
 
             let canvas = document.createElement("canvas");
-            canvas.setAttribute("id", "speedup");
+            canvas.id = "speedup";
             section.appendChild(canvas);
 
             let interactions = document.createElement("div");
             {
                 let downloadButton = document.createElement("button");
-                downloadButton.setAttribute("id", "downloadButton");
-                downloadButton.setAttribute("type", "button");
+                downloadButton.id = "downloadButton";
+                downloadButton.type = "button";
                 downloadButton.classList.add("btn", "btn-light");
                 downloadButton.textContent = "Download as PNG";
                 downloadButton.onclick = function() {
@@ -582,8 +582,8 @@ class SpeedupDiagram extends Diagram {
                 interactions.appendChild(downloadButton);
 
                 let csvButton = document.createElement("button");
-                csvButton.setAttribute("id", "csvButton");
-                csvButton.setAttribute("type", "button");
+                csvButton.id = "csvButton";
+                csvButton.type = "button";
                 csvButton.classList.add("btn", "btn-light");
                 csvButton.textContent = "Download as CSV";
                 csvButton.onclick = function() {
@@ -693,12 +693,12 @@ class SpeedupDiagram extends Diagram {
         _clear_select(yAxisSelect);
         for (const key of notable_keys) {
             let xOption = document.createElement("option");
-            xOption.setAttribute("value", key);
+            xOption.value = key;
             xOption.textContent = key;
             xAxisSelect.appendChild(xOption);
 
             let yOption = document.createElement("option");
-            yOption.setAttribute("value", key);
+            yOption.value = key;
             yOption.textContent = key;
             yAxisSelect.appendChild(yOption);
         }
@@ -715,8 +715,8 @@ class SpeedupDiagram extends Diagram {
         this.xAxis = document.getElementById("diagramX").value;
         this.yAxis = document.getElementById("diagramY").value;
         if (!_validate_keypath(this.xAxis) || !_validate_keypath(this.yAxis) || this.results.length === 0) {
-            document.getElementById("downloadButton").setAttribute("disabled", "true");
-            document.getElementById("csvButton").setAttribute("disabled", "true");
+            document.getElementById("downloadButton").disabled = "true";
+            document.getElementById("csvButton").disabled = "true";
             document.getElementById("speedup").style.display = "none";
             return;
         }
@@ -956,13 +956,13 @@ class ResultSearch extends Content {
 
         // add line for the filter
         let new_filter = document.createElement('LI');
-        new_filter.setAttribute("id", filter_id);
-        //new_filter.setAttribute("class", "flexbox filter");
+        new_filter.id = filter_id;
+        //new_filter.classList.add("flexbox", "filter");
         new_filter.classList.add("form-inline");
 
         // Remove this filter
         let remove_filter = document.createElement("button");
-        remove_filter.setAttribute("type", "button");
+        remove_filter.type = "button";
         remove_filter.classList.add("close");
         remove_filter.setAttribute("aria-label", "Close");
         // label
@@ -979,10 +979,10 @@ class ResultSearch extends Content {
 
         // filter type selection
         let filter_type = document.createElement("select");
-        filter_type.setAttribute("id", FILTER_ID_PREFIX.TYPE + filter_id);
+        filter_type.id = FILTER_ID_PREFIX.TYPE + filter_id;
         for (let filter in FILTERS) {
             let type = document.createElement("OPTION");
-            type.setAttribute("value", FILTERS[filter]);
+            type.value = FILTERS[filter];
             type.textContent = FILTERS[filter];
             filter_type.appendChild(type);
         }
@@ -1008,9 +1008,9 @@ class ResultSearch extends Content {
         // textbox
         {
             let input = document.createElement("input");
-            input.setAttribute("type", "text");
-            input.setAttribute("id", FILTER_ID_PREFIX.VALUE + filter_id);
-            input.setAttribute("placeholder", "Filter Value");
+            input.type = "text";
+            input.id = FILTER_ID_PREFIX.VALUE + filter_id;
+            input.placeholder = "Filter Value";
             input.classList.add("form-control");
             input_div.appendChild(input);
         }
@@ -1024,7 +1024,7 @@ class ResultSearch extends Content {
                 suggestions_button.setAttribute("data-toggle", "dropdown");
                 suggestions_button.setAttribute("aria-haspopup", "true");
                 suggestions_button.setAttribute("aria-expanded", "false");
-                suggestions_button.setAttribute("type", "button");
+                suggestions_button.type = "button";
 
                 {
                     let suggestions_button_screenreader_hint = document.createElement("span");
@@ -1038,12 +1038,12 @@ class ResultSearch extends Content {
             // Info button
             {
                 let type_info = document.createElement("input");
-                type_info.setAttribute("type", "button");
-                type_info.setAttribute("id", FILTER_ID_PREFIX.INFO + filter_id);
+                type_info.type = "button";
+                type_info.id = FILTER_ID_PREFIX.INFO + filter_id;
                 type_info.classList.add("btn", "btn-outline-warning");
-                type_info.setAttribute("value", "?");
+                type_info.value = "?";
                 type_info.setAttribute("data-toggle", "popover");
-                type_info.setAttribute("title", "Format Description");
+                type_info.title = "Format Description";
                 type_info.setAttribute("data-content", "You find some Tips for the expected input values here.");
                 type_info.setAttribute("data-placement", "right");
                 input_extras.appendChild(type_info);
@@ -1053,7 +1053,7 @@ class ResultSearch extends Content {
             {
                 let suggestions = document.createElement("div");
                 suggestions.classList.add("dropdown-menu");
-                suggestions.setAttribute("id", FILTER_ID_PREFIX.SUGGESTIONS + filter_id);
+                suggestions.id = FILTER_ID_PREFIX.SUGGESTIONS + filter_id;
                 if (this.notable_keys.length === 0) {
                     let suggestion_option = document.createElement("a");
                     suggestion_option.classList.add("dropdown-item");
@@ -1082,7 +1082,7 @@ class ResultSearch extends Content {
         // Extra JSON input
         let extra_input_field = document.createElement("div");
         extra_input_field.classList.add("input-group");
-        extra_input_field.setAttribute("id", FILTER_ID_PREFIX.EXTRA_FRAME + filter_id);
+        extra_input_field.id = FILTER_ID_PREFIX.EXTRA_FRAME + filter_id;
         extra_input_field.style.visibility = "hidden";
         // comparison mode dropdown
         {
@@ -1091,8 +1091,8 @@ class ResultSearch extends Content {
             {
                 let json_mode = document.createElement("button");
                 json_mode.classList.add("btn", "btn-outline-secondary", "dropdown-toggle");
-                json_mode.setAttribute("id", FILTER_ID_PREFIX.COMPARISON + filter_id);
-                json_mode.setAttribute("type", "button");
+                json_mode.id = FILTER_ID_PREFIX.COMPARISON + filter_id;
+                json_mode.type = "button";
                 json_mode.setAttribute("data-toggle", "dropdown");
                 json_mode.setAttribute("aria-haspopup", "true");
                 json_mode.setAttribute("aria-expanded", "false");
@@ -1121,8 +1121,8 @@ class ResultSearch extends Content {
         // json value input
         {
             let num_input = document.createElement("input");
-            num_input.setAttribute("id", FILTER_ID_PREFIX.EXTRA_VALUE + filter_id);
-            num_input.setAttribute("min", "0");
+            num_input.id = FILTER_ID_PREFIX.EXTRA_VALUE + filter_id;
+            num_input.min = "0";
             num_input.classList.add("form-control");
             extra_input_field.appendChild(num_input);
         }
@@ -1438,7 +1438,7 @@ class ResultSearch extends Content {
             newColumn.classList.add("is-invalid");
             if (document.getElementById("columnNameHelp") === null) {
                 let helpDiv = document.createElement("div");
-                helpDiv.setAttribute("id", "columnNameHelp");
+                helpDiv.id = "columnNameHelp";
                 helpDiv.classList.add("invalid-feedback");
                 helpDiv.textContent = "Please use correct syntax! (see JSON filter usage)";
                 newColumn.parentElement.appendChild(helpDiv);
