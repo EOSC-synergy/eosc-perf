@@ -76,9 +76,9 @@
                     </ul>
                 </nav>
             </div>
-            <div style="display:flex">
+            <div class="form-inline">
                 <label for="results_on_page">Results on page:</label>
-                <select id="results_on_page" class="form-control" onchange="paginator.update_page_result_count()">
+                <select id="results_on_page" class="form-control" onchange="search_page.get_paginator().update_page_result_count()">
                     <option value="10" selected>10</option>
                     <option value="15">15</option>
                     <option value="20">20</option>
