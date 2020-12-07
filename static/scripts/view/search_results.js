@@ -1137,6 +1137,17 @@ class ResultSearch extends Content {
 
         this.filter_ids.push(filter_id);
 
+        // prepare initial contents as if user just selected it
+        if ("createEvent" in document) {
+            let evt = document.createEvent("HTMLEvents");
+            evt.initEvent("change", false, true);
+            filter_type.dispatchEvent(evt);
+        }
+        else
+        {
+            filter_type.fireEvent("onchange");
+        }
+
         // Activate popover.
         $('[data-toggle="popover"]').popover({
             html: true
