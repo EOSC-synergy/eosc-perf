@@ -1396,8 +1396,12 @@ class ResultSearch extends Content {
             columnOption.classList.add("list-group-item", "list-group-item-action");
             if (column in COLUMNS) {
                 columnOption.classList.add("core_column", "list-group-item-secondary");
+                columnOption.textContent = COLUMNS[column];
             }
-            columnOption.textContent = column;
+            else {
+                columnOption.textContent = column;
+            }
+            columnOption.id = "column-select-" + column;
             activeColumns.appendChild(columnOption);
         }
 
@@ -1411,7 +1415,15 @@ class ResultSearch extends Content {
             }
             let columnOption = document.createElement("li");
             columnOption.classList.add("list-group-item");
-            columnOption.textContent = column;
+            if (column in COLUMNS) {
+                columnOption.classList.add("core_column", "list-group-item-secondary");
+                columnOption.textContent = COLUMNS[column];
+            }
+            else {
+                columnOption.textContent = column;
+            }
+            columnOption.textContent = COLUMNS[column];
+            columnOption.id = "column-select-" + column;
             availableColumns.appendChild(columnOption);
         }
 
@@ -1438,7 +1450,8 @@ class ResultSearch extends Content {
 
         let selected_columns = [];
         Array.from(activeColumns.children).forEach(function (option) {
-            selected_columns.push(option.textContent);
+            let value = option.id.slice("column-select-".length);
+            selected_columns.push(value);
         });
 
         this.active_columns = selected_columns;
