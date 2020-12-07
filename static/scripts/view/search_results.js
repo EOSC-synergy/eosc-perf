@@ -1400,11 +1400,20 @@ class ResultSearch extends Content {
         while (activeColumns.firstChild) {
             activeColumns.removeChild(activeColumns.firstChild);
         }
+
+        const CORE_COLUMNS = [COLUMNS.CHECKBOX, COLUMNS.DATA, COLUMNS.ACTIONS];
+
         for (let column of this.active_columns) {
             let columnOption = document.createElement("li");
             columnOption.classList.add("list-group-item", "list-group-item-action");
             if (column in COLUMNS) {
-                columnOption.classList.add("core_column", "list-group-item-secondary");
+                console.log(CORE_COLUMNS, column, CORE_COLUMNS.includes(COLUMNS[column]));
+                if (CORE_COLUMNS.includes(COLUMNS[column])) {
+                    columnOption.classList.add("core_column", "list-group-item-dark");
+                }
+                else {
+                    columnOption.classList.add("list-group-item-secondary");
+                }
                 columnOption.textContent = COLUMNS[column];
             }
             else {
@@ -1425,7 +1434,7 @@ class ResultSearch extends Content {
             let columnOption = document.createElement("li");
             columnOption.classList.add("list-group-item");
             if (column in COLUMNS) {
-                columnOption.classList.add("core_column", "list-group-item-secondary");
+                columnOption.classList.add("list-group-item-secondary");
                 columnOption.textContent = COLUMNS[column];
             }
             else {
