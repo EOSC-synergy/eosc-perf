@@ -387,6 +387,7 @@ class PageNavigation {
         this.current_page = 0;
         this.results_per_page = 10;
         this.page_count = 1;
+        this.result_count = 0;
     }
 
     /**
@@ -437,14 +438,22 @@ class PageNavigation {
     }
 
     /**
+     * Update the number of pages
+     */
+    update_page_count() {
+        this.page_count = Math.max(Math.ceil(this.result_count / this.results_per_page), 1);
+        if (this.current_page >= this.page_count) {
+            this.current_page = this.page_count - 1;
+        }
+    }
+
+    /**
      * Update the current number of results.
      * @param result_count The new number of results.
      */
     set_result_count(result_count) {
-        this.page_count = Math.max(Math.ceil(result_count / this.results_per_page), 1);
-        if (this.current_page >= this.page_count) {
-            this.current_page = this.page_count - 1;
-        }
+        this.result_count = result_count;
+        this.update_page_count();
         this.update();
     }
 
@@ -496,10 +505,10 @@ class PageNavigation {
      * Update the number of results displayed per page.
      */
     update_page_result_count() {
-        /** Reads the selected results per page and updates teh site accordingly. */
         this.results_per_page = document.getElementById("results_on_page").value;
         // Restart at page 1;
         this.current_page = 0;
+        this.update_page_count();
         this.update();
         search_page.update();
     }
