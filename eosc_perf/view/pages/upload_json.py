@@ -15,6 +15,8 @@ from ...controller.io_controller import controller
 
 from .helpers import error_json_redirect, error_redirect
 
+UPLOAD_LICENSE_PATH: str = "upload_license.txt"
+
 
 class UploadJSONFactory(PageFactory):
     """A factory to build upload pages."""
@@ -29,8 +31,7 @@ class UploadJSONFactory(PageFactory):
         Returns:
             str: The license text.
         """
-        filename = configuration.get("upload_license_filename")
-        path = str(Path(__file__).parent) + "/../../../" + filename
+        path = Path(Path.cwd(), UPLOAD_LICENSE_PATH)
         with open(path, "r") as license_file:
             license_string = license_file.read()
         return license_string
@@ -109,7 +110,7 @@ def upload_result_submit():
     try:
         success = controller.submit_result(result_json, json.dumps(metadata))
     except (ValueError, TypeError) as error:
-        #if custom_site:
+        # if custom_site:
         #    controller.remove_site(site_name)
         return error_json_redirect('Failed to submit result: ' + str(error))
     if not success:

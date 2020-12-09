@@ -1,21 +1,31 @@
 version: '3'
 services:
   flask:
-    image: flask-eosc-perf
+    image: flask
     restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile
-    # override app folder during development
     volumes:
-      # production config
-      - ./config.yaml:/app/config.yaml
       # access to database file
       - ./data:/app/data/
+    env_file: .env
+    secrets:
+      - source: oidc_secret
+        target: oidc_client_secret
+        uid: 'uwsgi'
+        mode: 0400
+      - source: cookie_secret
+        target: cookie_secret
+        uid: 'uwsgi'
+        mode: 0400
 
   nginx:
-    image: nginx:1.14.2-alpine
+    image: nginx
     restart: unless-stopped
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
     depends_on:
       - flask
       - certbot
@@ -23,18 +33,32 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      #- ./nginx/certs:/etc/nginx/certs
-      - ./nginx:/etc/nginx/conf.d
       - ./static:/var/www/web/
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot/
-    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    env_file: .env
+    secrets:
+      - source: nginx_api_secret
+        target: nginx_api_credentials
 
   certbot:
-    image: certbot/certbot
+    image: certbot
     restart: unless-stopped
+    build:
+      context: docker/certbot
+      dockerfile: Dockerfile
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot/; sleep 12h & wait $${!}; done;'"
+    env_file: .env
+    secrets:
+      - source: nginx_api_secret
+        target: nginx_api_credentials
 
+secrets:
+  oidc_secret:
+    file: ./oidc_secret.txt
+  cookie_secret:
+    file: ./cookie_secret.txt
+  nginx_api_secret:
+    file: ./nginx_api_credentials.txt

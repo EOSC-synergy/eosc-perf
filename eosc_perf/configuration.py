@@ -1,8 +1,38 @@
 """Configuration structure for config files to the application."""
+import json
 import os
-from typing import Any
+from json import JSONDecodeError
+from typing import Any, Optional
+from dotenv import load_dotenv
 
-import yaml
+
+def _get_var(env_name: str, env_type: type = str) -> Optional[Any]:
+    """Fetch a value from the environment.
+
+    Args:
+        env_name (str): The name of the environment variable to get.
+        env_type (type): The type to interpret the variable as.
+            Available types: str, int, bool, list (parsed as json array)
+    Returns:
+        Optional[Any]: The desired value, or None if it is empty or there was an error in parsing.
+    """
+    if env_name not in os.environ:
+        return None
+    if env_type == int:
+        try:
+            return int(os.environ[env_name])
+        except TypeError:
+            return None
+    if env_type == list:
+        try:
+            return json.loads(os.environ[env_name])
+        except JSONDecodeError:
+            return None
+    if env_type == bool:
+        if os.environ[env_name].lower() in ['1', 'true']:
+            return True
+        return False
+    return os.environ[env_name]
 
 
 class ConfigHandler:
@@ -10,57 +40,62 @@ class ConfigHandler:
 
     config: dict = {}
 
+    DEFAULTS: dict = {
+        'secret_key_file': 'SET_ME',
+        'oidc_client_secret_file': 'SET_ME',
+        'oidc_client_id': 'SET_ME',
+        'oidc_redirect_hostname': 'localhost',
+        'admin_entitlements': ['urn:mace:egi.eu:group:mteam.data.kit.edu:role=member'],
+        'infrastructure_href': 'https://example.com',
+        'database-path': '',  # diverge from example to use in-memory database
+        'debug': False,
+        'debug-db-reset': False,
+        'debug-db-demo-items': False,
+        'debug-db-filler-items': False,
+        'debug-logged-in-is-admin': False,
+        'debug_admin_entitlements': ['urn:mace:egi.eu:group:mteam.data.kit.edu:role=member']
+    }
+
     def __init__(self):
         """Set up a new configuration."""
         self.reset()
+        if os.path.exists('.env'):
+            load_dotenv('.env')
 
-    def _get_defaults(self) -> dict:
-        """Get default configuration values.
-
-        Returns:
-            dict: A dictionary containing default configuration values.
-        """
-        # refer to config.yaml.example tor more description
-        defaults = {
-            'secret_key': 'SET_ME',
-            'oidc_client_secret': 'SET_ME',
-            'oidc_client_id': 'SET_ME',
-            'oidc_redirect_hostname': 'localhost',
-            'admin_entitlements': ['urn:mace:egi.eu:group:mteam.data.kit.edu:role=member'],
-            'upload_license_filename': 'upload_license.txt',
-            'infrastructure_href': 'https://example.com',
-            'database-path': '',  # diverge from example to use in-memory database
-            'debug': False,
-            'debug-db-reset': False,
-            'debug-db-demo-items': False,
-            'debug-db-filler-items': False,
-            'debug-logged-in-is-admin': False,
-            'debug_admin_entitlements': ['urn:mace:egi.eu:group:mteam.data.kit.edu:role=member']
-        }
-
-        return defaults
-
-    def _load_config(self, load_file: bool = False) -> dict:
-        """Load the config file from 'config.ini'.
+    def _load_config(self, load_env: bool = False) -> dict:
+        """Load the config, optionally from the environment.
 
         Args:
-            load_file (bool): True if the configuration should be read from `config.ini`.
+            load_env (bool): True if the configuration should be read the environment.
         Returns:
             dict: A dictionary containing all loaded configuration values.
         """
-        defaults = self._get_defaults()
-        if load_file and os.path.exists('config.yaml'):
-            with open('config.yaml') as file:
-                config = yaml.safe_load(file.read())
-            if config is None:
-                print("Could not read config.yaml!")
+        config = self.DEFAULTS
 
-            for key, value in defaults.items():
-                if key not in config:
-                    config[key] = str(value)
-            return config
+        if load_env:
+            env_values: dict = {
+                'secret_key_file': _get_var('EOSC_PERF_COOKIE_CRYPT_KEY_PATH'),
+                'oidc_client_secret_file': _get_var('EOSC_PERF_OIDC_CLIENT_SECRET_PATH'),
+                'oidc_client_id': _get_var('EOSC_PERF_OIDC_CLIENT_ID'),
+                'oidc_redirect_hostname': _get_var('DOMAIN'),
+                'admin_entitlements': _get_var('EOSC_PERF_ADMIN_ENTITLEMENTS', list),
+                'infrastructure_href': _get_var('EOSC_PERF_INFRASTRUCTURE_HREF'),
+                'database-path': _get_var('EOSC_PERF_DB_PATH'),
+                'debug': _get_var('EOSC_PERF_DEBUG', bool),
+                'debug-db-reset': _get_var('EOSC_PERF_DEBUG_DB_RESET', bool),
+                'debug-db-demo-items': _get_var('EOSC_PERF_DEBUG_DB_DEMO_ITEMS', bool),
+                'debug-db-filler-items': _get_var('EOSC_PERF_DEBUG_DB_FILLER_ITEMS', bool),
+                'debug-logged-in-is-admin': _get_var('EOSC_PERF_DEBUG_LOGGED_IN_IS_ADMIN', bool),
+                'debug_admin_entitlements': _get_var('EOSC_PERF_DEBUG_ADMIN_ENTITLEMENTS', list)
+            }
 
-        return defaults
+            for key, value in self.DEFAULTS.items():
+                env_value = env_values[key]
+                if env_value is None:
+                    env_value = value
+                config[key] = env_value
+
+        return config
 
     def set(self, tag: str, value: Any):
         """Set a value.

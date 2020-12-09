@@ -136,7 +136,10 @@ dmypy.json
 
 # webapp files
 *.db
-config.yaml
 upload_license.txt
 nginx/certs/*
-certbot/
+/certbot/
+
+oidc_secret.txt
+cookie_secret.txt
+nginx_api_credentials.txt

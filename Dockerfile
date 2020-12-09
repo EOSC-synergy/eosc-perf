@@ -14,6 +14,6 @@ CMD [ "uwsgi", "--ini", "uwsgi.ini" ]
 RUN groupadd uwsgi && useradd -g uwsgi uwsgi && mkdir -p $APP $APP/data && chown -R uwsgi $APP
 USER uwsgi
 # copy the whole webapp
-COPY ./uwsgi.ini upload_license.txt config.yaml ./
+COPY uwsgi.ini upload_license.txt ./
 COPY ./templates/ templates/
 COPY ./eosc_perf/ eosc_perf/

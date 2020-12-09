@@ -1417,6 +1417,7 @@ class ResultSearch extends Content {
                 columnOption.textContent = COLUMNS[column];
             }
             else {
+                columnOption.classList.add("list-group-item-primary");
                 columnOption.textContent = column;
             }
             columnOption.id = "column-select-" + column;
@@ -1438,6 +1439,7 @@ class ResultSearch extends Content {
                 columnOption.textContent = COLUMNS[column];
             }
             else {
+                columnOption.classList.add("list-group-item-primary");
                 columnOption.textContent = column;
             }
             columnOption.textContent = COLUMNS[column];

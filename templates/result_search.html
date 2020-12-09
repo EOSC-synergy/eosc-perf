@@ -11,7 +11,12 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.0/highlight.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js"></script>
-    <script>let BENCHMARK_QUERY = "";let admin = false</script>
+    <!-- <script>let BENCHMARK_QUERY = "";let admin = false</script> -->
+    <style>
+    .list-group-item-small {
+        padding: 0.25rem 0.75rem;
+    }
+    </style>
 {% endblock %}
 {% block content %}
 {{content|safe}}
@@ -130,6 +135,16 @@
                     </div>
                     <div class="row">
                         <div class="col">
+                            <h5>Color legend</h5>
+                            <ul class="list-group list-group-horizontal-sm">
+                                <li class="list-group-item list-group-item-small list-group-item-dark">Required</li>
+                                <li class="list-group-item list-group-item-small list-group-item-secondary">System</li>
+                                <li class="list-group-item list-group-item-small list-group-item-primary">Suggested</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
                             <h4>Add column</h4>
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control" id="newColumnName" placeholder="JSON.path.to"
@@ -140,7 +155,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
