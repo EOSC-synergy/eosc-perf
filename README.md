@@ -7,18 +7,21 @@ EOSC-Perf is a webapp made to host, search, compare and analyze benchmark result
 
 ## Instructions
 
-To deploy the application using docker-compose:
-1. Create a 'config.yaml': `cp config.yaml.example config.yaml`
-    * Setup debug and production admin entitlements: `debug_admin_entitlements`, `admin_entitlements`
-    * Add OIDC client secret: `oidc_client_secret`
-    * Set your domain in `oidc_redirect_hostname`
-    * Set `secret_key` to something long with much entropy
-    * Set `infrastructure_href` to the website of your infrastructure manager
-    * Set `oidc_client_id` to your EGI-AAI OIDC client id
-1. Write a license for uploaded results to `upload_license.txt` or copy `uploading_license.txt.placeholder` for testing
+To deploy the application:
+1. Set up a `.env` file: `cp .env-example .env`, configure it following the comments
+1. Configure your EGI-AAI OIDC client secret:
+   * create a file `oidc_secret.txt` with the secret as contents
+1. Configure flask cookie encryption key:
+   * create a file `cookie_secret.txt` with the key as contents
+1. Configure NGINX API credentials:
+   * create a file `nginx_api_credentials.txt` with:
+     * one line: username (example: nginx)
+     * one line: password (example: correct-horse-battery-staple)
+1. Set up a `upload_license.txt`: `cp upload_license.txt.placeholder upload_license.txt`
+   * Write a license for uploaded results
 1. To generate HTTPS certs & nginx configuration:
-    * If you want to deploy to production: Run `bash init-lentsencrypt.sh`
-    * If you want to develop locally (on `localhost`): Run `bash init-dev-certs.sh`
+   * If you want to deploy to production: Run `bash init-lentsencrypt.sh`
+   * If you want to develop locally (on `localhost`): Run `bash init-dev-certs.sh`
 1. Run `docker-compose build`
 1. Run `docker-compose up`
 
@@ -43,5 +46,5 @@ To run tests (requires virtual environment):
 1. Run `tox` (it should install test requirements automatically)
 
 Tips:
-- To enable debug mode, set `debug: true` in the config.yaml
+- To enable debug mode, set `EOSC_PERF_DEBUG=true` in the `.env`
 
