@@ -37,6 +37,9 @@ services:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot/
     env_file: .env
+    secrets:
+      - source: nginx_api_secret
+        target: nginx_api_credentials
 
   certbot:
     image: certbot
@@ -48,9 +51,14 @@ services:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     env_file: .env
+    secrets:
+      - source: nginx_api_secret
+        target: nginx_api_credentials
 
 secrets:
   oidc_secret:
     file: ./oidc_secret.txt
   cookie_secret:
     file: ./cookie_secret.txt
+  nginx_api_secret:
+    file: ./nginx_api_credentials.txt

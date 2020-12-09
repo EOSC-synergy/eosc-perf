@@ -142,3 +142,4 @@ nginx/certs/*
 
 oidc_secret.txt
 cookie_secret.txt
+nginx_api_credentials.txt
