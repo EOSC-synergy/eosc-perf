@@ -65,8 +65,8 @@ function license_checkbox_click(cb) {
 
 function show_license() {
     let license = document.getElementById("license").getAttribute("value");
-    let window = window.open("about:blank", "", "_blank");
-    window.document.write("<html lang=\"en\"><body>"+license+"</body></html>");
+    let new_window = window.open("about:blank", "", "_blank");
+    new_window.document.write("<html lang=\"en\"><body>"+license+"</body></html>");
 }
 
 function append_form_data(fd) {

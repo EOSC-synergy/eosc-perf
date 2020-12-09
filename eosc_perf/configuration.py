@@ -46,7 +46,6 @@ class ConfigHandler:
         'oidc_client_id': 'SET_ME',
         'oidc_redirect_hostname': 'localhost',
         'admin_entitlements': ['urn:mace:egi.eu:group:mteam.data.kit.edu:role=member'],
-        'upload_license_filename': 'upload_license.txt',
         'infrastructure_href': 'https://example.com',
         'database-path': '',  # diverge from example to use in-memory database
         'debug': False,
@@ -80,7 +79,6 @@ class ConfigHandler:
                 'oidc_client_id': _get_var('EOSC_PERF_OIDC_CLIENT_ID'),
                 'oidc_redirect_hostname': _get_var('DOMAIN'),
                 'admin_entitlements': _get_var('EOSC_PERF_ADMIN_ENTITLEMENTS', list),
-                'upload_license_filename': _get_var('EOSC_PERF_LICENSE_FILENAME'),
                 'infrastructure_href': _get_var('EOSC_PERF_INFRASTRUCTURE_HREF'),
                 'database-path': _get_var('EOSC_PERF_DB_PATH'),
                 'debug': _get_var('EOSC_PERF_DEBUG', bool),
