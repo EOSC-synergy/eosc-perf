@@ -1,7 +1,7 @@
 """Test data generation module."""
 
 import json
-from .data_types import Uploader, Site, Benchmark, Result, Tag
+from .data_types import Uploader, Site, Benchmark, Result
 from .facade import facade
 
 
@@ -12,111 +12,6 @@ def _add_result(result):
         'benchmark': result.get_benchmark().get_docker_name(),
         'tags': [tag.get_name() for tag in result.get_tags()]
     }))
-
-
-def add_filler():
-    """Add filler data that can be used to test search filtering."""
-
-    filler_uploaders = [
-        Uploader(identifier='TEST_USER_0', email='fake.address@protonmail.ch', name='Christophe'),
-        Uploader(identifier='TEST_USER_1', email='idontknow1@gmail.com', name='Jonas'),
-        Uploader(identifier='TEST_USER_2', email='idontknow2@gmail.com', name='Moritz'),
-        Uploader(identifier='TEST_USER_3', email='idontknow3@gmail.com', name='Marc')
-    ]
-
-    filler_sites = [
-        Site(
-            short_name='paris',
-            name="Paris Cluster",
-            address='10.0.0.1',
-            description="Université de Paris (Cluster)"),
-        Site(
-            short_name="berlin",
-            name="Berlin Cluster",
-            address='10.0.0.2',
-            description="Freie Universität Berlin (Cluster)"),
-        Site(
-            short_name="karlsruhe",
-            name="Karlsruhe Cluster",
-            address='10.0.0.3',
-            description="Karlsruher Institut für Technologie (Cluster)")
-    ]
-
-    filler_benchmarks = [
-        Benchmark(docker_name='pihole/pihole:dev', uploader=filler_uploaders[1]),
-        Benchmark(docker_name='someone/gpu_cuda', uploader=filler_uploaders[2]),
-        Benchmark(docker_name='someone/cpu_pi', uploader=filler_uploaders[3]),
-        Benchmark(docker_name='someone/various', uploader=filler_uploaders[0]),
-        Benchmark(docker_name='someone/other', uploader=filler_uploaders[1]),
-        Benchmark(docker_name='someone/benchmarks', uploader=filler_uploaders[2]),
-        Benchmark(docker_name='someone/here', uploader=filler_uploaders[3])
-    ]
-
-    tags = [
-        Tag(name='gpu'),
-        Tag(name='cpu'),
-        Tag(name='obsolete'),
-        Tag(name='testing')
-    ]
-
-    filler_results = []
-    for uploader in filler_uploaders:
-        for site in filler_sites:
-            for benchmark in filler_benchmarks:
-                for tag in tags:
-                    result = Result(
-                        json="{}",
-                        uploader=uploader,
-                        site=site,
-                        benchmark=benchmark, tags=[tag])
-                    filler_results.append(result)
-
-    for test_uploader in filler_uploaders:
-        try:
-            facade.get_uploader(test_uploader.get_id())
-        except facade.NotFoundError:
-            facade.add_uploader(json.dumps({
-                'id': test_uploader.get_id(),
-                'email': test_uploader.get_email(),
-                'name': test_uploader.get_name()
-            }))
-
-    for test_site in filler_sites:
-        try:
-            facade.get_site(test_site.get_short_name())
-        except facade.NotFoundError:
-            facade.add_site(json.dumps({
-                'short_name': test_site.get_short_name(),
-                'address': test_site.get_address(),
-                'name': test_site.get_name(),
-                'description': test_site.get_description()
-            }))
-            facade.get_site(test_site.get_short_name()).set_hidden(False)
-
-    for test_tag in tags:
-        try:
-            facade.get_tag(test_tag.get_name())
-        except facade.NotFoundError:
-            facade.add_tag(test_tag.get_name())
-
-    for test_benchmark in filler_benchmarks:
-        try:
-            facade.get_benchmark(test_benchmark.get_docker_name())
-        except facade.NotFoundError:
-            facade.add_benchmark(
-                test_benchmark.get_docker_name(),
-                test_benchmark.get_uploader().get_id())
-            facade.get_benchmark(test_benchmark.get_docker_name()).set_hidden(False)
-
-    filters = {'filters': [
-        {'type': 'site', 'value': filler_sites[0].get_short_name()},
-        {'type': 'benchmark', 'value': filler_benchmarks[0].get_docker_name()}
-    ]}
-    results = facade.query_results(json.dumps(filters))
-    # only add test results if there aren't any results
-    if len(results) <= 0:
-        for test_result in filler_results:
-            _add_result(test_result)
 
 
 def add_demo():
