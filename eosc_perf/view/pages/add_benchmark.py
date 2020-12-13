@@ -14,7 +14,7 @@ from .helpers import error_json_redirect, error_redirect
 
 
 class AddBenchmarkPageFactory(PageFactory):
-    """A factory to build information pages."""
+    """A factory to build benchmark submission pages."""
 
     def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
         return "", {}
@@ -38,7 +38,7 @@ def add_benchmark():
 
 @add_benchmark_blueprint.route('/add_benchmark_submit', methods=['POST'])
 def add_benchmark_submit():
-    """HTTP endpoint to take in the reports."""
+    """HTTP endpoint to take in new benchmarks."""
     docker_name = request.form['docker_name'] if 'docker_name' in request.form else None
     message = request.form['message'] if 'message' in request.form else "No description given."
     template = request.form['template'] if 'template' in request.form and len(request.form['template']) > 2 else None

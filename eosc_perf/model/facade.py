@@ -2,8 +2,8 @@
 from typing import List, Type, Optional
 import json
 from sqlalchemy.exc import SQLAlchemyError
-from eosc_perf.model.data_types import Result, Tag, Benchmark, Uploader, Site,\
-    ResultIterator, Report, ResultReport, BenchmarkReport, SiteReport
+from eosc_perf.model.data_types import Result, Tag, Benchmark, Uploader, Site, \
+    ResultIterator, Report, ResultReport, BenchmarkReport, SiteReport, SiteFlavor
 from eosc_perf.model.result_filterer import ResultFilterer
 from eosc_perf.model.filters import BenchmarkFilter, UploaderFilter, SiteFilter, TagFilter,\
     JsonValueFilter
@@ -29,6 +29,7 @@ class DatabaseFacade:
         """
         # prepare query
         results = db.session.query(Result).filter(Result._uuid == uuid).all()
+        db.session.commit()
 
         # check number of results
         if len(results) < 1:
@@ -49,6 +50,7 @@ class DatabaseFacade:
         """
         # prepare query
         results = db.session.query(Tag).filter(Tag._name == name).all()
+        db.session.commit()
 
         # check number of results
         if len(results) < 1:
@@ -69,6 +71,7 @@ class DatabaseFacade:
         """
         # prepare query
         results = db.session.query(Benchmark).filter(Benchmark._docker_name == docker_name).all()
+        db.session.commit()
 
         # check number of results
         if len(results) < 1:
@@ -89,6 +92,7 @@ class DatabaseFacade:
         """
         # prepare query
         results = db.session.query(Uploader).filter(Uploader._identifier == identifier).all()
+        db.session.commit()
 
         # check number of results
         if len(results) < 1:
@@ -109,6 +113,7 @@ class DatabaseFacade:
         """
         # prepare query
         results = db.session.query(Site).filter(Site._short_name == short_name).all()
+        db.session.commit()
 
         # check number of results
         if len(results) < 1:
@@ -125,6 +130,7 @@ class DatabaseFacade:
         """
         # prepare query
         results = db.session.query(Site).all()
+        db.session.commit()
 
         #
         return results
@@ -137,6 +143,7 @@ class DatabaseFacade:
         """
         # prepare query
         results = db.session.query(Tag).all()
+        db.session.commit()
 
         #
         return results
@@ -149,6 +156,7 @@ class DatabaseFacade:
         """
         # prepare query
         results = db.session.query(Benchmark).all()
+        db.session.commit()
 
         #
         return results
@@ -198,6 +206,7 @@ class DatabaseFacade:
             results = results.filter(Benchmark._docker_name.contains(keyword))
 
         results = results.all()
+        db.session.commit()
 
         return results
 
