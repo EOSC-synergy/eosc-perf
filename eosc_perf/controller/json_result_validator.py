@@ -81,6 +81,7 @@ def _subset_keys(json_result: Dict, json_template: Dict, check_sub_keys: bool = 
     template_keys_normal_names = [*map(_remove_prefixes, json_template.keys())]
     if not set(template_keys_normal_names).issubset(set(json_result.keys())):
         diff = set(template_keys_normal_names).difference(set(json_result.keys()))
+        print(template_keys_normal_names, json_result.keys())
         raise ValueError("Uploaded JSON misses the following (sub-)keys: {}".format(str(diff)))
 
     if check_sub_keys:

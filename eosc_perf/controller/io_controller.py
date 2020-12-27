@@ -11,7 +11,7 @@ from .json_result_validator import JSONResultValidator
 from .authenticator import authenticator, AuthenticateError
 from eosc_perf.utility.type_aliases import JSON
 from ..model.facade import DatabaseFacade, facade
-from ..model.data_types import Site, Report
+from ..model.data_types import Site, Report, SiteFlavor
 from ..utility.dockerhub import decompose_dockername, build_dockerregistry_url, build_dockerregistry_tag_url
 
 
@@ -149,6 +149,11 @@ class IOController:
             # delete site if submitting a report failed to avoid orphans
             facade.remove_site(short_name)
             return False
+
+        site = facade.get_site(short_name)
+        default_flavor: SiteFlavor = SiteFlavor("default", site)
+        site.add_flavor(default_flavor)
+
         return True
 
     def submit_tag(self, tag: str) -> bool:
@@ -164,6 +169,19 @@ class IOController:
         if not self.is_authenticated():
             raise AuthenticateError("You must be logged in to submit a tag")
         return facade.add_tag(tag)
+
+    def submit_flavor(self, name: str, description: str, site_name: str) -> Optional[str]:
+        """Submit a new site flavor.
+
+        Args:
+            name (str) - The name of the flavor.
+            description (str) - The description of the flavor.
+            site_name (str) - The short_name of the site the flavor belongs to.
+        Returns:
+            Optional[str] - The UUID of the new flavor if successful, None on error.
+        """
+        success, uuid = facade.add_flavor(name, description, site_name)
+        return uuid if success else None
 
     def get_site(self, short_name: str) -> Optional[Site]:
         """Get a single site by it's short name.
@@ -278,6 +296,24 @@ class IOController:
         except DatabaseFacade.NotFoundError:
             return False
         result.set_hidden(True)
+        return True
+
+    def update_flavor(self, uuid: str, name: str, description: str) -> bool:
+        """Update a site flavor's details.
+
+        Args:
+            uuid (str) - The UUID of the flavor.
+            name (str) - The new name to set.
+            description (str) - The new description to set.
+        """
+        if not self.is_admin():
+            return False
+        try:
+            flavor = facade.get_site_flavor(uuid)
+        except facade.NotFoundError:
+            return False
+        flavor.set_name(name)
+        flavor.set_description(description)
         return True
 
     def _add_current_user_if_missing(self):

@@ -5,6 +5,8 @@
 {% block head %}
     {{ super() }}
     <link rel="stylesheet" type="text/css" href="static/css/loading.css" />
+    <link rel="stylesheet" type="text/css" href="static/css/bootstrap-icons.css" />
+    <script src="static/scripts/view/utility.js"></script>
     <script src="static/scripts/view/site_editor.js"></script>
 {% endblock %}
 
@@ -36,6 +38,14 @@
                 </div>
                 <div class="overlay loading-background loading center-contents d-none" id="loading-icon">
                     <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+                </div>
+                <div class="m-2">
+                    <label>Flavors: <br/></label>
+                    <div class="card overflow-auto" style="max-height: 16rem">
+                        <div class="list-group" id="flavorListGroup">
+                        </div>
+                        <button type="button" class="btn btn-success m-1" id="addFlavor"><i class="bi bi-plus"></i></button>
+                    </div>
                 </div>
                 <input type="submit" class="btn btn-success" name="submit" id="submit" value="Submit" />
             </form>

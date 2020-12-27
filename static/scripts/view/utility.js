@@ -43,3 +43,14 @@ function submit_form_json(form, data, success, fail) {
         error: fail
     });
 }
+
+/**
+ * Clear all child elements of a given element.
+ * @param element The element to remove all children from.
+ * @private
+ */
+function clear_element_children(element) {
+    while (element.firstChild) {
+        element.removeChild(element.firstChild);
+    }
+}

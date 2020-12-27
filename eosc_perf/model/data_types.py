@@ -340,6 +340,8 @@ class Site(db.Model):
     _description = db.Column(db.Text(), nullable=True)
     _hidden = db.Column(db.Boolean, nullable=False, default=True)
 
+    _flavors: List[SiteFlavor]
+
     def __init__(self, short_name: str, address: str, **kwargs):
         """Create a new site entry object.
 
@@ -393,6 +395,24 @@ class Site(db.Model):
         self._description = desc
         db.session.commit()
 
+    def set_name(self, name: str):
+        """Update the full name of the site.
+
+        Args:
+            name (str): The full name for the site.
+        """
+        self._name = name
+        db.session.commit()
+
+    def add_flavor(self, flavor: SiteFlavor):
+        """Add a new flavor to a site.
+
+        Args:
+            flavor (SiteFlavor) - The new flavor.
+        """
+        self._flavors.append(flavor)
+        db.session.commit()
+
     def get_results(self) -> ResultIterator:
         """Get an iterator for all results associated to this site.
 
@@ -434,6 +454,9 @@ class Site(db.Model):
         """
         return self._hidden
 
+    def get_flavors(self) -> List[SiteFlavor]:
+        return self._flavors
+
     @abstractmethod
     def __repr__(self) -> str:
         """Get a human-readable representation string of the site.
@@ -442,6 +465,92 @@ class Site(db.Model):
             str: A human-readable representation string of the site.
         """
         return '<{} {}>'.format(self.__class__.__name__, self._short_name)
+
+
+class SiteFlavor(db.Model):
+    """The SiteFlavor class represents a flavor of virtual machines available for usage on a Site.
+
+    Flavours can be pre-existing options filled in by administrators or a custom configuration by the user.
+    Custom flavors' names should be set to SiteFlavor.CUSTOM_FLAVOR and can be distinguished from the pre-filled
+    flavors with SiteFlavor.is_unique()."""
+
+    __tablename__: str = 'siteflavor'
+
+    _uuid = db.Column(UUID, primary_key=True, default=new_uuid)
+    _name = db.Column(db.Text())
+    _site_short_name = db.Column(db.Text, db.ForeignKey('site._short_name'), nullable=False)
+    _site = db.relationship('Site', backref=db.backref('_flavors', lazy=True))
+    _custom_text = db.Column(db.Text(), nullable=True, default=None)
+
+    CUSTOM_FLAVOR: str = 'CUSTOM_FLAVOR'
+
+    def __init__(self, name: str, site: Site, custom_text: Optional[str] = None):
+        """Create a new site flavor.
+
+        Args:
+            name (str) - The name of the flavor.
+            site (Site) - The site to associate this result to.
+            custom_text (Optional[str]) - Some description text to explain what defines this flavor.
+        """
+        super(SiteFlavor, self).__init__(_name=name, _site=site, _custom_text=custom_text)
+
+    def get_name(self) -> str:
+        """Get the name of this virtual machine flavor.
+
+        Returns:
+            str - The name of the flavor.
+        """
+        return self._name
+
+    def get_site(self) -> Site:
+        """Get the site this flavor exists on.
+
+        Returns:
+            Site - The site the flavor exists on.
+        """
+        return self._site
+
+    def get_description(self) -> Optional[str]:
+        """Get a user description of a custom flavor, if it exists.
+
+        Returns:
+            Optional[str] - The user description of the flavor.
+        """
+        return self._custom_text
+
+    def get_uuid(self) -> str:
+        """Get the UUID for a flavor.
+
+        Returns:
+            str - The UUID.
+        """
+        return self._uuid
+
+    def set_name(self, name: str):
+        """Set a new name for a site flavor.
+
+        Args:
+            name (str) - The new name for the flavor.
+        """
+        self._name = name
+        db.session.commit()
+
+    def set_description(self, description: str):
+        """Set a new description for a site flavor.
+
+        Args:
+            description (str) - The new description for the flavor.
+        """
+        self._custom_text = description
+        db.session.commit()
+
+    def is_unique(self) -> bool:
+        """Check if this flavor is a unique flavor or a custom/user-added flavor.
+
+        Returns:
+            bool: True if the flavor is unique, False if it's a custom flavor.
+        """
+        return self._name != self.CUSTOM_FLAVOR
 
 
 class Tag(db.Model):
@@ -536,9 +645,12 @@ class Result(db.Model):
                                        nullable=False)
     _benchmark = db.relationship('Benchmark', backref=db.backref('_results', lazy=True))
 
+    _flavor_name = db.Column(db.Text, db.ForeignKey('siteflavor._name'), nullable=False)
+    _flavor = db.relationship('SiteFlavor')
+
     _tags = db.relationship('Tag', secondary=tag_result_association, backref="_results")
 
-    def __init__(self, json: str, uploader: Uploader, site: Site, benchmark: Benchmark, **kwargs):
+    def __init__(self, json: str, uploader: Uploader, site: Site, benchmark: Benchmark, flavor: SiteFlavor, **kwargs):
         """Create a new result entry object.
 
         Args:
@@ -546,14 +658,15 @@ class Result(db.Model):
             uploader (Uploader): The user that submitted this result.
             site (Site): The site the benchmark was run on.
             benchmark (Benchmark): The benchmark that was run.
+            flavor (SiteFlavor): The flavor of virtual machine the benchmark was run on.
             tags (List[Tag], optional): A list of tags to associated the result with.
         """
         new_args = {}
         if 'tags' in kwargs and len(kwargs['tags']) > 0:
             new_args['_tags'] = kwargs['tags']
 
-        super(Result, self).__init__(_json=json, _uploader=uploader,
-                                     _site=site, _benchmark=benchmark, **new_args)
+        super(Result, self).__init__(_json=json, _uploader=uploader, _site=site, _benchmark=benchmark, _flavor=flavor,
+                                     **new_args)
 
     def get_json(self) -> str:
         """Get the json data of the result.
@@ -594,6 +707,14 @@ class Result(db.Model):
             List[Tag]: A list of all tags associated with this result.
         """
         return self._tags
+
+    def get_flavor(self) -> SiteFlavor:
+        """Get the flavor of virtual machine the benchmark was run on.
+
+        Returns:
+            SiteFlavor: The flavor this specific benchmark result resulted from.
+        """
+        return self._flavor
 
     def set_hidden(self, state: bool):
         """Set the hide state of the result.

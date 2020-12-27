@@ -4,6 +4,7 @@
 
 {% block head %}
     {{ super() }}
+    <script src="static/scripts/view/utility.js"></script>
     <script src="static/scripts/view/upload.js"></script>
 {% endblock %}
 
@@ -35,9 +36,19 @@
                             <select class="form-control" id="site_selection" name="site"></select>
                         </div>
                         <div class="m-2">
+                            <label for="siteFlavor">Select machine flavor:</label>
+                            <select class="form-control" id="siteFlavor" name="siteFlavor">
+                            </select>
+                        </div>
+                        <div class="m-2">
+                            <label for="siteFlavorCustom"></label>
+                            <textarea class="form-control d-none" id="siteFlavorCustom" name="siteFlavorCustom"
+                                      placeholder="Enter more details about your custom flavor here..."></textarea>
+                        </div>
+                        <div class="m-2">
                             <label for="custom_site">Custom site</label>
                             <input class="checkbox" type="checkbox" value="" id="custom_site"
-                                                                    onclick="site_checkbox_click(this)" />
+                                                                    onclick="upload_page.site_checkbox_click(this)" />
                         </div>
                         <div class="m-2">
                             <label for="site_name">Site name</label><br/>
@@ -68,7 +79,7 @@
                             <label for="custom_tag">Custom tag</label>
                             <div class="input-group">
                                 <input type="text" id="custom_tag" placeholder="tensor" class="form-control"
-                                                                       onkeyup="stopped_typing_tag_field()"/>
+                                                                       onkeyup="upload_page.stopped_typing_tag_field()"/>
                                 <div class="input-group-append">
                                     <button type="button" id="add_tag_button" class="btn btn-outline-success"
                                             onclick="add_tag()">Add Tag
@@ -81,9 +92,9 @@
             </div>
             <label class="checkbox-label">
                 <input class="checkbox" type="checkbox" value="" id="agreed_license"
-                    onclick="license_checkbox_click(this)" />
+                    onclick="upload_page.license_checkbox_click(this)" />
                 I have read and accept the
-                <button type="button" class="btn btn-secondary" onclick="show_license()">
+                <button type="button" class="btn btn-secondary" onclick="upload_page.show_license()">
                     License agreement
                 </button>
             </label>

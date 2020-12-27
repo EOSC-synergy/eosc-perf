@@ -1,5 +1,5 @@
 """"This module contains the implementation of the Model facade."""
-from typing import List, Type, Optional
+from typing import List, Type, Optional, Tuple
 import json
 from sqlalchemy.exc import SQLAlchemyError
 from eosc_perf.model.data_types import Result, Tag, Benchmark, Uploader, Site, \
@@ -29,6 +29,27 @@ class DatabaseFacade:
         """
         # prepare query
         results = db.session.query(Result).filter(Result._uuid == uuid).all()
+        db.session.commit()
+
+        # check number of results
+        if len(results) < 1:
+            raise self.NotFoundError("result '{}' not found".format(uuid))
+
+        #
+        return results[0]
+
+    def get_site_flavor(self, uuid: str) -> SiteFlavor:
+        """Fetch a site flavour by UUID.
+
+        Throws DatabaseFacade.NotFoundError if no such flavour is found.
+
+        Args:
+            uuid (str): The UUID of the flavour to get.
+        Returns:
+            Result: The desired flavour.
+        """
+        # prepare query
+        results = db.session.query(SiteFlavor).filter(SiteFlavor._uuid == uuid).all()
         db.session.commit()
 
         # check number of results
@@ -416,6 +437,8 @@ class DatabaseFacade:
         """
         try:
             site = self.get_site(short_name)
+            for flavor in site.get_flavors():
+                self._remove_from_db(flavor)
             return self._remove_from_db(site)
         except self.NotFoundError:
             return False
@@ -560,6 +583,16 @@ class DatabaseFacade:
 
         #
         return reports
+
+    def add_flavor(self, name: str, description: str, site_short_name: str) -> Tuple[bool, Optional[str]]:
+        if len(name) < 1:
+            raise ValueError("flavor name too short")
+        try:
+            site = self.get_site(site_short_name)
+        except self.NotFoundError:
+            return False, None
+        new_flavor = SiteFlavor(name, site, description if len(description) > 0 else None)
+        return self._add_to_db(new_flavor), new_flavor.get_uuid()
 
 
 # single global instance

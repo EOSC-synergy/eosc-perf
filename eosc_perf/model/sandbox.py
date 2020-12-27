@@ -1,7 +1,7 @@
 """Test data generation module."""
 
 import json
-from .data_types import Uploader, Site, Benchmark, Result
+from .data_types import Uploader, Site, Benchmark, Result, SiteFlavor
 from .facade import facade
 
 
@@ -28,6 +28,22 @@ def add_demo():
         address='127.0.0.1',
         description='Diagram test site entry (Do not use)')
 
+    try:
+        facade.get_site(demo_site.get_short_name())
+    except facade.NotFoundError:
+        facade.add_site(json.dumps({
+            'short_name': demo_site.get_short_name(),
+            'address': demo_site.get_address(),
+            'name': demo_site.get_name(),
+            'description': demo_site.get_description()
+        }))
+    facade.get_site(demo_site.get_short_name()).set_hidden(False)
+
+    # re-fetch to get site with flavors (automatically added in facade)
+    demo_site = facade.get_site(demo_site.get_short_name())
+
+    flavor = SiteFlavor("test-flavor", facade.get_site(demo_site.get_short_name()), custom_text="Demo machine")
+
     with open('eosc_perf/controller/config/result_template.json') as file:
         demo_benchmark = Benchmark(docker_name='donotuse/diagram:test', uploader=demo_uploader, template=file.read())
 
@@ -52,7 +68,8 @@ def add_demo():
             json=json.dumps(data),
             uploader=demo_uploader,
             site=demo_site,
-            benchmark=demo_benchmark))
+            benchmark=demo_benchmark,
+            flavor=flavor))
 
     try:
         facade.get_uploader(demo_uploader.get_id())
@@ -64,24 +81,13 @@ def add_demo():
         }))
 
     try:
-        facade.get_site(demo_site.get_short_name())
-    except facade.NotFoundError:
-        facade.add_site(json.dumps({
-            'short_name': demo_site.get_short_name(),
-            'address': demo_site.get_address(),
-            'name': demo_site.get_name(),
-            'description': demo_site.get_description()
-        }))
-        facade.get_site(demo_site.get_short_name()).set_hidden(False)
-
-    try:
         facade.get_benchmark(demo_benchmark.get_docker_name())
     except facade.NotFoundError:
         facade.add_benchmark(
             demo_benchmark.get_docker_name(),
             demo_benchmark.get_uploader().get_id(),
             demo_benchmark.get_template())
-        facade.get_benchmark(demo_benchmark.get_docker_name()).set_hidden(False)
+    facade.get_benchmark(demo_benchmark.get_docker_name()).set_hidden(False)
 
     filters = {'filters': [
         {'type': 'site', 'value': demo_site.get_short_name()},

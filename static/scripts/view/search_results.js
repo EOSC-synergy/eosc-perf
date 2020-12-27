@@ -1,6 +1,7 @@
 const FIELDS = {
     BENCHMARK: 'Benchmark',
     SITE: 'Site',
+    FLAVOR: 'Site flavour',
     UPLOADER: 'Uploader',
     DATA: 'Data',
     TAGS: 'Tags'
@@ -10,6 +11,7 @@ const COLUMNS = {
     CHECKBOX: 'Select',
     BENCHMARK: FIELDS.BENCHMARK,
     SITE: FIELDS.SITE,
+    FLAVOR: FIELDS.FLAVOR,
     UPLOADER: FIELDS.UPLOADER,
     DATA: FIELDS.DATA,
     TAGS: FIELDS.TAGS,
@@ -77,6 +79,7 @@ const JSON_KEYS = new Map([
     [COLUMNS.CHECKBOX, 'selected'],
     [COLUMNS.BENCHMARK, "benchmark"],
     [COLUMNS.SITE, "site"],
+    [COLUMNS.FLAVOR, "flavor"],
     [COLUMNS.UPLOADER, "uploader"],
     [COLUMNS.DATA, "data"],
     [COLUMNS.TAGS, "tags"]
@@ -321,6 +324,7 @@ class Table {
                         cell.appendChild(mailLink);
                     } break;
 
+                    case (COLUMNS.FLAVOR):
                     case (COLUMNS.SITE):
                     case (COLUMNS.TAGS):
                     case (COLUMNS.BENCHMARK): {
