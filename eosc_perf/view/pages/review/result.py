@@ -7,14 +7,14 @@ from flask import request, Response, redirect
 from flask.blueprints import Blueprint
 from werkzeug.urls import url_encode
 
-from ..page_factory import PageFactory
+from eosc_perf.view.page_factory import PageFactory
 from eosc_perf.utility.type_aliases import HTML
 
-from ...model.facade import facade
-from ...model.data_types import Report, ResultReport
-from ...controller.io_controller import controller
+from eosc_perf.model.facade import facade
+from eosc_perf.model.data_types import Report, ResultReport
+from eosc_perf.controller.io_controller import controller
 
-from .helpers import error_json_redirect, error_redirect, info_redirect
+from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect, info_redirect
 
 
 class ViewReportPageFactory(PageFactory):
@@ -96,7 +96,7 @@ def view_report():
     json_data = json.dumps(json.loads(result.get_json()), indent=4)
 
     page = factory.generate_page(
-        template='view_report.html',
+        template='review/result.html',
         args=None,
         reporter_name=reporter_name,
         reporter_mail=reporter_mail,

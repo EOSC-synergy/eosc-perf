@@ -6,16 +6,16 @@ from typing import Tuple, Any, Dict
 from flask import request, Response, redirect
 from flask.blueprints import Blueprint
 
-from ..page_factory import PageFactory
+from eosc_perf.view.page_factory import PageFactory
 from eosc_perf.utility.type_aliases import HTML
 
-from ...model.facade import facade
-from ...controller.io_controller import controller
-from ...configuration import configuration
-from ...model.database import db
-from ...model.data_types import ResultIterator
+from eosc_perf.model.facade import facade
+from eosc_perf.controller.io_controller import controller
+from eosc_perf.configuration import configuration
+from eosc_perf.model.database import db
+from eosc_perf.model.data_types import ResultIterator
 
-from .helpers import error_json_redirect, error_redirect
+from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect
 
 
 class ResultReportPageFactory(PageFactory):
@@ -88,7 +88,7 @@ def report_result():
         return error_redirect('Result does not exist')
 
     page = factory.generate_page(
-        template='report_result.html',
+        template='review/report_result.html',
         args=None,
         page_content=factory.generate_page_content(uuid),
         uuid=uuid)

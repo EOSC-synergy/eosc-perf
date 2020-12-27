@@ -7,13 +7,13 @@ from typing import Tuple, Any, Dict
 from flask import request, Response
 from flask.blueprints import Blueprint
 
-from ...configuration import configuration
-from ..page_factory import PageFactory
+from eosc_perf.configuration import configuration
+from eosc_perf.view.page_factory import PageFactory
 from eosc_perf.utility.type_aliases import HTML
 
-from ...controller.io_controller import controller
+from eosc_perf.controller.io_controller import controller
 
-from .helpers import error_json_redirect, error_redirect
+from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect
 
 UPLOAD_LICENSE_PATH: str = "upload_license.txt"
 
@@ -50,7 +50,7 @@ def upload_result():
     factory = UploadJSONFactory()
 
     page = factory.generate_page(
-        template='upload.html',
+        template='submission/result.html',
         args=None,
         license=factory.get_license_string().replace('\n', '<br/>'))
     return Response(page, mimetype='text/html')

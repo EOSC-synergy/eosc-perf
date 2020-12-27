@@ -5,12 +5,12 @@ from typing import Tuple, Any, Dict
 from flask import request, Response
 from flask.blueprints import Blueprint
 
-from ..page_factory import PageFactory
+from eosc_perf.view.page_factory import PageFactory
 from eosc_perf.utility.type_aliases import HTML, JSON
-from ...controller.io_controller import controller
-from ...model.facade import facade
+from eosc_perf.controller.io_controller import controller
+from eosc_perf.model.facade import facade
 
-from .helpers import error_redirect
+from eosc_perf.view.pages.helpers import error_redirect
 
 
 class SearchResultFactory(PageFactory):
@@ -51,7 +51,7 @@ def make_search_page():
             return error_redirect('Result search requires a valid Benchmark name')
     args = json.dumps({'benchmark': benchmark, 'admin': controller.is_admin()})
     factory = SearchResultFactory()
-    page = factory.generate_page(template='result_search.html', args=args)
+    page = factory.generate_page(template='search/results.html', args=args)
     return Response(page, mimetype='text/html')
 
 

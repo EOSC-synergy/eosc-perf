@@ -4,7 +4,7 @@ from typing import Tuple, Any, Dict
 from flask import Response
 from flask.blueprints import Blueprint
 
-from ..page_factory import PageFactory
+from eosc_perf.view.page_factory import PageFactory
 from eosc_perf.utility.type_aliases import HTML
 
 

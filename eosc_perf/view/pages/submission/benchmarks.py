@@ -4,13 +4,13 @@ from typing import Tuple, Dict, Any
 from flask import request, Response
 from flask.blueprints import Blueprint
 
-from ..page_factory import PageFactory
+from eosc_perf.view.page_factory import PageFactory
 from eosc_perf.utility.type_aliases import HTML
-from ...controller.authenticator import AuthenticateError
+from eosc_perf.controller.authenticator import AuthenticateError
 
-from ...controller.io_controller import controller
+from eosc_perf.controller.io_controller import controller
 
-from .helpers import error_json_redirect, error_redirect
+from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect
 
 
 class AddBenchmarkPageFactory(PageFactory):
@@ -32,7 +32,7 @@ def add_benchmark():
 
     factory = AddBenchmarkPageFactory()
 
-    page = factory.generate_page(template='add_benchmark.html')
+    page = factory.generate_page(template='submission/benchmark.html')
     return Response(page, mimetype='text/html')
 
 

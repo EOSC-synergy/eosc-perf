@@ -5,14 +5,14 @@ from flask import request, Response, redirect
 from flask.blueprints import Blueprint
 from werkzeug.urls import url_encode
 
-from ..page_factory import PageFactory
+from eosc_perf.view.page_factory import PageFactory
 from eosc_perf.utility.type_aliases import HTML
 
-from ...model.facade import facade
-from ...model.data_types import Report, SiteReport
-from ...controller.io_controller import controller
+from eosc_perf.model.facade import facade
+from eosc_perf.model.data_types import Report, SiteReport
+from eosc_perf.controller.io_controller import controller
 
-from .helpers import error_json_redirect, error_redirect, info_redirect
+from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect, info_redirect
 
 
 class SiteReviewPageFactory(PageFactory):
@@ -84,7 +84,7 @@ def review_site():
     date = report.get_date()
 
     page = factory.generate_page(
-        template='site_review.html',
+        template='review/site.html',
         args=None,
         site_name=site_name,
         site_description=report.get_site().get_description(),

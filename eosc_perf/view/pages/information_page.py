@@ -38,7 +38,7 @@ def info_page():
 def privacy_page():
     """HTTP endpoint for the upload instructions page."""
     factory = InformationPageFactory()
-    page = factory.generate_page(template='upload_instruction.html')
+    page = factory.generate_page(template='submission/benchmark_upload_instruction.html')
     return Response(page, mimetype='text/html')
 
 
@@ -49,7 +49,7 @@ def code_guidelines():
     with open('eosc_perf/controller/' + DEFAULT_TEMPLATE_PATH) as min_template:
         info = json.loads(min_template.read())
     info_str = json.dumps(info, indent=4, sort_keys=True)
-    page = factory.generate_page(template='code_guidelines.html', args=info_str)
+    page = factory.generate_page(template='submission/benchmark_code_guidelines.html', args=info_str)
     return Response(page, mimetype='text/html')
 
 

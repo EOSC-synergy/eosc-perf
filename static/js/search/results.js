@@ -810,13 +810,11 @@ class SpeedupDiagram extends Diagram {
  * The ResultSearch class is responsible to communicate with the backend to get the search results and display them.
  * TODO: split into smaller parts
  */
-class ResultSearch extends Content {
+class ResultSearch {
     /**
      * Set up result search.
      */
     constructor() {
-        super();
-
         this.results = [];
         this.filters = [];
         this.ordered_by = null;

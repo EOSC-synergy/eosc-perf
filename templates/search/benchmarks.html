@@ -3,32 +3,32 @@
 {% block title %}Benchmark Search{% endblock %}
 
 {% block head %}
-{{ super() }}
-<link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" />
-<script src="static/scripts/view/benchmark_search.js"></script>
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" />
+    <script src="static/js/search/benchmarks.js"></script>
 
-<style>
-    table {
-        border-collapse: collapse;
-        border-spacing: 0;
-        width: 100%;
-    }
+    <style>
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            width: 100%;
+        }
 
-    tr {
-        border-collapse: collapse;
-    }
+        tr {
+            border-collapse: collapse;
+        }
 
-    th,
-    td {
-        padding: 8px;
-        text-align: left;
-        border-bottom: 3px solid #000;
-    }
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 3px solid #000;
+        }
 
-    td {
-        border-bottom: 1px solid #ddd;
-    }
-</style>
+        td {
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
 {% endblock %}
 
 {% block info %}

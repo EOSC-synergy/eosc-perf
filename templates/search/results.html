@@ -4,14 +4,12 @@
 
 {% block head %}
 {{ super() }}
-    <script type="text/javascript" src="static/scripts/view/content.js"></script>
-    <script type="text/javascript" src="static/scripts/view/search_results.js"></script>
     <link rel="stylesheet" type="text/css" href="static/css/loading.css" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.0/styles/railscasts.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.0/highlight.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js"></script>
-    <!-- <script>let BENCHMARK_QUERY = "";let admin = false</script> -->
+    <script src="static/js/search/results.js"></script>
     <style>
     .list-group-item-small {
         padding: 0.25rem 0.75rem;

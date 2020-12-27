@@ -9,16 +9,16 @@ from flask.blueprints import Blueprint
 import markdown2
 from werkzeug.urls import url_encode
 
-from ..page_factory import PageFactory
+from eosc_perf.view.page_factory import PageFactory
 from eosc_perf.utility.type_aliases import HTML
 
-from ...model.facade import facade
-from ...model.data_types import Report, BenchmarkReport
-from ...controller.io_controller import controller
-from ...controller.authenticator import AuthenticateError
+from eosc_perf.model.facade import facade
+from eosc_perf.model.data_types import Report, BenchmarkReport
+from eosc_perf.controller.io_controller import controller
+from eosc_perf.controller.authenticator import AuthenticateError
 
-from .helpers import error_json_redirect, error_redirect, info_redirect
-from ...utility.dockerhub import build_dockerhub_url, build_dockerregistry_url
+from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect, info_redirect
+from eosc_perf.utility.dockerhub import build_dockerhub_url, build_dockerregistry_url
 
 
 def report_exists(uuid: str) -> bool:
@@ -106,7 +106,7 @@ def review_benchmark():
         dockerhub_desc_formatted = "Could not load description"
 
     page = factory.generate_page(
-        template='benchmark_review.html',
+        template='review/benchmark.html',
         args=None,
         docker_name=docker_name,
         docker_link=dockerhub_link,

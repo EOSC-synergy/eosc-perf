@@ -9,15 +9,15 @@ from .model.database import configure_database
 from .model.sandbox import add_demo
 from .view.ajax import ajax_blueprint
 from .view.pages.information_page import info_blueprint
-from .view.pages.report_result import result_report_blueprint
-from .view.pages.benchmark_review import benchmark_review_blueprint
-from .view.pages.benchmark_search import benchmark_search_blueprint
-from .view.pages.site_review import site_review_blueprint
-from .view.pages.view_report import view_report_blueprint
-from .view.pages.add_benchmark import add_benchmark_blueprint
-from .view.pages.upload_json import upload_json_blueprint
-from .view.pages.search_result import result_search_blueprint
-from .view.pages.privacy_policy import privacy_blueprint
+from eosc_perf.view.pages.review.report_result import result_report_blueprint
+from eosc_perf.view.pages.review.benchmark import benchmark_review_blueprint
+from eosc_perf.view.pages.search.benchmarks import benchmark_search_blueprint
+from eosc_perf.view.pages.review.site import site_review_blueprint
+from eosc_perf.view.pages.review.result import view_report_blueprint
+from eosc_perf.view.pages.submission.benchmarks import add_benchmark_blueprint
+from eosc_perf.view.pages.submission.results import upload_json_blueprint
+from eosc_perf.view.pages.search.results import result_search_blueprint
+from eosc_perf.view.pages.privacy_policy import privacy_blueprint
 from .view.pages.site_editor import site_editor_blueprint
 
 
