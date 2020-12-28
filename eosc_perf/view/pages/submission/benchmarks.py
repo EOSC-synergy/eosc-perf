@@ -10,8 +10,7 @@ from eosc_perf.controller.authenticator import AuthenticateError
 
 from eosc_perf.controller.io_controller import controller
 
-from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect, only_authenticated, \
-    only_authenticated_json
+from eosc_perf.view.pages.helpers import error_json_redirect, only_authenticated, only_authenticated_json
 
 
 class AddBenchmarkPageFactory(PageFactory):

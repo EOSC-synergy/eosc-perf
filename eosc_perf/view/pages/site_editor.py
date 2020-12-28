@@ -1,18 +1,15 @@
 """This module contains the factory to generate site editing pages."""
-import logging
 from typing import Tuple, Dict, Any
 
 from flask import request, Response
 from flask.blueprints import Blueprint
 
-from ...model.database import db
 from ..page_factory import PageFactory
 from eosc_perf.utility.type_aliases import HTML
-from ...controller.authenticator import AuthenticateError
 
 from ...controller.io_controller import controller
 
-from .helpers import error_json_redirect, error_redirect, only_admin, only_admin_json
+from .helpers import error_json_redirect, only_admin, only_admin_json
 
 
 class EditSitePageFactory(PageFactory):

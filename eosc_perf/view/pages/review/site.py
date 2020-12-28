@@ -21,7 +21,8 @@ class SiteReviewPageFactory(PageFactory):
     def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
         return "", {}
 
-    def report_exists(self, uuid: str) -> bool:
+    @staticmethod
+    def report_exists(uuid: str) -> bool:
         """Helper to determine whether a report exists.
 
         Args:

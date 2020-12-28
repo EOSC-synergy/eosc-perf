@@ -25,7 +25,8 @@ class ResultReportPageFactory(PageFactory):
     def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
         return "", {}
 
-    def generate_page_content(self, uuid: str) -> HTML:
+    @staticmethod
+    def generate_page_content(uuid: str) -> HTML:
         """Generate page body code.
 
         This contains the result json for the template.
@@ -42,7 +43,8 @@ class ResultReportPageFactory(PageFactory):
         string = json.dumps(result_json, indent=4, sort_keys=True)
         return string
 
-    def result_exists(self, uuid: str) -> bool:
+    @staticmethod
+    def result_exists(uuid: str) -> bool:
         """Helper to determine whether a result exists.
 
         Args:

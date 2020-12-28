@@ -143,7 +143,8 @@ class DatabaseFacade:
         #
         return results[0]
 
-    def get_sites(self) -> List[Site]:
+    @staticmethod
+    def get_sites() -> List[Site]:
         """Get all sites.
 
         Returns:
@@ -156,7 +157,8 @@ class DatabaseFacade:
         #
         return results
 
-    def get_tags(self) -> List[Tag]:
+    @staticmethod
+    def get_tags() -> List[Tag]:
         """Get all tags.
 
         Returns:
@@ -169,7 +171,8 @@ class DatabaseFacade:
         #
         return results
 
-    def get_benchmarks(self) -> List[Benchmark]:
+    @staticmethod
+    def get_benchmarks() -> List[Benchmark]:
         """Get all benchmarks.
 
         Returns:
@@ -182,7 +185,8 @@ class DatabaseFacade:
         #
         return results
 
-    def query_results(self, filter_json: str) -> List[Result]:
+    @staticmethod
+    def query_results(filter_json: str) -> List[Result]:
         """Fetch results based on given filters formatted in JSON.
 
         "type": one of "benchmark", "uploader", "site", "tag", "json",
@@ -211,7 +215,8 @@ class DatabaseFacade:
                     filter_['key'], filter_['value'], filter_['mode']))
         return filterer.filter(ResultIterator(db.session))
 
-    def query_benchmarks(self, keywords: List[str]) -> List[Benchmark]:
+    @staticmethod
+    def query_benchmarks(keywords: List[str]) -> List[Benchmark]:
         """Query all benchmarks containing all keywords in the name.
 
         Args:
@@ -231,7 +236,8 @@ class DatabaseFacade:
 
         return results
 
-    def _add_to_db(self, obj: Type[db.Model]) -> bool:
+    @staticmethod
+    def _add_to_db(obj: Type[db.Model]) -> bool:
         """Add a new model object to the database.
 
         Args:
@@ -249,7 +255,8 @@ class DatabaseFacade:
             db.session.rollback()
             return False
 
-    def _remove_from_db(self, obj: Type[db.Model]) -> bool:
+    @staticmethod
+    def _remove_from_db(obj: Type[db.Model]) -> bool:
         """Remove a model object from the database.
 
         Args:
@@ -572,7 +579,8 @@ class DatabaseFacade:
         #
         return results[0]
 
-    def get_reports(self, only_unanswered: bool = False) -> List[Report]:
+    @staticmethod
+    def get_reports(only_unanswered: bool = False) -> List[Report]:
         """Get all or only unanswered reports.
 
         Args:

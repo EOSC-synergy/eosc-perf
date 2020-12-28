@@ -115,7 +115,8 @@ class BenchmarkFetchAJAXHandler(AJAXHandler):
         """Fetch all benchmarks independent of given query."""
         return self.fetch_benchmarks(), 200
 
-    def fetch_benchmarks(self) -> JSON:
+    @staticmethod
+    def fetch_benchmarks() -> JSON:
         """Fetch all benchmarks.
 
         Returns:
@@ -133,7 +134,8 @@ class SiteFetchAJAXHandler(AJAXHandler):
         """Fetch all sites independent of given query."""
         return self.fetch_sites()
 
-    def fetch_sites(self) -> Tuple[JSON, Optional[int]]:
+    @staticmethod
+    def fetch_sites() -> Tuple[JSON, Optional[int]]:
         """Fetch all sites.
 
         Returns:
@@ -167,7 +169,8 @@ class TagFetchAJAXHandler(AJAXHandler):
         """
         return self.fetch_tags()
 
-    def fetch_tags(self) -> Tuple[JSON, Optional[int]]:
+    @staticmethod
+    def fetch_tags() -> Tuple[JSON, Optional[int]]:
         """Fetch all tags.
 
         Returns:
@@ -202,7 +205,6 @@ class FlavorUpdateAJAX(AJAXHandler):
         if query is None:
             return '{"error": "Empty query."}', 400
         try:
-            #data = json.loads(query)
             data = query
             new_name: str = data["name"]
             new_description = data["description"]

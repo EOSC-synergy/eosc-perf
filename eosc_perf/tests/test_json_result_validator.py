@@ -62,11 +62,13 @@ class JSONResultValidatorTest(unittest.TestCase):
         js["another_new_key"] = {"new_dict_sub_key": 2}
         self.assertTrue(self.validator.validate_json(json.dumps(js)))
 
-    def _load_template(self):
+    @staticmethod
+    def _load_template():
         with open("eosc_perf/controller/config/result_template.json") as file:
             return file.read()
 
-    def _load_sample(self):
+    @staticmethod
+    def _load_sample():
         with open("eosc_perf/tests/sample_result.json") as file:
             return file.read()
 

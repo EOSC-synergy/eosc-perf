@@ -650,7 +650,7 @@ class Result(db.Model):
 
     _tags = db.relationship('Tag', secondary=tag_result_association, backref="_results")
 
-    def __init__(self, json: str, uploader: Uploader, site: Site, benchmark: Benchmark, flavor: SiteFlavor, **kwargs):
+    def __init__(self, json_data: str, uploader: Uploader, site: Site, benchmark: Benchmark, flavor: SiteFlavor, **kwargs):
         """Create a new result entry object.
 
         Args:
@@ -665,7 +665,7 @@ class Result(db.Model):
         if 'tags' in kwargs and len(kwargs['tags']) > 0:
             new_args['_tags'] = kwargs['tags']
 
-        super(Result, self).__init__(_json=json, _uploader=uploader, _site=site, _benchmark=benchmark, _flavor=flavor,
+        super(Result, self).__init__(_json=json_data, _uploader=uploader, _site=site, _benchmark=benchmark, _flavor=flavor,
                                      **new_args)
 
     def get_json(self) -> str:

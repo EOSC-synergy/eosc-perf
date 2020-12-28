@@ -84,7 +84,7 @@ def add_demo():
         if not controller._result_validator.validate_json(data_raw, demo_benchmark.get_template()):
             raise ValueError("demo data " + str(i) + " does *not* pass demo template")
         demo_results.append(Result(
-            json=json.dumps(data),
+            json_data=json.dumps(data),
             uploader=demo_uploader,
             site=demo_site,
             benchmark=demo_benchmark,

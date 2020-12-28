@@ -39,7 +39,8 @@ class JSONResultValidator:
         return skip_keycheck or self._has_mandatory_fields(result_json, template)
 
     # Check whether the given json has the same keys as the template
-    def _has_mandatory_fields(self, result_json: Dict, template: Dict):
+    @staticmethod
+    def _has_mandatory_fields(result_json: Dict, template: Dict):
         """Check if a given json contains all fields contained in the template.
         Args:
             result_json (Dict): The json data to check for completeness.

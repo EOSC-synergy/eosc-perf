@@ -535,7 +535,8 @@ class IOControllerTest(unittest.TestCase):
         with self.app.test_request_context():
             self.assertFalse(self.controller.is_authenticated())
 
-    def _login_standard_user(self):
+    @staticmethod
+    def _login_standard_user():
         session['user'] = USER
         session['user']['info'].pop('eduperson_entitlement', None)
 
@@ -545,7 +546,8 @@ class IOControllerTest(unittest.TestCase):
         admin_entitlement[0] += '#aai.egi.eu'
         session['user']['info']['eduperson_entitlement'] = admin_entitlement
 
-    def _logout(self):
+    @staticmethod
+    def _logout():
         session.pop('user', None)
 
 

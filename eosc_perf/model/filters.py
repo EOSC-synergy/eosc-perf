@@ -112,7 +112,8 @@ class TagFilter(Filter):
 class JsonValueFilter(Filter):
     """Filter implementation that matches on a value in the JSON document."""
 
-    def _deep_get(self, dictionary: Dict, keys: str, default: Optional[str] = None):
+    @staticmethod
+    def _deep_get(dictionary: Dict, keys: str, default: Optional[str] = None):
         """Helper to get element based on JSON template.
 
         Args:
