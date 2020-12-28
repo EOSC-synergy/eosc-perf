@@ -7,13 +7,13 @@ from typing import Tuple, Any, Dict
 from flask import request, Response
 from flask.blueprints import Blueprint
 
-from eosc_perf.configuration import configuration
 from eosc_perf.view.page_factory import PageFactory
 from eosc_perf.utility.type_aliases import HTML
 
 from eosc_perf.controller.io_controller import controller
 
-from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect
+from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect, only_authenticated_json, \
+    only_authenticated
 
 UPLOAD_LICENSE_PATH: str = "upload_license.txt"
 
@@ -41,12 +41,9 @@ upload_json_blueprint = Blueprint('upload_json_blueprint', __name__)
 
 
 @upload_json_blueprint.route('/upload', methods=['GET'])
+@only_authenticated
 def upload_result():
     """HTTP endpoint for the result upload page."""
-
-    if not controller.is_authenticated():
-        return error_redirect('Not logged in')
-
     factory = UploadJSONFactory()
 
     page = factory.generate_page(
@@ -57,10 +54,9 @@ def upload_result():
 
 
 @upload_json_blueprint.route('/upload_submit', methods=['POST'])
+@only_authenticated_json
 def upload_result_submit():
     """HTTP endpoint to take in results."""
-    if not controller.is_authenticated():
-        return error_json_redirect('Not logged in')
     # check if the post request has the file part
     if 'file' not in request.files:
         return error_redirect('No file in request')

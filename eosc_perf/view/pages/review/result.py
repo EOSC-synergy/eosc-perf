@@ -14,7 +14,7 @@ from eosc_perf.model.facade import facade
 from eosc_perf.model.data_types import Report, ResultReport
 from eosc_perf.controller.io_controller import controller
 
-from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect, info_redirect
+from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect, info_redirect, only_admin, only_admin_json
 
 
 class ViewReportPageFactory(PageFactory):
@@ -42,10 +42,9 @@ view_report_blueprint = Blueprint('view-report', __name__)
 
 
 @view_report_blueprint.route('/view_report_fetch_first', methods=['GET'])
+@only_admin
 def test_view_report():
     """Review the first new benchmark report."""
-    if not controller.is_admin():
-        return error_redirect('Not an admin')
     reports = facade.get_reports(only_unanswered=True)
     if len(reports) == 0:
         return info_redirect('No reports available')
@@ -56,14 +55,9 @@ def test_view_report():
 
 
 @view_report_blueprint.route('/view_report', methods=['GET'])
+@only_admin
 def view_report():
     """HTTP endpoint for the view report page."""
-    if not controller.is_authenticated():
-        return error_redirect('Not logged in')
-
-    if not controller.is_admin():
-        return error_redirect('Not an admin')
-
     uuid = request.args.get('uuid')
     if uuid is None:
         return error_redirect('View report page opened with no uuid')
@@ -113,14 +107,9 @@ def view_report():
 
 
 @view_report_blueprint.route('/view_report_submit', methods=['POST'])
+@only_admin_json
 def view_report_submit():
     """HTTP endpoint to take in the reports."""
-    if not controller.is_authenticated():
-        return error_json_redirect('Not logged in')
-
-    if not controller.is_authenticated():
-        return error_json_redirect('Not an admin')
-
     uuid = request.form['uuid']
 
     # validate input

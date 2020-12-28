@@ -12,7 +12,7 @@ from eosc_perf.model.facade import facade
 from eosc_perf.model.data_types import Report, SiteReport
 from eosc_perf.controller.io_controller import controller
 
-from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect, info_redirect
+from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect, info_redirect, only_admin, only_admin_json
 
 
 class SiteReviewPageFactory(PageFactory):
@@ -40,10 +40,9 @@ site_review_blueprint = Blueprint('site-review', __name__)
 
 
 @site_review_blueprint.route('/site_review_fetch_first', methods=['GET'])
+@only_admin
 def review_site_helper():
     """Review the first new site report."""
-    if not controller.is_admin():
-        return error_redirect('Not an admin')
     reports = facade.get_reports(only_unanswered=True)
     if len(reports) == 0:
         return info_redirect('No reports available')
@@ -54,15 +53,9 @@ def review_site_helper():
 
 
 @site_review_blueprint.route('/site_review', methods=['GET'])
+@only_admin
 def review_site():
     """HTTP endpoint for the site review page."""
-
-    if not controller.is_authenticated():
-        return error_redirect('Not logged in')
-
-    if not controller.is_admin():
-        return error_redirect('Not an admin')
-
     uuid = request.args.get('uuid')
     if uuid is None:
         return error_redirect('Site review page opened with no uuid')
@@ -97,15 +90,9 @@ def review_site():
 
 
 @site_review_blueprint.route('/site_review_submit', methods=['POST'])
+@only_admin_json
 def review_site_submit():
     """HTTP endpoint to take in the reports."""
-
-    if not controller.is_authenticated():
-        return error_json_redirect('Not logged in')
-
-    if not controller.is_authenticated():
-        return error_json_redirect('Not an admin')
-
     uuid = request.form['uuid']
 
     # validate input

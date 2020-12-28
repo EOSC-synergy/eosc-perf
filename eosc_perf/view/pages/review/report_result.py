@@ -15,7 +15,8 @@ from eosc_perf.configuration import configuration
 from eosc_perf.model.database import db
 from eosc_perf.model.data_types import ResultIterator
 
-from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect
+from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect, only_authenticated_json, \
+    only_authenticated
 
 
 class ResultReportPageFactory(PageFactory):
@@ -73,12 +74,9 @@ def test_report_result():
 
 
 @result_report_blueprint.route('/report_result', methods=['GET'])
+@only_authenticated
 def report_result():
     """HTTP endpoint for the result report submission page."""
-
-    if not controller.is_authenticated():
-        return error_redirect('Not logged in')
-
     uuid = request.args.get('uuid')
     if uuid is None:
         return error_redirect('Report result page called with no result')
@@ -96,12 +94,9 @@ def report_result():
 
 
 @result_report_blueprint.route('/report_result_submit', methods=['POST'])
+@only_authenticated_json
 def report_result_submit():
     """HTTP endpoint to take in the reports."""
-
-    if not controller.is_authenticated():
-        return error_json_redirect('Not logged in')
-
     uuid = request.form['uuid']
     message = request.form['message']
     # validate input

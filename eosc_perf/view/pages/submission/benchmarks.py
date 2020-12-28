@@ -10,7 +10,8 @@ from eosc_perf.controller.authenticator import AuthenticateError
 
 from eosc_perf.controller.io_controller import controller
 
-from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect
+from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect, only_authenticated, \
+    only_authenticated_json
 
 
 class AddBenchmarkPageFactory(PageFactory):
@@ -24,12 +25,9 @@ add_benchmark_blueprint = Blueprint('add-benchmark-factory', __name__)
 
 
 @add_benchmark_blueprint.route('/add_benchmark', methods=['GET'])
+@only_authenticated
 def add_benchmark():
     """HTTP endpoint for the benchmark submission page."""
-
-    if not controller.is_authenticated():
-        return error_redirect('Not logged in')
-
     factory = AddBenchmarkPageFactory()
 
     page = factory.generate_page(template='submission/benchmark.html')
@@ -37,6 +35,7 @@ def add_benchmark():
 
 
 @add_benchmark_blueprint.route('/add_benchmark_submit', methods=['POST'])
+@only_authenticated_json
 def add_benchmark_submit():
     """HTTP endpoint to take in new benchmarks."""
     docker_name = request.form['docker_name'] if 'docker_name' in request.form else None

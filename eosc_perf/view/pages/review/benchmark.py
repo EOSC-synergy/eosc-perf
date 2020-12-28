@@ -17,7 +17,7 @@ from eosc_perf.model.data_types import Report, BenchmarkReport
 from eosc_perf.controller.io_controller import controller
 from eosc_perf.controller.authenticator import AuthenticateError
 
-from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect, info_redirect
+from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect, info_redirect, only_admin, only_admin_json
 from eosc_perf.utility.dockerhub import build_dockerhub_url, build_dockerregistry_url
 
 
@@ -44,10 +44,9 @@ benchmark_review_blueprint = Blueprint('benchmark-review', __name__)
 
 
 @benchmark_review_blueprint.route('/benchmark_review_fetch_first', methods=['GET'])
+@only_admin
 def get_benchmark_review():
     """Review the first new benchmark."""
-    if not controller.is_admin():
-        return error_redirect('Not an admin')
     reports = facade.get_reports(only_unanswered=True)
     if len(reports) == 0:
         return info_redirect('No reports available')
@@ -60,15 +59,9 @@ def get_benchmark_review():
 
 
 @benchmark_review_blueprint.route('/benchmark_review', methods=['GET'])
+@only_admin
 def review_benchmark():
     """HTTP endpoint for the benchmark review page."""
-
-    if not controller.is_authenticated():
-        return error_redirect('Not logged in')
-
-    if not controller.is_admin():
-        return error_redirect('Not an administrator')
-
     uuid = request.args.get('uuid')
     if uuid is None:
         return error_redirect('Benchmark review page opened with no uuid')
@@ -120,15 +113,9 @@ def review_benchmark():
 
 
 @benchmark_review_blueprint.route('/benchmark_review_submit', methods=['POST'])
+@only_admin_json
 def review_benchmark_submit():
     """HTTP endpoint to take in the reports."""
-
-    if not controller.is_authenticated():
-        return error_json_redirect('Not logged in')
-
-    if not controller.is_authenticated():
-        return error_json_redirect('Not an admin')
-
     uuid = request.form['uuid']
 
     # validate input

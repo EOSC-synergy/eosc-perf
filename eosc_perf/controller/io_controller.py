@@ -2,7 +2,7 @@
 import json
 import urllib.request
 from json import JSONDecodeError
-from typing import List, Optional
+from typing import List, Optional, Callable, Any
 from urllib.error import URLError
 
 from flask import session, redirect, Response
@@ -13,6 +13,35 @@ from eosc_perf.utility.type_aliases import JSON
 from ..model.facade import DatabaseFacade, facade
 from ..model.data_types import Site, Report, SiteFlavor
 from ..utility.dockerhub import decompose_dockername, build_dockerregistry_url, build_dockerregistry_tag_url
+
+
+def _only_authenticated(message: str = "Not authenticated.") -> Callable[..., Any]:
+    """Decorator helper for authentication.
+
+    Args:
+        message (str): Message to return if the user is not authenticated.
+    """
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        def wrapper(self, *args) -> Callable[..., Any]:
+            # use self because controller is not declared yet
+            if not self.is_authenticated():
+                raise AuthenticateError(message)
+            return func(self, args)
+
+        return wrapper
+
+    return decorator
+
+
+def _only_admin(function: Callable[..., Any]) -> Callable[..., Any]:
+    """Decorator helper for authentication.
+    """
+    def wrapper(self, *args) -> Callable[..., Any]:
+        if not self.is_admin():
+            raise AuthenticateError("Not an administrator.")
+        return function(self, args)
+
+    return wrapper
 
 
 class IOController:
@@ -35,6 +64,7 @@ class IOController:
         if not self.is_authenticated():
             return redirect('/login')
 
+    @_only_authenticated(message="Only authenticated users can submit results")
     def submit_result(self, result_json: JSON, metadata: str) -> bool:
         """Submit a new benchmark result to the system.
 
@@ -46,23 +76,21 @@ class IOController:
         Returns:
             bool: True if the benchmark was successfully added.
         """
-        if self.is_authenticated():
-            if 'benchmark' not in metadata:
-                raise ValueError("Missing benchmark identifier")
-            try:
-                benchmark = facade.get_benchmark(json.loads(metadata)['benchmark'])
-            except facade.NotFoundError:
-                raise ValueError("Unknown benchmark")
-            template = benchmark.get_template() if benchmark.has_template() else None
+        if 'benchmark' not in metadata:
+            raise ValueError("Missing benchmark identifier")
+        try:
+            benchmark = facade.get_benchmark(json.loads(metadata)['benchmark'])
+        except facade.NotFoundError:
+            raise ValueError("Unknown benchmark")
+        template = benchmark.get_template() if benchmark.has_template() else None
 
-            if not self._result_validator.validate_json(result_json, template):
-                raise ValueError("No valid result JSON")
+        if not self._result_validator.validate_json(result_json, template):
+            raise ValueError("No valid result JSON")
 
-            self._add_current_user_if_missing()
-            return facade.add_result(result_json, metadata)
+        self._add_current_user_if_missing()
+        return facade.add_result(result_json, metadata)
 
-        raise AuthenticateError("Only authenticated users can submit results")
-
+    @_only_authenticated(message="You need to be logged in to submit a benchmark.")
     def submit_benchmark(self, docker_name: str, comment: str, template: Optional[JSON] = None) -> bool:
         """Submit a new benchmark to the system.
 
@@ -73,9 +101,6 @@ class IOController:
         Returns:
             bool: True if the benchmark was successfully submitted.
         """
-        if not self.is_authenticated():
-            raise AuthenticateError("You need to be logged in to submit a benchmark.")
-
         if not self._valid_docker_hub_name(docker_name):
             raise RuntimeError("Could not verify '{}' as a valid docker hub name.".format(docker_name))
 
@@ -88,7 +113,7 @@ class IOController:
             raise RuntimeError("A benchmark with the given name was already submitted.")
 
         # if user is an admin, skip review process
-        #if self.is_admin():
+        # if self.is_admin():
         #    facade.get_benchmark(docker_name=docker_name).set_hidden(False)
         #    return True
 
@@ -99,6 +124,7 @@ class IOController:
             'uploader': self.get_user_id()
         }))
 
+    @_only_authenticated(message="You must be logged in to submit a site")
     def submit_site(self, short_name: str, address: str, name: str = None, description: str = None) -> bool:
         """Submit a new site to the system for review.
 
@@ -110,8 +136,6 @@ class IOController:
         Returns:
             bool: True on success.
         """
-        if not self.is_authenticated():
-            raise AuthenticateError("You must be logged in to submit a site")
         self._add_current_user_if_missing()
 
         if short_name is None or len(short_name) == 0 or address is None or len(address) == 0:
@@ -136,7 +160,7 @@ class IOController:
             message += ", description: {}".format(description)
 
         # if admin, skip review process
-        #if self.is_admin():
+        # if self.is_admin():
         #    facade.get_site(short_name).set_hidden(False)
         #    return True
 
@@ -156,6 +180,7 @@ class IOController:
 
         return True
 
+    @_only_authenticated("You must be logged in to submit a tag.")
     def submit_tag(self, tag: str) -> bool:
         """Submit a new tag.
 
@@ -166,10 +191,9 @@ class IOController:
         """
         if tag is None or len(tag) == 0:
             raise ValueError("invalid tag submitted")
-        if not self.is_authenticated():
-            raise AuthenticateError("You must be logged in to submit a tag")
         return facade.add_tag(tag)
 
+    @_only_authenticated(message="You must be logged in to submit a site flavor.")
     def submit_flavor(self, name: str, description: str, site_name: str) -> Optional[str]:
         """Submit a new site flavor.
 
@@ -183,7 +207,8 @@ class IOController:
         success, uuid = facade.add_flavor(name, description, site_name)
         return uuid if success else None
 
-    def get_site(self, short_name: str) -> Optional[Site]:
+    @staticmethod
+    def get_site(short_name: str) -> Optional[Site]:
         """Get a single site by it's short name.
 
         Args:
@@ -198,6 +223,7 @@ class IOController:
             site = None
         return site
 
+    @_only_admin
     def remove_site(self, short_name: str) -> bool:
         """Remove a single site by it's short name.
 
@@ -206,14 +232,12 @@ class IOController:
         Returns:
            bool: True if removal was successful.
         """
-        if self.is_authenticated():
-            if self._site_result_amount(short_name) == 0:
-                return facade.remove_site(short_name)
-            else:
-                raise RuntimeError("Only sites without results can be removed.")
+        if self._site_result_amount(short_name) == 0:
+            return facade.remove_site(short_name)
         else:
-            raise AuthenticateError("You need to be logged in to remove a site.")
+            raise RuntimeError("Only sites without results can be removed.")
 
+    @_only_authenticated("You must be logged in to submit a report.")
     def report(self, metadata: JSON) -> bool:
         """Add a Report to the model and notify an admin about it.
 
@@ -223,13 +247,11 @@ class IOController:
         Returns:
             bool: True If the report was successfully added.
         """
-        if self.is_authenticated():
-            self._add_current_user_if_missing()
-            # TODO: notify admin per email
-            return facade.add_report(metadata)
-        else:
-            raise AuthenticateError("Must be logged in to submit a report")
+        self._add_current_user_if_missing()
+        # TODO: notify admin per email
+        return facade.add_report(metadata)
 
+    @_only_admin
     def get_report(self, uuid: str) -> Report:
         """Get a report by UUID. Requires the user to be an admin.
 
@@ -238,10 +260,9 @@ class IOController:
         Returns:
             Report: The report.
         """
-        if not authenticator.is_admin():
-            raise AuthenticateError("User trying to view the reports isn't an admin.")
         return facade.get_report(uuid)
 
+    @_only_admin
     def get_reports(self, only_unanswered: bool = False) -> List[Report]:
         """Provide a list of all reports, require the user to be an admin.
 
@@ -252,10 +273,9 @@ class IOController:
         Returns:
             List[Reports]: List containing requested reports.
         """
-        if not authenticator.is_admin():
-            raise AuthenticateError("User trying to view the reports isn't an admin.")
         return facade.get_reports(only_unanswered=only_unanswered)
 
+    @_only_admin
     def process_report(self, verdict: bool, uuid: str) -> bool:
         """Set verdict of report with given uuid. If verdict is False, the item is hidden.
 
@@ -265,22 +285,21 @@ class IOController:
         Returns:
             bool: True if processing the report was successful.
         """
-        if authenticator.is_admin():
-            try:
-                report = facade.get_report(uuid)
-            except DatabaseFacade.NotFoundError:
-                return False
-            report.set_verdict(verdict)
-            if report.get_report_type() == Report.BENCHMARK:
-                report.get_benchmark().set_hidden(not verdict)
-            elif report.get_report_type() == Report.SITE:
-                report.get_site().set_hidden(not verdict)
-            elif report.get_report_type() == Report.RESULT:
-                report.get_result().set_hidden(not verdict)
+        try:
+            report = facade.get_report(uuid)
+        except DatabaseFacade.NotFoundError:
+            return False
+        report.set_verdict(verdict)
+        if report.get_report_type() == Report.BENCHMARK:
+            report.get_benchmark().set_hidden(not verdict)
+        elif report.get_report_type() == Report.SITE:
+            report.get_site().set_hidden(not verdict)
+        elif report.get_report_type() == Report.RESULT:
+            report.get_result().set_hidden(not verdict)
 
-            return True
-        raise AuthenticateError("Only admins can process reports")
+        return True
 
+    @_only_admin
     def remove_result(self, uuid: str) -> bool:
         """Make a result invisible.
 
@@ -289,8 +308,6 @@ class IOController:
         Returns:
             bool: True if the result was successfully hidden.
         """
-        if not authenticator.is_admin():
-            raise AuthenticateError("Only admins can remove results")
         try:
             result = facade.get_result(uuid)
         except DatabaseFacade.NotFoundError:
@@ -298,6 +315,7 @@ class IOController:
         result.set_hidden(True)
         return True
 
+    @_only_admin
     def update_flavor(self, uuid: str, name: str, description: str) -> bool:
         """Update a site flavor's details.
 
@@ -306,8 +324,6 @@ class IOController:
             name (str) - The new name to set.
             description (str) - The new description to set.
         """
-        if not self.is_admin():
-            return False
         try:
             flavor = facade.get_site_flavor(uuid)
         except facade.NotFoundError:
@@ -316,23 +332,24 @@ class IOController:
         flavor.set_description(description)
         return True
 
+    @_only_authenticated
     def _add_current_user_if_missing(self):
         """Add the current user as an uploader if they do not exist yet."""
-        if authenticator.is_authenticated():
-            uid = self.get_user_id()
-            try:
-                facade.get_uploader(uid)
-                return
-            except facade.NotFoundError:
-                email = self.get_email()
-                name = self.get_full_name()
-                facade.add_uploader(json.dumps({
-                    'id': uid,
-                    'email': email,
-                    'name': name
-                }))
+        uid = self.get_user_id()
+        try:
+            facade.get_uploader(uid)
+            return
+        except facade.NotFoundError:
+            email = self.get_email()
+            name = self.get_full_name()
+            facade.add_uploader(json.dumps({
+                'id': uid,
+                'email': email,
+                'name': name
+            }))
 
-    def _valid_docker_hub_name(self, docker_name: str) -> bool:
+    @staticmethod
+    def _valid_docker_hub_name(docker_name: str) -> bool:
         """Check if a benchmark exists with the given name on docker hub.
 
         Args:

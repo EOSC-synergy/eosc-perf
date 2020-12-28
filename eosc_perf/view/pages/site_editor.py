@@ -12,7 +12,7 @@ from ...controller.authenticator import AuthenticateError
 
 from ...controller.io_controller import controller
 
-from .helpers import error_json_redirect, error_redirect
+from .helpers import error_json_redirect, error_redirect, only_admin, only_admin_json
 
 
 class EditSitePageFactory(PageFactory):
@@ -26,23 +26,18 @@ site_editor_blueprint = Blueprint('edit-site-factory', __name__)
 
 
 @site_editor_blueprint.route('/site_editor', methods=['GET'])
+@only_admin
 def edit_site():
     """HTTP endpoint for the benchmark submission page."""
-    if not controller.is_admin():
-        return error_redirect('You are not allowed to access this page (Not an admin)')
-
     factory = EditSitePageFactory()
-
     page = factory.generate_page(template='site_editor.html')
     return Response(page, mimetype='text/html')
 
 
 @site_editor_blueprint.route('/update-site', methods=['POST'])
+@only_admin_json
 def edit_site_submit():
     """HTTP endpoint to take in the reports."""
-    if not controller.is_admin():
-        return error_json_redirect('Not an admin')
-
     site_name = request.form["short_name"]
     site = controller.get_site(site_name)
     if site is None:
