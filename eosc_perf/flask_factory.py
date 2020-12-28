@@ -3,11 +3,11 @@
 from flask import Flask
 import sys
 from .configuration import configuration
-from .controller.authenticator import (configure_authenticator,
-                                       authenticator_blueprint)
+from .controller.authenticator import configure_authenticator
 from .model.database import configure_database
 from .model.sandbox import add_demo
 from .view.ajax import ajax_blueprint
+from .view.pages.authenticator import authenticator_blueprint
 from .view.pages.information_page import info_blueprint
 from eosc_perf.view.pages.review.report_result import result_report_blueprint
 from eosc_perf.view.pages.review.benchmark import benchmark_review_blueprint
