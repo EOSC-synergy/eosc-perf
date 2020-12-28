@@ -104,7 +104,8 @@ def upload_result_submit():
         'uploader': controller.get_user_id(),
         'site': site_name,
         'benchmark': request.form['benchmark'],
-        'tags': tags
+        'tags': tags,
+        'site_flavor': request.form['site_flavor']
     }
 
     try:

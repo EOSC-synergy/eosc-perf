@@ -319,6 +319,18 @@ class DatabaseFacade:
             return False
         return True
 
+    def _has_site_flavor(self, uuid: str) -> bool:
+        """Check if a certain site flavor exists.
+
+        Args:
+            uuid (str) - The UUID of the site flavor.
+        """
+        try:
+            self.get_site_flavor(uuid)
+        except self.NotFoundError:
+            return False
+        return True
+
     def add_uploader(self, metadata_json: str) -> bool:
         """Add new uploader using uploader metadata json.
 
@@ -376,9 +388,15 @@ class DatabaseFacade:
         if not self._has_benchmark(metadata['benchmark']):
             raise ValueError("benchmark name is invalid")
 
+        if 'site_flavor' not in metadata:
+            raise ValueError("flavor is missing from result metadata")
+        if not self._has_site_flavor(metadata['site_flavor']):
+            raise ValueError("flavor id is invalid")
+
         uploader = self.get_uploader(metadata['uploader'])
         site = self.get_site(metadata['site'])
         benchmark = self.get_benchmark(metadata['benchmark'])
+        flavor = self.get_site_flavor(metadata['site_flavor'])
 
         tags = []
         if 'tags' in metadata:
@@ -392,7 +410,7 @@ class DatabaseFacade:
                 except DatabaseFacade.NotFoundError:
                     raise ValueError("unknown tag")
 
-        return self._add_to_db(Result(content_json, uploader, site, benchmark, tags=tags))
+        return self._add_to_db(Result(content_json, uploader, site, benchmark, flavor=flavor, tags=tags))
 
     def add_site(self, metadata_json: str) -> bool:
         """Add new site using site metadata json.

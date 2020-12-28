@@ -63,9 +63,8 @@ class ResultUpload {
         let flavorSelector = document.getElementById("siteFlavor");
         clear_element_children(flavorSelector);
         for (let flavor of this.sites_data.get(selector.value).flavors) {
-            console.log(flavor);
             let option = document.createElement("option");
-            option.value = flavor.name;
+            option.value = flavor.uuid;
             option.textContent = flavor.name;
             flavorSelector.appendChild(option);
         }
@@ -90,6 +89,7 @@ class ResultUpload {
             document.getElementById("site_address").removeAttribute("disabled");
             document.getElementById("site_description").removeAttribute("disabled");
             document.getElementById("site_selection").setAttribute("disabled", "true");
+            document.getElementById("siteFlavor").disabled = true;
             if (!BENCHMARKS_EMPTY && LICENSE_AGREED) {
                 document.getElementById("submit_button").removeAttribute("disabled");
             }
@@ -101,6 +101,7 @@ class ResultUpload {
             document.getElementById("site_description").setAttribute("disabled", "true");
             document.getElementById("site_description").value = "";
             document.getElementById("site_selection").removeAttribute("disabled");
+            document.getElementById("siteFlavor").disabled = false;
             if (SITES_EMPTY) {
                 document.getElementById("submit_button").setAttribute("disabled", "true");
             }
