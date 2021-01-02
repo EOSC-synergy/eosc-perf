@@ -184,7 +184,7 @@ class IOControllerTest(unittest.TestCase):
 
     def test_remove_site_not_existing(self):
         with self.app.test_request_context():
-            self._login_standard_user()
+            self._login_admin()
             self.assertFalse(self.controller.remove_site("not existing"))
 
     def test_remove_site_with_results(self):
@@ -206,7 +206,7 @@ class IOControllerTest(unittest.TestCase):
                             USER['info']['name'] + '"}'
         self.facade.add_uploader(uploader_metadata)
         with self.app.test_request_context():
-            self._login_standard_user()
+            self._login_admin()
             self.assertTrue(self.controller.submit_site("name", "127.0.0.1"))
             self.assertTrue(self.controller.remove_site("name"))
             # make sure that site is removed
