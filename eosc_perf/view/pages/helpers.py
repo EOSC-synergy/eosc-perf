@@ -66,10 +66,10 @@ def only_authenticated(function: Callable[..., Any]) -> Callable[..., Any]:
 def only_admin(function: Callable[..., Any]) -> Callable[..., Any]:
     """Decorator helper for authentication.
     """
-    def wrapper(*args) -> Callable[..., Any]:
+    def wrapper(*args, **kwargs) -> Callable[..., Any]:
         if not controller.is_admin():
             return error_redirect("Not allowed: not an administrator.")
-        return function(args)
+        return function(*args, **kwargs)
 
     # ugly hack for flask decorator name collisions
     wrapper.__name__ = function.__name__
@@ -83,10 +83,10 @@ def only_authenticated_json(function: Callable[..., Any]) -> Callable[..., Any]:
     Args:
         function (Callable[..., Any]): Function to decorate.
     """
-    def wrapper(*args) -> Callable[..., Any]:
+    def wrapper(*args, **kwargs) -> Callable[..., Any]:
         if not controller.is_authenticated():
             return error_json_redirect("Not allowed: not authenticated.")
-        return function(*args)
+        return function(*args, **kwargs)
 
     # ugly hack for flask decorator name collisions
     wrapper.__name__ = function.__name__

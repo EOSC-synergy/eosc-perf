@@ -22,11 +22,11 @@ def _only_authenticated(message: str = "Not authenticated.") -> Callable[..., An
         message (str): Message to return if the user is not authenticated.
     """
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
-        def wrapper(self, *args) -> Callable[..., Any]:
+        def wrapper(self, *args, **kwargs) -> Callable[..., Any]:
             # use self because controller is not declared yet
             if not self.is_authenticated():
                 raise AuthenticateError(message)
-            return func(self, args)
+            return func(self, *args, **kwargs)
 
         return wrapper
 
@@ -36,10 +36,10 @@ def _only_authenticated(message: str = "Not authenticated.") -> Callable[..., An
 def _only_admin(function: Callable[..., Any]) -> Callable[..., Any]:
     """Decorator helper for authentication.
     """
-    def wrapper(self, *args) -> Callable[..., Any]:
+    def wrapper(self, *args, **kwargs) -> Callable[..., Any]:
         if not self.is_admin():
             raise AuthenticateError("Not an administrator.")
-        return function(self, args)
+        return function(self, *args, **kwargs)
 
     return wrapper
 
