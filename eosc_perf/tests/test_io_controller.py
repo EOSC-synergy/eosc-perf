@@ -49,6 +49,11 @@ class IOControllerTest(unittest.TestCase):
         self.facade.add_uploader(uploader_metadata)
         self.facade.add_benchmark("name/name:tag", USER['sub'])
         self.facade.add_site('{"short_name": "name", "address": "100"  }')
+        success, uuid = self.facade.add_flavor('test-flavor', '', 'name')
+
+        return {
+            'flavor_uuid': uuid
+        }
 
     def test_authenticate_not_authenticated(self):
         with self.app.test_request_context():
@@ -69,16 +74,13 @@ class IOControllerTest(unittest.TestCase):
             self.assertRaises(ValueError, self.controller.submit_result, "---", "")
 
     def test_submit_result_success(self):
-        self._add_test_data()
+        data = self._add_test_data()
         with self.app.test_request_context():
             with open("eosc_perf/tests/sample_result.json") as file:
                 sample = file.read()
             self._login_standard_user()
-            metadata = '{ \
-                "uploader": "' + USER["sub"] + '", \
-                "benchmark": "name/name:tag", \
-                "site": "name" \
-            }'
+            metadata = '{ "uploader": "' + USER["sub"] + '",' + '"benchmark": "name/name:tag",' + '"site": "name",' +\
+                       '"site_flavor": "' + data['flavor_uuid'] + '"' + '} '
             self.assertTrue(self.controller.submit_result(sample, metadata))
 
     def test_submit_benchmark_unauthenticated(self):
@@ -188,17 +190,14 @@ class IOControllerTest(unittest.TestCase):
             self.assertFalse(self.controller.remove_site("not existing"))
 
     def test_remove_site_with_results(self):
-        self._add_test_data()
+        data = self._add_test_data()
         with self.app.test_request_context():
             with open("eosc_perf/tests/sample_result.json") as file:
                 sample = file.read()
-            self._login_standard_user()
-            metadata = {
-                "uploader": USER["sub"],
-                "benchmark": "name/name:tag",
-                "site": "name"
-            }
-            self.controller.submit_result(sample, json.dumps(metadata))
+            self._login_admin()
+            metadata = '{ "uploader": "' + USER["sub"] + '",' + '"benchmark": "name/name:tag",' + '"site": "name",' +\
+                       '"site_flavor": "' + data['flavor_uuid'] + '"' + '} '
+            self.controller.submit_result(sample, metadata)
             self.assertRaises(RuntimeError, self.controller.remove_site, "name")
 
     def test_remove_site(self):
@@ -342,16 +341,13 @@ class IOControllerTest(unittest.TestCase):
             self.assertEqual(self.controller.process_report(True, uuid), True)
 
     def test_process_report_result(self):
-        self._add_test_data()
+        data = self._add_test_data()
         with self.app.test_request_context():
             with open("eosc_perf/tests/sample_result.json") as file:
                 sample = file.read()
             self._login_admin()
-            metadata = '{ \
-                "uploader": "' + USER["sub"] + '", \
-                "benchmark": "name/name:tag", \
-                "site": "name" \
-            }'
+            metadata = '{ "uploader": "' + USER["sub"] + '",' + '"benchmark": "name/name:tag",' + '"site": "name",' +\
+                       '"site_flavor": "' + data['flavor_uuid'] + '"' + '} '
             self.controller.submit_result(sample, metadata)
             filters = {'filters': [
                 {'type': 'uploader', 'value': USER["info"]["email"]},
@@ -382,31 +378,25 @@ class IOControllerTest(unittest.TestCase):
             self.assertRaises(AuthenticateError, self.controller.remove_result, "name")
 
     def test_remove_result_not_found(self):
-        self._add_test_data()
+        data = self._add_test_data()
         with self.app.test_request_context():
             with open("eosc_perf/tests/sample_result.json") as file:
                 sample = file.read()
             self._login_admin()
-            metadata = '{ \
-                "uploader": "' + USER["sub"] + '", \
-                "benchmark": "name/name:tag", \
-                "site": "name" \
-            }'
+            metadata = '{ "uploader": "' + USER["sub"] + '",' + '"benchmark": "name/name:tag",' + '"site": "name",' +\
+                       '"site_flavor": "' + data['flavor_uuid'] + '"' + '} '
             self.controller.submit_result(sample, metadata)
             self.assertFalse(self.controller.remove_result("wrong_uuid"))
 
     def test_remove_result(self):
-        self._add_test_data()
+        data = self._add_test_data()
         with self.app.test_request_context():
             with open("eosc_perf/tests/sample_result.json") as file:
                 sample = file.read()
             self._login_admin()
-            metadata = {
-                "uploader": USER["sub"],
-                "benchmark": "name/name:tag",
-                "site": "name"
-            }
-            self.controller.submit_result(sample, json.dumps(metadata))
+            metadata = '{ "uploader": "' + USER["sub"] + '",' + '"benchmark": "name/name:tag",' + '"site": "name",' +\
+                       '"site_flavor": "' + data['flavor_uuid'] + '"' + '} '
+            self.controller.submit_result(sample, metadata)
             filters = {'filters': [
                 {'type': 'uploader', 'value': USER["info"]["email"]},
             ]}
@@ -454,16 +444,13 @@ class IOControllerTest(unittest.TestCase):
 
     def test_site_result_amount(self):
         self.assertEqual(self.controller._site_result_amount("name"), 0)
-        self._add_test_data()
+        data = self._add_test_data()
         with self.app.test_request_context():
             with open("eosc_perf/tests/sample_result.json") as file:
                 sample = file.read()
             self._login_standard_user()
-            metadata = '{ \
-                "uploader": "' + USER["sub"] + '", \
-                "benchmark": "name/name:tag", \
-                "site": "name" \
-            }'
+            metadata = '{ "uploader": "' + USER["sub"] + '",' + '"benchmark": "name/name:tag",' + '"site": "name",' +\
+                       '"site_flavor": "' + data['flavor_uuid'] + '"' + '} '
             self.controller.submit_result(sample, metadata)
             self.assertEqual(self.controller._site_result_amount("name"), 1)
 

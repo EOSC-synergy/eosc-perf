@@ -15,6 +15,7 @@ class FacadeTest(unittest.TestCase):
     tested_benchmark_name: str = 'foobar/bazbutt'
     tested_site_name: str = 'iamasitename'
     tested_tag_name: str = 'testtag'
+    tested_flavor_name: str  = 'test-flavor'
 
     def setUp(self):
         """Called before each test."""
@@ -279,6 +280,10 @@ class FacadeTest(unittest.TestCase):
         """Test removing a site that doesn't exist."""
         self.assertFalse(self.facade.remove_site(self.tested_site_name))
 
+    def test_add_flavor(self):
+        self.test_add_site_valid()
+        self.assertTrue(self.facade.add_flavor(self.tested_flavor_name, "", self.tested_site_name))
+
     def test_add_tag_valid(self):
         """Test valid call to add_tag."""
         self.assertTrue(self.facade.add_tag(self.tested_tag_name))
@@ -332,17 +337,24 @@ class FacadeTest(unittest.TestCase):
         self.assertTrue(self.facade.add_uploader(json.dumps(usermeta)))
         self.assertTrue(self.facade.add_benchmark(self.tested_benchmark_name, self.tested_uploader_id))
         self.assertTrue(self.facade.add_site(json.dumps(sitemeta)))
+        success, uuid = self.facade.add_flavor(self.tested_flavor_name, "hello", self.tested_site_name)
+        self.assertTrue(success)
+
+        return {
+            'flavor_uuid': uuid
+        }
 
     def test_add_result_valid(self):
         """Test valid call to add_result."""
         content_json = '{ "tag": 3.1415926535 }'
+        data = self._add_result_data()
         meta = {
             'uploader': self.tested_uploader_id,
             'site': self.tested_site_name,
             'benchmark': self.tested_benchmark_name,
-            'tags': [self.tested_tag_name]
+            'tags': [self.tested_tag_name],
+            'site_flavor': data['flavor_uuid']
         }
-        self._add_result_data()
         self.test_add_tag_valid()
         self.assertTrue(self.facade.add_result(content_json, json.dumps(meta)))
 
@@ -351,14 +363,15 @@ class FacadeTest(unittest.TestCase):
     def test_add_result_invalid(self):
         """Test invalid calls to add_result."""
 
-        self._add_result_data()
+        data = self._add_result_data()
 
         # missing uploader
         content_json = '{ "tag": 3.1415926535 }'
         meta = {
             'site': self.tested_site_name,
             'benchmark': self.tested_benchmark_name,
-            'tags': [self.tested_tag_name]
+            'tags': [self.tested_tag_name],
+            'site_flavor': data['flavor_uuid']
         }
         with self.assertRaises(ValueError):
             self.facade.add_result(content_json, json.dumps(meta))
@@ -368,7 +381,8 @@ class FacadeTest(unittest.TestCase):
             'uploader': 'foobar',
             'site': self.tested_site_name,
             'benchmark': self.tested_benchmark_name,
-            'tags': [self.tested_tag_name]
+            'tags': [self.tested_tag_name],
+            'site_flavor': data['flavor_uuid']
         }
         with self.assertRaises(ValueError):
             self.facade.add_result(content_json, json.dumps(meta))
@@ -377,7 +391,8 @@ class FacadeTest(unittest.TestCase):
             'uploader': 1,
             'site': self.tested_site_name,
             'benchmark': self.tested_benchmark_name,
-            'tags': [self.tested_tag_name]
+            'tags': [self.tested_tag_name],
+            'site_flavor': data['flavor_uuid']
         }
         with self.assertRaises(ValueError):
             self.facade.add_result(content_json, json.dumps(meta))
@@ -386,7 +401,8 @@ class FacadeTest(unittest.TestCase):
         meta = {
             'uploader': self.tested_uploader_id,
             'benchmark': self.tested_benchmark_name,
-            'tags': [self.tested_tag_name]
+            'tags': [self.tested_tag_name],
+            'site_flavor': data['flavor_uuid']
         }
         with self.assertRaises(ValueError):
             self.facade.add_result(content_json, json.dumps(meta))
@@ -396,7 +412,8 @@ class FacadeTest(unittest.TestCase):
             'uploader': self.tested_uploader_id,
             'site': '',
             'benchmark': self.tested_benchmark_name,
-            'tags': [self.tested_tag_name]
+            'tags': [self.tested_tag_name],
+            'site_flavor': data['flavor_uuid']
         }
         with self.assertRaises(ValueError):
             self.facade.add_result(content_json, json.dumps(meta))
@@ -406,7 +423,8 @@ class FacadeTest(unittest.TestCase):
             'uploader': self.tested_uploader_id,
             'site': 'hello world',
             'benchmark': self.tested_benchmark_name,
-            'tags': [self.tested_tag_name]
+            'tags': [self.tested_tag_name],
+            'site_flavor': data['flavor_uuid']
         }
         with self.assertRaises(ValueError):
             self.facade.add_result(content_json, json.dumps(meta))
@@ -415,7 +433,8 @@ class FacadeTest(unittest.TestCase):
             'uploader': self.tested_uploader_id,
             'site': 1,
             'benchmark': self.tested_benchmark_name,
-            'tags': [self.tested_tag_name]
+            'tags': [self.tested_tag_name],
+            'site_flavor': data['flavor_uuid']
         }
         with self.assertRaises(ValueError):
             self.facade.add_result(content_json, json.dumps(meta))
@@ -424,7 +443,8 @@ class FacadeTest(unittest.TestCase):
         meta = {
             'uploader': self.tested_uploader_id,
             'site': self.tested_site_name,
-            'tags': [self.tested_tag_name]
+            'tags': [self.tested_tag_name],
+            'site_flavor': data['flavor_uuid']
         }
         with self.assertRaises(ValueError):
             self.facade.add_result(content_json, json.dumps(meta))
@@ -434,7 +454,8 @@ class FacadeTest(unittest.TestCase):
             'uploader': self.tested_uploader_id,
             'site': self.tested_site_name,
             'benchmark': '',
-            'tags': [self.tested_tag_name]
+            'tags': [self.tested_tag_name],
+            'site_flavor': data['flavor_uuid']
         }
         with self.assertRaises(ValueError):
             self.facade.add_result(content_json, json.dumps(meta))
@@ -444,7 +465,8 @@ class FacadeTest(unittest.TestCase):
             'uploader': self.tested_uploader_id,
             'site': self.tested_site_name,
             'benchmark': 'the moon is made of cheese',
-            'tags': [self.tested_tag_name]
+            'tags': [self.tested_tag_name],
+            'site_flavor': data['flavor_uuid']
         }
         with self.assertRaises(ValueError):
             self.facade.add_result(content_json, json.dumps(meta))
@@ -453,7 +475,8 @@ class FacadeTest(unittest.TestCase):
             'uploader': self.tested_uploader_id,
             'site': self.tested_site_name,
             'benchmark': 1,
-            'tags': [self.tested_tag_name]
+            'tags': [self.tested_tag_name],
+            'site_flavor': data['flavor_uuid']
         }
         with self.assertRaises(ValueError):
             self.facade.add_result(content_json, json.dumps(meta))
@@ -465,7 +488,8 @@ class FacadeTest(unittest.TestCase):
             'uploader': self.tested_uploader_id,
             'site': self.tested_site_name,
             'benchmark': self.tested_benchmark_name,
-            'tags': 'not a list'
+            'tags': 'not a list',
+            'site_flavor': data['flavor_uuid']
         }
         with self.assertRaises(TypeError):
             self.facade.add_result(content_json, json.dumps(meta))
@@ -474,7 +498,8 @@ class FacadeTest(unittest.TestCase):
             'uploader': self.tested_uploader_id,
             'site': self.tested_site_name,
             'benchmark': self.tested_benchmark_name,
-            'tags': [['not a list of strings']]
+            'tags': [['not a list of strings']],
+            'site_flavor': data['flavor_uuid']
         }
         with self.assertRaises(TypeError):
             self.facade.add_result(content_json, json.dumps(meta))
@@ -484,7 +509,29 @@ class FacadeTest(unittest.TestCase):
             'uploader': self.tested_uploader_id,
             'site': self.tested_site_name,
             'benchmark': self.tested_benchmark_name,
-            'tags': ['fake tag']
+            'tags': ['fake tag'],
+            'site_flavor': data['flavor_uuid']
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_result(content_json, json.dumps(meta))
+
+        # missing flavor
+        meta = {
+            'uploader': self.tested_uploader_id,
+            'site': self.tested_site_name,
+            'benchmark': self.tested_benchmark_name,
+            'tags': [self.tested_tag_name]
+        }
+        with self.assertRaises(ValueError):
+            self.facade.add_result(content_json, json.dumps(meta))
+
+        # unknown flavor
+        meta = {
+            'uploader': self.tested_uploader_id,
+            'site': self.tested_site_name,
+            'benchmark': self.tested_benchmark_name,
+            'tags': [self.tested_tag_name],
+            'site_flavor': 'hambaga'
         }
         with self.assertRaises(ValueError):
             self.facade.add_result(content_json, json.dumps(meta))

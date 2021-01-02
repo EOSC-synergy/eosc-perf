@@ -396,9 +396,9 @@ class DatabaseFacade:
             raise ValueError("benchmark name is invalid")
 
         if 'site_flavor' not in metadata:
-            raise ValueError("flavor is missing from result metadata")
+            raise ValueError("site_flavor is missing from result metadata")
         if not self._has_site_flavor(metadata['site_flavor']):
-            raise ValueError("flavor id is invalid")
+            raise ValueError("site_flavor id " + str(metadata['site_flavor']) + " is invalid")
 
         uploader = self.get_uploader(metadata['uploader'])
         site = self.get_site(metadata['site'])
