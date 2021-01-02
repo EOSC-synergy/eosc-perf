@@ -4,6 +4,7 @@ import json
 import unittest
 from eosc_perf.controller.json_result_validator import JSONResultValidator
 from eosc_perf.configuration import configuration
+from eosc_perf.tests.utility import setup_test_config
 
 
 class JSONResultValidatorTest(unittest.TestCase):
@@ -11,7 +12,7 @@ class JSONResultValidatorTest(unittest.TestCase):
     def setUp(self):
         """Called before each test."""
         self.validator = JSONResultValidator()
-        configuration.reload()
+        setup_test_config(configuration)
 
     def tearDown(self):
         """Called after each test."""

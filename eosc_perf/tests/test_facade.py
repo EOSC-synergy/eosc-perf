@@ -5,6 +5,7 @@ from flask import Flask
 from eosc_perf.configuration import configuration
 from eosc_perf.model.database import configure_database
 from eosc_perf.model.facade import DatabaseFacade
+from eosc_perf.tests.utility import setup_test_config
 
 
 class FacadeTest(unittest.TestCase):
@@ -23,7 +24,7 @@ class FacadeTest(unittest.TestCase):
         self.app.app_context().push()
 
         # use memory database, reset entirely every time
-        configuration.reset()
+        setup_test_config(configuration)
         configure_database(self.app)
 
         # facade

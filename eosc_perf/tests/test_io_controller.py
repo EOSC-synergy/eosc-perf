@@ -10,6 +10,7 @@ from eosc_perf.controller.io_controller import controller
 from eosc_perf.controller.authenticator import AuthenticateError
 from eosc_perf.configuration import configuration
 from eosc_perf.model.data_types import Report
+from eosc_perf.tests.utility import setup_test_config
 
 USER = {'exp': time() + 3600,
         'sub': 'id',
@@ -28,13 +29,8 @@ class IOControllerTest(unittest.TestCase):
         self.app.secret_key = '!secret'
 
         # use memory database, reset entirely every time
-        configuration.reset()
-        configuration.set('database-path', '')
-        configuration.set('debug', True)
-        configuration.set('debug-db-reset', True)
-        configuration.set('oidc_client_id', 'test-app')
-        configuration.set('oidc_client_secret', 'longspaghettistring')
-        configuration.set('secret_key', 'lorem ipsum dolor sir amet')
+        setup_test_config(configuration)
+        #print('"', configuration.get('oidc_client_secret'), '"')
         configure_authenticator(self.app)
         configure_database(self.app)
 
@@ -144,8 +140,8 @@ class IOControllerTest(unittest.TestCase):
         self.facade.add_uploader(uploader_metadata)
         with self.app.test_request_context():
             self._login_standard_user()
-            self.controller.submit_site("name", "127.0.0.1")
-            self.assertFalse(self.controller.submit_site("name", "127.0.0.2"))
+            self.controller.submit_site("name", address="127.0.0.1")
+            self.assertFalse(self.controller.submit_site("name", address="127.0.0.2"))
 
     def test_submit_tag_unauthenticated(self):
         with self.app.test_request_context():
