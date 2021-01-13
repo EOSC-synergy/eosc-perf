@@ -6,7 +6,7 @@ from time import time
 from typing import Optional
 from urllib.request import urlopen
 import requests
-from aarc_g002_entitlement import Aarc_g002_entitlement
+from aarc_g002_entitlement import Aarc_g002_entitlement, Aarc_g002_entitlement_Error
 
 from flask import session
 from authlib.integrations.flask_client import OAuth
@@ -150,8 +150,11 @@ class Authenticator:
             return False
         for entitlement in entitlements:
             for required in self.admin_entitlements:
-                if self._match_entitlement(required, entitlement):
-                    return True
+                try:
+                    if self._match_entitlement(required, entitlement):
+                        return True
+                except Aarc_g002_entitlement_Error:
+                    return False
         return False
 
     def logout(self) -> bool:
