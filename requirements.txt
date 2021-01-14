@@ -5,5 +5,5 @@ Authlib==0.14.3
 requests==2.24.0
 requests-html==0.10.0
 markdown2==2.3.9
-aarc-g002-entitlement==0.2.1
+aarc-g002-entitlement>=0.3
 python-dotenv~=0.15.0
