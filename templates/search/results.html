@@ -28,12 +28,13 @@
             </div>
         </h5>
         <div id="filterCardContent" class="collapse show">
-            <div class="flexbox" style="width: 14em">
+            <div class="form-inline">
                 <label for="benchmark_selection">Benchmark:</label>
                 <select class="form-control" id="benchmark_selection" onchange="search_page.update_benchmark_selection()">
                     <option></option>
                 </select>
             </div>
+            <hr/>
             <ul id="filters" class="list-unstyled d-flex flex-column">
             </ul>
             <input type="button" class="btn btn-primary" value="Search" onclick="search_page.search()"/>
