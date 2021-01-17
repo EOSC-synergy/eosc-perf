@@ -1347,6 +1347,8 @@ class ResultSearch {
 
         this._update_json_suggestions();
 
+        this.update();
+
         if (this.diagram !== null) {
             this.diagram.update_notable_keys(this.notable_keys);
         }
