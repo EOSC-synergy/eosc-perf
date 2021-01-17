@@ -1512,6 +1512,7 @@ class ResultSearch {
         let newColumnOption = document.createElement("li");
         newColumnOption.classList.add("list-group-item");
         newColumnOption.textContent = newColumn.value;
+        newColumnOption.id = "column-select-" + newColumn.value;
         availableColumns.appendChild(newColumnOption);
     }
 
