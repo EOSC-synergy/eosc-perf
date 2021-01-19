@@ -611,55 +611,97 @@ class SpeedupDiagram extends Diagram {
      *
      * TODO: add nulls for columns this dataset has no value for
      *
-     * @returns {{spanGaps: boolean, backgroundColor: (string|*), borderColor: (string|string), data: [], borderWidth: number, label: (*|string)}} Chart.js dataset
+     * @returns {{data: [{spanGaps: boolean, backgroundColor: *, borderColor: string|string, data: [], borderWidth: number, label: *|string}], labels: []}}
      * @private
      */
-    _buildDataset() {
-        let color = Chart.helpers.color;
-        let scores = [];
-        for (const value of this.results) {
-            scores.push(_fetch_subkey(value.data, this.yAxis));
-        }
-        return {
-            label: _get_subkey_name(this.yAxis),
-            backgroundColor: color(CHART_COLORS[0]).alpha(0.5).rgbString(),
-            borderColor: CHART_COLORS[0],
-            borderWidth: 1,
-            data: scores,
-            spanGaps: true
-        };
-    }
-
-    /**
-     * Build an array of chart column labels off current data
-     * @returns {[]} An array of labels.
-     * @private
-     */
-    _buildLabels() {
+    _generateChartData() {
         let labels = [];
+        let scores = [];
+        let values = [];
+
         let sameSite = true;
+        let columnsAreIntegers = true;
+
+        // test if sites are the same all across and if it's an integer range
         if (this.results.length !== 0) {
             let siteName = _fetch_subkey(this.results[0].data, JSON_KEYS.get(COLUMNS.SITE));
             for (const result of this.results) {
                 sameSite &&= (_fetch_subkey(result.data, JSON_KEYS.get(COLUMNS.SITE)) === siteName);
-                if (sameSite === false) {
-                    break;
-                }
+                columnsAreIntegers &&= Number.isInteger(_fetch_subkey(result.data, this.xAxis));
+
+                scores.push(_fetch_subkey(result.data, this.yAxis));
             }
         }
         else {
             sameSite = false;
+            columnsAreIntegers = false;
         }
-        for (const value of this.results) {
-            let label = _fetch_subkey(value.data, this.xAxis);
+
+        console.log("sameSite", sameSite, "columsAreIntegers", columnsAreIntegers);
+
+        let color = Chart.helpers.color;
+
+        // if we're working on a int range, display it as a linear data set
+        if (columnsAreIntegers) {
+            // get bounds
+            let min = scores.reduce((x, y) => Math.min(x, y));
+            let max = scores.reduce((x, y) => Math.max(x, y));
+
+            // sort data ascending
+            let data = this.results;
+            data.sort(
+                (x, y) => (_fetch_subkey(x.data, this.xAxis) > _fetch_subkey(y.data, this.xAxis)) ? 1 : -1);
+
+            // map values to range
+            let prev = min; // xValue > min + 1 = false for first iteration where xValue = min
+            for (const result of data) {
+                const xValue = _fetch_subkey(result.data, this.xAxis);
+                // fill in gaps
+                if (xValue > prev + 1) {
+                    for (let i = prev + 1; i < xValue; i++) {
+                        labels.push("(" + i.toString() + ")");
+                        values.push(NaN); // NaN => no value in chart.js
+                    }
+                }
+
+                let label = xValue.toString();
+                if (!sameSite) {
+                    label += "(" + _fetch_subkey(result, JSON_KEYS.get(COLUMNS.SITE)) + ")";
+                }
+                labels.push(label);
+
+                values.push(_fetch_subkey(result.data, this.yAxis));
+
+                prev = xValue;
+            }
+        }
+        else {
             if (sameSite) {
-                labels.push(label.toString());
+                for (const result of this.results) {
+                    labels.push(_fetch_subkey(result.data, this.xAxis).toString());
+                }
             }
             else {
-                labels.push(_fetch_subkey(value, JSON_KEYS.get(COLUMNS.SITE)) + ', ' + label.toString());
+                for (const result of this.results) {
+                    labels.push(_fetch_subkey(result, JSON_KEYS.get(COLUMNS.SITE)) + ', '
+                        + _fetch_subkey(result.data, this.xAxis).toString());
+                }
             }
+
+            values = scores;
         }
-        return labels;
+
+        return {
+            labels: labels,
+            data: [{
+                label: _get_subkey_name(this.yAxis),
+                backgroundColor: color(CHART_COLORS[0]).alpha(0.5).rgbString(),
+                borderColor: CHART_COLORS[0],
+                borderWidth: 1,
+                data: values,
+                spanGaps: true
+            }]
+        };
     }
 
     /**
@@ -735,8 +777,7 @@ class SpeedupDiagram extends Diagram {
             document.getElementById("speedup").style.removeProperty("display");
         }
 
-        let dataSets = [this._buildDataset()];
-        let labels = this._buildLabels();
+        let { labels: labels, data: dataSets } = this._generateChartData();
 
         let context = document.getElementById('speedup').getContext('2d');
         window.diagram = new Chart(context, {
