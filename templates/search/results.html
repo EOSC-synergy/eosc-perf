@@ -58,6 +58,13 @@
                     <option value="speedup">Speedup Diagram</option>
                 </select>
             </div>
+            <div id="diagramConfiguration-speedup" class="d-none">
+                <select class="custom-select" id="speedupDiagramMode" onchange="search_page.update_diagram_configuration()">
+                    <option value="linear">Linear</option>
+                    <option value="log">Logarithmic</option>
+                    <option value="prop">Proportional</option>
+                </select>
+            </div>
             <div id="diagramSection" class="d-flex flex-column lead"></div>
         </div>
     </div>

@@ -525,6 +525,8 @@ class Diagram {
     }
     cleanup() {
     }
+    update_diagram_configuration() {
+    }
 }
 
 class SpeedupDiagram extends Diagram {
@@ -537,6 +539,7 @@ class SpeedupDiagram extends Diagram {
         this.xAxis = "";
         this.yAxis = "";
         this.notable_keys = [];
+        this.mode = "linear";
 
         let section = document.getElementById("diagramSection");
         {
@@ -641,14 +644,14 @@ class SpeedupDiagram extends Diagram {
 
         let color = Chart.helpers.color;
 
-        // if we're working on a int range, display it as a linear data set
-        if (columnsAreIntegers) {
+        // if we're working on a int range, display it as a linear data set with gaps if configured to
+        if (this.mode === "prop" && columnsAreIntegers) {
             // get bounds
             let min = scores.reduce((x, y) => Math.min(x, y));
             let max = scores.reduce((x, y) => Math.max(x, y));
 
             // sort data ascending
-            let data = this.results;
+            let data = this.results.slice();
             data.sort(
                 (x, y) => (_fetch_subkey(x.data, this.xAxis) > _fetch_subkey(y.data, this.xAxis)) ? 1 : -1);
 
@@ -780,7 +783,7 @@ class SpeedupDiagram extends Diagram {
         let { labels: labels, data: dataSets } = this._generateChartData();
 
         let context = document.getElementById('speedup').getContext('2d');
-        window.diagram = new Chart(context, {
+        let configuration = {
             type: 'line',
             data: {
                 labels: labels,
@@ -818,7 +821,14 @@ class SpeedupDiagram extends Diagram {
                     }
                 }
             }
-        });
+        };
+        if (this.mode === "log") {
+            configuration.options.scales.yAxes[0].type = 'logarithmic';
+        }
+        else {
+            configuration.options.scales.yAxes[0].type = 'linear';
+        }
+        window.diagram = new Chart(context, configuration);
 
         document.getElementById("downloadButton").disabled = false;
         document.getElementById("csvButton").disabled = false;
@@ -844,6 +854,11 @@ class SpeedupDiagram extends Diagram {
 
         // naïve purge
         _clear_select(document.getElementById("diagramSection"));
+    }
+
+    update_diagram_configuration() {
+        this.mode = document.getElementById("speedupDiagramMode").value;
+        this.refresh();
     }
 }
 
@@ -1243,7 +1258,9 @@ class ResultSearch {
      */
     select_result(result_number) {
         this.results[result_number][JSON_KEYS.get(COLUMNS.CHECKBOX)] ^= true;
-        this.diagram.update(this.get_selected_results());
+        if (this.diagram !== null) {
+            this.diagram.update(this.get_selected_results());
+        }
     }
 
     /**
@@ -1585,11 +1602,17 @@ class ResultSearch {
      */
     select_diagram_type() {
         let diagram_chooser = document.getElementById("diagramDropdown");
+        let configPanel = document.getElementById("diagramConfiguration-"
+            + document.getElementById("diagramDropdown").value);
+        if (configPanel !== undefined && configPanel !== null) {
+            configPanel.classList.add("d-none");
+        }
         switch (diagram_chooser.value) {
             case "speedup": {
                 this.diagram = new SpeedupDiagram();
                 this.diagram.update(this.get_selected_results());
                 this.diagram.update_notable_keys(this.notable_keys);
+                document.getElementById("diagramConfiguration-speedup").classList.remove("d-none");
             } break;
             default: {
                 if (this.diagram !== null && this.diagram !== undefined) {
@@ -1599,6 +1622,9 @@ class ResultSearch {
                 this.diagram = null;
             } break;
         }
+        if (this.diagram !== null) {
+            this.diagram.update(this.get_selected_results());
+        }
     }
 
     /**
@@ -1607,6 +1633,10 @@ class ResultSearch {
      */
     get_paginator() {
         return this.paginator;
+    }
+
+    update_diagram_configuration() {
+        this.diagram.update_diagram_configuration();
     }
 }
 
