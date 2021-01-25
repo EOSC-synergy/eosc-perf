@@ -30,7 +30,7 @@
         <div id="filterCardContent" class="collapse show">
             <div class="form-inline">
                 <label for="benchmark_selection">Benchmark:</label>
-                <select class="form-control" id="benchmark_selection" onchange="search_page.update_benchmark_selection()">
+                <select class="custom-select" id="benchmark_selection" onchange="search_page.update_benchmark_selection()">
                     <option></option>
                 </select>
                 <button class="btn btn-outline-secondary" type="button" id="dockerhubLinkButton" disabled>View on Docker Hub</button>
@@ -53,7 +53,7 @@
             <div class="form-inline">
                 <label for="diagramDropdown">Select diagram type:</label>
                 <select name="diagram-choice" id="diagramDropdown" onchange="search_page.select_diagram_type()"
-                        class="form-control">
+                        class="custom-select">
                     <option value="null"></option>
                     <option value="speedup">Speedup Diagram</option>
                 </select>

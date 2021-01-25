@@ -1053,7 +1053,7 @@ class ResultSearch {
                 document.getElementById(FILTER_ID_PREFIX.EXTRA_FRAME + filter_id).style.visibility = "visible";
             }
         });
-        filter_type.classList.add("form-control");
+        filter_type.classList.add("custom-select");
 
         // Primary input
         let input_div = document.createElement("div");
