@@ -1313,9 +1313,16 @@ class ResultSearch {
             .done(function (data) {
                 search_page.set_notable_keys(data['notable_keys']);
             });
+
+            let infoButton = document.getElementById("dockerhubLinkButton");
+            infoButton.onclick = function() {
+                open_tab("https://hub.docker.com/r/" + benchmark_name);
+            };
+            infoButton.disabled = false;
         }
         else {
             this.set_notable_keys([]);
+            document.getElementById("dockerhubLinkButton").disabled = true;
         }
     }
 

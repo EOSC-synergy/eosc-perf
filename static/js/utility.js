@@ -54,3 +54,18 @@ function clear_element_children(element) {
         element.removeChild(element.firstChild);
     }
 }
+
+/**
+ * Helper to open link in new tab
+ *
+ * See https://stackoverflow.com/a/28374344.
+ *
+ * @param href page to open
+ */
+function open_tab(href) {
+    Object.assign(document.createElement('a'),
+        {
+            target: '_blank',
+            href: href,
+        }).click();
+}
