@@ -31,7 +31,7 @@ def read_file_content(filename: str) -> Optional[str]:
     """
     try:
         with open(filename, 'r') as f:
-            return f.read()
+            return f.read().strip()
     except OSError:
         return None
 
