@@ -76,19 +76,22 @@ class IOController:
         Returns:
             bool: True if the benchmark was successfully added.
         """
-        if 'benchmark' not in metadata:
+        metadata_parsed = json.loads(metadata)
+        if 'benchmark' not in metadata_parsed:
             raise ValueError("Missing benchmark identifier")
         try:
-            benchmark = facade.get_benchmark(json.loads(metadata)['benchmark'])
+            benchmark = facade.get_benchmark(metadata_parsed['benchmark'])
         except facade.NotFoundError:
             raise ValueError("Unknown benchmark")
+
         template = benchmark.get_template() if benchmark.has_template() else None
 
         if not self._result_validator.validate_json(result_json, template):
             raise ValueError("No valid result JSON")
 
         self._add_current_user_if_missing()
-        return facade.add_result(result_json, metadata)
+        return facade.add_result(result_json, metadata_parsed['uploader'], metadata_parsed['site'],
+                                 metadata_parsed['benchmark'], metadata_parsed['site_flavor'], metadata_parsed['tags'])
 
     @_only_authenticated(message="You need to be logged in to submit a benchmark.")
     def submit_benchmark(self, docker_name: str, comment: str, template: Optional[JSON] = None) -> bool:
@@ -141,16 +144,7 @@ class IOController:
         if short_name is None or len(short_name) == 0 or address is None or len(address) == 0:
             raise ValueError("invalid short_name or address")
 
-        meta = {
-            'short_name': short_name,
-            'address': address
-        }
-        if name is not None:
-            meta['name'] = name
-        if description is not None:
-            meta['description'] = description
-
-        if not facade.add_site(json.dumps(meta)):
+        if not facade.add_site(short_name, address, description=description, full_name=name):
             return False
 
         message = "New Site. Short name: {}, address: {}".format(short_name, address)
@@ -332,21 +326,14 @@ class IOController:
         flavor.set_description(description)
         return True
 
-    @_only_authenticated
+    #@_only_authenticated
     def _add_current_user_if_missing(self):
         """Add the current user as an uploader if they do not exist yet."""
         uid = self.get_user_id()
         try:
             facade.get_uploader(uid)
-            return
         except facade.NotFoundError:
-            email = self.get_email()
-            name = self.get_full_name()
-            facade.add_uploader(json.dumps({
-                'id': uid,
-                'email': email,
-                'name': name
-            }))
+            facade.add_uploader(uid, self.get_full_name(), self.get_email())
 
     @staticmethod
     def _valid_docker_hub_name(docker_name: str) -> bool:

@@ -7,13 +7,13 @@ from ..controller.io_controller import controller
 
 
 def _add_result(result):
-    facade.add_result(result.get_json(), json.dumps({
-        'uploader': result.get_uploader().get_id(),
-        'site': result.get_site().get_short_name(),
-        'benchmark': result.get_benchmark().get_docker_name(),
-        'tags': [tag.get_name() for tag in result.get_tags()],
-        'site_flavor': result.get_flavor().get_uuid()
-    }))
+    facade.add_result(result.get_json(),
+        result.get_uploader().get_id(),
+        result.get_site().get_short_name(),
+        result.get_benchmark().get_docker_name(),
+        result.get_flavor().get_uuid(),
+        [tag.get_name() for tag in result.get_tags()]
+    )
 
 
 def add_demo():
@@ -29,11 +29,7 @@ def add_demo():
     try:
         facade.get_uploader(demo_uploader.get_id())
     except facade.NotFoundError:
-        facade.add_uploader(json.dumps({
-            'id': demo_uploader.get_id(),
-            'email': demo_uploader.get_email(),
-            'name': demo_uploader.get_name()
-        }))
+        facade.add_uploader(demo_uploader.get_id(), demo_uploader.get_name(), demo_uploader.get_email())
 
     # virtualbox archlinux installation I use for development
     demo_site = Site(
@@ -46,12 +42,8 @@ def add_demo():
         site = facade.get_site(demo_site.get_short_name())
         demo_flavor = site.get_flavors()[0]
     except facade.NotFoundError:
-        facade.add_site(json.dumps({
-            'short_name': demo_site.get_short_name(),
-            'address': demo_site.get_address(),
-            'name': demo_site.get_name(),
-            'description': demo_site.get_description()
-        }))
+        facade.add_site(demo_site.get_short_name(), demo_site.get_address(), description=demo_site.get_description(),
+                        full_name=demo_site.get_name())
 
         # todo: one flavor per core-count adjustment?
         demo_flavor = SiteFlavor("virtualbox-arch", facade.get_site(demo_site.get_short_name()),

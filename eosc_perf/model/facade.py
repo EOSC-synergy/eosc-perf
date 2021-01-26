@@ -280,10 +280,6 @@ class DatabaseFacade:
         Returns:
             bool: True if the uploader was found.
         """
-        if not isinstance(uploader, str):
-            return False
-        if len(uploader) < 1:
-            return False
         try:
             self.get_uploader(uploader)
         except self.NotFoundError:
@@ -338,117 +334,89 @@ class DatabaseFacade:
             return False
         return True
 
-    def add_uploader(self, metadata_json: str) -> bool:
+    def add_uploader(self, identifier: str, name: str, email: str) -> bool:
         """Add new uploader using uploader metadata json.
 
         Args:
-            metadata_json (str): The metadata about the new uploader.
+            identifier (str): Unique id for this user.
+            name (str): Human-readable name for the user.
+            email (str): User's email address.
         Returns:
             bool: True if adding the uploader was successful.
         """
-        #
-        metadata = json.loads(metadata_json)
-
         # input validation
-        if 'id' not in metadata:
-            raise ValueError("id is missing from uploader metadata")
-        if len(metadata['id']) < 1:
+        if len(identifier) < 1:
             raise ValueError("id empty")
-        if 'name' not in metadata:
-            raise ValueError("name is missing from uploader metadata")
-        if len(metadata['name']) < 1:
+        if len(name) < 1:
             raise ValueError("name is empty")
-        if 'email' not in metadata:
-            raise ValueError("email is missing from uploader metadata")
-        if len(metadata['email']) < 1:
+        if len(email) < 1:
             raise ValueError("email is empty")
 
-        uploader = Uploader(metadata['id'], metadata['email'], metadata['name'])
+        uploader = Uploader(identifier, email, name)
 
-        return self._add_to_db(uploader)
+        success = self._add_to_db(uploader)
+        return success
 
-    def add_result(self, content_json: str, metadata_json: str) -> bool:
+    def add_result(self, content_json: str, uploader_id: str, site_name: str, benchmark_name: str, site_flavor: str,
+                   tag_names: List[str] = None) -> bool:
         """Add new site using site metadata json.
 
         Args:
             content_json (str): The JSON of the benchmark result data.
-            metadata_json (str): The metadata about the new result.
+            uploader_id (str): Identifier for the uploader of this result.
+            site_name (str): Short name of the site the benchmark was run on.
+            benchmark_name (str): The docker name of the benchmark that was run.
+            site_flavor (str): The name of the virtual machine flavor used.
+            tag_names (List[str]): Tags to associate to the result.
         Returns:
             bool: True if adding successful.
         """
-        # content_json is assumed validated by the Controller
-        metadata = json.loads(metadata_json)
-
-        # input validation
-        if 'uploader' not in metadata:
-            raise ValueError("uploader is missing from result metadata")
-        if not self._has_uploader(metadata['uploader']):
+        if not self._has_uploader(uploader_id):
             raise ValueError("uploader id is invalid")
-
-        if 'site' not in metadata:
-            raise ValueError("site is missing from result metadata")
-        if not self._has_site(metadata['site']):
+        if not self._has_site(site_name):
             raise ValueError("site id is invalid")
-
-        if 'benchmark' not in metadata:
-            raise ValueError("benchmark is missing from result metadata")
-        if not self._has_benchmark(metadata['benchmark']):
+        if not self._has_benchmark(benchmark_name):
             raise ValueError("benchmark name is invalid")
+        if not self._has_site_flavor(site_flavor):
+            raise ValueError("site_flavor id " + str(site_flavor) + " is invalid")
 
-        if 'site_flavor' not in metadata:
-            raise ValueError("site_flavor is missing from result metadata")
-        if not self._has_site_flavor(metadata['site_flavor']):
-            raise ValueError("site_flavor id " + str(metadata['site_flavor']) + " is invalid")
+        uploader = self.get_uploader(uploader_id)
+        site = self.get_site(site_name)
+        benchmark = self.get_benchmark(benchmark_name)
+        flavor = self.get_site_flavor(site_flavor)
 
-        uploader = self.get_uploader(metadata['uploader'])
-        site = self.get_site(metadata['site'])
-        benchmark = self.get_benchmark(metadata['benchmark'])
-        flavor = self.get_site_flavor(metadata['site_flavor'])
-
-        tags = []
-        if 'tags' in metadata:
-            if not isinstance(metadata['tags'], list):
-                raise TypeError("tags must be a list of strings in result metadata")
-            for tag_name in metadata['tags']:
-                if not isinstance(tag_name, str):
-                    raise TypeError("at least one tag in results metadata is not a string")
+        tags: List[Tag] = []
+        if not isinstance(tag_names, list):
+            raise TypeError("tags must be in a list")
+        if tag_names is not None and len(tag_names) > 0:
+            for tag_name in tag_names:
                 try:
-                    tags.append(self.get_tag(tag_name))
-                except DatabaseFacade.NotFoundError:
-                    raise ValueError("unknown tag")
+                    tag = self.get_tag(tag_name)
+                    tags.append(tag)
+                except self.NotFoundError:
+                    raise ValueError("unknown tag " + tag_name)
 
         return self._add_to_db(Result(content_json, uploader, site, benchmark, flavor=flavor, tags=tags))
 
-    def add_site(self, metadata_json: str) -> bool:
+    def add_site(self, short_name: str, address: str, *, description: str = None, full_name: str = None) -> bool:
         """Add new site using site metadata json.
 
         Args:
-            metadata_json (str): The metadata about the site to be added.
+            short_name (str): Short name for the site. Used as identifier.
+            address (str): Network address for the site.
+            description (str): Description for the site.
+            full_name (str): Human-readable name.
         Returns:
             bool: True if adding the site was successful.
         """
-        #
-        metadata = json.loads(metadata_json)
 
         # input validation
-        if 'short_name' not in metadata:
-            raise ValueError("short_name is missing from site metadata")
-        if len(metadata['short_name']) < 1:
+        if len(short_name) < 1:
             raise ValueError("short_name empty")
-        if 'address' not in metadata:
-            raise ValueError("address is missing from site metadata")
-        if len(metadata['address']) < 1:
+        if len(address) < 1:
             raise ValueError("address is empty")
 
-        description = None
-        if 'description' in metadata and len(metadata['description']) > 0:
-            description = metadata['description']
-        full_name = None
-        if 'name' in metadata and len(metadata['name']) > 0:
-            full_name = metadata['name']
-
-        site = Site(metadata['short_name'], metadata['address'], description=description,
-                    name=full_name)
+        site = Site(short_name, address, description=description, name=full_name)
 
         return self._add_to_db(site)
 
