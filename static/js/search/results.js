@@ -521,7 +521,7 @@ class PageNavigation {
 class Diagram {
     update_notable_keys(notable_keys) {
     }
-    update(results) {
+    updateData(results) {
     }
     cleanup() {
     }
@@ -555,7 +555,7 @@ class SpeedupDiagram extends Diagram {
                 dropdown.id = "diagramX";
                 dropdown.classList.add("form-control");
                 dropdown.onchange = function() {
-                    search_page.get_diagram().refresh();
+                    search_page.get_diagram()._update();
                 };
                 xAxisDiv.appendChild(dropdown);
             }
@@ -573,7 +573,7 @@ class SpeedupDiagram extends Diagram {
                 dropdown.id = "diagramY";
                 dropdown.classList.add("form-control");
                 dropdown.onchange = function() {
-                    search_page.get_diagram().refresh();
+                    search_page.get_diagram()._update();
                 };
                 yAxisDiv.appendChild(dropdown);
             }
@@ -610,19 +610,17 @@ class SpeedupDiagram extends Diagram {
     }
 
     /**
-     * Build a chart.js dataset off current data
+     * Pass various checks over the used data to verify if certain diagrams are viable.
      *
-     * TODO: add nulls for columns this dataset has no value for
+     * sameSite: all results are from the same site
+     * columnsAreNumbers: all columns/labels are actual numbers and can for example be put on a log scale
      *
-     * @returns {{data: [{spanGaps: boolean, backgroundColor: *, borderColor: string|string, data: [], borderWidth: number, label: *|string}], labels: []}}
+     * @returns {{sameSite: boolean, columnsAreNumbers: boolean, columnsAreIntegers: boolean}}
      * @private
      */
-    _generateChartData() {
-        let labels = [];
-        let scores = [];
-        let values = [];
-
+    _determineDataProperties() {
         let sameSite = true;
+        let columnsAreNumbers = true;
         let columnsAreIntegers = true;
 
         // test if sites are the same all across and if it's an integer range
@@ -630,20 +628,45 @@ class SpeedupDiagram extends Diagram {
             let siteName = _fetch_subkey(this.results[0].data, JSON_KEYS.get(COLUMNS.SITE));
             for (const result of this.results) {
                 sameSite &&= (_fetch_subkey(result.data, JSON_KEYS.get(COLUMNS.SITE)) === siteName);
+                columnsAreNumbers &&= typeof _fetch_subkey(result.data, this.xAxis) === 'number';
                 columnsAreIntegers &&= Number.isInteger(_fetch_subkey(result.data, this.xAxis));
-
-                scores.push(_fetch_subkey(result.data, this.yAxis));
             }
         }
         else {
             sameSite = false;
-            columnsAreIntegers = false;
+            columnsAreNumbers = false;
+        }
+
+        return {
+            sameSite, columnsAreNumbers, columnsAreIntegers
+        };
+    }
+
+    /**
+     * Build a chart.js dataset off current data
+     *
+     * TODO: add nulls for columns this dataset has no value for
+     *
+     * @returns {{data: [{spanGaps: boolean, backgroundColor: *, borderColor: string|string, data: [], borderWidth: number, label: *|string}], labels: []}}
+     * @private
+     */
+    _generateChartData(properties) {
+        let labels = [];
+        let scores = [];
+        let values = [];
+        let dataPoints = [];
+
+        // test if sites are the same all across and if it's an integer range
+        if (this.results.length !== 0) {
+            for (const result of this.results) {
+                scores.push(_fetch_subkey(result.data, this.yAxis));
+            }
         }
 
         let color = Chart.helpers.color;
 
         // if we're working on a int range, display it as a linear data set with gaps if configured to
-        if (this.mode === "prop" && columnsAreIntegers) {
+        if (this.mode === "prop" && properties.columnsAreIntegers) {
             // get bounds
             let min = scores.reduce((x, y) => Math.min(x, y));
             let max = scores.reduce((x, y) => Math.max(x, y));
@@ -666,7 +689,7 @@ class SpeedupDiagram extends Diagram {
                 }
 
                 let label = xValue.toString();
-                if (!sameSite) {
+                if (!properties.sameSite) {
                     label += "(" + _fetch_subkey(result, JSON_KEYS.get(COLUMNS.SITE)) + ")";
                 }
                 labels.push(label);
@@ -677,9 +700,9 @@ class SpeedupDiagram extends Diagram {
             }
         }
         else {
-            if (sameSite) {
+            if (properties.sameSite) {
                 for (const result of this.results) {
-                    labels.push(_fetch_subkey(result.data, this.xAxis).toString());
+                    labels.push(_fetch_subkey(result.data, this.xAxis));
                 }
             }
             else {
@@ -692,6 +715,10 @@ class SpeedupDiagram extends Diagram {
             values = scores;
         }
 
+        for (let i = 0; i < values.length; i++) {
+            dataPoints.push({y: values[i], x: labels[i]});
+        }
+
         return {
             labels: labels,
             data: [{
@@ -699,7 +726,7 @@ class SpeedupDiagram extends Diagram {
                 backgroundColor: color(CHART_COLORS[0]).alpha(0.5).rgbString(),
                 borderColor: CHART_COLORS[0],
                 borderWidth: 1,
-                data: values,
+                data: dataPoints,
                 spanGaps: true
             }]
         };
@@ -766,19 +793,8 @@ class SpeedupDiagram extends Diagram {
             window.diagram.destroy();
             delete window.diagram;
         }
-        this.xAxis = document.getElementById("diagramX").value;
-        this.yAxis = document.getElementById("diagramY").value;
-        if (!_validate_keypath(this.xAxis) || !_validate_keypath(this.yAxis) || this.results.length === 0) {
-            document.getElementById("downloadButton").disabled = "true";
-            document.getElementById("csvButton").disabled = "true";
-            document.getElementById("speedup").style.display = "none";
-            return;
-        }
-        else {
-            document.getElementById("speedup").style.removeProperty("display");
-        }
 
-        let { labels: labels, data: dataSets } = this._generateChartData();
+        let { labels: labels, data: dataSets } = this._generateChartData(this.properties);
 
         let context = document.getElementById('speedup').getContext('2d');
         let configuration = {
@@ -798,9 +814,9 @@ class SpeedupDiagram extends Diagram {
                 },
                 scales: {
                     yAxes: [{
-                        ticks: {
+                        /*ticks: {
                             beginAtZero: true
-                        },
+                        },*/
                         scaleLabel: {
                             display: true,
                             labelString: this.yAxis
@@ -821,6 +837,7 @@ class SpeedupDiagram extends Diagram {
             }
         };
         if (this.mode === "log") {
+            configuration.options.scales.xAxes[0].type = 'logarithmic';
             configuration.options.scales.yAxes[0].type = 'logarithmic';
         }
         else {
@@ -832,14 +849,48 @@ class SpeedupDiagram extends Diagram {
         document.getElementById("csvButton").disabled = false;
     }
 
+    _update() {
+        this.xAxis = document.getElementById("diagramX").value;
+        this.yAxis = document.getElementById("diagramY").value;
+
+        this.properties = this._determineDataProperties();
+
+        if (this.properties.sameSite) {
+            document.getElementById("speedupDiagramMode").children.namedItem("speedupDiagramMode-prop").disabled = !this.properties.columnsAreIntegers;
+
+            document.getElementById("speedupDiagramMode").children.namedItem("speedupDiagramMode-log").disabled = !this.properties.columnsAreNumbers;
+        }
+
+        if (this.properties.columnsAreNumbers === false && this.mode === "log") {
+            this.mode = "linear";
+            document.getElementById("speedupDiagramMode").value = "linear";
+        }
+        if (this.properties.columnsAreIntegers === false && this.mode === "prop") {
+            this.mode = "linear";
+            document.getElementById("speedupDiagramMode").value = "linear";
+        }
+
+        if (!_validate_keypath(this.xAxis) || !_validate_keypath(this.yAxis) || this.results.length === 0) {
+            document.getElementById("downloadButton").disabled = "true";
+            document.getElementById("csvButton").disabled = "true";
+            document.getElementById("speedup").style.display = "none";
+            return;
+        }
+        else {
+            document.getElementById("speedup").style.removeProperty("display");
+        }
+
+        this.refresh();
+    }
+
     /**
      * Update diagram data
      * @param data The new results to use.
      */
-    update(data) {
+    updateData(data) {
         this.results = data;
 
-        this.refresh();
+        this._update();
     }
 
     /**
@@ -856,7 +907,7 @@ class SpeedupDiagram extends Diagram {
 
     update_diagram_configuration() {
         this.mode = document.getElementById("speedupDiagramMode").value;
-        this.refresh();
+        this._update();
     }
 }
 
@@ -914,7 +965,7 @@ class ResultSearch {
         this.table.display(this.results.slice(start, end), this.active_columns, start);
 
         if (this.diagram !== null) {
-            this.diagram.update(this.get_selected_results());
+            this.diagram.updateData(this.get_selected_results());
         }
 
         $('[data-toggle="popover"]').popover({
@@ -1258,7 +1309,7 @@ class ResultSearch {
     select_result(result_number) {
         this.results[result_number][JSON_KEYS.get(COLUMNS.CHECKBOX)] ^= true;
         if (this.diagram !== null) {
-            this.diagram.update(this.get_selected_results());
+            this.diagram.updateData(this.get_selected_results());
         }
     }
 
@@ -1617,7 +1668,7 @@ class ResultSearch {
         switch (diagram_chooser.value) {
             case "speedup": {
                 this.diagram = new SpeedupDiagram();
-                this.diagram.update(this.get_selected_results());
+                this.diagram.updateData(this.get_selected_results());
                 this.diagram.update_notable_keys(this.notable_keys);
                 document.getElementById("diagramConfiguration-speedup").classList.remove("d-none");
             } break;
@@ -1630,7 +1681,7 @@ class ResultSearch {
             } break;
         }
         if (this.diagram !== null) {
-            this.diagram.update(this.get_selected_results());
+            this.diagram.updateData(this.get_selected_results());
         }
     }
 
