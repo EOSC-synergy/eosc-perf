@@ -2,7 +2,7 @@
     "arguments": "Total Time - 4K, 16 Rays Per Pixel",
     "outcome": {
         "all_results": "155.995:157.626:156.195",
-        "value": "156.605"
+        "value": 156.605
     },
     "specs": {
         "arch": "X86_64",
