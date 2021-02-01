@@ -640,8 +640,6 @@ class SpeedupDiagram extends Diagram {
             columnsAreIntegers = false;
         }
 
-        console.log("sameSite", sameSite, "columsAreIntegers", columnsAreIntegers);
-
         let color = Chart.helpers.color;
 
         // if we're working on a int range, display it as a linear data set with gaps if configured to
