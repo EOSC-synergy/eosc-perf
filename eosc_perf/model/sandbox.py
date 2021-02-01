@@ -48,9 +48,6 @@ def add_demo():
         # todo: one flavor per core-count adjustment?
         demo_flavor = SiteFlavor("virtualbox-arch", facade.get_site(demo_site.get_short_name()),
                                  custom_text="Example data obtained with virtualbox core-adjustment")
-
-        facade.add_flavor(demo_flavor.get_name(), demo_flavor.get_description(),
-                          demo_flavor.get_site().get_short_name())
     facade.get_site(demo_site.get_short_name()).set_hidden(False)
 
     with open('eosc_perf/model/sample_data/template.json') as file:
