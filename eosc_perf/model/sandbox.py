@@ -55,7 +55,7 @@ def add_demo():
 
     with open('eosc_perf/model/sample_data/template.json') as file:
         # the benchmark is real
-        demo_benchmark = Benchmark(docker_name='thechristophe/phoronix-c-ray', uploader=demo_uploader,
+        demo_benchmark = Benchmark(docker_name='thechristophe/openbench-c-ray', uploader=demo_uploader,
                                    template=file.read())
 
     try:
