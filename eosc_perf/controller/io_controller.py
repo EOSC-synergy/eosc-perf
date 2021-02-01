@@ -112,7 +112,8 @@ class IOController:
         if template is not None and not self._result_validator.validate_json(template, skip_keycheck=True):
             raise ValueError("Template is not valid JSON")
 
-        if not facade.add_benchmark(docker_name=docker_name, uploader_id=self.get_user_id(), template=template):
+        if not facade.add_benchmark(docker_name=docker_name, uploader_id=self.get_user_id(), description=comment,
+                                    template=template):
             raise RuntimeError("A benchmark with the given name was already submitted.")
 
         # if user is an admin, skip review process

@@ -216,16 +216,22 @@ class Benchmark(db.Model):
     _uploader_id = db.Column(db.Text, db.ForeignKey('uploader._email'), nullable=False)
     _uploader = db.relationship('Uploader', backref=db.backref('_benchmarks', lazy=True))
 
+    _description = db.Column(db.Text, nullable=True)
+
     _template = db.Column(db.Text, nullable=True)
 
-    def __init__(self, docker_name: str, uploader: Uploader, template: JSON = None):
+    def __init__(self, docker_name: str, uploader: Uploader, description: Optional[str] = None,
+                 template: Optional[JSON] = None):
         """Create a new benchmark entry object.
 
         Args:
             docker_name (str): The docker name of the new benchmark.
             uploader (Uploader): The uploader that added this benchmark.
+            description (Optional[str]): The description for the benchmark.
+            template (Optional[JSON]): The template for the benchmark results.
         """
-        super(Benchmark, self).__init__(_docker_name=docker_name, _uploader=uploader, _template=template)
+        super(Benchmark, self).__init__(_docker_name=docker_name, _uploader=uploader, _description=description,
+                                        _template=template)
 
     def get_docker_name(self) -> str:
         """Get the docker hub identifier of the benchmark, formatted as \"user/image:tagname\".
@@ -267,6 +273,20 @@ class Benchmark(db.Model):
             bool: True if hidden.
         """
         return self._hidden
+
+    def set_description(self, description: str):
+        """Set the description of the benchmark.
+
+        Args:
+            description (str): The new description.
+        """
+        self._description = description
+        db.session.commit()
+
+    def get_description(self):
+        """Get the benchmark description.
+        """
+        return self._description
 
     def set_template(self, template: JSON):
         """Set a new JSON data template for this benchmark.

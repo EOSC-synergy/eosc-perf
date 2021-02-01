@@ -500,13 +500,15 @@ class DatabaseFacade:
 
         return success
 
-    def add_benchmark(self, docker_name: str, uploader_id: str, template: Optional[JSON] = None) -> bool:
+    def add_benchmark(self, docker_name: str, uploader_id: str, description: Optional[str] = None,
+                      template: Optional[JSON] = None) -> bool:
         """Add a new benchmark.
 
         Args:
             docker_name (str): The docker name of the benchmark to add.
             uploader_id (str): The identifier of the uploader that added this benchmark.
-            template (JSON): An optional JSON data template to use for the results of this benchmark.
+            description (Optional[str]): The description for the benchmark.
+            template (Optional[JSON]): An optional JSON data template to use for the results of this benchmark.
         Returns:
             bool: True if adding the benchmark was successful.
         """
@@ -519,7 +521,7 @@ class DatabaseFacade:
 
         uploader = self.get_uploader(uploader_id)
 
-        return self._add_to_db(Benchmark(docker_name, uploader, template=template))
+        return self._add_to_db(Benchmark(docker_name, uploader, description=description, template=template))
 
     def get_report(self, uuid: str) -> Report:
         """Fetch a single report by its UUID.

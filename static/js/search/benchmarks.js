@@ -41,13 +41,15 @@ function update_result_table() {
 
         // add a 'a' with href
         let a = document.createElement('a');
-
-        let link_text = document.createTextNode(docker_name);
-        a.appendChild(link_text);
+        a.textContent = docker_name;
         a.title = docker_name;
         a.href = '/result_search?benchmark=' + encodeURI(docker_name);
 
+        let description = document.createElement("div");
+        description.textContent = results[index].description;
+
         docker_name_cell.appendChild(a);
+        docker_name_cell.appendChild(description);
     }
     if (result_amount > results_per_page) {
         show_nav_buttons();

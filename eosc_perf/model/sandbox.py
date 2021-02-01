@@ -56,7 +56,7 @@ def add_demo():
     with open('eosc_perf/model/sample_data/template.json') as file:
         # the benchmark is real
         demo_benchmark = Benchmark(docker_name='thechristophe/openbench-c-ray', uploader=demo_uploader,
-                                   template=file.read())
+                                   description="Example description :)", template=file.read())
 
     try:
         facade.get_benchmark(demo_benchmark.get_docker_name())
@@ -64,7 +64,8 @@ def add_demo():
         facade.add_benchmark(
             demo_benchmark.get_docker_name(),
             demo_benchmark.get_uploader().get_id(),
-            demo_benchmark.get_template())
+            description=demo_benchmark.get_description(),
+            template=demo_benchmark.get_template())
     facade.get_benchmark(demo_benchmark.get_docker_name()).set_hidden(False)
 
     # load demo results
