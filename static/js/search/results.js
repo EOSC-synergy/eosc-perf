@@ -1064,6 +1064,7 @@ class ResultSearch {
             if (filter_type.value.localeCompare(FILTERS.JSON) === 0) {
                 document.getElementById(FILTER_ID_PREFIX.SUGGESTIONS_BTN + filter_id).disabled = false;
                 document.getElementById(FILTER_ID_PREFIX.EXTRA_FRAME + filter_id).style.visibility = "visible";
+                search_page._update_json_suggestions(filter_id);
             }
         });
         filter_type.classList.add("custom-select");
@@ -1364,37 +1365,45 @@ class ResultSearch {
     }
 
     /**
+     * Update the JSON-field suggestions for a specific filter
+     * @private
+     */
+    _update_json_suggestions(filter) {
+        let div = document.getElementById(FILTER_ID_PREFIX.SUGGESTIONS + filter);
+        // don't update other types of suggestions
+        if (document.getElementById(FILTER_ID_PREFIX.TYPE + filter).value.toLocaleString().localeCompare(FILTERS.JSON) !== 0) {
+            return;
+        }
+        while (div.firstChild) {
+            div.removeChild(div.firstChild);
+        }
+        if (this.notable_keys.length === 0) {
+            let suggestion_option = document.createElement("a");
+            suggestion_option.classList.add("dropdown-item");
+            suggestion_option.textContent = "No suggestions found!";
+            div.append(suggestion_option);
+        }
+        else {
+            for (let notable of this.notable_keys) {
+                let suggestion_option = document.createElement("a");
+                suggestion_option.classList.add("dropdown-item");
+                suggestion_option.textContent = notable;
+                suggestion_option.addEventListener("click", function () {
+                    document.getElementById(FILTER_ID_PREFIX.VALUE + filter).value = notable;
+                    document.getElementById(FILTER_ID_PREFIX.VALUE + filter).textContent = notable;
+                    });
+                div.appendChild(suggestion_option);
+            }
+        }
+    }
+
+    /**
      * Update all notable-JSON-field suggestion dropdowns
      * @private
      */
-    _update_json_suggestions() {
+    _update_all_json_suggestions() {
         for (let filter of this.filter_ids) {
-            let div = document.getElementById(FILTER_ID_PREFIX.SUGGESTIONS + filter);
-            // don't update other types of suggestions
-            if (document.getElementById(FILTER_ID_PREFIX.TYPE + filter).value.toLocaleString().localeCompare(FILTERS.JSON) !== 0) {
-                continue;
-            }
-            while (div.firstChild) {
-                div.removeChild(div.firstChild);
-            }
-            if (this.notable_keys.length === 0) {
-                let suggestion_option = document.createElement("a");
-                suggestion_option.classList.add("dropdown-item");
-                suggestion_option.textContent = "No suggestions found!";
-                div.append(suggestion_option);
-            }
-            else {
-                for (let notable of this.notable_keys) {
-                    let suggestion_option = document.createElement("a");
-                    suggestion_option.classList.add("dropdown-item");
-                    suggestion_option.textContent = notable;
-                    suggestion_option.addEventListener("click", function () {
-                        document.getElementById(FILTER_ID_PREFIX.VALUE + filter).value = notable;
-                        document.getElementById(FILTER_ID_PREFIX.VALUE + filter).textContent = notable;
-                    });
-                    div.appendChild(suggestion_option);
-                }
-            }
+            this._update_json_suggestions(filter);
         }
     }
 
@@ -1408,7 +1417,7 @@ class ResultSearch {
         this.active_columns = [];
         this._populate_active_columns();
 
-        this._update_json_suggestions();
+        this._update_all_json_suggestions();
 
         this.update();
 
