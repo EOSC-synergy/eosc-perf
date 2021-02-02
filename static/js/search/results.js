@@ -539,7 +539,7 @@ class SpeedupDiagram extends Diagram {
         this.xAxis = "";
         this.yAxis = "";
         this.notable_keys = [];
-        this.mode = "linear";
+        this.mode = "simple";
 
         let section = document.getElementById("diagramSection");
         {
@@ -615,13 +615,12 @@ class SpeedupDiagram extends Diagram {
      * sameSite: all results are from the same site
      * columnsAreNumbers: all columns/labels are actual numbers and can for example be put on a log scale
      *
-     * @returns {{sameSite: boolean, columnsAreNumbers: boolean, columnsAreIntegers: boolean}}
+     * @returns {{sameSite: boolean, columnsAreNumbers: boolean}}
      * @private
      */
     _determineDataProperties() {
         let sameSite = true;
         let columnsAreNumbers = true;
-        let columnsAreIntegers = true;
 
         // test if sites are the same all across and if it's an integer range
         if (this.results.length !== 0) {
@@ -629,7 +628,6 @@ class SpeedupDiagram extends Diagram {
             for (const result of this.results) {
                 sameSite &&= (_fetch_subkey(result.data, JSON_KEYS.get(COLUMNS.SITE)) === siteName);
                 columnsAreNumbers &&= typeof _fetch_subkey(result.data, this.xAxis) === 'number';
-                columnsAreIntegers &&= Number.isInteger(_fetch_subkey(result.data, this.xAxis));
             }
         }
         else {
@@ -638,7 +636,7 @@ class SpeedupDiagram extends Diagram {
         }
 
         return {
-            sameSite, columnsAreNumbers, columnsAreIntegers
+            sameSite, columnsAreNumbers
         };
     }
 
@@ -651,72 +649,19 @@ class SpeedupDiagram extends Diagram {
      * @private
      */
     _generateChartData(properties) {
-        let labels = [];
-        let scores = [];
-        let values = [];
+        let labels = []; // labels below graph
         let dataPoints = [];
-
-        // test if sites are the same all across and if it's an integer range
-        if (this.results.length !== 0) {
-            for (const result of this.results) {
-                scores.push(_fetch_subkey(result.data, this.yAxis));
-            }
-        }
-
         let color = Chart.helpers.color;
 
-        // if we're working on a int range, display it as a linear data set with gaps if configured to
-        if (this.mode === "prop" && properties.columnsAreIntegers) {
-            // get bounds
-            let min = scores.reduce((x, y) => Math.min(x, y));
-            let max = scores.reduce((x, y) => Math.max(x, y));
-
-            // sort data ascending
-            let data = this.results.slice();
-            data.sort(
-                (x, y) => (_fetch_subkey(x.data, this.xAxis) > _fetch_subkey(y.data, this.xAxis)) ? 1 : -1);
-
-            // map values to range
-            let prev = min; // xValue > min + 1 = false for first iteration where xValue = min
-            for (const result of data) {
-                const xValue = _fetch_subkey(result.data, this.xAxis);
-                // fill in gaps
-                if (xValue > prev + 1) {
-                    for (let i = prev + 1; i < xValue; i++) {
-                        labels.push("(" + i.toString() + ")");
-                        values.push(NaN); // NaN => no value in chart.js
-                    }
-                }
-
-                let label = xValue.toString();
-                if (!properties.sameSite) {
-                    label += "(" + _fetch_subkey(result, JSON_KEYS.get(COLUMNS.SITE)) + ")";
-                }
-                labels.push(label);
-
-                values.push(_fetch_subkey(result.data, this.yAxis));
-
-                prev = xValue;
+        for (const result of this.results) {
+            const x = _fetch_subkey(result.data, this.xAxis);
+            const y = _fetch_subkey(result.data, this.yAxis);
+            let label = x.toString();
+            if (!properties.sameSite) {
+                label += ' (' + _fetch_subkey(result, JSON_KEYS.get(COLUMNS.SITE)) + ')';
             }
-        }
-        else {
-            if (properties.sameSite) {
-                for (const result of this.results) {
-                    labels.push(_fetch_subkey(result.data, this.xAxis));
-                }
-            }
-            else {
-                for (const result of this.results) {
-                    labels.push(_fetch_subkey(result, JSON_KEYS.get(COLUMNS.SITE)) + ', '
-                        + _fetch_subkey(result.data, this.xAxis).toString());
-                }
-            }
-
-            values = scores;
-        }
-
-        for (let i = 0; i < values.length; i++) {
-            dataPoints.push({y: values[i], x: labels[i]});
+            dataPoints.push({x, y});
+            labels.push(label);
         }
 
         return {
@@ -802,7 +747,12 @@ class SpeedupDiagram extends Diagram {
                 window.diagram.options.scales.xAxes[0].type = 'logarithmic';
                 window.diagram.options.scales.yAxes[0].type = 'logarithmic';
             }
-            else {
+            else if (this.mode === "linear") {
+                window.diagram.options.scales.xAxes[0].type = 'linear';
+                window.diagram.options.scales.yAxes[0].type = 'linear';
+            }
+            else /* simple */ {
+                delete window.diagram.options.scales.xAxes[0].type;
                 window.diagram.options.scales.yAxes[0].type = 'linear';
             }
 
@@ -846,6 +796,13 @@ class SpeedupDiagram extends Diagram {
                         line: {
                             tension: 0
                         }
+                    },
+                    tooltips: {
+                        callbacks: {
+                            title: function(tooltipItem, entry) {
+                                return tooltipItem[0].yLabel + ' (' + tooltipItem[0].label + ')';
+                            }
+                        }
                     }
                 }
             };
@@ -853,8 +810,12 @@ class SpeedupDiagram extends Diagram {
                 configuration.options.scales.xAxes[0].type = 'logarithmic';
                 configuration.options.scales.yAxes[0].type = 'logarithmic';
             }
-            else {
+            else if (this.mode === "linear") {
                 configuration.options.scales.xAxes[0].type = 'linear';
+                configuration.options.scales.yAxes[0].type = 'linear';
+            }
+            else /* simple */ {
+                delete configuration.options.scales.xAxes[0].type;
                 configuration.options.scales.yAxes[0].type = 'linear';
             }
             window.diagram = new Chart(context, configuration);
@@ -871,18 +832,13 @@ class SpeedupDiagram extends Diagram {
         this.properties = this._determineDataProperties();
 
         if (this.properties.sameSite) {
-            document.getElementById("speedupDiagramMode").children.namedItem("speedupDiagramMode-prop").disabled = !this.properties.columnsAreIntegers;
-
+            document.getElementById("speedupDiagramMode").children.namedItem("speedupDiagramMode-linear").disabled = !this.properties.columnsAreNumbers;
             document.getElementById("speedupDiagramMode").children.namedItem("speedupDiagramMode-log").disabled = !this.properties.columnsAreNumbers;
         }
 
-        if (this.properties.columnsAreNumbers === false && this.mode === "log") {
-            this.mode = "linear";
-            document.getElementById("speedupDiagramMode").value = "linear";
-        }
-        if (this.properties.columnsAreIntegers === false && this.mode === "prop") {
-            this.mode = "linear";
-            document.getElementById("speedupDiagramMode").value = "linear";
+        if (this.properties.columnsAreNumbers === false && (this.mode === "log" || this.mode === "linear")) {
+            this.mode = "simple";
+            document.getElementById("speedupDiagramMode").value = "simple";
         }
 
         if (!_validate_keypath(this.xAxis) || !_validate_keypath(this.yAxis) || this.results.length === 0) {
