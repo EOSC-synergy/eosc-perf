@@ -789,61 +789,75 @@ class SpeedupDiagram extends Diagram {
      * Update diagram chart
      */
     refresh() {
-        if (window.diagram !== null && window.diagram !== undefined) {
-            window.diagram.destroy();
-            delete window.diagram;
-        }
-
         let { labels: labels, data: dataSets } = this._generateChartData(this.properties);
 
-        let context = document.getElementById('speedup').getContext('2d');
-        let configuration = {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: dataSets,
-            },
-            options: {
-                responsive: true,
-                legend: {
-                    position: 'bottom',
-                },
-                title: {
-                    display: true,
-                    text: 'SpeedupDiagram'
-                },
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: this.yAxis
-                        }
-                    }],
-                    xAxes: [{
-                        scaleLabel: {
-                            display: true,
-                            labelString: this.xAxis
-                        }
-                    }]
-                },
-                elements: {
-                    line: {
-                        tension: 0
-                    }
-                }
+        if (window.diagram !== undefined && window.diagram !== null) {
+            window.diagram.data.labels = labels;
+            window.diagram.data.datasets = dataSets;
+
+            window.diagram.options.scales.yAxes[0].scaleLabel.labelString = this.yAxis;
+            window.diagram.options.scales.xAxes[0].scaleLabel.labelString = this.xAxis;
+
+            if (this.mode === "log") {
+                window.diagram.options.scales.xAxes[0].type = 'logarithmic';
+                window.diagram.options.scales.yAxes[0].type = 'logarithmic';
             }
-        };
-        if (this.mode === "log") {
-            configuration.options.scales.xAxes[0].type = 'logarithmic';
-            configuration.options.scales.yAxes[0].type = 'logarithmic';
+            else {
+                window.diagram.options.scales.yAxes[0].type = 'linear';
+            }
+
+            window.diagram.update();
         }
         else {
-            configuration.options.scales.yAxes[0].type = 'linear';
+            let context = document.getElementById('speedup').getContext('2d');
+            let configuration = {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: dataSets,
+                },
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                        text: 'SpeedupDiagram'
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: this.yAxis
+                            }
+                        }],
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: this.xAxis
+                            }
+                        }]
+                    },
+                    elements: {
+                        line: {
+                            tension: 0
+                        }
+                    }
+                }
+            };
+            if (this.mode === "log") {
+                configuration.options.scales.xAxes[0].type = 'logarithmic';
+                configuration.options.scales.yAxes[0].type = 'logarithmic';
+            }
+            else {
+                configuration.options.scales.yAxes[0].type = 'linear';
+            }
+            window.diagram = new Chart(context, configuration);
         }
-        window.diagram = new Chart(context, configuration);
 
         document.getElementById("downloadButton").disabled = false;
         document.getElementById("csvButton").disabled = false;
@@ -899,6 +913,7 @@ class SpeedupDiagram extends Diagram {
     cleanup() {
         if (window.diagram) {
             window.diagram.destroy();
+            delete window.diagram;
         }
 
         // naïve purge
