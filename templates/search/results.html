@@ -53,10 +53,11 @@
             <div class="form-inline">
                 <label for="diagramDropdown">Select diagram type:</label>
                 <select name="diagram-choice" id="diagramDropdown" onchange="search_page.select_diagram_type()"
-                        class="custom-select">
+                        class="custom-select" disabled>
                     <option value="null"></option>
                     <option value="speedup">Speedup Diagram</option>
                 </select>
+                <span class="badge badge-secondary" id="diagramDropdownBenchmarkHint">Please select a benchmark</span>
             </div>
             <div id="diagramConfiguration-speedup" class="d-none">
                 <select class="custom-select" id="speedupDiagramMode" onchange="search_page.update_diagram_configuration()">

@@ -1391,20 +1391,21 @@ class ResultSearch {
         }
 
         if (benchmark_name.length > 0) {
-            $.ajax('/fetch_notable_benchmark_keys?query_json=' + encodeURI(JSON.stringify({docker_name: benchmark_name})))
-            .done(function (data) {
-                search_page.set_notable_keys(data['notable_keys']);
-            });
+            this._poll_notable_keys(benchmark_name);
 
             let infoButton = document.getElementById("dockerhubLinkButton");
             infoButton.onclick = function() {
                 open_tab("https://hub.docker.com/r/" + benchmark_name);
             };
             infoButton.disabled = false;
+
+            this._enable_diagram_selection();
         }
         else {
             this.set_notable_keys([]);
             document.getElementById("dockerhubLinkButton").disabled = true;
+
+            this._disable_diagram_selection();
         }
     }
 
@@ -1688,11 +1689,7 @@ class ResultSearch {
                 document.getElementById("diagramConfiguration-speedup").classList.remove("d-none");
             } break;
             default: {
-                if (this.diagram !== null && this.diagram !== undefined) {
-                    this.diagram.cleanup();
-                }
-                delete this.diagram;
-                this.diagram = null;
+                this._delete_diagram();
             } break;
         }
         if (this.diagram !== null) {
@@ -1710,6 +1707,49 @@ class ResultSearch {
 
     update_diagram_configuration() {
         this.diagram.update_diagram_configuration();
+    }
+
+    /**
+     * Delete the current diagram
+     * @private
+     */
+    _delete_diagram() {
+        if (this.diagram !== null && this.diagram !== undefined) {
+            this.diagram.cleanup();
+        }
+        delete this.diagram;
+        this.diagram = null;
+    }
+
+    /**
+     * Allow the user to select a diagram when a benchmark is selected
+     * @private
+     */
+    _enable_diagram_selection() {
+        document.getElementById("diagramDropdown").disabled = false;
+        document.getElementById("diagramDropdownBenchmarkHint").classList.add("d-none");
+    }
+
+    /**
+     * Disable the diagram feature when no benchmark is selected
+     * @private
+     */
+    _disable_diagram_selection() {
+        document.getElementById("diagramDropdown").disabled = true;
+        document.getElementById("diagramDropdownBenchmarkHint").classList.remove("d-none");
+        document.getElementById("diagramDropdown").value = "";
+        this._delete_diagram();
+    }
+
+    /**
+     * Fetch notable keys for a given benchmark
+     * @param benchmark_name the docker name of the benchmark
+     * @private
+     */
+    _poll_notable_keys(benchmark_name) {
+        $.ajax('/fetch_notable_benchmark_keys?query_json=' + encodeURI(JSON.stringify({docker_name: benchmark_name}))).done(function (data) {
+            search_page.set_notable_keys(data['notable_keys']);
+        });
     }
 }
 
