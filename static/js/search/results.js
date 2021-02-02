@@ -8,7 +8,7 @@ const FIELDS = {
 };
 
 const COLUMNS = {
-    CHECKBOX: 'Select',
+    CHECKBOX: '',
     BENCHMARK: FIELDS.BENCHMARK,
     SITE: FIELDS.SITE,
     FLAVOR: FIELDS.FLAVOR,
