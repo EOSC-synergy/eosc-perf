@@ -854,6 +854,7 @@ class SpeedupDiagram extends Diagram {
                 configuration.options.scales.yAxes[0].type = 'logarithmic';
             }
             else {
+                configuration.options.scales.xAxes[0].type = 'linear';
                 configuration.options.scales.yAxes[0].type = 'linear';
             }
             window.diagram = new Chart(context, configuration);
