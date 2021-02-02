@@ -93,3 +93,7 @@ select {
         width: 50em;
     }
 }
+
+.result-table td, .result-table th {
+    vertical-align: middle;
+}
