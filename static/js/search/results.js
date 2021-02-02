@@ -814,9 +814,9 @@ class SpeedupDiagram extends Diagram {
                 },
                 scales: {
                     yAxes: [{
-                        /*ticks: {
+                        ticks: {
                             beginAtZero: true
-                        },*/
+                        },
                         scaleLabel: {
                             display: true,
                             labelString: this.yAxis
