@@ -1351,12 +1351,27 @@ class ResultSearch {
      * Invert the current result selection
      * @returns {boolean} false (skip other event listener)
      */
-    invert_selection() {
+    selection_invert() {
         if(this.results.length === 0) {
             return false;
         }
         this.results.forEach(r => {
             r.selected = !r.selected;
+        });
+        this.update();
+        return false;
+    }
+
+    /**
+     * Select all results
+     * @returns {boolean} false (skip other event listener)
+     */
+    selection_all() {
+        if(this.results.length === 0) {
+            return false;
+        }
+        this.results.forEach(r => {
+            r.selected = true;
         });
         this.update();
         return false;

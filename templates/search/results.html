@@ -103,7 +103,9 @@
             <input type="button" class="btn btn-primary" value="Select Columns"
                onclick="search_page.make_column_select_prompt()"/>
             <input type="button" class="btn btn-primary" id="invert_selection" value="Invert Selection"
-               onclick="search_page.invert_selection()"/>
+               onclick="search_page.selection_invert()"/>
+            <input type="button" class="btn btn-primary" id="invert_selection" value="Select all"
+               onclick="search_page.selection_all()"/>
         </div>
     </div>
     <div class="modal" id="jsonPreviewModal" tabindex="-1" role="dialog" aria-labelledby="jsonPreviewModalTitle"
