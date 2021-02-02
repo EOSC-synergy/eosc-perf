@@ -553,7 +553,7 @@ class SpeedupDiagram extends Diagram {
 
                 let dropdown = document.createElement("select");
                 dropdown.id = "diagramX";
-                dropdown.classList.add("form-control");
+                dropdown.classList.add("custom-select");
                 dropdown.onchange = function() {
                     search_page.get_diagram()._update();
                 };
@@ -571,7 +571,7 @@ class SpeedupDiagram extends Diagram {
 
                 let dropdown = document.createElement("select");
                 dropdown.id = "diagramY";
-                dropdown.classList.add("form-control");
+                dropdown.classList.add("custom-select");
                 dropdown.onchange = function() {
                     search_page.get_diagram()._update();
                 };
