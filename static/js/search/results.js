@@ -773,7 +773,7 @@ class SpeedupDiagram extends Diagram {
                     },
                     title: {
                         display: true,
-                        text: 'SpeedupDiagram'
+                        text: 'Line Graph'
                     },
                     scales: {
                         yAxes: [{
