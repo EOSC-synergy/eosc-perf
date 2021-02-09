@@ -541,6 +541,8 @@ class SpeedupDiagram extends Diagram {
         this.notable_keys = [];
         this.mode = "simple";
 
+        document.getElementById("speedupDiagramMode").classList.remove("d-none");
+
         let section = document.getElementById("diagramSection");
         {
             let xAxisDiv = document.createElement("div");
@@ -872,6 +874,8 @@ class SpeedupDiagram extends Diagram {
             window.diagram.destroy();
             delete window.diagram;
         }
+
+        document.getElementById("speedupDiagramMode").classList.add("d-none");
 
         // naïve purge
         _clear_select(document.getElementById("diagramSection"));
