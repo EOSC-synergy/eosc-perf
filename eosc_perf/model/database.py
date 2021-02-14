@@ -1,4 +1,6 @@
-"""This module exposes the database object (db) and the setup function."""
+"""This module declares the database object that internal components of the model will interact with, and exposes a
+function to set it up at program start.
+"""
 import os.path
 from flask_sqlalchemy import SQLAlchemy
 from ..configuration import configuration
@@ -6,17 +8,17 @@ from ..configuration import configuration
 db = SQLAlchemy()
 
 
-def configure_database(app):
+def configure_database(flask_app):
     """Set up the database with the given flask app."""
     if len(configuration.get('database-path')) > 0:
-        app.config['SQLALCHEMY_DATABASE_URI'] = configuration.get('database-path')
+        flask_app.config['SQLALCHEMY_DATABASE_URI'] = configuration.get('database-path')
     else:
         # in memory sqlite as fallback
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        flask_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
+    flask_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # setup sqlalchemy for flask
-    db.init_app(app)
+    db.init_app(flask_app)
 
     # delete database on debug launch
     if configuration.get('debug') and configuration.get('debug-db-reset'):
@@ -24,9 +26,9 @@ def configure_database(app):
                 and os.path.exists(configuration.get('database-path')):
             os.remove(configuration.get('database-path'))
         # drop everything
-        with app.app_context():
+        with flask_app.app_context():
             db.drop_all()
 
     # create database tables if they do not exist
-    with app.app_context():
+    with flask_app.app_context():
         db.create_all()

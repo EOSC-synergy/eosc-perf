@@ -1,4 +1,6 @@
-""""This module contains the implementation of the Model facade."""
+""""The facade is the interface through which the rest of the application interacts with the model/database. It provides
+methods to create, find, and even remove some of the data.
+"""
 from typing import List, Type, Optional, Tuple
 import json
 from sqlalchemy.exc import SQLAlchemyError

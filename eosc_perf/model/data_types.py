@@ -1,4 +1,6 @@
-""""This module contains all data types and associated helpers from the model."""
+""""This module defines the abstracting model classes for internal data, like benchmark results, user-created tags,
+users and everything else.
+"""
 
 from __future__ import annotations
 
@@ -203,8 +205,13 @@ class Uploader(db.Model):
 
 
 class Benchmark(db.Model):
-    """A specific benchmark that was run."""
+    """The benchmark class represents a single type of benchmark that was run.
 
+    Benchmarks are tied down to a specific docker image version to avoid confusion and misleading comparisons in case
+    the benchmark images change their metrics or scoring scale from version to version.
+    """
+
+    # name of table in  database
     __tablename__ = 'benchmark'
 
     # value columns
@@ -350,7 +357,11 @@ class Benchmark(db.Model):
 
 
 class Site(db.Model):
-    """The Site class represents a location where a benchmark can be executed."""
+    """The Site class represents a location where a benchmark can be executed.
+
+    This generally refers to the different virtual machine providers.
+    """
+
     __tablename__ = 'site'
 
     # value columns
@@ -492,7 +503,8 @@ class SiteFlavor(db.Model):
 
     Flavours can be pre-existing options filled in by administrators or a custom configuration by the user.
     Custom flavors' names should be set to SiteFlavor.CUSTOM_FLAVOR and can be distinguished from the pre-filled
-    flavors with SiteFlavor.is_unique()."""
+    flavors with SiteFlavor.is_unique().
+    """
 
     __tablename__: str = 'siteflavor'
 
@@ -574,7 +586,13 @@ class SiteFlavor(db.Model):
 
 
 class Tag(db.Model):
-    """The Tag class represents a user-created label that can be used for filtering a list of results."""
+    """The Tag class represents a user-created label that can be used for filtering a list of results.
+
+    These are entirely created by users and may not necessarily be related to any benchmark output data.
+    These may be used to indicate if, for example, a benchmark is used to measure CPU or GPU performance, since some
+    benchmarks may be used to test both.
+    """
+
     __tablename__ = 'tag'
 
     # value columns
@@ -646,7 +664,10 @@ tag_result_association = db.Table(
 
 
 class Result(db.Model):
-    """The Result class represents a single benchmark result and its contents."""
+    """The Result class represents a single benchmark result and its contents.
+
+    They carry the JSON data output by the ran benchmarks.
+    """
 
     __tablename__ = 'result'
     # value columns
@@ -661,8 +682,7 @@ class Result(db.Model):
     _site_short_name = db.Column(db.Text, db.ForeignKey('site._short_name'), nullable=False)
     _site = db.relationship('Site', backref=db.backref('_results', lazy=True))
 
-    _benchmark_docker_name = db.Column(db.Text, db.ForeignKey('benchmark._docker_name'),
-                                       nullable=False)
+    _benchmark_docker_name = db.Column(db.Text, db.ForeignKey('benchmark._docker_name'), nullable=False)
     _benchmark = db.relationship('Benchmark', backref=db.backref('_results', lazy=True))
 
     _flavor_name = db.Column(db.Text, db.ForeignKey('siteflavor._name'), nullable=False)
@@ -811,7 +831,13 @@ class Result(db.Model):
 
 
 class Report(db.Model):
-    """The Report class represents an automated or an user’s report."""
+    """The Report class represents an automated or an user’s report.
+
+    Reports are automated if used to submit new benchmarks or sites, in which case the report will need to be approved
+    before the associated site or benchmark becomes visible.
+    Reports can also be manually generated if users choose to report a result from their search results if they suspect
+    it may be falsified or incorrect.
+    """
 
     # value columns
     _uuid = db.Column(UUID, primary_key=True, default=new_uuid)
@@ -927,7 +953,10 @@ class Report(db.Model):
 
 
 class ResultReport(Report):
-    """The ResultReport class represents a report about a benchmark result."""
+    """The ResultReport class represents a report about a benchmark result.
+
+    These are normally manually generated.
+    """
 
     __tablename__ = 'result_report'
 
@@ -976,7 +1005,10 @@ class ResultReport(Report):
 
 
 class BenchmarkReport(Report):
-    """The BenchmarkReport class represents a report of a benchmark."""
+    """The BenchmarkReport class represents a report of a benchmark.
+
+    These are automatically generated when a benchmark is submitted.
+    """
 
     __tablename__ = 'benchmark_report'
 
@@ -1021,7 +1053,10 @@ class BenchmarkReport(Report):
 
 
 class SiteReport(Report):
-    """The SiteReport class represents a report of a site."""
+    """The SiteReport class represents a report of a site.
+
+    These are automatically generated when a site is submitted.
+    """
 
     __tablename__ = 'site_report'
 

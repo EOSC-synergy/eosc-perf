@@ -23,10 +23,14 @@ Motivation
 The landscape of european university servers is very diverse, so it is at times difficult to pick which servers or platform to use.
 EOSC-Perf is intended to help scientists identify the ideal server for a given task by letting them compare benchmark results that were ran on different servers to identify the server with the best performance for a given task.
 
+The platform itself is intended to gather data from multiple users running benchmarks, so one does not need to re-run benchmarks if matching data already exists.
+Once data is available for all platforms, the platforms can be easily compared using the existing data.
+
 Limitations
 -----------
 
 - This application was developed to be used in a docker-compose environment, as is thus configured with certain fixed resource links that are to be served by nginx, which is also set-up in this docker-compose environment.
+  This includes all routes prefixed with /static/, which generally refer to css and js files, which you may find in the /static folder of the same name in the project root. This can also be used to serve other assets like pictures.
 
 .. warning:: This page is a work-in-progress.
  

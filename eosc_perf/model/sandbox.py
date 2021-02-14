@@ -1,4 +1,8 @@
-"""Test data generation module."""
+"""The sandbox module exposes methods to add sample data in the scenario where one wants to try out the eosc-perf
+application but does not have any real world data to use it on.
+
+To add the sample data, use `add_demo()`.
+"""
 
 import json
 from .data_types import Uploader, Site, Benchmark, Result, SiteFlavor
@@ -17,7 +21,7 @@ def _add_result(result):
 
 
 def add_demo():
-    """Add data that is good for demonstration."""
+    """Add sample data to the database."""
 
     demo_uploader = Uploader(
         # cannot collide with UUIDs
