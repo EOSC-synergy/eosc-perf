@@ -9,9 +9,9 @@ db = SQLAlchemy()
 def configure_database(app):
     """Set up the database with the given flask app."""
     if len(configuration.get('database-path')) > 0:
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + configuration.get('database-path')
+        app.config['SQLALCHEMY_DATABASE_URI'] = configuration.get('database-path')
     else:
-        # in memory
+        # in memory sqlite as fallback
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
