@@ -50,7 +50,7 @@ def add_demo():
         },
         {
             'site': Site(short_name='cesnet-mcc', name='CESNET-MCC', address='unknown', description=''),
-            'flavors': ['staandrd.small', 'standard.medium', 'standard.large', 'hpc.8core-16ram']
+            'flavors': ['standard.small', 'standard.medium', 'standard.large', 'hpc.8core-16ram']
         },
         {
             'site': Site(short_name='ifca-lcg2', name='IFCA-LCG2', address='unknown', description=''),
