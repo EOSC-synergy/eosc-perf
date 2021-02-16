@@ -5,7 +5,9 @@ To add the sample data, use `add_demo()`.
 """
 
 import json
+
 from .data_types import Uploader, Site, Benchmark, Result, SiteFlavor
+from .database import db
 from .facade import facade
 from ..controller.io_controller import controller
 
@@ -27,69 +29,131 @@ def add_demo():
         # cannot collide with UUIDs
         identifier='DEMO_USER',
         # not putting my real email in
-        email='christophe@example.com',
-        name='Christophe [Example data]')
+        email='sample-data@example.com',
+        name='Mister Example')
 
     try:
-        facade.get_uploader(demo_uploader.get_id())
+        uploader = facade.get_uploader(demo_uploader.get_id())
     except facade.NotFoundError:
         facade.add_uploader(demo_uploader.get_id(), demo_uploader.get_name(), demo_uploader.get_email())
+        uploader = facade.get_uploader(demo_uploader.get_id())
 
     # virtualbox archlinux installation I use for development
-    demo_site = Site(
-        short_name='ch-virt',
-        name="VirtualboxTestbed",
-        address='127.0.0.1',
-        description='Locally generated demo data [Example data]')
+    sample_sites = [
+        {
+            'site': Site(short_name='ch-virt', name="VirtualboxTestbed", address='127.0.0.1', description=''),
+            'flavors': ['virtualbox-arch']
+        },
+        {
+            'site': Site(short_name='cesga', name='CESGA', address='unknown', description=''),
+            'flavors': ['cor1mem2h10', 'cor2mem2hd20', 'cor4mem4hd40']
+        },
+        {
+            'site': Site(short_name='cesnet-mcc', name='CESNET-MCC', address='unknown', description=''),
+            'flavors': ['staandrd.small', 'standard.medium', 'standard.large', 'hpc.8core-16ram']
+        },
+        {
+            'site': Site(short_name='ifca-lcg2', name='IFCA-LCG2', address='unknown', description=''),
+            'flavors': ['m1.small', 'cm4.large', 'm1.large', 'm1.xlarge', 'cm4.4xlarge']
+        },
+        {
+            'site': Site(short_name='iisas-fedcloud', name='IISAS-FedCloud', address='unknown', description=''),
+            'flavors': ['m1.small', 'm1.medium', 'm1.large', 'm1.xlarge']
+        },
+        {
+            'site': Site(short_name='ncg-ingrid-pt', name='NCG-INGRID-PT', address='unknown', description=''),
+            'flavors': ['svc1.s', 'svc2.s', 'svc2.m', 'svc2.l', 'svc2.xl', 'svc2.xxl']
+        }
+    ]
 
-    try:
-        site = facade.get_site(demo_site.get_short_name())
-        demo_flavor = site.get_flavors()[0]
-    except facade.NotFoundError:
-        facade.add_site(demo_site.get_short_name(), demo_site.get_address(), description=demo_site.get_description(),
-                        full_name=demo_site.get_name())
+    for entry in sample_sites:
+        site_info = entry['site']
+        try:
+            site = facade.get_site(site_info.get_short_name())
+        except facade.NotFoundError:
+            facade.add_site(site_info.get_short_name(), site_info.get_address(), description=site_info.get_description(),
+                        full_name=site_info.get_name())
+            site = facade.get_site(site_info.get_short_name())
 
-        # todo: one flavor per core-count adjustment?
-        demo_flavor = SiteFlavor("virtualbox-arch", facade.get_site(demo_site.get_short_name()),
-                                 custom_text="Example data obtained with virtualbox core-adjustment")
-    facade.get_site(demo_site.get_short_name()).set_hidden(False)
+        for flavor_name in entry['flavors']:
+            try:
+                facade.get_site_flavor_by_name(site.get_short_name(), flavor_name)
+            except facade.NotFoundError:
+                facade.add_flavor(flavor_name, '', site.get_short_name())
+                facade.get_site_flavor_by_name(site.get_short_name(), flavor_name)
+
+        site.set_hidden(False)
 
     with open('eosc_perf/model/sample_data/template.json') as file:
         # the benchmark is real
-        demo_benchmark = Benchmark(docker_name='thechristophe/openbench-c-ray', uploader=demo_uploader,
-                                   description="Example description :)", template=file.read())
+        demo_benchmark = Benchmark(docker_name='thechristophe/openbench-c-ray', uploader=uploader,
+                                   description="Compare cpu perf with multithreaded raytracing", template=file.read())
 
     try:
-        facade.get_benchmark(demo_benchmark.get_docker_name())
+        benchmark = facade.get_benchmark(demo_benchmark.get_docker_name())
     except facade.NotFoundError:
         facade.add_benchmark(
             demo_benchmark.get_docker_name(),
-            demo_benchmark.get_uploader().get_id(),
+            uploader.get_id(),
             description=demo_benchmark.get_description(),
             template=demo_benchmark.get_template())
-    facade.get_benchmark(demo_benchmark.get_docker_name()).set_hidden(False)
+        benchmark = facade.get_benchmark(demo_benchmark.get_docker_name())
+    benchmark.set_hidden(False)
 
     # load demo results
     demo_results = []
-    for i in [1, 2, 4, 8, 12, 16, 20, 24]:
-        with open('eosc_perf/model/sample_data/result-{}.json'.format(i)) as file:
+    results = [
+        {'site': 'ch-virt', 'flavor': 'virtualbox-arch', 'file': 'result-1.json'},
+        {'site': 'ch-virt', 'flavor': 'virtualbox-arch', 'file': 'result-2.json'},
+        {'site': 'ch-virt', 'flavor': 'virtualbox-arch', 'file': 'result-4.json'},
+        {'site': 'ch-virt', 'flavor': 'virtualbox-arch', 'file': 'result-8.json'},
+        {'site': 'ch-virt', 'flavor': 'virtualbox-arch', 'file': 'result-12.json'},
+        {'site': 'cesga', 'flavor': 'cor1mem2h10', 'file': 'c-ray/cesga-1.json'},
+        {'site': 'cesnet-mcc', 'flavor': 'staandrd.small', 'file': 'c-ray/cesnet-mcc-1.json'},
+        {'site': 'cesnet-mcc', 'flavor': 'standard.medium', 'file': 'c-ray/cesnet-mcc-2.json'},
+        {'site': 'cesnet-mcc', 'flavor': 'standard.large', 'file': 'c-ray/cesnet-mcc-4.json'},
+        {'site': 'cesnet-mcc', 'flavor': 'hpc.8core-16ram', 'file': 'c-ray/cesnet-mcc-8.json'},
+        {'site': 'ifca-lcg2', 'flavor': 'm1.small', 'file': 'c-ray/ifca-lcg2-1.json'},
+        {'site': 'ifca-lcg2', 'flavor': 'cm4.large', 'file': 'c-ray/ifca-lcg2-2.json'},
+        {'site': 'ifca-lcg2', 'flavor': 'm1.large', 'file': 'c-ray/ifca-lcg2-4.json'},
+        {'site': 'ifca-lcg2', 'flavor': 'm1.xlarge', 'file': 'c-ray/ifca-lcg2-8.json'},
+        {'site': 'ifca-lcg2', 'flavor': 'cm4.4xlarge', 'file': 'c-ray/ifca-lcg2-16.json'},
+        {'site': 'iisas-fedcloud', 'flavor': 'm1.small', 'file': 'c-ray/iisas-fedcloud-1.json'},
+        {'site': 'iisas-fedcloud', 'flavor': 'm1.medium', 'file': 'c-ray/iisas-fedcloud-2.json'},
+        {'site': 'iisas-fedcloud', 'flavor': 'm1.large', 'file': 'c-ray/iisas-fedcloud-4.json'},
+        {'site': 'iisas-fedcloud', 'flavor': 'm1.xlarge', 'file': 'c-ray/iisas-fedcloud-8.json'},
+        {'site': 'ncg-ingrid-pt', 'flavor': 'svc1.s', 'file': 'c-ray/ncg-ingrid-pt-1.json'},
+        {'site': 'ncg-ingrid-pt', 'flavor': 'svc2.s', 'file': 'c-ray/ncg-ingrid-pt-2.json'},
+        {'site': 'ncg-ingrid-pt', 'flavor': 'svc2.m', 'file': 'c-ray/ncg-ingrid-pt-4.json'},
+        {'site': 'ncg-ingrid-pt', 'flavor': 'svc2.l', 'file': 'c-ray/ncg-ingrid-pt-8.json'},
+        {'site': 'ncg-ingrid-pt', 'flavor': 'svc2.xl', 'file': 'c-ray/ncg-ingrid-pt-16.json'},
+        {'site': 'ncg-ingrid-pt', 'flavor': 'svc2.xxl', 'file': 'c-ray/ncg-ingrid-pt-32.json'}
+    ]
+    for result_info in results:
+        site = facade.get_site(result_info['site'])
+        flavor = facade.get_site_flavor_by_name(result_info['site'], result_info['flavor'])
+
+        with open('eosc_perf/model/sample_data/{}'.format(result_info['file'])) as file:
             data_raw = file.read()
             data = json.loads(data_raw)
-        if not controller._result_validator.validate_json(data_raw, demo_benchmark.get_template()):
-            raise ValueError("demo data " + str(i) + " does *not* pass demo template")
+        if not controller._result_validator.validate_json(data_raw, benchmark.get_template()):
+            raise ValueError("demo data " + result_info['file'] + " does *not* pass demo template")
         demo_results.append(Result(
             json_data=json.dumps(data),
-            uploader=demo_uploader,
-            site=demo_site,
-            benchmark=demo_benchmark,
-            flavor=demo_flavor))
+            uploader=uploader,
+            site=site,
+            benchmark=benchmark,
+            flavor=flavor))
 
     filters = {'filters': [
-        {'type': 'site', 'value': demo_site.get_short_name()},
-        {'type': 'benchmark', 'value': demo_benchmark.get_docker_name()}
+        {'type': 'site', 'value': sample_sites[0]['site'].get_short_name()},
+        {'type': 'benchmark', 'value': benchmark.get_docker_name()}
     ]}
     results = facade.query_results(json.dumps(filters))
-    # only add test results if there aren't any results
+    # only add test results if there aren't any results from my fake machine
     if len(results) <= 0:
         for result in demo_results:
             _add_result(result)
+
+    # Commit again to make sure
+    db.session.commit()

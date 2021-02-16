@@ -61,6 +61,31 @@ class DatabaseFacade:
         #
         return results[0]
 
+    def get_site_flavor_by_name(self, site_name: str, flavor_name: str) -> SiteFlavor:
+        """Fetch a site flavour by site and flavor name.
+
+        Throws DatabaseFacade.NotFoundError if no such flavour is found.
+
+        Args:
+            site_name (str): The name of the site which has the flavor.
+            flavor_name (str): The name of the flavor to find.
+        Returns:
+            Result: The desired flavour.
+        """
+        # prepare query
+        results = db.session.query(SiteFlavor)\
+            .filter(SiteFlavor._site_short_name == site_name)\
+            .filter(SiteFlavor._name == flavor_name)\
+            .all()
+        db.session.commit()
+
+        # check number of results
+        if len(results) < 1:
+            raise self.NotFoundError("result '{}' not found".format(flavor_name))
+
+        #
+        return results[0]
+
     def get_tag(self, name: str) -> Tag:
         """Fetch a single tag by name.
 
