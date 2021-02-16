@@ -46,7 +46,7 @@ def privacy_page():
 def code_guidelines():
     """HTTP endpoint for code guidelines page."""
     factory = InformationPageFactory()
-    with open('eosc_perf/controller/' + DEFAULT_TEMPLATE_PATH) as min_template:
+    with open('eosc_perf/model/sample_data/template.json') as min_template:
         info = json.loads(min_template.read())
     info_str = json.dumps(info, indent=4, sort_keys=True)
     page = factory.generate_page(template='submission/benchmark_code_guidelines.html', args=info_str)
