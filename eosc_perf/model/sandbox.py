@@ -109,7 +109,7 @@ def add_demo():
         {'site': 'ch-virt', 'flavor': 'virtualbox-arch', 'file': 'result-8.json'},
         {'site': 'ch-virt', 'flavor': 'virtualbox-arch', 'file': 'result-12.json'},
         {'site': 'cesga', 'flavor': 'cor1mem2h10', 'file': 'c-ray/cesga-1.json'},
-        {'site': 'cesnet-mcc', 'flavor': 'staandrd.small', 'file': 'c-ray/cesnet-mcc-1.json'},
+        {'site': 'cesnet-mcc', 'flavor': 'standard.small', 'file': 'c-ray/cesnet-mcc-1.json'},
         {'site': 'cesnet-mcc', 'flavor': 'standard.medium', 'file': 'c-ray/cesnet-mcc-2.json'},
         {'site': 'cesnet-mcc', 'flavor': 'standard.large', 'file': 'c-ray/cesnet-mcc-4.json'},
         {'site': 'cesnet-mcc', 'flavor': 'hpc.8core-16ram', 'file': 'c-ray/cesnet-mcc-8.json'},
