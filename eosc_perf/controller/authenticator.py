@@ -154,7 +154,7 @@ class Authenticator:
                     if self._match_entitlement(required, entitlement):
                         return True
                 except Aarc_g002_entitlement_Error:
-                    return False
+                    continue
         return False
 
     def logout(self) -> bool:
