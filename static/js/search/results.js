@@ -626,9 +626,10 @@ class SpeedupDiagram extends Diagram {
 
         // test if sites are the same all across and if it's an integer range
         if (this.results.length !== 0) {
-            let siteName = _fetch_subkey(this.results[0].data, JSON_KEYS.get(COLUMNS.SITE));
+            const site_path = JSON_KEYS.get(COLUMNS.SITE);
+            let siteName = _fetch_subkey(this.results[0], site_path);
             for (const result of this.results) {
-                sameSite &&= (_fetch_subkey(result.data, JSON_KEYS.get(COLUMNS.SITE)) === siteName);
+                sameSite &&= (_fetch_subkey(result, site_path) === siteName);
                 columnsAreNumbers &&= typeof _fetch_subkey(result.data, this.xAxis) === 'number';
             }
         }
