@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{# This page only loads a script to redirect users to a previous or another page after authentication. #}
+
+{% block title %}Redirecting...{% endblock %}
+
+{% block head %}
+{{ super() }}
+    <script src="static/js/redirection.js"></script>
+{% endblock %}
+
+{% block info %}
+    Redirecting...
+{% endblock %}

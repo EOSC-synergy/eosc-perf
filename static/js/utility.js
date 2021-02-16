@@ -69,3 +69,17 @@ function open_tab(href) {
             href: href,
         }).click();
 }
+
+function login() {
+    // store where we were
+    window.sessionStorage.setItem('after_auth_redirect_url', window.location);
+    // go to login page
+    window.location.href = '/login';
+}
+
+function logout() {
+    // store where we were
+    window.sessionStorage.setItem('after_auth_redirect_url', window.location);
+    // go to logout page
+    window.location.href = '/logout';
+}
