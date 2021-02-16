@@ -540,6 +540,7 @@ class SpeedupDiagram extends Diagram {
         this.yAxis = "";
         this.notable_keys = [];
         this.mode = "simple";
+        this.grouping = false;
 
         document.getElementById("speedupDiagramMode").classList.remove("d-none");
 
@@ -656,6 +657,44 @@ class SpeedupDiagram extends Diagram {
         let dataPoints = [];
         let color = Chart.helpers.color;
 
+        // grouping-by-site behaviour
+        if (this.grouping === true && (this.mode === "linear" || this.mode === "log")) {
+            let datasets = new Map();
+            let labelSet = new Set();
+
+            for (const result of this.results) {
+                const x = _fetch_subkey(result.data, this.xAxis);
+                const y = _fetch_subkey(result.data, this.yAxis);
+                let label = x.toString();
+                if (datasets.get(result.site) === undefined) {
+                    datasets.set(result.site, []);
+                }
+                datasets.get(result.site).push({x, y});
+                dataPoints.push({x, y});
+                labelSet.add(label);
+            }
+
+            let data = [];
+            let colorIndex = 0;
+            datasets.forEach(function(dataset, site, map) {
+                data.push({
+                    label: site,
+                    backgroundColor: color(CHART_COLORS[colorIndex]).alpha(0.5).rgbString(),
+                    borderColor: CHART_COLORS[colorIndex],
+                    borderWidth: 1,
+                    data: dataset,
+                    spanGaps: true
+                });
+                colorIndex++;
+            });
+
+            return {
+                labels: Array.from(labelSet).sort(),
+                data: data
+            };
+        }
+
+        // default behaviour
         for (const result of this.results) {
             const x = _fetch_subkey(result.data, this.xAxis);
             const y = _fetch_subkey(result.data, this.yAxis);
@@ -677,7 +716,7 @@ class SpeedupDiagram extends Diagram {
                 data: dataPoints,
                 spanGaps: true
             }]
-        };
+        }
     }
 
     /**
@@ -884,6 +923,7 @@ class SpeedupDiagram extends Diagram {
 
     update_diagram_configuration() {
         this.mode = document.getElementById("speedupDiagramMode").value;
+        this.grouping = document.getElementById("speedupDiagramGroupedMode").checked;
         this._update();
     }
 }

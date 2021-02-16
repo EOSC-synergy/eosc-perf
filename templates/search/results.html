@@ -65,6 +65,10 @@
                     <option id="speedupDiagramMode-linear" value="linear">Linear</option>
                     <option id="speedupDiagramMode-log" value="log">Logarithmic</option>
                 </select>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="speedupDiagramGroupedMode" onchange="search_page.update_diagram_configuration()"/>
+                    <label class="form-check-label" for="speedupDiagramGroupedMode">Group values by site (only in linear & logarithmic mode)</label>
+                </div>
             </div>
             <div id="diagramSection" class="d-flex flex-column lead"></div>
         </div>
