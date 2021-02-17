@@ -194,6 +194,33 @@ class Table {
     }
 
     /**
+     * Label a result on the table as removed.
+     *
+     * This visually communicates the removal to the user.
+     *
+     * @param uuid uuid of result in displayed results
+     */
+    mark_result_as_removed(uuid) {
+        // index 0 == table head
+        let row = document.getElementById('table-entry-' + uuid);
+        if (row === null) {
+            return;
+        }
+        const childCount = row.children.length;
+        clear_element_children(row);
+        console.log(row);
+        let shadow = document.createElement("td");
+        shadow.classList.add("loading-background");
+        shadow.style.opacity = "100%";
+        let removedBadge = document.createElement("span");
+        removedBadge.classList.add("badge", "bg-danger");
+        removedBadge.textContent = "Removed";
+        shadow.appendChild(removedBadge);
+        shadow.colSpan = childCount;
+        row.appendChild(shadow);
+    }
+
+    /**
      * Remove all entries from the table.
      */
     _clear() {
@@ -285,6 +312,7 @@ class Table {
         for (let i = 0; i < results.length; i++) {
             let row = document.createElement("TR");
             const result = results[i];
+            row.id = 'table-entry-' + result.uuid;
 
             for (const key of columns) {
                 const column = (key in COLUMNS) ? COLUMNS[key] : key;
@@ -1355,12 +1383,15 @@ class ResultSearch {
      */
     delete_result(result) {
         $.ajax('/delete_result?uuid=' + encodeURI(result['uuid'])).done(function (data) {
-            alert(data);
-            if (data.toLowerCase.includes("success")) {
-                this.results.filter(function (r) {
-                    return r["uuid"] === result;
+            console.log("removed", result.uuid);
+            if (data.toLowerCase().includes("success")) {
+                search_page.table.mark_result_as_removed(result.uuid);
+                search_page.results = search_page.results.filter(function (r) {
+                    return r.uuid !== result.uuid;
                 });
-                search_page.update();
+            }
+            else {
+                alert("Could not remove result!");
             }
         });
         return false;
