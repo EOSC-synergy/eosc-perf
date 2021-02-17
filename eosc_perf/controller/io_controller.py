@@ -123,7 +123,7 @@ class IOController:
 
         message = "New benchmark, docker identifier: {}".format(docker_name)
         if comment is not None and len(comment) > 0:
-            message += ", submit comment: {}".format(comment)
+            message += ", description: {}".format(comment)
 
         return self.report(json.dumps({
             'message': message,
