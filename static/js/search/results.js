@@ -139,7 +139,7 @@ function _get_subkey_name(key_path) {
  * @returns {string} A nice-looking string.
  * @private
  */
-function _format_nicely(item) {
+function _format_column_data(item) {
     if (typeof item === 'undefined') {
         return "⚠ not found";
     }
@@ -362,7 +362,7 @@ class Table {
                     } break;
 
                     default: {
-                        cell.textContent = _format_nicely(_fetch_subkey(result["data"], column));
+                        cell.textContent = _format_column_data(_fetch_subkey(result["data"], column));
                     } break;
                 }
                 row.appendChild(cell);
