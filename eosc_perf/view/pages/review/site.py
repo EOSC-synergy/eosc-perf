@@ -40,19 +40,6 @@ class SiteReviewPageFactory(PageFactory):
 site_review_blueprint = Blueprint('site-review', __name__)
 
 
-@site_review_blueprint.route('/site_review_fetch_first', methods=['GET'])
-@only_admin
-def review_site_helper():
-    """Review the first new site report."""
-    reports = facade.get_reports(only_unanswered=True)
-    if len(reports) == 0:
-        return info_redirect('No reports available')
-    for report in reports:
-        if report.get_report_type() == Report.SITE:
-            return redirect('/site_review?' + url_encode({'uuid': report.get_uuid()}), code=302)
-    return info_redirect('No site to review')
-
-
 @site_review_blueprint.route('/site_review', methods=['GET'])
 @only_admin
 def review_site():

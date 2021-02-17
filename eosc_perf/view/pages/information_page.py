@@ -9,7 +9,7 @@ from ..page_factory import PageFactory
 from eosc_perf.utility.type_aliases import HTML
 from ...controller.json_result_validator import DEFAULT_TEMPLATE_PATH
 
-from .helpers import error_redirect
+from .helpers import error_redirect, only_admin
 
 
 class InformationPageFactory(PageFactory):
@@ -39,6 +39,15 @@ def privacy_page():
     """HTTP endpoint for the upload instructions page."""
     factory = InformationPageFactory()
     page = factory.generate_page(template='submission/benchmark_upload_instruction.html')
+    return Response(page, mimetype='text/html')
+
+
+@info_blueprint.route('/reports')
+@only_admin
+def report_list():
+    """HTTP endpoint for the report list."""
+    factory = InformationPageFactory()
+    page = factory.generate_page(template='review/report_list.html')
     return Response(page, mimetype='text/html')
 
 

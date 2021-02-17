@@ -8,6 +8,7 @@ from typing import List, Optional, Tuple
 from flask import request, Response
 from flask.blueprints import Blueprint
 
+from .pages.helpers import only_admin_json
 from ..controller.io_controller import controller
 from eosc_perf.utility.type_aliases import JSON
 from ..model.data_types import Benchmark
@@ -127,6 +128,35 @@ class BenchmarkFetchAJAXHandler(AJAXHandler):
 
         benchmarks = facade.get_benchmarks()
         return _pack_benchmarks(benchmarks)
+
+
+class ReportFetchAJAXHandler(AJAXHandler):
+    """AJAX handler for fetching reports."""
+
+    def process(self, query: Optional[JSON] = None) -> Tuple[JSON, Optional[int]]:
+        """Fetch all benchmarks independent of given query."""
+        return self.fetch_reports(), 200
+
+    @staticmethod
+    def fetch_reports() -> JSON:
+        """Fetch all reports.
+
+        Returns:
+            JSON: JSON data containing details about all known reports.
+        """
+
+        report_data = []
+
+        for report in facade.get_reports(only_unanswered=False):
+            report_data.append({
+                'uuid': report.get_uuid(),
+                'type': report.get_field_name(),
+                'submitter': report.get_reporter().get_name(),
+                'message': report.get_message(),
+                'verdict': report.get_status()
+            })
+
+        return json.dumps({'reports': report_data})
 
 
 class SiteFetchAJAXHandler(AJAXHandler):
@@ -273,6 +303,15 @@ def fetch_tags():
 def fetch_benchmarks():
     """HTTP endpoint for benchmark AJAX fetches."""
     handler = BenchmarkFetchAJAXHandler()
+    response, code = handler.process()
+    return Response(response, mimetype='application/json', status=code)
+
+
+@ajax_blueprint.route('/fetch_reports')
+@only_admin_json
+def fetch_reports():
+    """HTTP endpoint for benchmark AJAX fetches."""
+    handler = ReportFetchAJAXHandler()
     response, code = handler.process()
     return Response(response, mimetype='application/json', status=code)
 

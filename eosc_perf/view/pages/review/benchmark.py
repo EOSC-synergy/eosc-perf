@@ -43,21 +43,6 @@ class BenchmarkReviewPageFactory(PageFactory):
 benchmark_review_blueprint = Blueprint('benchmark-review', __name__)
 
 
-@benchmark_review_blueprint.route('/benchmark_review_fetch_first', methods=['GET'])
-@only_admin
-def get_benchmark_review():
-    """Review the first new benchmark."""
-    reports = facade.get_reports(only_unanswered=True)
-    if len(reports) == 0:
-        return info_redirect('No reports available')
-    # use first benchmark report we can find
-    for report in reports:
-        if report.get_report_type() == Report.BENCHMARK:
-            return redirect(
-                '/benchmark_review?' + url_encode({'uuid': report.get_uuid()}), code=302)
-    return info_redirect('No benchmark to review')
-
-
 @benchmark_review_blueprint.route('/benchmark_review', methods=['GET'])
 @only_admin
 def review_benchmark():

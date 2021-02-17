@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Report List{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="static/css/loading.css" />
+    <link rel="stylesheet" type="text/css" href="static/css/bootstrap-icons.css" />
+    <script src="static/js/utility.js"></script>
+    <script src="static/js/review/report_list.js"></script>
+{% endblock %}
+
+{% block info %}
+    <h1>Reports</h1>
+    <div class="list-group" id="reportListGroup"></div>
+{% endblock %}

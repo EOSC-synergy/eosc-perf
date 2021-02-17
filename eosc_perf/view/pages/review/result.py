@@ -42,19 +42,6 @@ class ViewReportPageFactory(PageFactory):
 view_report_blueprint = Blueprint('view-report', __name__)
 
 
-@view_report_blueprint.route('/view_report_fetch_first', methods=['GET'])
-@only_admin
-def test_view_report():
-    """Review the first new benchmark report."""
-    reports = facade.get_reports(only_unanswered=True)
-    if len(reports) == 0:
-        return info_redirect('No reports available')
-    for report in reports:
-        if report.get_report_type() == Report.RESULT:
-            return redirect('/view_report?' + url_encode({'uuid': report.get_uuid()}), code=302)
-    return info_redirect('No result report to review')
-
-
 @view_report_blueprint.route('/view_report', methods=['GET'])
 @only_admin
 def view_report():
