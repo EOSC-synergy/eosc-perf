@@ -1445,7 +1445,7 @@ class ResultSearch {
 
             let infoButton = document.getElementById("dockerhubLinkButton");
             infoButton.onclick = function() {
-                open_tab("https://hub.docker.com/r/" + benchmark_name);
+                open_tab("https://hub.docker.com/r/" + benchmark_name.split(':')[0]);
             };
             infoButton.disabled = false;
 
