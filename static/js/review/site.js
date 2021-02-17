@@ -5,7 +5,7 @@ $(function () {
             'uuid': form.find('input[name="uuid"]').val(),
             'action': e.originalEvent.submitter.name
         };
-        submit_form(form, data,
+        submit_form_json(form, data,
             function (data, textStatus) {
                 // display success message and disable form
                 display_message('Review successful');
