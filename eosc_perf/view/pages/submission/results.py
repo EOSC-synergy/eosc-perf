@@ -7,6 +7,7 @@ from typing import Tuple, Any, Dict
 from flask import request, Response
 from flask.blueprints import Blueprint
 
+from eosc_perf.model.facade import facade
 from eosc_perf.view.page_factory import PageFactory
 from eosc_perf.utility.type_aliases import HTML
 
@@ -102,6 +103,8 @@ def upload_result_submit():
         'benchmark': request.form['benchmark'],
         'tags': tags,
         'site_flavor': request.form['site_flavor']
+        if 'site_flavor' in request.form
+        else facade.get_site_flavor_by_name(site_name, 'default').get_uuid()
     }
 
     try:
