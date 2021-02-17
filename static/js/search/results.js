@@ -1,3 +1,5 @@
+"use strict";
+
 const FIELDS = {
     BENCHMARK: 'Benchmark',
     SITE: 'Site',
