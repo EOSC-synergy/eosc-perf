@@ -97,3 +97,8 @@ select {
 .result-table td, .result-table th {
     vertical-align: middle;
 }
+
+.container {
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
