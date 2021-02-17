@@ -995,7 +995,6 @@ class ResultSearch {
         // this can't be done for benchmarks for now because the list is re-populated every load
         this.select_diagram_type();
         this.add_filter_field();
-        this.search();
         // Enable popover.
         $('[data-toggle="popover"]').popover({
             html: true
@@ -1580,6 +1579,7 @@ class ResultSearch {
             if (BENCHMARK_QUERY.length) {
                 this.set_benchmark(BENCHMARK_QUERY);
             }
+            this.search();
         }
     }
 
