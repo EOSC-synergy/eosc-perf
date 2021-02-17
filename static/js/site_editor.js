@@ -145,6 +145,7 @@ class SiteEditor {
         document.getElementById("description").value = entry.description;
         document.getElementById("address").value = entry.address;
 
+        clear_element_children(document.getElementById("flavorListGroup"));
         this._fill_flavors(entry.flavors);
 
         document.getElementById("siteUpdateForm").classList.remove("d-none");
