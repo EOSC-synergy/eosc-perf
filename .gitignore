@@ -136,6 +136,7 @@ dmypy.json
 
 # webapp files
 *.db
+*.db.*
 upload_license.txt
 nginx/certs/*
 /certbot/

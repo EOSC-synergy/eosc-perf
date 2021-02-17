@@ -1,4 +1,11 @@
-version: '3.1'
+version: '3.5'
+
+x-sqlite-db-dir:
+  &sqlite-db-dir
+  type: bind
+  source: ./data/
+
+
 services:
   flask:
     image: flask
@@ -7,8 +14,8 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      # access to database file
-      - ./data:/app/data/
+      - << : *sqlite-db-dir
+        target: /app/data/
     env_file: .env
     secrets:
       - source: oidc_secret
@@ -54,6 +61,16 @@ services:
     secrets:
       - source: nginx_api_secret
         target: nginx_api_credentials
+
+  sqlite-backuper:
+    image: sqlite-backuper
+    build:
+      context: docker/sqlite-backuper
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - <<: *sqlite-db-dir
+        target: /workdir/
 
 secrets:
   oidc_secret:
