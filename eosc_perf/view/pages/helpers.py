@@ -52,10 +52,10 @@ def only_authenticated(function: Callable[..., Any]) -> Callable[..., Any]:
     Args:
         function (Callable[..., Any]): Function to wrap.
     """
-    def wrapper(*args) -> Callable[..., Any]:
+    def wrapper(*args, **kwargs) -> Callable[..., Any]:
         if not controller.is_authenticated():
             return error_redirect("Not allowed: not authenticated.")
-        return function(*args)
+        return function(*args, **kwargs)
 
     # ugly hack for flask decorator name collisions
     wrapper.__name__ = function.__name__
