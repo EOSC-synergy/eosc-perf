@@ -121,8 +121,12 @@ class IOController:
         #    facade.get_benchmark(docker_name=docker_name).set_hidden(False)
         #    return True
 
+        message = "New benchmark, docker identifier: {}".format(docker_name)
+        if comment is not None and len(comment) > 0:
+            message += ", submit comment: {}".format(comment)
+
         return self.report(json.dumps({
-            'message': "New Benchmark. Submit comment: {}".format(comment),
+            'message': message,
             'type': 'benchmark',
             'value': docker_name,
             'uploader': self.get_user_id()
@@ -148,9 +152,9 @@ class IOController:
         if not facade.add_site(short_name, address, description=description, full_name=name):
             return False
 
-        message = "New Site. Short name: {}, address: {}".format(short_name, address)
+        message = "New site, identifier: {}, address: {}".format(short_name, address)
         if name is not None:
-            message += ", name: {}".format(name)
+            message += ", full name: {}".format(name)
         if description is not None:
             message += ", description: {}".format(description)
 
