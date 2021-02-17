@@ -158,11 +158,6 @@ class IOController:
         if description is not None:
             message += ", description: {}".format(description)
 
-        # if admin, skip review process
-        # if self.is_admin():
-        #    facade.get_site(short_name).set_hidden(False)
-        #    return True
-
         if not self.report(json.dumps({
             'message': message,
             'type': 'site',
