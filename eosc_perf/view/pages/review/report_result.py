@@ -62,19 +62,6 @@ class ResultReportPageFactory(PageFactory):
 result_report_blueprint = Blueprint('result-report-factory', __name__)
 
 
-# temporary helper function for testing
-@result_report_blueprint.route('/test_report_result', methods=['GET'])
-def test_report_result():
-    """Testing helper."""
-    if not configuration.get('debug'):
-        return error_redirect('This endpoint is not available in production')
-    iterator = ResultIterator(db.session)
-    results = []
-    for value in iterator:
-        results.append(value)
-    return redirect('/report_result?uuid=' + results[0].get_uuid())
-
-
 @result_report_blueprint.route('/report_result', methods=['GET'])
 @only_authenticated
 def report_result():
