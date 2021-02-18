@@ -181,6 +181,24 @@ function _clear_select(selectElement) {
     }
 }
 
+/**
+ * Generic comparison function helper
+ * @param x first param
+ * @param y second param
+ * @returns {number} see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+ * @private
+ */
+function _comparator(x, y) {
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+
+    return 0;
+}
+
 class Table {
     /**
      * Construct a new table handler.
@@ -255,33 +273,30 @@ class Table {
                 case (COLUMNS.CHECKBOX): {
                     // sort by selected results
                     cell.addEventListener("click", function () {
-                        search_page.sort_by((x, y) => x["selected"] < y["selected"], column_name);
+                        search_page.sort_by((x, y) => _comparator(x["selected"], y["selected"]), column_name);
                     });
                 }
                     break;
                 case (COLUMNS.BENCHMARK): {
                     // alphabetically sort by benchmark
                     cell.addEventListener("click", function () {
-                        search_page.sort_by((x, y) => x["benchmark"] < y["benchmark"], column_name);
+                        search_page.sort_by((x, y) => _comparator(x["benchmark"], y["benchmark"]), column_name);
                     });
                 }
                     break;
                 case (COLUMNS.SITE): {
                     // alphabetically sort by site
                     cell.addEventListener("click", function () {
-                        search_page.sort_by((x, y) => x["site"] < y["site"], column_name);
+                        search_page.sort_by((x, y) => _comparator(x["site"], y["site"]), column_name);
                     });
                 }
                     break;
                 case (COLUMNS.UPLOADER): {
                     // alphabetically sort by uploader
                     cell.addEventListener("click", function () {
-                        search_page.sort_by((x, y) => x["uploader"] < y["uploader"], column_name);
+                        search_page.sort_by((x, y) => _comparator(x["uploader"], y["uploader"]), column_name);
                     });
                 }
-                    break;
-                case (COLUMNS.DATA):
-                    // Not clear what to sort after.
                     break;
                 case (COLUMNS.TAGS):
                     // todo find order on tags
@@ -289,7 +304,7 @@ class Table {
                 default:
                     cell.addEventListener("click", function() {
                         // TODO: sorting helpers
-                        search_page.sort_by( (x, y) => _fetch_subkey(x["data"], column) < _fetch_subkey(y["data"], column), column);
+                        search_page.sort_by( (x, y) => _comparator(_fetch_subkey(x["data"], column), _fetch_subkey(y["data"], column)), column);
                     });
                     break;
             }
@@ -337,7 +352,7 @@ class Table {
 
                     case (COLUMNS.TAGS): {
                         const content = result[JSON_KEYS.get(column)];
-                        if (content.length == 0) {
+                        if (content.length === 0) {
                             cell.textContent = "None";
                             cell.style.color = "#9F9F9F";
                         }
@@ -1343,7 +1358,6 @@ class ResultSearch {
 
     /**
      * Sort the results by a given column.
-     * @param callback A function taking tow results and returning a bool, in  a way a order is defined.
      * @param column Which column to sort by.
      */
     sort_by(callback, column) {
