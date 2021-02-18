@@ -8,8 +8,9 @@
     <script src="static/js/submission/result.js"></script>
 {% endblock %}
 
-{% block info %}
-    <input type="hidden" id="license" value="{{ license }}" />
+{% block pageContent %}
+    <div class="container">
+        <input type="hidden" id="license" value="{{ license }}" />
         <h1>Upload Result</h1><br/>
         <form action="/upload_submit" id="form" enctype="multipart/form-data" class="form-group" method="POST">
             <div class="card-columns upload-form">
@@ -101,4 +102,5 @@
             <input type="submit" class="btn btn-success float-right mr-1" name="upload" value="Upload" id="submit_button"
                 disabled />
         </form>
+    </div>
 {% endblock %}
