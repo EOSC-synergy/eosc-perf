@@ -10,45 +10,47 @@
     <script src="static/js/site_editor.js"></script>
 {% endblock %}
 
-{% block info %}
-    <h1>Site Editor</h1>
-    <div class="row">
-        <div class="col">
-            <div class="list-group" id="siteListGroup">
+{% block pageContent %}
+    <div class="container">
+        <h1>Site Editor</h1>
+        <div class="row">
+            <div class="col">
+                <div class="list-group" id="siteListGroup">
+                </div>
             </div>
-        </div>
-        <div class="col">
-            <form class="d-none" action="/update-site" method="POST" id="siteUpdateForm">
-                <div class="m-2">
-                    <label for="short_name">Short name:<br/></label>
-                    <input type="text" name="short_name" id="short_name" class="form-control inputbox small" readonly/>
-                </div>
-                <div class="m-2">
-                    <label for="full_name">Full name:<br/></label>
-                    <input type="text" name="full_name" id="full_name" class="form-control inputbox small"
-                           placeholder="{{ shortName }}"/>
-                </div>
-                <div class="m-2">
-                    <label for="description">Description:<br/></label>
-                    <input type="text" name="description" id="description" class="form-control inputbox small"/>
-                </div>
-                <div class="m-2">
-                    <label for="address">Network address:<br/></label>
-                    <input type="text" name="address" id="address" class="form-control inputbox small"/>
-                </div>
-                <div class="overlay loading-background loading center-contents d-none" id="loading-icon">
-                    <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
-                </div>
-                <div class="m-2">
-                    <label>Flavors: <br/></label>
-                    <div class="card overflow-auto" style="max-height: 16rem">
-                        <div class="list-group" id="flavorListGroup">
-                        </div>
-                        <button type="button" class="btn btn-success m-1" id="addFlavor"><i class="bi bi-plus"></i></button>
+            <div class="col">
+                <form class="d-none" action="/update-site" method="POST" id="siteUpdateForm">
+                    <div class="m-2">
+                        <label for="short_name">Short name:<br/></label>
+                        <input type="text" name="short_name" id="short_name" class="form-control inputbox small" readonly/>
                     </div>
-                </div>
-                <input type="submit" class="btn btn-success" name="submit" id="submit" value="Submit" />
-            </form>
+                    <div class="m-2">
+                        <label for="full_name">Full name:<br/></label>
+                        <input type="text" name="full_name" id="full_name" class="form-control inputbox small"
+                               placeholder="{{ shortName }}"/>
+                    </div>
+                    <div class="m-2">
+                        <label for="description">Description:<br/></label>
+                        <input type="text" name="description" id="description" class="form-control inputbox small"/>
+                    </div>
+                    <div class="m-2">
+                        <label for="address">Network address:<br/></label>
+                        <input type="text" name="address" id="address" class="form-control inputbox small"/>
+                    </div>
+                    <div class="overlay loading-background loading center-contents d-none" id="loading-icon">
+                        <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+                    </div>
+                    <div class="m-2">
+                        <label>Flavors: <br/></label>
+                        <div class="card overflow-auto" style="max-height: 16rem">
+                            <div class="list-group" id="flavorListGroup">
+                            </div>
+                            <button type="button" class="btn btn-success m-1" id="addFlavor"><i class="bi bi-plus"></i></button>
+                        </div>
+                    </div>
+                    <input type="submit" class="btn btn-success" name="submit" id="submit" value="Submit" />
+                </form>
+            </div>
         </div>
     </div>
 {% endblock %}

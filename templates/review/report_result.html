@@ -12,16 +12,18 @@
     </style>
 {% endblock %}
 
-{% block info %}
-    <h1>Report result</h1>
-    <h4>Result content:</h4>
-    <code>{{ page_content }}</code>
-    <br/>
-    <form id="form" action="/report_result_submit" method="POST">
-        <input type="hidden" name="uuid" value="{{ uuid }}" />
-        <label for="message-box">Explanation:</label>
-        <input type="text" id="message-box" class="form-control" name="message" value=""
-               placeholder="Enter an explanation for your report here." />
-        <input type="submit" name="submit" class="btn btn-danger" value="Submit report" />
-    </form>
+{% block pageContent %}
+    <div class="container">
+        <h1>Report result</h1>
+        <h4>Result content:</h4>
+        <code>{{ page_content }}</code>
+        <br/>
+        <form id="form" action="/report_result_submit" method="POST">
+            <input type="hidden" name="uuid" value="{{ uuid }}" />
+            <label for="message-box">Explanation:</label>
+            <input type="text" id="message-box" class="form-control" name="message" value=""
+                   placeholder="Enter an explanation for your report here." />
+            <input type="submit" name="submit" class="btn btn-danger" value="Submit report" />
+        </form>
+    </div>
 {% endblock %}

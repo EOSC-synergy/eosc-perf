@@ -7,21 +7,23 @@
     <script src="static/js/review/result.js"></script>
 {% endblock %}
 
-{% block info %}
-    <h1>Inaccurate result report</h1>
-    <p>
-        Reported by: {{reporter_name}} ({{reporter_mail}})<br/>
-        Message: {{report_message}}<br/>
-        Date: {{date}}<br/>
-        Site: {{site}}<br/>
-        Benchmark: {{benchmark}}<br/>
-        Uploader: {{uploader_name}} ({{uploader_mail}})<br/>
-        Tags: {{tags}}<br/>
-        JSON: <pre>{{JSON}}</pre>
-    </p>
-    <form id="form" action="/site_review_submit" method="POST">
-        <input type="hidden" name="uuid" value="{{ uuid }}" />
-        <input type="submit" class="btn btn-danger" name="remove" value="Remove result" />
-        <input type="submit" class="btn btn-success" name="approve" value="Approve result" />
-    </form>
+{% block pageContent %}
+    <div class="container">
+        <h1>Inaccurate result report</h1>
+        <p>
+            Reported by: {{reporter_name}} ({{reporter_mail}})<br/>
+            Message: {{report_message}}<br/>
+            Date: {{date}}<br/>
+            Site: {{site}}<br/>
+            Benchmark: {{benchmark}}<br/>
+            Uploader: {{uploader_name}} ({{uploader_mail}})<br/>
+            Tags: {{tags}}<br/>
+            JSON: <pre>{{JSON}}</pre>
+        </p>
+        <form id="form" action="/site_review_submit" method="POST">
+            <input type="hidden" name="uuid" value="{{ uuid }}" />
+            <input type="submit" class="btn btn-danger" name="remove" value="Remove result" />
+            <input type="submit" class="btn btn-success" name="approve" value="Approve result" />
+        </form>
+    </div>
 {% endblock %}
