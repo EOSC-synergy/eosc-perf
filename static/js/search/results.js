@@ -4,9 +4,8 @@ const FIELDS = {
     BENCHMARK: 'Benchmark',
     SITE: 'Site',
     FLAVOR: 'Site flavour',
-    UPLOADER: 'Uploader',
-    DATA: 'Data',
-    TAGS: 'Tags'
+    TAGS: 'Tags',
+    UPLOADER: 'Uploader'
 };
 
 const COLUMNS = {
@@ -14,8 +13,6 @@ const COLUMNS = {
     BENCHMARK: FIELDS.BENCHMARK,
     SITE: FIELDS.SITE,
     FLAVOR: FIELDS.FLAVOR,
-    UPLOADER: FIELDS.UPLOADER,
-    DATA: FIELDS.DATA,
     TAGS: FIELDS.TAGS,
     ACTIONS: 'Actions'
 };
@@ -78,13 +75,12 @@ const JSON_MODE_SYMBOLS = new Map([
 ]);
 
 const JSON_KEYS = new Map([
-    [COLUMNS.CHECKBOX, 'selected'],
     [COLUMNS.BENCHMARK, "benchmark"],
     [COLUMNS.SITE, "site"],
     [COLUMNS.FLAVOR, "flavor"],
-    [COLUMNS.UPLOADER, "uploader"],
-    [COLUMNS.DATA, "data"],
-    [COLUMNS.TAGS, "tags"]
+    [COLUMNS.TAGS, "tags"],
+    [FIELDS.CHECKBOX, 'selected'],
+    [FIELDS.UPLOADER, "uploader"],
 ]);
 
 const CHART_COLORS = [
@@ -322,7 +318,7 @@ class Table {
                         let select = document.createElement("input");
                         select.type = "checkbox";
                         select.id = "selected" + i;
-                        if (result[JSON_KEYS.get(column)]) {
+                        if (result[JSON_KEYS.get(FIELDS.CHECKBOX)]) {
                             select.checked = true;
                         }
                         select.style.height = "1.5em";
@@ -331,27 +327,6 @@ class Table {
                             search_page.select_result(i + startIndex);
                         });
                         cell.appendChild(select);
-                    } break;
-
-                    case (COLUMNS.DATA): {
-                        let view_button = document.createElement("input");
-                        view_button.type = "submit";
-                        view_button.value = "View JSON";
-                        view_button.classList.add("btn", "btn-secondary", "btn-sm");
-                        view_button.addEventListener("click", function () {
-                            search_page.display_json(JSON.stringify(result[JSON_KEYS.get(column)], null, 4));
-                        });
-                        cell.appendChild(view_button);
-                    } break;
-
-                    case (COLUMNS.UPLOADER): {
-                        let mailLink = document.createElement("a");
-                        mailLink.href = "mailto:" + result[JSON_KEYS.get(column)];
-                        mailLink.dataset.toggle = "tooltip";
-                        mailLink.dataset.placement = "top";
-                        mailLink.title = result[JSON_KEYS.get(column)];
-                        mailLink.textContent = "Contact";
-                        cell.appendChild(mailLink);
                     } break;
 
                     case (COLUMNS.FLAVOR):
@@ -366,23 +341,50 @@ class Table {
                         let div = document.createElement('div');
                         div.classList.add('btn-group');
 
+                        let view_button = document.createElement("button");
+                        view_button.type = "button";
+                        view_button.classList.add("btn", "btn-primary", "btn-sm");
+                        view_button.addEventListener("click", function () {
+                            search_page.display_result(result);
+                        });
+                        view_button.title = "View JSON";
+                        let viewButtonIcon = document.createElement("i");
+                        viewButtonIcon.classList.add("bi", "bi-hash");
+                        view_button.appendChild(viewButtonIcon);
+                        div.appendChild(view_button);
+
+                        let contactButton = document.createElement("a");
+                        contactButton.href = "mailto:" + result[JSON_KEYS.get(FIELDS.UPLOADER)];
+                        contactButton.classList.add("btn", "btn-secondary", "btn-sm");
+                        contactButton.title = "Contact uploader";
+                        let contactButtonIcon = document.createElement("i");
+                        contactButtonIcon.classList.add("bi", "bi-envelope");
+                        contactButton.appendChild(contactButtonIcon);
+                        div.appendChild(contactButton);
+
                         let actions_report = document.createElement("button");
-                        actions_report.textContent = 'Report';
-                        actions_report.classList.add('btn', 'btn-warning', 'btn-sm');
                         actions_report.type = "button";
+                        actions_report.classList.add('btn', 'btn-warning', 'btn-sm');
                         actions_report.addEventListener('click', function () {
                             search_page.report_result(result);
                         });
+                        actions_report.title = "Report";
+                        let reportButtonIcon = document.createElement("i");
+                        reportButtonIcon.classList.add("bi", "bi-exclamation");
+                        actions_report.appendChild(reportButtonIcon);
                         div.appendChild(actions_report);
 
                         if (admin) {
                             let actions_delete = document.createElement('button');
-                            actions_delete.textContent = 'Delete';
-                            actions_delete.classList.add('btn', 'btn-danger', 'btn-sm');
                             actions_delete.type = "button";
+                            actions_delete.classList.add('btn', 'btn-danger', 'btn-sm');
                             actions_delete.addEventListener('click', function () {
                                 search_page.delete_result(result);
                             });
+                            actions_delete.title = "Delete";
+                            let deleteButtonIcon = document.createElement("i");
+                            deleteButtonIcon.classList.add("bi", "bi-trash");
+                            actions_delete.appendChild(deleteButtonIcon);
                             div.appendChild(actions_delete);
                         }
                         cell.appendChild(div);
@@ -1022,11 +1024,11 @@ class ResultSearch {
     }
 
     /**
-     * Display the specified JSON in a popup.
-     * @param json The JSON data to display.
+     * Display the specified result in a popup.
+     * @param result The result to display.
      */
-    display_json(json) {
-        document.getElementById('jsonPreviewContent').textContent = json;
+    display_result(result) {
+        document.getElementById('jsonPreviewContent').textContent = JSON.stringify(result.data, null, 4);
         document.querySelectorAll('pre code').forEach((block) => {
             hljs.highlightBlock(block);
         });
@@ -1091,7 +1093,7 @@ class ResultSearch {
                 if (search_page.results.length > 0) {
                     // add selected col
                    search_page.results.forEach(element => {
-                        element[JSON_KEYS.get(COLUMNS.CHECKBOX)] = false;
+                        element[JSON_KEYS.get(FIELDS.CHECKBOX)] = false;
                     });
                 }
                 search_page.current_page = 1;
@@ -1353,7 +1355,7 @@ class ResultSearch {
      * @param result_number The index of the result to select.
      */
     select_result(result_number) {
-        this.results[result_number][JSON_KEYS.get(COLUMNS.CHECKBOX)] ^= true;
+        this.results[result_number][JSON_KEYS.get(FIELDS.CHECKBOX)] ^= true;
         if (this.diagram !== null) {
             this.diagram.updateData(this.get_selected_results());
         }
@@ -1718,7 +1720,7 @@ class ResultSearch {
      * @returns {*[]} The current selected results.
      */
     get_selected_results() {
-        return this.results.filter(x => x[JSON_KEYS.get(COLUMNS.CHECKBOX)]);
+        return this.results.filter(x => x[JSON_KEYS.get(FIELDS.CHECKBOX)]);
     }
 
     /**
