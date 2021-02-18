@@ -331,9 +331,19 @@ class Table {
 
                     case (COLUMNS.FLAVOR):
                     case (COLUMNS.SITE):
-                    case (COLUMNS.TAGS):
                     case (COLUMNS.BENCHMARK): {
                         cell.textContent = result[JSON_KEYS.get(column)];
+                    } break;
+
+                    case (COLUMNS.TAGS): {
+                        const content = result[JSON_KEYS.get(column)];
+                        if (content.length == 0) {
+                            cell.textContent = "None";
+                            cell.style.color = "#9F9F9F";
+                        }
+                        else {
+                            cell.textContent = content;
+                        }
                     } break;
 
                     case COLUMNS.ACTIONS: {
