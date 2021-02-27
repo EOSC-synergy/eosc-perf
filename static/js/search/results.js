@@ -9,7 +9,7 @@ const FIELDS = {
 };
 
 const COLUMNS = {
-    CHECKBOX: '',
+    CHECKBOX: 'Checkbox',
     BENCHMARK: FIELDS.BENCHMARK,
     SITE: FIELDS.SITE,
     FLAVOR: FIELDS.FLAVOR,
@@ -265,7 +265,14 @@ class Table {
                 }
             }
             else {
-                cell.textContent = column_name;
+                // hide label for checkbox column because wide and redundant
+                // TODO: compare against the enum directly somehow instead of magic "CHECKBOX" string
+                if (column === "CHECKBOX") {
+                    cell.textContent = "";
+                }
+                else {
+                    cell.textContent = column_name;
+                }
             }
             cell.scope = "col";
 
