@@ -1365,9 +1365,13 @@ class ResultSearch {
     remove_filter(filter_id) {
         /** Remove the filter*/
         document.getElementById(filter_id).remove();
-        this.filter_ids.filter(function(value) {
-            return value.localeCompare(filter_id) !== 0;
-        });
+        const index = this.filter_ids.indexOf(filter_id);
+        if (index > -1) {
+            this.filter_ids.splice(index, 1);
+        }
+        else {
+            console.error("Failed to remove filter from internal filter list!");
+        }
     }
 
     /**
