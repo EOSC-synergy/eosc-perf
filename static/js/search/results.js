@@ -1638,7 +1638,7 @@ class ResultSearch {
             activeColumns.removeChild(activeColumns.firstChild);
         }
 
-        const CORE_COLUMNS = [COLUMNS.CHECKBOX, COLUMNS.DATA, COLUMNS.ACTIONS];
+        const CORE_COLUMNS = [COLUMNS.CHECKBOX, COLUMNS.ACTIONS];
 
         for (let column of this.active_columns) {
             let columnOption = document.createElement("li");
@@ -1654,7 +1654,9 @@ class ResultSearch {
                 columnOption.textContent = COLUMNS[column];
             }
             else {
-                columnOption.classList.add("list-group-item-primary");
+                if (this.notable_keys.includes(column)) {
+                    columnOption.classList.add("list-group-item-primary");
+                }
                 columnOption.textContent = column;
             }
             columnOption.id = "column-select-" + column;
