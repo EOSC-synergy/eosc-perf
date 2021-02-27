@@ -9,6 +9,7 @@ from flask import request, Response
 from flask.blueprints import Blueprint
 
 from .pages.helpers import only_admin_json
+from ..controller.authenticator import authenticator
 from ..controller.io_controller import controller
 from eosc_perf.utility.type_aliases import JSON
 from ..model.data_types import Benchmark
@@ -55,12 +56,14 @@ class ResultSearchAJAX(SearchAJAXHandler):
         """Fetch benchmark results corresponding to given query."""
         results_dict = {"results": []}
         results = facade.query_results(query)
+        admin = authenticator.is_admin()
         for result in results:
             result_dict = {
-                "data": json.loads(result.get_json()), "uuid": result.get_uuid(),
+                "data": json.loads(result.get_json()),
+                "uuid": result.get_uuid(),
                 "site": result.get_site().get_short_name(),
                 "benchmark": result.get_benchmark().get_docker_name(),
-                "uploader": result.get_uploader().get_email(),
+                "uploader": result.get_uploader().get_email() if admin else None,
                 "tags": [tag.get_name() for tag in result.get_tags()],
                 "flavor": result.get_flavor().get_name()
             }

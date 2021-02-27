@@ -392,15 +392,6 @@ class Table {
                         view_button.appendChild(viewButtonIcon);
                         div.appendChild(view_button);
 
-                        let contactButton = document.createElement("a");
-                        contactButton.href = "mailto:" + result[JSON_KEYS.get(FIELDS.UPLOADER)];
-                        contactButton.classList.add("btn", "btn-secondary", "btn-sm");
-                        contactButton.title = "Contact uploader";
-                        let contactButtonIcon = document.createElement("i");
-                        contactButtonIcon.classList.add("bi", "bi-envelope");
-                        contactButton.appendChild(contactButtonIcon);
-                        div.appendChild(contactButton);
-
                         let actions_report = document.createElement("button");
                         actions_report.type = "button";
                         actions_report.classList.add('btn', 'btn-warning', 'btn-sm');
@@ -413,7 +404,18 @@ class Table {
                         actions_report.appendChild(reportButtonIcon);
                         div.appendChild(actions_report);
 
+                        // display contact and remove button only if admin
                         if (admin) {
+                            // emails are not transmitted if not admin, so we just hide button
+                            let contactButton = document.createElement("a");
+                            contactButton.href = "mailto:" + result[JSON_KEYS.get(FIELDS.UPLOADER)];
+                            contactButton.classList.add("btn", "btn-secondary", "btn-sm");
+                            contactButton.title = "Contact uploader";
+                            let contactButtonIcon = document.createElement("i");
+                            contactButtonIcon.classList.add("bi", "bi-envelope");
+                            contactButton.appendChild(contactButtonIcon);
+                            div.appendChild(contactButton);
+
                             let actions_delete = document.createElement('button');
                             actions_delete.type = "button";
                             actions_delete.classList.add('btn', 'btn-danger', 'btn-sm');
