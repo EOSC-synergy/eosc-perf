@@ -291,6 +291,13 @@ class Table {
                     });
                 }
                     break;
+                case (COLUMNS.FLAVOR): {
+                    // alphabetically sort by site flavor
+                    cell.addEventListener("click", function () {
+                        search_page.sort_by((x, y) => _comparator(x["flavor"], y["flavor"]), column_name);
+                    });
+                }
+                    break;
                 case (COLUMNS.UPLOADER): {
                     // alphabetically sort by uploader
                     cell.addEventListener("click", function () {
