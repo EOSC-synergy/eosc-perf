@@ -1,7 +1,7 @@
 window.addEventListener("load", function () {
     let form = $('#form');
     form.submit(function (e) {
-        submit_form(form, form.serialize(),
+        submit_form_json(form, form.serialize(),
             function (data, textStatus) {
                 // display success message and disable form
                 display_message('Submission successful');

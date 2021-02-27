@@ -86,8 +86,9 @@ def report_result():
 @only_authenticated_json
 def report_result_submit():
     """HTTP endpoint to take in the reports."""
-    uuid = request.form['uuid']
-    message = request.form['message']
+    uuid = request.form['uuid'] if 'uuid' in request.form else None
+    message = request.form['message'] if 'message' in request.form else None
+
     # validate input
     if uuid is None:
         return error_json_redirect('Incomplete report form submitted (missing UUID)')
