@@ -1,4 +1,4 @@
-$(function () {
+window.addEventListener("load", function () {
     let form = $('#form');
     form.submit(function (e) {
         submit_form(form, form.serialize(),
@@ -12,5 +12,9 @@ $(function () {
             });
 
         return false;
+    });
+
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
     });
 });
