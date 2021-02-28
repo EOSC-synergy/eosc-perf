@@ -1002,6 +1002,231 @@ class SpeedupDiagram extends Diagram {
 }
 
 /**
+ * Helping wrapper to manage dropdown buttons for any needed json path input fields (filter suggestions, chart axis, ?)
+ *
+ * TODO: search field?
+ */
+class JSONValueInputPrompt {
+    constructor(dropdownDiv, dropdownButton, inputBox) {
+        this.button = dropdownButton;
+        this.button.dataset.toggle = "dropdown";
+
+        this.button.setAttribute("aria-haspopup", "true");
+        this.button.setAttribute("aria-expanded", "false");
+
+        this.inputBox = inputBox;
+
+        this.dropdown = document.createElement("div");
+        this.dropdown.classList.add("dropdown-menu", "dropdown-menu-right", "scrollable-dropdown");
+        this.button.parentNode.insertBefore(this.dropdown, this.button);
+
+        let jsonValueInputPrompt = this;
+        // TODO: find better visual design than bootstrap list groups
+        $(dropdownDiv).on('shown.bs.dropdown', function() {
+            const keys = search_page.get_notable_keys();
+            clear_element_children(jsonValueInputPrompt.dropdown);
+            let list = document.createElement("ul");
+            list.classList.add("list-group");
+            for (const key of keys) {
+                let item = document.createElement("li");
+                item.textContent = key;
+                item.classList.add("list-group-item");
+                item.onclick = function () {
+                    jsonValueInputPrompt.set_value(key);
+                };
+                list.appendChild(item);
+            }
+            jsonValueInputPrompt.dropdown.appendChild(list);
+        });
+
+        $(this.button).dropdown();
+    }
+
+    set_value(value) {
+        this.inputBox.value = value;
+    }
+}
+
+class Filter {
+    constructor(searchPage) {
+        this.searchPage = searchPage;
+
+        // add line for the filter
+        this.element = document.createElement('li');
+        this.element.classList.add("form-inline");
+
+        // Remove this filter
+        let deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.classList.add("close");
+        deleteButton.setAttribute("aria-label", "Close");
+        // label
+        {
+            let remove_filter_label = document.createElement("span");
+            remove_filter_label.setAttribute("aria-hidden", "true");
+            remove_filter_label.textContent = "×";
+            deleteButton.appendChild(remove_filter_label);
+        }
+        let filter = this;
+        deleteButton.addEventListener("click", function () {
+            filter.remove();
+        });
+        this.element.appendChild(deleteButton);
+
+        // filter type selection
+        this.filterType = document.createElement("select");
+        for (let filter in FILTERS) {
+            let type = document.createElement("OPTION");
+            type.value = FILTERS[filter];
+            type.textContent = FILTERS[filter];
+            this.filterType.appendChild(type);
+        }
+        this.element.appendChild(this.filterType);
+
+        // On change callback
+        this.filterType.addEventListener("change", function () {
+            filter.inputBox.placeholder = FILTER_HINTS.get(filter.filterType.value);
+            filter.jsonTypeHelp.dataset.content = FILTER_HELPS.get(filter.filterType.value);
+
+            // hide extra json input on other filters
+            filter.suggestionsButton.disabled = true;
+            filter.extraJsonInput.style.visibility = "hidden";
+            if (filter.filterType.value.localeCompare(FILTERS.JSON) === 0) {
+                filter.suggestionsButton.disabled = false;
+                filter.extraJsonInput.style.visibility = "visible";
+            }
+        });
+        this.filterType.classList.add("custom-select");
+
+        // Primary input
+        let input = document.createElement("div");
+        input.classList.add("input-group");
+        // textbox
+        this.inputBox = document.createElement("input");
+        this.inputBox.type = "text";
+        this.inputBox.placeholder = "Filter Value";
+        this.inputBox.classList.add("form-control");
+        input.appendChild(this.inputBox);
+
+        // suggestions & info
+        {
+            let inputExtras = document.createElement("div");
+            inputExtras.classList.add("input-group-append");
+
+            // Info button
+            {
+                this.jsonTypeHelp = document.createElement("input");
+                this.jsonTypeHelp.type = "button";
+                this.jsonTypeHelp.classList.add("btn", "btn-outline-warning");
+                this.jsonTypeHelp.value = "?";
+                this.jsonTypeHelp.dataset.toggle = "popover";
+                this.jsonTypeHelp.title = "Format Description";
+                this.jsonTypeHelp.dataset.content = "You find some Tips for the expected input values here.";
+                this.jsonTypeHelp.dataset.placement = "right";
+                inputExtras.appendChild(this.jsonTypeHelp);
+            }
+
+            {
+                this.suggestionsButton = document.createElement("button");
+                this.suggestionsButton.disabled = true;
+                this.suggestionsButton.classList.add("btn", "btn-outline-secondary", "dropdown-toggle", "dropdown-toggle-split");
+
+                {
+                    let suggestions_button_screenreader_hint = document.createElement("span");
+                    suggestions_button_screenreader_hint.classList.add("sr-only");
+                    suggestions_button_screenreader_hint.textContent = "Toggle Dropdown";
+                    this.suggestionsButton.appendChild(suggestions_button_screenreader_hint);
+                }
+                inputExtras.appendChild(this.suggestionsButton);
+                this.jsonSuggestor = new JSONValueInputPrompt(inputExtras, this.suggestionsButton, this.inputBox);
+            }
+
+            input.appendChild(inputExtras);
+        }
+        this.element.appendChild(input);
+
+        // Extra JSON input
+        this.extraJsonInput = document.createElement("div");
+        this.extraJsonInput.classList.add("input-group");
+        this.extraJsonInput.style.visibility = "hidden";
+        // comparison mode dropdown
+        {
+            let jsonMode = document.createElement("div");
+            jsonMode.classList.add("input-group-prepend");
+            {
+                this.jsonModeButton = document.createElement("button");
+                this.jsonModeButton.classList.add("btn", "btn-outline-secondary", "dropdown-toggle");
+                this.jsonModeButton.type = "button";
+                this.jsonModeButton.dataset.toggle = "dropdown";
+                this.jsonModeButton.setAttribute("aria-haspopup", "true");
+                this.jsonModeButton.setAttribute("aria-expanded", "false");
+                this.jsonModeButton.value = JSON_MODES.GREATER_THAN;
+                this.jsonModeButton.textContent = JSON_MODE_SYMBOLS.get(JSON_MODES.GREATER_THAN);
+                jsonMode.appendChild(this.jsonModeButton);
+
+                let jsonModeDropdown = document.createElement("div");
+                jsonModeDropdown.classList.add("dropdown-menu");
+                for (let mode in JSON_MODES) {
+                    mode = JSON_MODES[mode];
+                    let jsonModeOption = document.createElement("a");
+                    jsonModeOption.classList.add("dropdown-item");
+                    jsonModeOption.value = mode;
+                    jsonModeOption.textContent = JSON_MODE_SYMBOLS.get(mode);
+                    jsonModeOption.addEventListener("click", function() {
+                        filter.jsonModeButton.value = mode;
+                        filter.jsonModeButton.textContent = JSON_MODE_SYMBOLS.get(mode);
+                    });
+                    jsonModeDropdown.appendChild(jsonModeOption);
+                }
+                jsonMode.appendChild(jsonModeDropdown);
+            }
+            this.extraJsonInput.appendChild(jsonMode);
+        }
+        // json value input
+        {
+            this.jsonValue = document.createElement("input");
+            this.jsonValue.classList.add("form-control");
+            this.extraJsonInput.appendChild(this.jsonValue);
+        }
+        this.element.appendChild(this.extraJsonInput);
+
+        document.getElementById('filters').appendChild(this.element);
+
+        // prepare initial contents as if user just selected it
+        let changeEvent = document.createEvent("HTMLEvents");
+        changeEvent.initEvent("change", false, true);
+        this.filterType.dispatchEvent(changeEvent);
+
+        // Activate popover.
+        $(this.element).popover({
+            html: true
+        });
+
+    }
+
+    remove() {
+        this.element.parent.removeChild(this.element);
+        this.searchPage.remove_filter(this);
+    }
+
+    getType() {
+        return this.filterType.value;
+    }
+
+    getValue() {
+        return this.inputBox.value;
+    }
+
+    getJsonMode() {
+        return this.jsonModeButton.value;
+    }
+
+    getJsonValue() {
+        return this.jsonValue.value;
+    }
+}
+
+/**
  * The ResultSearch class is responsible to communicate with the backend to get the search results and display them.
  * TODO: split into smaller parts
  */
@@ -1014,7 +1239,7 @@ class ResultSearch {
         this.filters = [];
         this.ordered_by = null;
         this.current_filter_id = 0;
-        this.filter_ids = [];
+        this.filters = [];
         this.notable_keys = [];
 
         this.active_columns = [];
@@ -1099,25 +1324,25 @@ class ResultSearch {
             });
         }
 
-        for (let filter_id of this.filter_ids) {
-            let filter = {};
-            let filter_type = document.getElementById(FILTER_ID_PREFIX.TYPE + filter_id).value;
-            let filter_value = document.getElementById(FILTER_ID_PREFIX.VALUE + filter_id).value;
-            let filter_compare = document.getElementById(FILTER_ID_PREFIX.COMPARISON + filter_id).value;
-            let filter_extra_value = document.getElementById(FILTER_ID_PREFIX.EXTRA_VALUE + filter_id).value;
-            filter['type'] = FILTER_KEYS.get(filter_type);
-            if (filter_type.toString().localeCompare(FILTERS.JSON) === 0) {
-                filter['value'] = filter_extra_value;
-                filter['key'] = filter_value;
-                filter['mode'] = filter_compare;
-                if (filter_value && filter_extra_value) {
-                    filters.push(filter);
+        for (let filter of this.filters) {
+            let filterInfo = {};
+            const filterType = filter.getType();
+            const value = filter.getValue();
+
+            filterInfo['type'] = FILTER_KEYS.get(filterType);
+            if (filterType.toString().localeCompare(FILTERS.JSON) === 0) {
+                const jsonValue = filter.getJsonValue();
+                filterInfo['value'] = jsonValue;
+                filterInfo['key'] = filter.getValue();
+                filterInfo['mode'] = filter.getJsonMode();
+                if (value && jsonValue) {
+                    filters.push(filterInfo);
                 }
             }
             else {
-                filter['value'] = filter_value;
-                if (filter_value) {
-                    filters.push(filter);
+                filterInfo['value'] = value;
+                if (value) {
+                    filters.push(filterInfo);
                 }
             }
         }
@@ -1146,230 +1371,20 @@ class ResultSearch {
     }
 
     /**
-     * Add a filter field consisting of a selection of filter type, one or two input fields and the option of removing
-     * the created filter field.
-     * @param input_values An optional object witch should contain a subset of following attributes filter_type (the
-     *                     type of filter, the value should be element of filter_types), input (input value of
-     *                     corresponding filter), num_input (numeric input value of corresponding filter).
+     * Add a filter field.
      */
-    add_filter_field(input_values) {
-        let filter_id = "f" + this.current_filter_id++;
-
-        let filter_list = document.getElementById('filters');
-
-        // add line for the filter
-        let new_filter = document.createElement('LI');
-        new_filter.id = filter_id;
-        //new_filter.classList.add("flexbox", "filter");
-        new_filter.classList.add("form-inline");
-
-        // Remove this filter
-        let remove_filter = document.createElement("button");
-        remove_filter.type = "button";
-        remove_filter.classList.add("close");
-        remove_filter.setAttribute("aria-label", "Close");
-        // label
-        {
-            let remove_filter_label = document.createElement("span");
-            remove_filter_label.setAttribute("aria-hidden", "true");
-            remove_filter_label.textContent = "×";
-            remove_filter.appendChild(remove_filter_label);
-        }
-        remove_filter.addEventListener("click", function () {
-            search_page.remove_filter(filter_id);
-        });
-        new_filter.appendChild(remove_filter);
-
-        // filter type selection
-        let filter_type = document.createElement("select");
-        filter_type.id = FILTER_ID_PREFIX.TYPE + filter_id;
-        for (let filter in FILTERS) {
-            let type = document.createElement("OPTION");
-            type.value = FILTERS[filter];
-            type.textContent = FILTERS[filter];
-            filter_type.appendChild(type);
-        }
-        new_filter.appendChild(filter_type);
-
-        // On change callback
-        filter_type.addEventListener("change", function () {
-            document.getElementById(FILTER_ID_PREFIX.VALUE + filter_id).placeholder =
-                FILTER_HINTS.get(filter_type.value);
-            document.getElementById(FILTER_ID_PREFIX.INFO + filter_id).dataset.content =
-                FILTER_HELPS.get(filter_type.value);
-
-            // hide extra json input on other filters
-            document.getElementById(FILTER_ID_PREFIX.SUGGESTIONS_BTN + filter_id).disabled = true;
-            document.getElementById(FILTER_ID_PREFIX.EXTRA_FRAME + filter_id).style.visibility = "hidden";
-            if (filter_type.value.localeCompare(FILTERS.JSON) === 0) {
-                document.getElementById(FILTER_ID_PREFIX.SUGGESTIONS_BTN + filter_id).disabled = false;
-                document.getElementById(FILTER_ID_PREFIX.EXTRA_FRAME + filter_id).style.visibility = "visible";
-                search_page._update_json_suggestions(filter_id);
-            }
-        });
-        filter_type.classList.add("custom-select");
-
-        // Primary input
-        let input_div = document.createElement("div");
-        input_div.classList.add("input-group");
-        // textbox
-        {
-            let input = document.createElement("input");
-            input.type = "text";
-            input.id = FILTER_ID_PREFIX.VALUE + filter_id;
-            input.placeholder = "Filter Value";
-            input.classList.add("form-control");
-            input_div.appendChild(input);
-        }
-        // suggestions & info
-        {
-            let input_extras = document.createElement("div");
-            input_extras.classList.add("input-group-append");
-
-            // Info button
-            {
-                let type_info = document.createElement("input");
-                type_info.type = "button";
-                type_info.id = FILTER_ID_PREFIX.INFO + filter_id;
-                type_info.classList.add("btn", "btn-outline-warning");
-                type_info.value = "?";
-                type_info.dataset.toggle = "popover";
-                type_info.title = "Format Description";
-                type_info.dataset.content = "You find some Tips for the expected input values here.";
-                type_info.dataset.placement = "right";
-                input_extras.appendChild(type_info);
-            }
-
-            {
-                let suggestions_button = document.createElement("button");
-                suggestions_button.disabled = true;
-                suggestions_button.id = FILTER_ID_PREFIX.SUGGESTIONS_BTN + filter_id;
-                suggestions_button.classList.add("btn", "btn-outline-secondary", "dropdown-toggle", "dropdown-toggle-split");
-                suggestions_button.dataset.toggle = "dropdown";
-                suggestions_button.setAttribute("aria-haspopup", "true");
-                suggestions_button.setAttribute("aria-expanded", "false");
-                suggestions_button.type = "button";
-
-                {
-                    let suggestions_button_screenreader_hint = document.createElement("span");
-                    suggestions_button_screenreader_hint.classList.add("sr-only");
-                    suggestions_button_screenreader_hint.textContent = "Toggle Dropdown";
-                    suggestions_button.appendChild(suggestions_button_screenreader_hint);
-                }
-                input_extras.appendChild(suggestions_button);
-            }
-
-            // Suggestions
-            {
-                let suggestions = document.createElement("div");
-                suggestions.classList.add("dropdown-menu");
-                suggestions.id = FILTER_ID_PREFIX.SUGGESTIONS + filter_id;
-                if (this.notable_keys.length === 0) {
-                    let suggestion_option = document.createElement("a");
-                    suggestion_option.classList.add("dropdown-item");
-                    suggestion_option.textContent = "No suggestions found!";
-                    suggestions.append(suggestion_option);
-                }
-                else {
-                    for (let notable of this.notable_keys) {
-                        let suggestion_option = document.createElement("a");
-                        suggestion_option.classList.add("dropdown-item");
-                        suggestion_option.textContent = notable;
-                        suggestion_option.addEventListener("click", function () {
-                            document.getElementById(FILTER_ID_PREFIX.VALUE + filter_id).value = suggestions.value;
-                            document.getElementById(FILTER_ID_PREFIX.VALUE + filter_id).textContent = suggestions.value;
-                        });
-                        suggestions.append(suggestion_option);
-                    }
-                }
-                input_extras.appendChild(suggestions);
-            }
-
-
-            input_div.appendChild(input_extras);
-        }
-        new_filter.appendChild(input_div);
-
-        // Extra JSON input
-        let extra_input_field = document.createElement("div");
-        extra_input_field.classList.add("input-group");
-        extra_input_field.id = FILTER_ID_PREFIX.EXTRA_FRAME + filter_id;
-        extra_input_field.style.visibility = "hidden";
-        // comparison mode dropdown
-        {
-            let json_mode_prepend = document.createElement("div");
-            json_mode_prepend.classList.add("input-group-prepend");
-            {
-                let json_mode = document.createElement("button");
-                json_mode.classList.add("btn", "btn-outline-secondary", "dropdown-toggle");
-                json_mode.id = FILTER_ID_PREFIX.COMPARISON + filter_id;
-                json_mode.type = "button";
-                json_mode.dataset.toggle = "dropdown";
-                json_mode.setAttribute("aria-haspopup", "true");
-                json_mode.setAttribute("aria-expanded", "false");
-                json_mode.value = JSON_MODES.GREATER_THAN;
-                json_mode.textContent = JSON_MODE_SYMBOLS.get(JSON_MODES.GREATER_THAN);
-                json_mode_prepend.appendChild(json_mode);
-
-                let json_mode_dropdown = document.createElement("div");
-                json_mode_dropdown.classList.add("dropdown-menu");
-                for (let mode in JSON_MODES) {
-                    mode = JSON_MODES[mode];
-                    let mode_option = document.createElement("a");
-                    mode_option.classList.add("dropdown-item");
-                    mode_option.value = mode;
-                    mode_option.textContent = JSON_MODE_SYMBOLS.get(mode);
-                    mode_option.addEventListener("click", function() {
-                        json_mode.value = mode;
-                        json_mode.textContent = JSON_MODE_SYMBOLS.get(mode);
-                    });
-                    json_mode_dropdown.appendChild(mode_option);
-                }
-                json_mode_prepend.appendChild(json_mode_dropdown);
-            }
-            extra_input_field.appendChild(json_mode_prepend);
-        }
-        // json value input
-        {
-            let num_input = document.createElement("input");
-            num_input.id = FILTER_ID_PREFIX.EXTRA_VALUE + filter_id;
-            num_input.min = "0";
-            num_input.classList.add("form-control");
-            extra_input_field.appendChild(num_input);
-        }
-        new_filter.appendChild(extra_input_field);
-
-        filter_list.appendChild(new_filter);
-
-        this.filter_ids.push(filter_id);
-
-        // prepare initial contents as if user just selected it
-        if ("createEvent" in document) {
-            let evt = document.createEvent("HTMLEvents");
-            evt.initEvent("change", false, true);
-            filter_type.dispatchEvent(evt);
-        }
-        else
-        {
-            filter_type.fireEvent("onchange");
-        }
-
-        // Activate popover.
-        $('[data-toggle="popover"]').popover({
-            html: true
-        });
+    add_filter_field() {
+        this.filters.push(new Filter);
     }
 
     /**
-     * Remove a filter field by id.
-     * @param filter_id The id of the filter field to remove.
+     * Remove a filter field.
+     * @param filter The filter to remove.
      */
-    remove_filter(filter_id) {
-        /** Remove the filter*/
-        document.getElementById(filter_id).remove();
-        const index = this.filter_ids.indexOf(filter_id);
+    remove_filter(filter) {
+        const index = this.filters.indexOf(filter);
         if (index > -1) {
-            this.filter_ids.splice(index, 1);
+            this.filters.splice(index, 1);
         }
         else {
             console.error("Failed to remove filter from internal filter list!");
@@ -1527,49 +1542,6 @@ class ResultSearch {
     }
 
     /**
-     * Update the JSON-field suggestions for a specific filter
-     * @private
-     */
-    _update_json_suggestions(filter) {
-        let div = document.getElementById(FILTER_ID_PREFIX.SUGGESTIONS + filter);
-        // don't update other types of suggestions
-        if (document.getElementById(FILTER_ID_PREFIX.TYPE + filter).value.toLocaleString().localeCompare(FILTERS.JSON) !== 0) {
-            return;
-        }
-        while (div.firstChild) {
-            div.removeChild(div.firstChild);
-        }
-        if (this.notable_keys.length === 0) {
-            let suggestion_option = document.createElement("a");
-            suggestion_option.classList.add("dropdown-item");
-            suggestion_option.textContent = "No suggestions found!";
-            div.append(suggestion_option);
-        }
-        else {
-            for (let notable of this.notable_keys) {
-                let suggestion_option = document.createElement("a");
-                suggestion_option.classList.add("dropdown-item");
-                suggestion_option.textContent = notable;
-                suggestion_option.addEventListener("click", function () {
-                    document.getElementById(FILTER_ID_PREFIX.VALUE + filter).value = notable;
-                    document.getElementById(FILTER_ID_PREFIX.VALUE + filter).textContent = notable;
-                    });
-                div.appendChild(suggestion_option);
-            }
-        }
-    }
-
-    /**
-     * Update all notable-JSON-field suggestion dropdowns
-     * @private
-     */
-    _update_all_json_suggestions() {
-        for (let filter of this.filter_ids) {
-            this._update_json_suggestions(filter);
-        }
-    }
-
-    /**
      * Set the list of notable keys regarding the current benchmark.
      * @param keys The list of notable keys.
      */
@@ -1579,13 +1551,19 @@ class ResultSearch {
         this.active_columns = [];
         this._populate_active_columns();
 
-        this._update_all_json_suggestions();
-
         this.update();
 
         if (this.diagram !== null) {
             this.diagram.update_notable_keys(this.notable_keys);
         }
+    }
+
+    /**
+     * Get an array of all the notable keys
+     * @returns {[]} an array of "json.value.path" structured paths
+     */
+    get_notable_keys() {
+        return this.notable_keys;
     }
 
     /**

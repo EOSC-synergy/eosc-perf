@@ -102,3 +102,13 @@ select {
     padding-top: 1em;
     padding-bottom: 1em;
 }
+
+.scrollable-dropdown {
+    padding: 0;
+    max-height: 12em;
+    overflow-y: scroll;
+}
+
+.scrollable-dropdown > .list-group > .list-group-item {
+    padding: .50rem 0.75rem;
+}
