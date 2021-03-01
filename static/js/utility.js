@@ -76,6 +76,12 @@ function login() {
     // go to login page
     window.location.href = '/login';
 }
+function loginThenGoTo(destination) {
+    // store where we're going
+    window.sessionStorage.setItem('after_auth_redirect_url', destination);
+    // go to login page
+    window.location.href = '/login';
+}
 
 function logout() {
     // store where we were
