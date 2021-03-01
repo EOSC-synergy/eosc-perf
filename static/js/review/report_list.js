@@ -45,7 +45,7 @@ function _fill_report_item(item, data) {
 
     if (data.type === "result") {
         item.onclick = function() {
-            window.location.href = '/view_report?=' + encodeURI(data.uuid);
+            window.location.href = '/view_report?uuid=' + encodeURI(data.uuid);
         }
     }
     else if (data.type === "site") {
