@@ -64,13 +64,17 @@ const FILTER_ID_PREFIX = {
 
 const JSON_MODES =  {
     LESS_THAN: 'lesser_than',
+    LESS_OR_EQUALS: 'less_or_equals',
     EQUALS: 'equals',
+    GREATER_OR_EQUALS: 'greater_or_equals',
     GREATER_THAN: 'greater_than'
 };
 
 const JSON_MODE_SYMBOLS = new Map([
     [JSON_MODES.LESS_THAN, '<'],
+    [JSON_MODES.LESS_OR_EQUALS, '≤'],
     [JSON_MODES.EQUALS, '='],
+    [JSON_MODES.GREATER_OR_EQUALS, '≥'],
     [JSON_MODES.GREATER_THAN, '>']
 ]);
 

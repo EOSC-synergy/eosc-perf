@@ -157,5 +157,9 @@ class JsonValueFilter(Filter):
                 return float(val) > float(self.value)
             elif self.mode == 'lesser_than':
                 return float(val) < float(self.value)
+            elif self.mode == 'less_or_equals':
+                return float(val) <= float(self.value)
+            elif self.mode == 'greater_or_equals':
+                return float(val) >= float(self.value)
         else:
             return False
