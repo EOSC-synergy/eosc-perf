@@ -4,7 +4,9 @@
 
 {% block head %}
     {{ super() }}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.0/styles/railscasts.min.css">
     <script src="static/js/review/result.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.0/highlight.min.js"></script>
 {% endblock %}
 
 {% block pageContent %}
@@ -18,7 +20,7 @@
             Benchmark: {{benchmark}}<br/>
             Uploader: {{uploader_name}} ({{uploader_mail}})<br/>
             Tags: {{tags}}<br/>
-            JSON: <pre>{{JSON}}</pre>
+            JSON: <pre><code class="json rounded" style="overflow:scroll;max-height:60vh">{{ JSON }}</code></pre>
         </p>
         <form id="form" action="/site_review_submit" method="POST">
             <input type="hidden" name="uuid" value="{{ uuid }}" />

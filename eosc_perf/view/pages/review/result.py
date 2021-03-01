@@ -21,7 +21,7 @@ class ViewReportPageFactory(PageFactory):
     """A factory to build result report view pages."""
 
     def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
-        pass
+        return "", {}
 
     @staticmethod
     def report_exists(uuid: str) -> bool:
