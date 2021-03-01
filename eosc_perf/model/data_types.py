@@ -685,7 +685,7 @@ class Result(db.Model):
     _benchmark_docker_name = db.Column(db.Text, db.ForeignKey('benchmark._docker_name'), nullable=False)
     _benchmark = db.relationship('Benchmark', backref=db.backref('_results', lazy=True))
 
-    _flavor_name = db.Column(db.Text, db.ForeignKey('siteflavor._name'), nullable=False)
+    _flavor_uuid = db.Column(db.Text, db.ForeignKey('siteflavor._uuid'), nullable=False)
     _flavor = db.relationship('SiteFlavor')
 
     _tags = db.relationship('Tag', secondary=tag_result_association, backref="_results")
