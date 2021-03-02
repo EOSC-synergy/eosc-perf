@@ -54,9 +54,12 @@ class ResultSearchAJAX(SearchAJAXHandler):
 
     def find_results(self, query: Optional[JSON] = None) -> Tuple[JSON, Optional[int]]:
         """Fetch benchmark results corresponding to given query."""
-        results_dict = {"results": []}
-        results = facade.query_results(query)
         admin = authenticator.is_admin()
+        try:
+            results = facade.query_results(query, not admin)
+        except ValueError:
+            return "", 401
+        results_dict = {"results": []}
         for result in results:
             result_dict = {
                 "data": json.loads(result.get_json()),

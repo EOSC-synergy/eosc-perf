@@ -213,7 +213,7 @@ class DatabaseFacade:
         return results
 
     @staticmethod
-    def query_results(filter_json: str) -> List[Result]:
+    def query_results(filter_json: str, disable_uploader_filter: bool = False) -> List[Result]:
         """Fetch results based on given filters formatted in JSON.
 
         "type": one of "benchmark", "uploader", "site", "tag", "json",
@@ -222,6 +222,7 @@ class DatabaseFacade:
 
         Args:
             filter_json (str): A JSON string containing all query filters.
+            disable_uploader_filter (bool): Whether to *forbid* the upload filter.
         Returns:
             List[Results]: A list containing the 100 first results in the database matching all filters.
         """
@@ -232,6 +233,9 @@ class DatabaseFacade:
             if filter_['type'] == 'benchmark':
                 filterer.add_filter(BenchmarkFilter(filter_['value']))
             elif filter_['type'] == 'uploader':
+                # TODO: bit of a hack, detect this in controller?
+                if disable_uploader_filter:
+                    raise ValueError("unexpected uploader filter")
                 filterer.add_filter(UploaderFilter(filter_['value']))
             elif filter_['type'] == 'site':
                 filterer.add_filter(SiteFilter(filter_['value']))

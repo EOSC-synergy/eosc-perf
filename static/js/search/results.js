@@ -18,30 +18,30 @@ const COLUMNS = {
 };
 
 const FILTERS = {
-    UPLOADER: FIELDS.UPLOADER,
     SITE: FIELDS.SITE,
     TAG: FIELDS.TAGS,
+    UPLOADER: FIELDS.UPLOADER,
     JSON: "JSON-Key"
 };
 
 const FILTER_KEYS = new Map([
-    [FILTERS.UPLOADER, "uploader"],
     [FILTERS.SITE, "site"],
     [FILTERS.TAG, "tag"],
+    [FILTERS.UPLOADER, "uploader"],
     [FILTERS.JSON, "json"]
 ]);
 
 const FILTER_HINTS = new Map([
-    [FILTERS.UPLOADER, "user@example.com"],
     [FILTERS.SITE, "site short_name"],
     [FILTERS.TAG, "tag_name"],
+    [FILTERS.UPLOADER, "user@example.com"],
     [FILTERS.JSON, "path.to.value"]
 ]);
 
 const FILTER_HELPS = new Map([
-    [FILTERS.UPLOADER, "The Uploader is described by the uploader's email. Different uploaders can be found in the table below in the <i>Uploader</i> column."],
     [FILTERS.SITE, "This field requires the site's short_name, which is a form of identifier. Sites can be found in the <i>Site</i> column in the result table below."],
     [FILTERS.TAG, "A tag is a short bit of text containing one or multiple keywords, such as <code>tensor</code> or <code>gpu_bound</code>."],
+    [FILTERS.UPLOADER, "The Uploader is described by the uploader's email. Different uploaders can be found in the table below in the <i>Uploader</i> column."],
     [FILTERS.JSON, 'The search value has to describe the exact path within the JSON, separated with a dot.<br/>\
         <b>Example:</b><br/> \
         <code>{"example":{"nested":{"json":"value"},"different":{"path":{"to":"otherValue"}}}</code><br/> \
@@ -1080,6 +1080,10 @@ class Filter {
         // filter type selection
         this.filterType = document.createElement("select");
         for (let filter in FILTERS) {
+            // skip uploader filter option if not admin
+            if (filter === "UPLOADER" && !isAdmin()) {
+                continue;
+            }
             let type = document.createElement("OPTION");
             type.value = FILTERS[filter];
             type.textContent = FILTERS[filter];
@@ -1358,7 +1362,19 @@ class ResultSearch {
 
         // Find get new results via ajax query.
         $.ajax('/query_results?query_json=' + encodeURI(JSON.stringify(query)))
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                if (jqXHR.status === 401) {
+                    // unauthorized query (uploader)
+                    // TODO: how should we display error messages inline? popup? toast?
+                }
+                search_page.results = [];
+                console.log("Error", jqXHR.status, "occured while searching searching");
+            })
             .done(function (data) {
+                if (!data.hasOwnProperty("results")) {
+                    console.error("Search page returned no data!");
+                    return;
+                }
                 search_page.results = data["results"];
                 if (search_page.results.length > 0) {
                     // add selected col
@@ -1366,6 +1382,7 @@ class ResultSearch {
                         element[JSON_KEYS.get(FIELDS.CHECKBOX)] = false;
                     });
                 }
+            }).always(function () {
                 search_page.current_page = 1;
                 search_page.get_paginator().set_result_count(search_page.get_result_count());
                 search_page.update();
