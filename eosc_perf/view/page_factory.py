@@ -47,6 +47,7 @@ class PageFactory:
             im_link=configuration.get('infrastructure_href'),
             user_name=controller.get_full_name(),
             logged_in=controller.is_authenticated(),
+            support_email=configuration.get('support_email'),
             **extra_args,
             **jinja_args)
 

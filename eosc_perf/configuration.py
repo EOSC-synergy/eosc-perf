@@ -52,7 +52,8 @@ class ConfigHandler:
         'debug-db-reset': False,
         'debug-db-demo-items': False,
         'debug-logged-in-is-admin': False,
-        'debug_admin_entitlements': ['urn:mace:egi.eu:group:mteam.data.kit.edu:role=member']
+        'debug_admin_entitlements': ['urn:mace:egi.eu:group:mteam.data.kit.edu:role=member'],
+        'support_email': 'perf-support@lists.kit.edu'
     }
 
     def __init__(self):
@@ -84,7 +85,8 @@ class ConfigHandler:
                 'debug-db-reset': _get_var('EOSC_PERF_DEBUG_DB_RESET', bool),
                 'debug-db-demo-items': _get_var('EOSC_PERF_DEBUG_DB_DEMO_ITEMS', bool),
                 'debug-logged-in-is-admin': _get_var('EOSC_PERF_DEBUG_LOGGED_IN_IS_ADMIN', bool),
-                'debug_admin_entitlements': _get_var('EOSC_PERF_DEBUG_ADMIN_ENTITLEMENTS', list)
+                'debug_admin_entitlements': _get_var('EOSC_PERF_DEBUG_ADMIN_ENTITLEMENTS', list),
+                'support_email': _get_var('EOSC_PERF_SUPPORT_EMAIL')
             }
 
             for key, value in self.DEFAULTS.items():
