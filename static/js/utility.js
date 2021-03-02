@@ -89,3 +89,25 @@ function logout() {
     // go to logout page
     window.location.href = '/logout';
 }
+
+/**
+ * Helpers for the hardcoded data from flask
+ */
+function isLoggedIn() {
+    return logged_in;
+}
+function isAdmin() {
+    return admin;
+}
+function isDebug() {
+    return debug;
+}
+function getUsername() {
+    return user_name;
+}
+function getSupportEmail() {
+    return support_email;
+}
+function getInfrastructureManager() {
+    return im_link;
+}
