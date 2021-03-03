@@ -51,7 +51,7 @@ def make_search_page():
             return error_redirect('Result search requires a valid Benchmark name')
     args = json.dumps({'benchmark': benchmark, 'admin': controller.is_admin()})
     factory = SearchResultFactory()
-    page = factory.generate_page(template='search/results.html', args=args)
+    page = factory.generate_page(template='search/results.jinja2.html', args=args)
     return Response(page, mimetype='text/html')
 
 

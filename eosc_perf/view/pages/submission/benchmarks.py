@@ -29,7 +29,7 @@ def add_benchmark():
     """HTTP endpoint for the benchmark submission page."""
     factory = AddBenchmarkPageFactory()
 
-    page = factory.generate_page(template='submission/benchmark.html')
+    page = factory.generate_page(template='submission/benchmark.jinja2.html')
     return Response(page, mimetype='text/html')
 
 

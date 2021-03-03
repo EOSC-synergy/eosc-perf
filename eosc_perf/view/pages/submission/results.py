@@ -48,7 +48,7 @@ def upload_result():
     factory = UploadJSONFactory()
 
     page = factory.generate_page(
-        template='submission/result.html',
+        template='submission/result.jinja2.html',
         args=None,
         license=factory.get_license_string().replace('\n', '<br/>'))
     return Response(page, mimetype='text/html')

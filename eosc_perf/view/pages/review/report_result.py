@@ -75,7 +75,7 @@ def report_result():
         return error_redirect('Result does not exist')
 
     page = factory.generate_page(
-        template='review/report_result.html',
+        template='review/report_result.jinja2.html',
         args=None,
         page_content=factory.generate_page_content(uuid),
         uuid=uuid)

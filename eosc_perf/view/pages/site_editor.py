@@ -27,7 +27,7 @@ site_editor_blueprint = Blueprint('edit-site-factory', __name__)
 def edit_site():
     """HTTP endpoint for the benchmark submission page."""
     factory = EditSitePageFactory()
-    page = factory.generate_page(template='site_editor.html')
+    page = factory.generate_page(template='site_editor.jinja2.html')
     return Response(page, mimetype='text/html')
 
 

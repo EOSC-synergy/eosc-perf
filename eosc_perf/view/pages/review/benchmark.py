@@ -84,7 +84,7 @@ def review_benchmark():
         dockerhub_desc_formatted = "Could not load description"
 
     page = factory.generate_page(
-        template='review/benchmark.html',
+        template='review/benchmark.jinja2.html',
         args=None,
         docker_name=docker_name,
         docker_link=dockerhub_link,

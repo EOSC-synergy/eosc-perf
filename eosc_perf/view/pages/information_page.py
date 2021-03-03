@@ -30,7 +30,7 @@ def info_page():
         return error_redirect('Information page called with invalid arguments')
 
     factory = InformationPageFactory()
-    page = factory.generate_page(template='information.html', args=info)
+    page = factory.generate_page(template='information.jinja2.html', args=info)
     return Response(page, mimetype='text/html')
 
 
@@ -38,7 +38,7 @@ def info_page():
 def privacy_page():
     """HTTP endpoint for the upload instructions page."""
     factory = InformationPageFactory()
-    page = factory.generate_page(template='submission/benchmark_upload_instruction.html')
+    page = factory.generate_page(template='submission/benchmark_upload_instruction.jinja2.html')
     return Response(page, mimetype='text/html')
 
 
@@ -47,7 +47,7 @@ def privacy_page():
 def report_list():
     """HTTP endpoint for the report list."""
     factory = InformationPageFactory()
-    page = factory.generate_page(template='review/report_list.html')
+    page = factory.generate_page(template='review/report_list.jinja2.html')
     return Response(page, mimetype='text/html')
 
 
@@ -58,7 +58,7 @@ def code_guidelines():
     with open('eosc_perf/model/sample_data/template.json') as min_template:
         info = json.loads(min_template.read())
     info_str = json.dumps(info, indent=4, sort_keys=True)
-    page = factory.generate_page(template='submission/benchmark_code_guidelines.html', args=info_str)
+    page = factory.generate_page(template='submission/benchmark_code_guidelines.jinja2.html', args=info_str)
     return Response(page, mimetype='text/html')
 
 
@@ -70,5 +70,5 @@ def error():
         info = "Unknown error"
 
     factory = InformationPageFactory()
-    page = factory.generate_page(template='error.html', args=info)
+    page = factory.generate_page(template='error.jinja2.html', args=info)
     return Response(page, mimetype='text/html')

@@ -78,7 +78,7 @@ def view_report():
     json_data = json.dumps(json.loads(result.get_json()), indent=4)
 
     page = factory.generate_page(
-        template='review/result.html',
+        template='review/result.jinja2.html',
         args=None,
         reporter_name=reporter_name,
         reporter_mail=reporter_mail,

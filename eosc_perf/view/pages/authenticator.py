@@ -33,7 +33,7 @@ def authentication_redirect():
     """"OIDC-Authentication redirect through authenticator singleton."""
     if authenticator.is_authenticated():
         factory = RedirectFactory()
-        page = factory.generate_page(template='redirect_return.html')
+        page = factory.generate_page(template='redirect_return.jinja2.html')
         return Response(page, mimetype='text/html')
 
     return error_redirect('Login failed')
@@ -44,7 +44,7 @@ def logout():
     """"Revoke current user's authentication."""
     if authenticator.logout():
         factory = RedirectFactory()
-        page = factory.generate_page(template='redirect_return.html')
+        page = factory.generate_page(template='redirect_return.jinja2.html')
         return Response(page, mimetype='text/html')
     else:
         return info_redirect('There is no authenticated user to log out.')

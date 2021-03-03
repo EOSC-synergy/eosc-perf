@@ -65,7 +65,7 @@ def review_site():
     date = report.get_date()
 
     page = factory.generate_page(
-        template='review/site.html',
+        template='review/site.jinja2.html',
         args=None,
         site_name=site_name,
         site_description=report.get_site().get_description(),

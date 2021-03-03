@@ -22,4 +22,4 @@ privacy_blueprint = Blueprint('privacy-policy-factory', __name__)
 def privacy_page():
     """HTTP endpoint for the privacy policy page."""
     factory = PrivacyPolicyFactory()
-    return Response(factory.generate_page(template='privacy_policy.html'), mimetype='text/html')
+    return Response(factory.generate_page(template='privacy_policy.jinja2.html'), mimetype='text/html')

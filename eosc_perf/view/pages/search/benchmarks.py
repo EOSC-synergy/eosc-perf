@@ -22,4 +22,4 @@ benchmark_search_blueprint = Blueprint('benchmark-search', __name__)
 def search_benchmark():
     """HTTP endpoint for the benchmark search page."""
     factory = BenchmarkSearchFactory()
-    return Response(factory.generate_page(template='search/benchmarks.html'), mimetype='text/html')
+    return Response(factory.generate_page(template='search/benchmarks.jinja2.html'), mimetype='text/html')

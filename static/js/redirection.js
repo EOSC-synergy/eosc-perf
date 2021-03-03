@@ -1,5 +1,5 @@
 /**
- * This script is loaded by templates/redirect_return.html.
+ * This script is loaded by templates/redirect_return.jinja2.html.
  */
 
 window.addEventListener("load", function () {
