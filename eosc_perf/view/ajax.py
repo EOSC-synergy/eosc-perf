@@ -285,9 +285,9 @@ def query_results():
 @ajax_blueprint.route('/query_benchmarks')
 def query_benchmarks():
     """HTTP endpoint for benchmark AJAX queries."""
-    query_json = request.args.get('query_json')
+    query = request.args.get('query')
     handler = BenchmarkSearchAJAX()
-    response, code = handler.process(query_json)
+    response, code = handler.process(query)
     return Response(response, mimetype='application/json', status=code)
 
 

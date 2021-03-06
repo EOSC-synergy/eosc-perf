@@ -35,22 +35,29 @@
     <div class="container">
         <h1>Benchmark Search</h1>
         <form id="form" action="/benchmark_search" class="flexbox" method="POST">
-            <input type="text" name="query" class="form-control" style="flex: 10 1 0" placeholder="Enter your query here" />
+            <label for="query" class="sr-only">Query:</label>
+            <input type="text" name="query" id="query" class="form-control" style="flex: 10 1 0" placeholder="Enter your query here, keywords separated by spaces" />
             <input type="submit" class="btn btn-info" name="submit" value="Search" />
         </form>
-        <table id="result_table">
-            <thead>
-                <tr>
-                    <th>Docker Name</th>
-                </tr>
-            </thead>
-            <tbody id="result_table_body">
-            </tbody>
-        </table>
+        {# TODO: Use card style? Would avoid position:relative tweak #}
+        <div class="container" style="position:relative">
+            <div class="overlay loading-background loading center-contents" id="loadingIcon">
+                <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Benchmarks</th>
+                    </tr>
+                </thead>
+                <tbody id="resultTableBody">
+                </tbody>
+            </table>
+        </div>
         <br />
-        <p id="page_info" class="text-right"></p>
-        <button type="button" onclick="next_page()" class="btn btn-info float-right mr-1" id="next_button">Next</button>
-        <button type="button" onclick="prev_page()" class="btn btn-info float-right mr-1"
+        <p id="pageIndex" class="text-right"></p>
+        <button type="button" onclick="benchmarkSearch.next_page()" class="btn btn-info float-right mr-1" id="next_button">Next</button>
+        <button type="button" onclick="benchmarkSearch.prev_page()" class="btn btn-info float-right mr-1"
             id="previous_button">Previous</button>
     </div>
 {% endblock %}
