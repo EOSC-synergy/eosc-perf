@@ -192,6 +192,57 @@ function _comparator(x, y) {
     return 0;
 }
 
+/**
+ * Helping wrapper to manage dropdown buttons for any needed json path input fields (filter suggestions, chart axis, ?)
+ *
+ * TODO: search field?
+ */
+class JSONValueInputPrompt {
+    constructor(dropdownButton, inputBox) {
+        this.button = dropdownButton;
+        this.button.dataset.toggle = "dropdown";
+
+        this.button.setAttribute("aria-haspopup", "true");
+        this.button.setAttribute("aria-expanded", "false");
+
+        this.inputBox = inputBox;
+
+        this.dropdown = document.createElement("div");
+        this.dropdown.classList.add("dropdown-menu", "dropdown-menu-right", "scrollable-dropdown");
+        this.button.parentNode.insertBefore(this.dropdown, this.button);
+
+        let jsonValueInputPrompt = this;
+        // TODO: find better visual design than bootstrap list groups
+        $(dropdownButton.parentElement).on('shown.bs.dropdown', function() {
+            const keys = search_page.get_notable_keys();
+            clear_element_children(jsonValueInputPrompt.dropdown);
+            let list = document.createElement("ul");
+            list.classList.add("list-group");
+            for (const key of keys) {
+                let item = document.createElement("li");
+                item.textContent = key;
+                item.classList.add("list-group-item");
+                item.onclick = function () {
+                    jsonValueInputPrompt.set_value(key);
+                };
+                list.appendChild(item);
+            }
+            jsonValueInputPrompt.dropdown.appendChild(list);
+        });
+
+        $(this.button).dropdown();
+    }
+
+    set_value(value) {
+        this.inputBox.value = value;
+
+        // call change callback if it exists
+        if (this.inputBox.onchange !== undefined) {
+            this.inputBox.onchange();
+        }
+    }
+}
+
 class Table {
     /**
      * Construct a new table handler.
@@ -994,52 +1045,6 @@ class SpeedupDiagram extends Diagram {
     }
 }
 
-/**
- * Helping wrapper to manage dropdown buttons for any needed json path input fields (filter suggestions, chart axis, ?)
- *
- * TODO: search field?
- */
-class JSONValueInputPrompt {
-    constructor(dropdownDiv, dropdownButton, inputBox) {
-        this.button = dropdownButton;
-        this.button.dataset.toggle = "dropdown";
-
-        this.button.setAttribute("aria-haspopup", "true");
-        this.button.setAttribute("aria-expanded", "false");
-
-        this.inputBox = inputBox;
-
-        this.dropdown = document.createElement("div");
-        this.dropdown.classList.add("dropdown-menu", "dropdown-menu-right", "scrollable-dropdown");
-        this.button.parentNode.insertBefore(this.dropdown, this.button);
-
-        let jsonValueInputPrompt = this;
-        // TODO: find better visual design than bootstrap list groups
-        $(dropdownDiv).on('shown.bs.dropdown', function() {
-            const keys = search_page.get_notable_keys();
-            clear_element_children(jsonValueInputPrompt.dropdown);
-            let list = document.createElement("ul");
-            list.classList.add("list-group");
-            for (const key of keys) {
-                let item = document.createElement("li");
-                item.textContent = key;
-                item.classList.add("list-group-item");
-                item.onclick = function () {
-                    jsonValueInputPrompt.set_value(key);
-                };
-                list.appendChild(item);
-            }
-            jsonValueInputPrompt.dropdown.appendChild(list);
-        });
-
-        $(this.button).dropdown();
-    }
-
-    set_value(value) {
-        this.inputBox.value = value;
-    }
-}
-
 class Filter {
     constructor(searchPage) {
         this.searchPage = searchPage;
@@ -1135,7 +1140,7 @@ class Filter {
                     this.suggestionsButton.appendChild(suggestions_button_screenreader_hint);
                 }
                 inputExtras.appendChild(this.suggestionsButton);
-                this.jsonSuggestor = new JSONValueInputPrompt(inputExtras, this.suggestionsButton, this.inputBox);
+                this.jsonSuggestor = new JSONValueInputPrompt(this.suggestionsButton, this.inputBox);
             }
 
             input.appendChild(inputExtras);
