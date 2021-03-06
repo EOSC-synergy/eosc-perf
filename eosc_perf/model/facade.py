@@ -3,6 +3,8 @@ methods to create, find, and even remove some of the data.
 """
 from typing import List, Type, Optional, Tuple
 import json
+
+from sqlalchemy import or_
 from sqlalchemy.exc import SQLAlchemyError
 from eosc_perf.model.data_types import Result, Tag, Benchmark, Uploader, Site, \
     ResultIterator, Report, ResultReport, BenchmarkReport, SiteReport, SiteFlavor
@@ -260,7 +262,7 @@ class DatabaseFacade:
 
         # add filter for every keyword
         for keyword in keywords:
-            results = results.filter(Benchmark._docker_name.contains(keyword))
+            results = results.filter(or_(Benchmark._docker_name.contains(keyword), Benchmark._description.contains(keyword)))
 
         results = results.all()
         db.session.commit()
