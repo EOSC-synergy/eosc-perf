@@ -669,15 +669,32 @@ class SpeedupDiagram extends Diagram {
                 let label = document.createElement("label");
                 label.for = "diagramX";
                 label.textContent = "X Axis:";
+                label.style.paddingRight = "0.2em";
                 xAxisDiv.appendChild(label);
 
-                let dropdown = document.createElement("select");
-                dropdown.id = "diagramX";
-                dropdown.classList.add("custom-select");
-                dropdown.onchange = function() {
+                let inputGroup = document.createElement("div");
+                inputGroup.classList.add("input-group");
+
+                this.xAxisInput = document.createElement("input");
+                this.xAxisInput.type = "text";
+                this.xAxisInput.placeholder = "path.to.value";
+                this.xAxisInput.classList.add("form-control");
+                this.xAxisInput.onchange = function() {
                     search_page.get_diagram()._update();
                 };
-                xAxisDiv.appendChild(dropdown);
+                inputGroup.appendChild(this.xAxisInput);
+
+                let inputGroupAppend = document.createElement("div");
+                inputGroupAppend.classList.add("input-group-append");
+
+                let xAxisDropdownButton = document.createElement("button");
+                xAxisDropdownButton.classList.add("btn", "btn-outline-secondary", "dropdown-toggle", "dropdown-toggle-split");
+                inputGroupAppend.appendChild(xAxisDropdownButton);
+                this.xAxisJsonSelector = new JSONValueInputPrompt(xAxisDropdownButton, this.xAxisInput);
+
+                inputGroup.appendChild(inputGroupAppend);
+                xAxisDiv.appendChild(inputGroup);
+
             }
             section.appendChild(xAxisDiv);
 
@@ -685,17 +702,34 @@ class SpeedupDiagram extends Diagram {
             yAxisDiv.classList.add("form-inline");
             {
                 let label = document.createElement("label");
-                label.for = "diagramY";
+                label.for = "diagramX";
                 label.textContent = "Y Axis:";
+                label.style.paddingRight = "0.2em";
                 yAxisDiv.appendChild(label);
 
-                let dropdown = document.createElement("select");
-                dropdown.id = "diagramY";
-                dropdown.classList.add("custom-select");
-                dropdown.onchange = function() {
+                let inputGroup = document.createElement("div");
+                inputGroup.classList.add("input-group");
+
+                this.yAxisInput = document.createElement("input");
+                this.yAxisInput.type = "text";
+                this.yAxisInput.placeholder = "path.to.value";
+                this.yAxisInput.classList.add("form-control");
+                this.yAxisInput.onchange = function() {
                     search_page.get_diagram()._update();
                 };
-                yAxisDiv.appendChild(dropdown);
+                inputGroup.appendChild(this.yAxisInput);
+
+                let inputGroupAppend = document.createElement("div");
+                inputGroupAppend.classList.add("input-group-append");
+
+                let yAxisDropdownButton = document.createElement("button");
+                yAxisDropdownButton.classList.add("btn", "btn-outline-secondary", "dropdown-toggle", "dropdown-toggle-split");
+                inputGroupAppend.appendChild(yAxisDropdownButton);
+                this.yAxisJsonSelector = new JSONValueInputPrompt(yAxisDropdownButton, this.xAxisInput);
+
+                inputGroup.appendChild(inputGroupAppend);
+                yAxisDiv.appendChild(inputGroup);
+
             }
             section.appendChild(yAxisDiv);
 
@@ -872,21 +906,9 @@ class SpeedupDiagram extends Diagram {
     update_notable_keys(notable_keys) {
         this.notable_keys = notable_keys;
 
-        let xAxisSelect = document.getElementById("diagramX");
-        _clear_select(xAxisSelect);
-        let yAxisSelect = document.getElementById("diagramY");
-        _clear_select(yAxisSelect);
-        for (const key of notable_keys) {
-            let xOption = document.createElement("option");
-            xOption.value = key;
-            xOption.textContent = key;
-            xAxisSelect.appendChild(xOption);
-
-            let yOption = document.createElement("option");
-            yOption.value = key;
-            yOption.textContent = key;
-            yAxisSelect.appendChild(yOption);
-        }
+        // pick something by default
+        this.xAxisInput.value = notable_keys[0];
+        this.yAxisInput.value = notable_keys[0];
     }
 
     /**
@@ -985,8 +1007,8 @@ class SpeedupDiagram extends Diagram {
     }
 
     _update() {
-        this.xAxis = document.getElementById("diagramX").value;
-        this.yAxis = document.getElementById("diagramY").value;
+        this.xAxis = this.xAxisInput.value;
+        this.yAxis = this.yAxisInput.value;
 
         this.properties = this._determineDataProperties();
 
