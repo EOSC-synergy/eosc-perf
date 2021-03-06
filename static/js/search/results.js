@@ -51,17 +51,6 @@ const FILTER_HELPS = new Map([
         json or example.nested or different:path:to']
 ]);
 
-const FILTER_ID_PREFIX = {
-    TYPE: "filter-type-",
-    VALUE: "filter-value-",
-    EXTRA_VALUE: "filter-extra-value-",
-    SUGGESTIONS: "filter-suggestions-",
-    SUGGESTIONS_BTN: "filter-suggestions-btn-",
-    COMPARISON: "filter-comparison-mode-",
-    INFO: "filter-info-",
-    EXTRA_FRAME: "filter-extra"
-};
-
 const JSON_MODES =  {
     LESS_THAN: 'lesser_than',
     LESS_OR_EQUALS: 'less_or_equals',
