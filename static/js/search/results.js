@@ -274,7 +274,6 @@ class Table {
         }
         const childCount = row.children.length;
         clear_element_children(row);
-        console.log(row);
         let shadow = document.createElement("td");
         shadow.classList.add("loading-background");
         shadow.style.opacity = "100%";
@@ -1443,7 +1442,7 @@ class ResultSearch {
                     // TODO: how should we display error messages inline? popup? toast?
                 }
                 search_page.results = [];
-                console.log("Error", jqXHR.status, "occured while searching searching");
+                console.error("Error", jqXHR.status, "occured while searching searching");
             })
             .done(function (data) {
                 if (!data.hasOwnProperty("results")) {
@@ -1542,7 +1541,6 @@ class ResultSearch {
      */
     delete_result(result) {
         $.ajax('/delete_result?uuid=' + encodeURI(result['uuid'])).done(function (data) {
-            console.log("removed", result.uuid);
             if (data.toLowerCase().includes("success")) {
                 search_page.table.mark_result_as_removed(result.uuid);
                 search_page.results = search_page.results.filter(function (r) {
@@ -1723,7 +1721,6 @@ class ResultSearch {
             let columnOption = document.createElement("li");
             columnOption.classList.add("list-group-item", "list-group-item-action");
             if (column in COLUMNS) {
-                console.log(CORE_COLUMNS, column, CORE_COLUMNS.includes(COLUMNS[column]));
                 if (CORE_COLUMNS.includes(COLUMNS[column])) {
                     columnOption.classList.add("core_column", "list-group-item-dark");
                 }
