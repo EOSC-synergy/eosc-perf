@@ -619,7 +619,7 @@ class SpeedupDiagram extends Diagram {
         this.mode = "simple";
         this.grouping = false;
 
-        document.getElementById("speedupDiagramMode").classList.remove("d-none");
+        document.getElementById("diagramConfiguration-speedup").classList.remove("d-none");
 
         let section = document.getElementById("diagramSection");
         {
@@ -992,7 +992,7 @@ class SpeedupDiagram extends Diagram {
             delete window.diagram;
         }
 
-        document.getElementById("speedupDiagramMode").classList.add("d-none");
+        document.getElementById("diagramConfiguration-speedup").classList.add("d-none");
 
         // naïve purge
         _clear_select(document.getElementById("diagramSection"));
