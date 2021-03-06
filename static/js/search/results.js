@@ -86,6 +86,12 @@ const CHART_COLORS = [
     'rgb(201, 203, 207)' // gray
 ];
 
+const SORT_ORDER = Object.freeze({
+    NONE: 0,
+    NORMAL: 1,
+    REVERSED: 2,
+});
+
 const SUBKEY_NOT_FOUND = "⚠ not found";
 
 /**
@@ -249,6 +255,8 @@ class Table {
      */
     constructor() {
         this.table = document.getElementById("result_table");
+        this.columnHeads = new Map();
+        this.sortedBy = null;
     }
 
     /**
@@ -285,17 +293,22 @@ class Table {
         while (this.table.firstChild != null) {
             this.table.firstChild.remove();
         }
+        this.columnHeads.clear();
     }
 
     /**
      * Set up the top row of the table.
      */
     _create_head(columns) {
+        let table = this;
         let head = document.createElement("THEAD");
         for (const column of columns) {
             const column_name = (column in COLUMNS) ? COLUMNS[column] : _get_subkey_name(column);
 
             let cell = document.createElement("TH");
+            this.columnHeads.set(column_name, {
+                element: cell
+            });
 
             if (!(column in COLUMNS)) {
                 cell.dataset.toggle = "tooltip";
@@ -362,12 +375,25 @@ class Table {
                 default:
                     cell.addEventListener("click", function() {
                         // TODO: sorting helpers
-                        search_page.sort_by( (x, y) => _comparator(_fetch_subkey(x["data"], column), _fetch_subkey(y["data"], column)), column);
+                        search_page.sort_by( (x, y) => _comparator(_fetch_subkey(x["data"], column), _fetch_subkey(y["data"], column)), column_name);
                     });
                     break;
             }
+
+            if (this.sortedBy === column_name) {
+                let arrow = document.createElement("i");
+                arrow.classList.add("bi");
+                if (this.sortReversed) {
+                    arrow.classList.add("bi-chevron-up");
+                }
+                else {
+                    arrow.classList.add("bi-chevron-down");
+                }
+                cell.appendChild(arrow);
+            }
             head.appendChild(cell);
         }
+
         this.table.appendChild(head);
     }
 
@@ -497,6 +523,39 @@ class Table {
         this._clear();
         this._create_head(columns);
         this._fill_table(results, columns, startIndex);
+    }
+
+    set_column_sort(columnName, order) {
+        let cell = this.columnHeads.get(columnName).element;
+        // same column, reversed order
+        if (order === SORT_ORDER.REVERSED && this.sortedBy !== null) {
+            // just reverse whatever order there was
+            let arrow = cell.querySelector(".bi");
+            if (arrow.classList.contains("bi-chevron-down")) {
+                arrow.classList.remove("bi-chevron-down");
+                arrow.classList.add("bi-chevron-up");
+                this.sortReversed = true;
+            }
+            else {
+                arrow.classList.add("bi-chevron-down");
+                arrow.classList.remove("bi-chevron-up");
+                this.sortReversed = false;
+            }
+            return;
+        }
+
+        // different column
+        if (this.sortedBy !== null) {
+            let arrow = this.columnHeads.get(this.sortedBy).element.querySelector(".bi");
+            arrow.parentNode.removeChild(arrow);
+        }
+
+        let arrow = document.createElement("i");
+        arrow.classList.add("bi", "bi-chevron-down");
+        cell.appendChild(arrow);
+
+        this.sortedBy = columnName;
+        this.sortReversed = false;
     }
 }
 
@@ -1430,17 +1489,20 @@ class ResultSearch {
 
     /**
      * Sort the results by a given column.
+     * @param callback Comparison function for the sort.
      * @param column Which column to sort by.
      */
     sort_by(callback, column) {
-        this.results.sort(callback);
         // reverse order if double clicked.
         if (this.ordered_by === column) {
             this.results = this.results.reverse();
-            this.ordered_by = "";
-        } else {
-            this.ordered_by = column;
+            this.table.set_column_sort(column, SORT_ORDER.REVERSED);
         }
+        else {
+            this.results.sort(callback);
+            this.table.set_column_sort(column, SORT_ORDER.NORMAL);
+        }
+        this.ordered_by = column;
         this.update();
         // remove possible column hover tooltips
         $('.tooltip').remove();
