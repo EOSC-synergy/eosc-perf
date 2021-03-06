@@ -106,9 +106,14 @@ select {
 .scrollable-dropdown {
     padding: 0;
     max-height: 12em;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .scrollable-dropdown > .list-group > .list-group-item {
     padding: .50rem 0.75rem;
+    user-select: none;
+}
+
+.scrollable-dropdown > .list-group > .list-group-item:hover {
+    background-color: #7abaff;
 }
