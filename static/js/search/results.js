@@ -1287,7 +1287,7 @@ class Filter {
     }
 
     remove() {
-        this.element.parent.removeChild(this.element);
+        this.element.parentNode.removeChild(this.element);
         this.searchPage.remove_filter(this);
     }
 
@@ -1469,7 +1469,7 @@ class ResultSearch {
      * Add a filter field.
      */
     add_filter_field() {
-        this.filters.push(new Filter);
+        this.filters.push(new Filter(this));
     }
 
     /**
