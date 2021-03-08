@@ -1,9 +1,11 @@
-var SITES_EMPTY = false
-var BENCHMARKS_EMPTY = false
-var CUSTOM_SITE = false
-var LICENSE_AGREED = false
+"use strict";
 
-// Used to compare tags by their name
+/**
+ * String comparison helper using toLowerCase()
+ * @param a first string
+ * @param b second stringf
+ * @returns {number} -1 if a < , 1 if a > b, 0 if a == b
+ */
 function compare(a, b) {
     if (a.name.toLowerCase() < b.name.toLowerCase()){
         return -1;
@@ -15,12 +17,20 @@ function compare(a, b) {
 }
 
 class ResultUpload {
+    /**
+     * Initialize result upload page
+     */
     constructor() {
+        this.agreedToLicense = false;
+        this.noSites = false;
+        this.customSite = false;
+        this.benchmarksEmpty = false;
+
         let form = $('#form');
         form.submit(function (e) {
             let old_html = "";
             let selection = document.getElementById('site_selection');
-            if (!CUSTOM_SITE) {
+            if (!this.customSite) {
                 old_html = selection.options[selection.selectedIndex].innerHTML;
                 selection.options[selection.selectedIndex].innerHTML = selection.options[selection.selectedIndex].id;
             }
@@ -30,12 +40,12 @@ class ResultUpload {
                 function (data, textStatus) {
                     // display success message and reset page
                     display_message('Submission successful');
-                    upload_page.prepare_page();
+                    upload_page.reset_page();
                 },
                 function (data) {
                     window.location.href = data.responseJSON.redirect;
                 });
-            if (!CUSTOM_SITE) {
+            if (!this.customSite) {
                 selection.options[selection.selectedIndex].innerHTML = old_html;
             }
             return false;
@@ -43,214 +53,248 @@ class ResultUpload {
 
         this.sites_data = new Map();
 
-        this.prepare_page();
-
-        document.getElementById("site_selection").addEventListener("change", function() {
+        this.siteSelection = document.getElementById("site_selection");
+        this.siteSelection.addEventListener("change", function() {
             upload_page.on_site_select();
         });
-        document.getElementById("siteFlavor").addEventListener("change", function() {
+
+        this.customSiteNameInput = document.getElementById("site_name");
+        this.customSiteAddressInput = document.getElementById("site_address");
+        this.customSiteDescriptionInput = document.getElementById("site_description");
+
+        this.customFlavorDescriptionInput = document.getElementById("siteFlavorCustom");
+
+        this.flavorInput = document.getElementById("siteFlavor");
+        this.flavorInput.addEventListener("change", function() {
             upload_page.on_flavor_select();
         });
+
+        this.submitButton = document.getElementById("submit_button");
+        this.customTagInput = document.getElementById("custom_tag");
+
+        this.reset_page();
+
+        this.fetch_sites();
+        this.fetch_tags();
+        this.fetch_benchmarks();
     }
 
+    /**
+     * Callback for site option selection
+     */
     on_site_select() {
-        let selector = document.getElementById("site_selection");
-
-        if (selector.value === undefined || selector.value.length === 0) {
+        if (this.siteSelection.value === undefined || this.siteSelection.value.length === 0) {
             return;
         }
 
-        let flavorSelector = document.getElementById("siteFlavor");
-        clear_element_children(flavorSelector);
-        for (let flavor of this.sites_data.get(selector.value).flavors) {
+        clear_element_children(this.flavorInput);
+        for (let flavor of this.sites_data.get(this.siteSelection.value).flavors) {
             let option = document.createElement("option");
             option.value = flavor.uuid;
             option.textContent = flavor.name;
-            flavorSelector.appendChild(option);
+            this.flavorInput.appendChild(option);
         }
     }
 
+    /**
+     * Callback for flavor option selection
+     */
     on_flavor_select() {
-        let selector = document.getElementById("siteFlavor");
-
-        let customFlavorDesc = document.getElementById("siteFlavorCustom");
-        if (selector.value === "new...") {
-            customFlavorDesc.classList.remove("d-none");
+        /*
+        // not implemented yet
+        if (this.flavorInput.value === "New...") {
+            this.customFlavorDescriptionInput.classList.remove("d-none");
         }
         else {
-            customFlavorDesc.classList.add("d-none");
+            this.customFlavorDescriptionInput.classList.add("d-none");
         }
+        */
     }
 
-    site_checkbox_click(cb) {
-        CUSTOM_SITE = cb.checked;
-        if (CUSTOM_SITE) {
-            document.getElementById("site_name").removeAttribute("disabled");
-            document.getElementById("site_address").removeAttribute("disabled");
-            document.getElementById("site_description").removeAttribute("disabled");
-            document.getElementById("site_selection").setAttribute("disabled", "true");
-            document.getElementById("siteFlavor").disabled = true;
-            if (!BENCHMARKS_EMPTY && LICENSE_AGREED) {
-                document.getElementById("submit_button").removeAttribute("disabled");
-            }
-        } else {
-            document.getElementById("site_name").setAttribute("disabled", "true");
-            document.getElementById("site_name").value = "";
-            document.getElementById("site_address").setAttribute("disabled", "true");
-            document.getElementById("site_address").value = "";
-            document.getElementById("site_description").setAttribute("disabled", "true");
-            document.getElementById("site_description").value = "";
-            document.getElementById("site_selection").removeAttribute("disabled");
-            document.getElementById("siteFlavor").disabled = false;
-            if (SITES_EMPTY) {
-                document.getElementById("submit_button").setAttribute("disabled", "true");
+    /**
+     * Callback for custom site checkbox
+     * @param checkbox checkbox element
+     */
+    site_checkbox_click(checkbox) {
+        this.customSite = checkbox.checked;
+        if (this.customSite) {
+            this.customSiteNameInput.disabled = false;
+            this.customSiteAddressInput.disabled = false;
+            this.customSiteDescriptionInput.disabled = false;
+            this.siteSelection.disabled = true;
+            this.flavorInput.disabled = true;
+            if (!this.benchmarksEmpty && this.agreedToLicense) {
+                this.submitButton.disabled = false;
             }
         }
-    }
-
-    license_checkbox_click(cb) {
-        LICENSE_AGREED = cb.checked
-        if (LICENSE_AGREED && (!SITES_EMPTY || CUSTOM_SITE) && !BENCHMARKS_EMPTY) {
-            document.getElementById("submit_button").removeAttribute("disabled");
-        } else {
-            document.getElementById("submit_button").setAttribute("disabled", "true");
+        else {
+            this.customSiteNameInput.disabled = true;
+            this.customSiteNameInput.value = '';
+            this.customSiteAddressInput.disabled = true;
+            this.customSiteAddressInput.value = '';
+            this.customSiteDescriptionInput.disabled = true;
+            this.customSiteDescriptionInput.value = '';
+            this.siteSelection.disabled = false;
+            this.flavorInput.disabled = false;
+            if (this.noSites) {
+                this.submitButton.disabled = true;
+            }
         }
     }
 
+    /**
+     * Callback for license checkbox
+     * @param checkbox checkbox element
+     */
+    license_checkbox_click(checkbox) {
+        this.agreedToLicense = checkbox.checked;
+        if (this.agreedToLicense && (!this.noSites || this.customSite) && !this.benchmarksEmpty) {
+            this.submitButton.removeAttribute("disabled");
+        } else {
+            this.submitButton.setAttribute("disabled", "true");
+        }
+    }
+
+    /**
+     * Display the result submission license to the user
+     */
     show_license() {
-        let license = document.getElementById("license").getAttribute("value");
-        let new_window = window.open("about:blank", "", "_blank");
-        new_window.document.write("<html lang=\"en\"><body>"+license+"</body></html>");
+        const license = document.getElementById("license").getAttribute("value");
+        display_message(license, "License", true);
     }
 
-    append_form_data(fd) {
-        fd.append("custom_site", CUSTOM_SITE)
-        if (CUSTOM_SITE) {
-            fd.append("new_site_name", document.getElementById("site_name").value)
-            fd.append("new_site_address", document.getElementById("site_address").value)
-            fd.append("new_site_description", document.getElementById("site_description").value)
+    /**
+     * Add extra non-form data to result submission form
+     * @param formData form data
+     */
+    append_form_data(formData) {
+        formData.append("custom_site", this.customSite);
+        if (this.customSite) {
+            formData.append("new_site_name", this.customSiteNameInput.value);
+            formData.append("new_site_address", this.customSiteAddressInput.value);
+            formData.append("new_site_description", this.customSiteDescriptionInput.value);
         }
     }
 
-    stopped_typing_tag_field(){
-        if(document.getElementById("custom_tag").value.trim().length > 0) {
-            document.getElementById('add_tag_button').removeAttribute("disabled");
-        } else {
-            document.getElementById('add_tag_button').setAttribute("disabled", "true");
-        }
+    /**
+     * Callback for custom tag text box
+     */
+    stopped_typing_tag_field() {
+        // only allow add tag button if length > 0
+        document.getElementById('add_tag_button').disabled = this.customTagInput.value.trim().length <= 0;
     }
 
+    /**
+     * Submit a new tag
+     */
     add_tag() {
-        let tag = document.getElementById("custom_tag").value.trim();
-        let form = $('#form');
-        let formData = new FormData();
-        formData.append("new_tag", tag)
-        $.ajax({
-            type: "POST",
-            url: "upload_tag",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (data, textStatus) {
-                // reset tag field and reload tags
-                document.getElementById("custom_tag").value  = ""
-                document.getElementById('add_tag_button').setAttribute("disabled", "true");
-                upload_page.prepare_tags();
+        let tag = this.customTagInput.value.trim();
+        submit_json('/upload_tag', {
+                new_tag: tag
             },
-            error: function (data) {
+            function (data, textStatus) {
+                // reset tag field and reload tags
+                upload_page.customTagInput.value = '';
+                upload_page.fetch_tags();
+            },
+            function (data) {
                 window.location.href = data.responseJSON.redirect;
             }
-        });
-
-        form.submit(function (e) {
-            let selection = document.getElementById('site_selection');
-            let old_html = selection.options[selection.selectedIndex].innerHTML
-            selection.options[selection.selectedIndex].innerHTML = selection.options[selection.selectedIndex].id;
-            let formData = new FormData(this);
-            upload_page.append_form_data(formData);
-            submit_form(form, formData,
-                function (data, textStatus) {
-                    // display success message and disable form
-                    display_message('Submission successful');
-                    upload_page.prepare_page();
-                },
-                function (data) {
-                    window.location.href = data.responseJSON.redirect;
-                });
-            selection.options[selection.selectedIndex].innerHTML = old_html;
-            return false;
-        });
+        );
     }
 
+    /**
+     * Fill obtained sites into the user form
+     * @param data server response
+     */
     fill_sites(data) {
         let sites = data.results;
-        let site_selection = document.getElementById("site_selection");
 
         this.sites_data.clear();
         for (let site of sites) {
-            let site_name = site.name;
-            let site_id = site.short_name;
+            let siteHumanName = site.name;
+            let siteName = site.short_name;
 
             let option = document.createElement("option");
-            option.id = site_id;
-            option.value = site_id;
-            option.textContent = site_name;
-            site_selection.appendChild(option);
+            option.id = siteName;
+            option.value = siteName;
+            option.textContent = siteHumanName;
+            this.siteSelection.appendChild(option);
 
-            this.sites_data.set(site_id, site);
+            this.sites_data.set(siteName, site);
         }
         if (sites.length === 0) {
-            SITES_EMPTY = true;
-            document.getElementById("submit_button").setAttribute("disabled", "true");
+            this.noSites = true;
+            this.submitButton.disabled = true;
         }
         else {
-            site_selection.selectedIndex = 0;
+            this.siteSelection.selectedIndex = 0;
         }
 
         this.on_site_select();
     }
 
-    prepare_sites() {
-        let site_selection = document.getElementById("site_selection");
-        site_selection.innerHTML = "";
+    /**
+     * Fetch the sites and their data from backend
+     */
+    fetch_sites() {
+        clear_element_children(this.siteSelection);
         $.ajax('/fetch_sites')
             .done(function (data) {
                 upload_page.fill_sites(data);
             });
     }
 
-    prepare_tags() {
-        let tag_selection = document.getElementById("tag_selection");
-        tag_selection.innerHTML = '<option selected>--No Tag--</option>';
+    /**
+     * Fetch a list of tags from backend
+     */
+    fetch_tags() {
+        let tagSelection = document.getElementById("tag_selection");
         $.ajax('/fetch_tags')
             .done(function (data) {
-                let tags = data.results.sort(compare);
-                for (let index = 0; index < tags.length; ++index) {
-                    let tag_html = "<option>" + tags[index].name + "</option>\n";
-                    tag_selection.innerHTML += tag_html;
+                clear_element_children(tagSelection);
+                data.results.sort(compare);
+                for (const tag of data.results) {
+                    let option = document.createElement("option");
+                    option.textContent = tag.name;
+                    tagSelection.appendChild(option);
                 }
-            })
+                if (data.results.length === 0) {
+                    let option = document.createElement("option");
+                    option.textContent = "No tags found";
+                    option.disabled = true;
+                    tagSelection.appendChild(option);
+                }
+            });
     }
 
-    prepare_benchmarks() {
-        let bm_selection = document.getElementById("bm_selection");
-        bm_selection.innerHTML = "";
+    /**
+     * Fetch a list of benchmarks from backend
+     */
+    fetch_benchmarks() {
+        let benchmarkSelection = document.getElementById("bm_selection");
+        clear_element_children(benchmarkSelection);
         $.ajax('/fetch_benchmarks')
             .done(function (data) {
                 let benchmarks = data.results;
-                for (let index = 0; index < benchmarks.length; ++index) {
-                    bm_selection.innerHTML += "<option>" + benchmarks[index].docker_name + "</option>\n";
+                for (const benchmark of benchmarks) {
+                    let option = document.createElement("option");
+                    option.textContent = benchmark.docker_name;
+                    benchmarkSelection.appendChild(option);
                 }
                 if (benchmarks.length === 0) {
-                    BENCHMARKS_EMPTY = true;
-                    document.getElementById("submit_button").setAttribute("disabled", "true");
+                    this.benchmarksEmpty = true;
+                    this.submitButton.disabled = true;
                 }
             })
     }
 
-    prepare_page() {
-        document.getElementById("result_file").value = "";
-        document.getElementById("custom_tag").value = "";
+    /**
+     * Reset some fields to empty values to prevent accidentally submitting duplicate data
+     */
+    reset_page() {
+        document.getElementById("result_file").value = '';
+        this.customTagInput.value = '';
         document.getElementById('add_tag_button').setAttribute("disabled", "true");
         if (false !== document.getElementById("agreed_license").checked) {
             document.getElementById("agreed_license").click();
@@ -258,9 +302,6 @@ class ResultUpload {
         if (false !== document.getElementById("custom_site").checked) {
             document.getElementById("custom_site").click();
         }
-        this.prepare_sites();
-        this.prepare_tags();
-        this.prepare_benchmarks();
     }
 }
 

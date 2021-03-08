@@ -72,8 +72,6 @@ def upload_result_submit():
         return error_json_redirect("Uploaded file is not UTF-8 encoded.")
 
     tags = request.form.getlist("tags")
-    if "--No Tag--" in tags:
-        tags.remove("--No Tag--")
 
     custom_site = (request.form["custom_site"] == 'true')
     if not custom_site:
@@ -104,7 +102,7 @@ def upload_result_submit():
         'tags': tags,
         'site_flavor': request.form['site_flavor']
         if 'site_flavor' in request.form
-        else facade.get_site_flavor_by_name(site_name, 'default').get_uuid()
+        else facade.get_site_flavor_by_name(site_name, 'unknown').get_uuid()
     }
 
     try:
@@ -122,12 +120,11 @@ def upload_result_submit():
 
 
 @upload_json_blueprint.route('/upload_tag', methods=['POST'])
+@only_authenticated_json
 def upload_tag():
     """HTTP endpoint to take in new tags."""
     tag = request.form['new_tag']
     if tag == "":
         return error_json_redirect('No name entered for new tag')
-    if tag == "--No Tag--":
-        return error_json_redirect('New tag cannot be called "--No Tag--"')
     controller.submit_tag(tag)
     return Response('{}', mimetype='application/json', status=200)
