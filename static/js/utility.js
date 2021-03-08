@@ -116,7 +116,7 @@ function submit_form(form, formData, on_success, on_fail) {
 }
 
 /**
- * Send a form to the server by AJAX.
+ * Send a form to the server as JSON by AJAX.
  * @param form the HTML form with method='POST or GET' and action='/endpoint' attributes
  * @param data the data structure to send
  * @param success callback taking (data, textStatus)
@@ -126,6 +126,24 @@ function submit_form_json(form, data, success, fail) {
     $.ajax({
         type: form.attr('method'),
         url: form.attr('action'),
+        data: data,
+        dataType: "json",
+        success: success,
+        error: fail
+    });
+}
+
+/**
+ * Send JSON data to the server by AJAX.
+ * @param form the HTML form with method='POST or GET' and action='/endpoint' attributes
+ * @param data the data structure to send
+ * @param success callback taking (data, textStatus)
+ * @param fail callback taking (data) in case of errors
+ */
+function submit_json(url, data, success, fail) {
+    $.ajax({
+        type: 'POST',
+        url: url,
         data: data,
         dataType: "json",
         success: success,
