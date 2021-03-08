@@ -72,10 +72,28 @@ class Modal {
 /**
  * Display a message.
  * @param message The message to display.
+ * @param title An optional title.
+ * @param html Whether the message should be treated as HTML text.
  */
-function display_message(message) {
-    document.getElementById('overlay-text').innerHTML = message;
-    document.getElementById('overlay').style.display = 'block';
+function display_message(message, title = null, html = false) {
+    let contentDiv = document.createElement("div");
+    if (html) {
+        contentDiv.innerHTML = message;
+    }
+    else {
+        contentDiv.textContent = message;
+    }
+    let footer = document.createElement("div");
+    let closeButton = document.createElement("button");
+    closeButton.type = "button";
+    closeButton.classList.add("btn", "btn-secondary");
+    closeButton.dataset.dismiss = "modal";
+    closeButton.textContent = "Close";
+    footer.appendChild(closeButton);
+    let modal = new Modal(title === null ? '' : title, contentDiv, footer);
+    closeButton.onclick = function(e){ modal.cleanup() };
+
+    modal.display();
 }
 
 /**
