@@ -74,6 +74,9 @@ def add_demo():
             facade.add_site(site_info.get_short_name(), site_info.get_address(), description=site_info.get_description(),
                         full_name=site_info.get_name())
             site = facade.get_site(site_info.get_short_name())
+            # add 'unknown' flavor to mirror controller behaviour
+            facade.add_flavor('unknown', "Pick this if you don't know the flavor or it is not listed",
+                              site.get_short_name())
 
         for flavor_name in entry['flavors']:
             try:

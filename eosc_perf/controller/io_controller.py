@@ -169,7 +169,7 @@ class IOController:
             return False
 
         site = facade.get_site(short_name)
-        default_flavor: SiteFlavor = SiteFlavor("default", site)
+        default_flavor: SiteFlavor = SiteFlavor("unknown", site)
         site.add_flavor(default_flavor)
 
         return True
