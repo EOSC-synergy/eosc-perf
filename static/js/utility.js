@@ -47,7 +47,6 @@ function submit_form_json(form, data, success, fail) {
 /**
  * Clear all child elements of a given element.
  * @param element The element to remove all children from.
- * @private
  */
 function clear_element_children(element) {
     while (element.firstChild) {
