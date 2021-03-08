@@ -1,3 +1,74 @@
+
+class Modal {
+    /**
+     * Build a bootstrap modal
+     * @param title title text
+     * @param body body div
+     * @param footer footer div (should contain close button with data-dismiss="modal")
+     */
+    constructor(title, body, footer) {
+        this.modal = document.createElement("div");
+        this.modal.classList.add("modal", "fade");
+        this.modal.tabIndex = -1;
+        this.modal.setAttribute("role", "dialog");
+        {
+            let modalDialog = document.createElement("div");
+            modalDialog.classList.add("modal-dialog");
+            modalDialog.setAttribute("role", "document");
+            {
+                let modalContent = document.createElement("div");
+                modalContent.classList.add("modal-content");
+
+                {
+                    let modalHeader = document.createElement("div");
+                    modalHeader.classList.add("modal-header");
+                    {
+                        this.modalTitle = document.createElement("div");
+                        this.modalTitle.classList.add("modal-title");
+                        this.modalTitle.textContent = title;
+                        modalHeader.appendChild(this.modalTitle);
+
+                        let closeButton = document.createElement("button");
+                        closeButton.type = "button";
+                        closeButton.classList.add("close");
+                        closeButton.dataset.dismiss = "modal";
+                        closeButton.setAttribute("aria-label", "Close");
+                        {
+                            let closeSymbol = document.createElement("span");
+                            closeSymbol.setAttribute("aria-hidden", "true");
+                            closeSymbol.textContent = "×"; // &times; / multiplication symbol
+                            closeButton.appendChild(closeSymbol);
+                        }
+                        modalHeader.appendChild(closeButton);
+                    }
+                    modalContent.appendChild(modalHeader);
+
+                    this.modalBody = document.createElement("div");
+                    this.modalBody.classList.add("modal-body");
+                    this.modalBody.appendChild(body);
+                    modalContent.appendChild(this.modalBody);
+
+                    this.modalFooter = document.createElement("div");
+                    this.modalFooter.classList.add("modal-footer");
+                    this.modalFooter.appendChild(footer);
+                    modalContent.appendChild(this.modalFooter);
+                }
+                modalDialog.appendChild(modalContent);
+            }
+            this.modal.appendChild(modalDialog);
+        }
+    }
+
+    display() {
+        $(this.modal).modal('show');
+    }
+
+    cleanup() {
+        //$(this.modal).modal('dispose');
+        this.modal.remove();
+    }
+}
+
 /**
  * Display a message.
  * @param message The message to display.
