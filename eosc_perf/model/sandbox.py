@@ -14,12 +14,12 @@ from ..controller.io_controller import controller
 
 def _add_result(result):
     facade.add_result(result.get_json(),
-        result.get_uploader().get_id(),
-        result.get_site().get_short_name(),
-        result.get_benchmark().get_docker_name(),
-        result.get_flavor().get_uuid(),
-        [tag.get_name() for tag in result.get_tags()]
-    )
+                      result.get_uploader().get_id(),
+                      result.get_site().get_short_name(),
+                      result.get_benchmark().get_docker_name(),
+                      result.get_flavor().get_uuid(),
+                      [tag.get_name() for tag in result.get_tags()]
+                      )
 
 
 def add_demo():
@@ -71,8 +71,9 @@ def add_demo():
         try:
             site = facade.get_site(site_info.get_short_name())
         except facade.NotFoundError:
-            facade.add_site(site_info.get_short_name(), site_info.get_address(), description=site_info.get_description(),
-                        full_name=site_info.get_name())
+            facade.add_site(site_info.get_short_name(), site_info.get_address(),
+                            description=site_info.get_description(),
+                            full_name=site_info.get_name())
             site = facade.get_site(site_info.get_short_name())
             # add 'unknown' flavor to mirror controller behaviour
             facade.add_flavor('unknown', "Pick this if you don't know the flavor or it is not listed",
