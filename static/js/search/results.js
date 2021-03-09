@@ -760,7 +760,7 @@ class SpeedupDiagram extends Diagram {
             yAxisDiv.classList.add("form-inline");
             {
                 let label = document.createElement("label");
-                label.for = "diagramX";
+                label.for = "diagramY";
                 label.textContent = "Y Axis:";
                 label.style.paddingRight = "0.2em";
                 yAxisDiv.appendChild(label);
@@ -783,7 +783,7 @@ class SpeedupDiagram extends Diagram {
                 let yAxisDropdownButton = document.createElement("button");
                 yAxisDropdownButton.classList.add("btn", "btn-outline-secondary", "dropdown-toggle", "dropdown-toggle-split");
                 inputGroupAppend.appendChild(yAxisDropdownButton);
-                this.yAxisJsonSelector = new JSONValueInputPrompt(yAxisDropdownButton, this.xAxisInput);
+                this.yAxisJsonSelector = new JSONValueInputPrompt(yAxisDropdownButton, this.yAxisInput);
 
                 inputGroup.appendChild(inputGroupAppend);
                 yAxisDiv.appendChild(inputGroup);
