@@ -124,8 +124,8 @@ class JsonValueFilter(Filter):
             default (Optional[str]): An optional default value for the result.
         """
         return reduce(lambda d, key: d.get(key, default)
-                      if isinstance(d, dict)
-                      else default, keys.split("."), dictionary)
+        if isinstance(d, dict)
+        else default, keys.split("."), dictionary)
 
     def __init__(self, template: str, value: str, mode: str):
         """Create a new filter by JSON sub-value.
@@ -149,17 +149,17 @@ class JsonValueFilter(Filter):
         """
         val = self._deep_get(json.loads(result.get_json()), self.template)
         if val is not None:
-            if self.mode == 'equals':
-                if isinstance(val, str):
-                    return val == self.value
-                return abs(float(val) - float(self.value)) < 0.001
-            elif self.mode == 'greater_than':
-                return float(val) > float(self.value)
-            elif self.mode == 'lesser_than':
-                return float(val) < float(self.value)
-            elif self.mode == 'less_or_equals':
-                return float(val) <= float(self.value)
-            elif self.mode == 'greater_or_equals':
-                return float(val) >= float(self.value)
-        else:
-            return False
+            if self.mode == 'equals' and isinstance(val, str):
+                return val == self.value
+            elif not isinstance(val, str):
+                if self.mode == 'equals':
+                    return abs(float(val) - float(self.value)) < 0.001
+                elif self.mode == 'greater_than':
+                    return float(val) > float(self.value)
+                elif self.mode == 'lesser_than':
+                    return float(val) < float(self.value)
+                elif self.mode == 'less_or_equals':
+                    return float(val) <= float(self.value)
+                elif self.mode == 'greater_or_equals':
+                    return float(val) >= float(self.value)
+        return False

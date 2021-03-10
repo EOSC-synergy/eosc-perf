@@ -180,6 +180,22 @@ class FacadeResultTests(FacadeTestBase):
                 "value": 1.41421356237
             }
         ]}))), 0)
+        self.assertEqual(len(self.facade.query_results(json.dumps({"filters": [
+            {
+                "type": "json",
+                "mode": "less_or_equals",
+                "key": "tag",
+                "value": 1.41421356237
+            }
+        ]}))), 0)
+        self.assertEqual(len(self.facade.query_results(json.dumps({"filters": [
+            {
+                "type": "json",
+                "mode": "greater_or_equals",
+                "key": "tag",
+                "value": 6.28318530718
+            }
+        ]}))), 0)
 
 
 if __name__ == '__main__':
