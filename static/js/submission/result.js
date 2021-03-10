@@ -213,7 +213,7 @@ class ResultUpload {
         this.sites_data.clear();
         for (let site of sites) {
             let siteHumanName = site.name;
-            let siteName = site.short_name;
+            let siteName = site.identifier;
 
             let option = document.createElement("option");
             option.id = siteName;

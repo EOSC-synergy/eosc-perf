@@ -64,7 +64,7 @@ class ResultSearchAJAX(SearchAJAXHandler):
             result_dict = {
                 "data": json.loads(result.get_json()),
                 "uuid": result.get_uuid(),
-                "site": result.get_site().get_short_name(),
+                "site": result.get_site().get_identifier(),
                 "benchmark": result.get_benchmark().get_docker_name(),
                 "uploader": result.get_uploader().get_email() if admin else None,
                 "tags": [tag.get_name() for tag in result.get_tags()],
@@ -189,7 +189,7 @@ class SiteFetchAJAXHandler(AJAXHandler):
             if site.get_hidden():
                 continue
             result_dict["name"] = site.get_name()
-            result_dict["short_name"] = site.get_short_name()
+            result_dict["identifier"] = site.get_identifier()
             result_dict["description"] = site.get_description()
             result_dict["address"] = site.get_address()
             result_dict["flavors"] = [{'name': flavor.get_name(), 'description': flavor.get_description(),

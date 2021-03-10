@@ -2,7 +2,7 @@
 const NEW_FLAVOR_ID = "new_flavor";
 
 function _fill_site_item(item, data) {
-    item.id = data.short_name;
+    item.id = data.identifier;
     item.classList.add("list-group-item", "list-group-item-action", "flex-column", "align-items-start");
 
     let headingDiv = document.createElement("div");
@@ -12,7 +12,7 @@ function _fill_site_item(item, data) {
     heading.textContent = data.name;
     headingDiv.appendChild(heading);
     let headingExtra = document.createElement("small");
-    headingExtra.textContent = data.short_name;
+    headingExtra.textContent = data.identifier;
     headingDiv.appendChild(headingExtra);
     item.appendChild(headingDiv);
 
@@ -120,7 +120,7 @@ class SiteEditor {
 
             list.appendChild(listItem);
 
-            this.entries.set(siteData.short_name, siteData);
+            this.entries.set(siteData.identifier, siteData);
         }
     }
 
@@ -140,7 +140,7 @@ class SiteEditor {
 
         let entry = this.entries.get(siteId);
 
-        document.getElementById("short_name").value = entry.short_name;
+        document.getElementById("identifier").value = entry.identifier;
         document.getElementById("full_name").value = entry.name;
         document.getElementById("description").value = entry.description;
         document.getElementById("address").value = entry.address;
@@ -235,7 +235,7 @@ class SiteEditor {
             "uuid": uuid
         };
         if (uuid === NEW_FLAVOR_ID) {
-            update.site = document.getElementById("short_name").value;
+            update.site = document.getElementById("identifier").value;
         }
         $.ajax({
             type: "POST",
@@ -264,7 +264,7 @@ class SiteEditor {
             return;
         }
         let data = this.entries.get(this.selectedSite);
-        data.short_name = document.getElementById("short_name").value;
+        data.identifier = document.getElementById("identifier").value;
         data.name = document.getElementById("full_name").value;
         data.description = document.getElementById("description").value;
         data.address = document.getElementById("address").value;

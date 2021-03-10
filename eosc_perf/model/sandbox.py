@@ -15,7 +15,7 @@ from ..controller.io_controller import controller
 def _add_result(result):
     facade.add_result(result.get_json(),
                       result.get_uploader().get_id(),
-                      result.get_site().get_short_name(),
+                      result.get_site().get_identifier(),
                       result.get_benchmark().get_docker_name(),
                       result.get_flavor().get_uuid(),
                       [tag.get_name() for tag in result.get_tags()]
@@ -41,27 +41,27 @@ def add_demo():
     # virtualbox archlinux installation I use for development
     sample_sites = [
         {
-            'site': Site(short_name='ch-virt', name="VirtualboxTestbed", address='127.0.0.1', description=''),
+            'site': Site(identifier='ch-virt', name="VirtualboxTestbed", address='127.0.0.1', description=''),
             'flavors': ['virtualbox-arch']
         },
         {
-            'site': Site(short_name='cesga', name='CESGA', address='unknown', description=''),
+            'site': Site(identifier='cesga', name='CESGA', address='unknown', description=''),
             'flavors': ['cor1mem2h10', 'cor2mem2hd20', 'cor4mem4hd40']
         },
         {
-            'site': Site(short_name='cesnet-mcc', name='CESNET-MCC', address='unknown', description=''),
+            'site': Site(identifier='cesnet-mcc', name='CESNET-MCC', address='unknown', description=''),
             'flavors': ['standard.small', 'standard.medium', 'standard.large', 'hpc.8core-16ram']
         },
         {
-            'site': Site(short_name='ifca-lcg2', name='IFCA-LCG2', address='unknown', description=''),
+            'site': Site(identifier='ifca-lcg2', name='IFCA-LCG2', address='unknown', description=''),
             'flavors': ['m1.small', 'cm4.large', 'm1.large', 'm1.xlarge', 'cm4.4xlarge']
         },
         {
-            'site': Site(short_name='iisas-fedcloud', name='IISAS-FedCloud', address='unknown', description=''),
+            'site': Site(identifier='iisas-fedcloud', name='IISAS-FedCloud', address='unknown', description=''),
             'flavors': ['m1.small', 'm1.medium', 'm1.large', 'm1.xlarge']
         },
         {
-            'site': Site(short_name='ncg-ingrid-pt', name='NCG-INGRID-PT', address='unknown', description=''),
+            'site': Site(identifier='ncg-ingrid-pt', name='NCG-INGRID-PT', address='unknown', description=''),
             'flavors': ['svc1.s', 'svc2.s', 'svc2.m', 'svc2.l', 'svc2.xl', 'svc2.xxl']
         }
     ]
@@ -69,22 +69,22 @@ def add_demo():
     for entry in sample_sites:
         site_info = entry['site']
         try:
-            site = facade.get_site(site_info.get_short_name())
+            site = facade.get_site(site_info.get_identifier())
         except facade.NotFoundError:
-            facade.add_site(site_info.get_short_name(), site_info.get_address(),
+            facade.add_site(site_info.get_identifier(), site_info.get_address(),
                             description=site_info.get_description(),
                             full_name=site_info.get_name())
-            site = facade.get_site(site_info.get_short_name())
+            site = facade.get_site(site_info.get_identifier())
             # add 'unknown' flavor to mirror controller behaviour
             facade.add_flavor('unknown', "Pick this if you don't know the flavor or it is not listed",
-                              site.get_short_name())
+                              site.get_identifier())
 
         for flavor_name in entry['flavors']:
             try:
-                facade.get_site_flavor_by_name(site.get_short_name(), flavor_name)
+                facade.get_site_flavor_by_name(site.get_identifier(), flavor_name)
             except facade.NotFoundError:
-                facade.add_flavor(flavor_name, '', site.get_short_name())
-                facade.get_site_flavor_by_name(site.get_short_name(), flavor_name)
+                facade.add_flavor(flavor_name, '', site.get_identifier())
+                facade.get_site_flavor_by_name(site.get_identifier(), flavor_name)
 
         site.set_hidden(False)
 
@@ -150,7 +150,7 @@ def add_demo():
             flavor=flavor))
 
     filters = {'filters': [
-        {'type': 'site', 'value': sample_sites[0]['site'].get_short_name()},
+        {'type': 'site', 'value': sample_sites[0]['site'].get_identifier()},
         {'type': 'benchmark', 'value': benchmark.get_docker_name()}
     ]}
     results = facade.query_results(json.dumps(filters))

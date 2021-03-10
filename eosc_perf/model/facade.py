@@ -76,7 +76,7 @@ class DatabaseFacade:
         """
         # prepare query
         results = db.session.query(SiteFlavor)\
-            .filter(SiteFlavor._site_short_name == site_name)\
+            .filter(SiteFlavor._site_identifier == site_name)\
             .filter(SiteFlavor._name == flavor_name)\
             .all()
         db.session.commit()
@@ -151,23 +151,23 @@ class DatabaseFacade:
         #
         return results[0]
 
-    def get_site(self, short_name: str) -> Site:
-        """Fetch a single site by its short name.
+    def get_site(self, identifier: str) -> Site:
+        """Fetch a single site by its identifier.
 
         Throws DatabaseFacade.NotFoundError if no such site is found.
 
         Args:
-            short_name (str): The short name of the site to get.
+            identifier (str): The identifier of the site to get.
         Returns:
             Site: The desired site.
         """
         # prepare query
-        results = db.session.query(Site).filter(Site._short_name == short_name).all()
+        results = db.session.query(Site).filter(Site._identifier == identifier).all()
         db.session.commit()
 
         # check number of results
         if len(results) < 1:
-            raise self.NotFoundError("site '{}' not found".format(short_name))
+            raise self.NotFoundError("site '{}' not found".format(identifier))
 
         #
         return results[0]
@@ -431,11 +431,11 @@ class DatabaseFacade:
 
         return self._add_to_db(Result(content_json, uploader, site, benchmark, flavor=flavor, tags=tags))
 
-    def add_site(self, short_name: str, address: str, *, description: str = None, full_name: str = None) -> bool:
+    def add_site(self, identifier: str, address: str, *, description: str = None, full_name: str = None) -> bool:
         """Add new site using site metadata json.
 
         Args:
-            short_name (str): Short name for the site. Used as identifier.
+            identifier (str): Short name for the site. Used as identifier.
             address (str): Network address for the site.
             description (str): Description for the site.
             full_name (str): Human-readable name.
@@ -444,25 +444,26 @@ class DatabaseFacade:
         """
 
         # input validation
-        if len(short_name) < 1:
-            raise ValueError("short_name empty")
+        if len(identifier) < 1:
+            raise ValueError("identifier empty")
         if len(address) < 1:
             raise ValueError("address is empty")
 
-        site = Site(short_name, address, description=description, name=full_name)
+        site = Site(identifier, address, description=description, name=full_name)
 
         return self._add_to_db(site)
 
-    def remove_site(self, short_name: str) -> bool:
-        """Remove a site by short name.
+    def remove_site(self, identifier: str) -> bool:
+        """Remove a site by identifier.
 
         Args:
-            short_name (str): The short name of the site to be removed.
+            identifier (str): The identifier of the site to be removed.
         Returns:
             bool: True if removal was successful.
         """
         try:
-            site = self.get_site(short_name)
+            site = self.get_site(identifier)
+            # clear all flavors associated to this site
             for flavor in site.get_flavors():
                 self._remove_from_db(flavor)
             return self._remove_from_db(site)
@@ -613,11 +614,11 @@ class DatabaseFacade:
         #
         return reports
 
-    def add_flavor(self, name: str, description: str, site_short_name: str) -> Tuple[bool, Optional[str]]:
+    def add_flavor(self, name: str, description: str, site_identifier: str) -> Tuple[bool, Optional[str]]:
         if len(name) < 1:
             raise ValueError("flavor name too short")
         try:
-            site = self.get_site(site_short_name)
+            site = self.get_site(site_identifier)
         except self.NotFoundError:
             return False, None
         new_flavor = SiteFlavor(name, site, description if len(description) > 0 else None)

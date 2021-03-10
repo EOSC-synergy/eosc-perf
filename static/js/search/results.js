@@ -32,14 +32,14 @@ const FILTER_KEYS = new Map([
 ]);
 
 const FILTER_HINTS = new Map([
-    [FILTERS.SITE, "site short_name"],
+    [FILTERS.SITE, "site identifier"],
     [FILTERS.TAG, "tag_name"],
     [FILTERS.UPLOADER, "user@example.com"],
     [FILTERS.JSON, "path.to.value"]
 ]);
 
 const FILTER_HELPS = new Map([
-    [FILTERS.SITE, "This field requires the site's short_name, which is a form of identifier. Sites can be found in the <i>Site</i> column in the result table below."],
+    [FILTERS.SITE, "This field requires the site's identifier, which is a form of identifier. Sites can be found in the <i>Site</i> column in the result table below."],
     [FILTERS.TAG, "A tag is a short bit of text containing one or multiple keywords, such as <code>tensor</code> or <code>gpu_bound</code>."],
     [FILTERS.UPLOADER, "The Uploader is described by the uploader's email. Different uploaders can be found in the table below in the <i>Uploader</i> column."],
     [FILTERS.JSON, 'The search value has to describe the exact path within the JSON, separated with a dot.<br/>\

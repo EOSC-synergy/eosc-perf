@@ -133,11 +133,11 @@ class IOController:
         }))
 
     @_only_authenticated(message="You must be logged in to submit a site")
-    def submit_site(self, short_name: str, address: str, name: str = None, description: str = None) -> bool:
+    def submit_site(self, identifier: str, address: str, name: str = None, description: str = None) -> bool:
         """Submit a new site to the system for review.
 
         Args:
-            short_name (str): Machine-readable site identifier.
+            identifier (str): Machine-readable site identifier.
             address (str): Network address of the site.
             name (str): Human-readable name of the site.
             description (str): Human-readable description of the site.
@@ -146,13 +146,13 @@ class IOController:
         """
         self._add_current_user_if_missing()
 
-        if short_name is None or len(short_name) == 0 or address is None or len(address) == 0:
-            raise ValueError("invalid short_name or address")
+        if identifier is None or len(identifier) == 0 or address is None or len(address) == 0:
+            raise ValueError("invalid identifier or address")
 
-        if not facade.add_site(short_name, address, description=description, full_name=name):
+        if not facade.add_site(identifier, address, description=description, full_name=name):
             return False
 
-        message = "New site, identifier: {}, address: {}".format(short_name, address)
+        message = "New site, identifier: {}, address: {}".format(identifier, address)
         if name is not None:
             message += ", full name: {}".format(name)
         if description is not None:
@@ -161,14 +161,14 @@ class IOController:
         if not self.report(json.dumps({
             'message': message,
             'type': 'site',
-            'value': short_name,
+            'value': identifier,
             'uploader': self.get_user_id()
         })):
             # delete site if submitting a report failed to avoid orphans
-            facade.remove_site(short_name)
+            facade.remove_site(identifier)
             return False
 
-        site = facade.get_site(short_name)
+        site = facade.get_site(identifier)
         default_flavor: SiteFlavor = SiteFlavor("unknown", site)
         site.add_flavor(default_flavor)
 
@@ -188,46 +188,46 @@ class IOController:
         return facade.add_tag(tag)
 
     @_only_authenticated(message="You must be logged in to submit a site flavor.")
-    def submit_flavor(self, name: str, description: str, site_name: str) -> Optional[str]:
+    def submit_flavor(self, name: str, description: str, site_identifier: str) -> Optional[str]:
         """Submit a new site flavor.
 
         Args:
             name (str) - The name of the flavor.
             description (str) - The description of the flavor.
-            site_name (str) - The short_name of the site the flavor belongs to.
+            site_identifier (str) - The identifier of the site the flavor belongs to.
         Returns:
             Optional[str] - The UUID of the new flavor if successful, None on error.
         """
-        success, uuid = facade.add_flavor(name, description, site_name)
+        success, uuid = facade.add_flavor(name, description, site_identifier)
         return uuid if success else None
 
     @staticmethod
-    def get_site(short_name: str) -> Optional[Site]:
+    def get_site(identifier: str) -> Optional[Site]:
         """Get a single site by it's short name.
 
         Args:
-           short_name (str): Short name of the site.
+           identifier (str): Short name of the site.
         Returns:
            Optional[Site]: The site with the given short name.
                  None if no site with given name is found.
         """
         try:
-            site = facade.get_site(short_name)
+            site = facade.get_site(identifier)
         except facade.NotFoundError:
             site = None
         return site
 
     @_only_admin
-    def remove_site(self, short_name: str) -> bool:
+    def remove_site(self, identifier: str) -> bool:
         """Remove a single site by it's short name.
 
         Args:
-           short_name (str): Short name of the site.
+           identifier (str): Short name of the site.
         Returns:
            bool: True if removal was successful.
         """
-        if self._site_result_amount(short_name) == 0:
-            return facade.remove_site(short_name)
+        if self._site_result_amount(identifier) == 0:
+            return facade.remove_site(identifier)
         else:
             raise RuntimeError("Only sites without results can be removed.")
 
@@ -366,16 +366,16 @@ class IOController:
             return False
 
     @staticmethod
-    def _site_result_amount(short_name: str) -> int:
+    def _site_result_amount(identifier: str) -> int:
         """Get the number of results associated with a site.
 
         Args:
-            short_name (str): The site to check.
+            identifier (str): The site to check.
         Result:
             int: The number of results linked to the specified site.
         """
         filters = {'filters': [
-            {'type': 'site', 'value': short_name}
+            {'type': 'site', 'value': identifier}
         ]}
         results = facade.query_results(json.dumps(filters))
         return len(results)

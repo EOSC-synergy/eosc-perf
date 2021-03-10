@@ -365,7 +365,7 @@ class Site(db.Model):
     __tablename__ = 'site'
 
     # value columns
-    _short_name = db.Column(db.Text(), primary_key=True, nullable=False)
+    _identifier = db.Column(db.Text(), primary_key=True, nullable=False)
     _address = db.Column(db.Text(), nullable=False)
     _name = db.Column(db.Text(), nullable=True)
     _description = db.Column(db.Text(), nullable=True)
@@ -373,24 +373,25 @@ class Site(db.Model):
 
     _flavors: List[SiteFlavor]
 
-    def __init__(self, short_name: str, address: str, **kwargs):
+    def __init__(self, identifier: str, address: str, **kwargs):
         """Create a new site entry object.
 
         Arg:
-            short_name (str): A short identifier for the site.
+            identifier (str): A short identifier for the site.
             address (str): The network address of the site.
             name (str, optional): A human readable name for the site.
             description (str, optional): A human readable description for the site.
         """
         new_args = {}
+        # name defaults to identifier if left out
         if 'name' in kwargs and kwargs['name'] is not None:
             new_args['_name'] = kwargs['name']
         else:
-            new_args['_name'] = short_name
+            new_args['_name'] = identifier
         if 'description' in kwargs and kwargs['description'] is not None:
             new_args['_description'] = kwargs['description']
 
-        super(Site, self).__init__(_short_name=short_name, _address=address, **new_args)
+        super(Site, self).__init__(_identifier=identifier, _address=address, **new_args)
 
     def get_address(self) -> str:
         """Get the network address of the site.
@@ -460,13 +461,13 @@ class Site(db.Model):
         """
         return self._name
 
-    def get_short_name(self) -> str:
+    def get_identifier(self) -> str:
         """Get the site's identifier.
 
         Returns:
             str: The site's identifier.
         """
-        return self._short_name
+        return self._identifier
 
     def set_hidden(self, state: bool):
         """Set the hide state of the site.
@@ -495,7 +496,7 @@ class Site(db.Model):
         Returns:
             str: A human-readable representation string of the site.
         """
-        return '<{} {}>'.format(self.__class__.__name__, self._short_name)
+        return '<{} {}>'.format(self.__class__.__name__, self._identifier)
 
 
 class SiteFlavor(db.Model):
@@ -510,7 +511,7 @@ class SiteFlavor(db.Model):
 
     _uuid = db.Column(UUID, primary_key=True, default=new_uuid)
     _name = db.Column(db.Text())
-    _site_short_name = db.Column(db.Text, db.ForeignKey('site._short_name'), nullable=False)
+    _site_identifier = db.Column(db.Text, db.ForeignKey('site._identifier'), nullable=False)
     _site = db.relationship('Site', backref=db.backref('_flavors', lazy=True))
     _custom_text = db.Column(db.Text(), nullable=True, default=None)
 
@@ -679,7 +680,7 @@ class Result(db.Model):
     _uploader_id = db.Column(db.Text, db.ForeignKey('uploader._email'), nullable=False)
     _uploader = db.relationship('Uploader', backref=db.backref('_results', lazy=True))
 
-    _site_short_name = db.Column(db.Text, db.ForeignKey('site._short_name'), nullable=False)
+    _site_identifier = db.Column(db.Text, db.ForeignKey('site._identifier'), nullable=False)
     _site = db.relationship('Site', backref=db.backref('_results', lazy=True))
 
     _benchmark_docker_name = db.Column(db.Text, db.ForeignKey('benchmark._docker_name'), nullable=False)
@@ -1063,7 +1064,7 @@ class SiteReport(Report):
     _uuid = db.Column(UUID, db.ForeignKey('report._uuid'), primary_key=True)
 
     # relationship columns
-    _site_name = db.Column(db.Text, db.ForeignKey('site._short_name'), nullable=False)
+    _site_name = db.Column(db.Text, db.ForeignKey('site._identifier'), nullable=False)
     _site = db.relationship('Site')
 
     __mapper_args__ = {

@@ -35,7 +35,7 @@ def edit_site():
 @only_admin_json
 def edit_site_submit():
     """HTTP endpoint to take in the reports."""
-    site_name = request.form["short_name"]
+    site_name = request.form["identifier"]
     site = controller.get_site(site_name)
     if site is None:
         return error_json_redirect("Unknown site")

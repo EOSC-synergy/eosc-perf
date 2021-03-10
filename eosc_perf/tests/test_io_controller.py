@@ -126,7 +126,7 @@ class IOControllerTest(unittest.TestCase):
         with self.app.test_request_context():
             self.assertRaises(AuthenticateError, self.controller.submit_site, "name", "address")
 
-    def test_submit_site_invalid_short_name(self):
+    def test_submit_site_invalid_identifier(self):
         with self.app.test_request_context():
             self._login_standard_user()
             self.assertRaises(ValueError, self.controller.submit_site, None, "address")

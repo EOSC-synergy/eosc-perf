@@ -74,7 +74,7 @@ class SiteFilter(Filter):
         """Create a new filter by site name.
 
         Args:
-            site (str): The short_name of the site to check for.
+            site (str): The identifier of the site to check for.
         """
         self.site = site
 
@@ -86,7 +86,7 @@ class SiteFilter(Filter):
         Returns:
             bool: True if the result is from the associated site.
         """
-        return self.site in result.get_site().get_short_name()
+        return self.site in result.get_site().get_identifier()
 
 
 class TagFilter(Filter):

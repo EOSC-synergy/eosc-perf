@@ -57,7 +57,7 @@ def review_site():
     if report.get_report_type() != Report.SITE:
         return error_redirect('Site review page opened with wrong report type')
 
-    site_name = report.get_site().get_short_name()
+    site_name = report.get_site().get_identifier()
     reporter = report.get_reporter()
     uploader_name = reporter.get_name()
     uploader_mail = reporter.get_email()
