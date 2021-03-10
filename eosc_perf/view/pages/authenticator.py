@@ -16,12 +16,6 @@ class RedirectFactory(PageFactory):
     def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
         return args, {}
 
-
-def configure_authenticator(app):
-    """Configures the authenticator for given app and config."""
-    authenticator.configure_authenticator(app)
-
-
 @authenticator_blueprint.route('/login')
 def authenticate_user():
     """"Authenticates user through authenticator singleton."""
