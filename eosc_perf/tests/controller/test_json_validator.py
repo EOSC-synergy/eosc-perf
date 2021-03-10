@@ -2,6 +2,8 @@
 
 import json
 import unittest
+from pathlib import Path
+
 from eosc_perf.controller.json_result_validator import JSONResultValidator
 from eosc_perf.configuration import configuration
 from eosc_perf.tests.utility import setup_test_config
@@ -65,12 +67,12 @@ class JSONResultValidatorTest(unittest.TestCase):
 
     @staticmethod
     def _load_template():
-        with open("eosc_perf/controller/config/result_template.json") as file:
+        with open("../../../controller/config/result_template.json") as file:
             return file.read()
 
     @staticmethod
     def _load_sample():
-        with open("eosc_perf/tests/sample_result.json") as file:
+        with open("eosc_perf/tests/controller/sample_result.json") as file:
             return file.read()
 
 
