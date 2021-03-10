@@ -270,7 +270,7 @@ class DatabaseFacade:
         return results
 
     @staticmethod
-    def _add_to_db(obj: Type[db.Model]) -> bool:
+    def _add_to_database(obj: Type[db.Model]) -> bool:
         """Add a new model object to the database.
 
         Args:
@@ -289,7 +289,7 @@ class DatabaseFacade:
             return False
 
     @staticmethod
-    def _remove_from_db(obj: Type[db.Model]) -> bool:
+    def _remove_from_database(obj: Type[db.Model]) -> bool:
         """Remove a model object from the database.
 
         Args:
@@ -387,7 +387,7 @@ class DatabaseFacade:
 
         uploader = Uploader(identifier, email, name)
 
-        success = self._add_to_db(uploader)
+        success = self._add_to_database(uploader)
         return success
 
     def add_result(self, content_json: str, uploader_id: str, site_name: str, benchmark_name: str, site_flavor: str,
@@ -429,7 +429,7 @@ class DatabaseFacade:
                 except self.NotFoundError:
                     raise ValueError("unknown tag " + tag_name)
 
-        return self._add_to_db(Result(content_json, uploader, site, benchmark, flavor=flavor, tags=tags))
+        return self._add_to_database(Result(content_json, uploader, site, benchmark, flavor=flavor, tags=tags))
 
     def add_site(self, identifier: str, address: str, *, description: str = None, full_name: str = None) -> bool:
         """Add new site using site metadata json.
@@ -451,7 +451,7 @@ class DatabaseFacade:
 
         site = Site(identifier, address, description=description, name=full_name)
 
-        return self._add_to_db(site)
+        return self._add_to_database(site)
 
     def remove_site(self, identifier: str) -> bool:
         """Remove a site by identifier.
@@ -465,8 +465,8 @@ class DatabaseFacade:
             site = self.get_site(identifier)
             # clear all flavors associated to this site
             for flavor in site.get_flavors():
-                self._remove_from_db(flavor)
-            return self._remove_from_db(site)
+                self._remove_from_database(flavor)
+            return self._remove_from_database(site)
         except self.NotFoundError:
             return False
 
@@ -480,7 +480,7 @@ class DatabaseFacade:
         """
         if len(name) < 1:
             raise ValueError("tag name too short")
-        return self._add_to_db(Tag(name=name))
+        return self._add_to_database(Tag(name=name))
 
     def add_report(self, metadata: str) -> bool:
         """Add a new report.
@@ -518,19 +518,19 @@ class DatabaseFacade:
                 site = self.get_site(dictionary['value'])
             except self.NotFoundError:
                 raise ValueError("unknown site for report")
-            success = self._add_to_db(SiteReport(uploader=uploader, site=site, message=message))
+            success = self._add_to_database(SiteReport(uploader=uploader, site=site, message=message))
         elif dictionary['type'] == 'benchmark':
             try:
                 benchmark = self.get_benchmark(dictionary['value'])
             except self.NotFoundError:
                 raise ValueError("unknown benchmark for report")
-            success = self._add_to_db(BenchmarkReport(uploader=uploader, benchmark=benchmark, message=message))
+            success = self._add_to_database(BenchmarkReport(uploader=uploader, benchmark=benchmark, message=message))
         elif dictionary['type'] == 'result':
             try:
                 result = self.get_result(dictionary['value'])
             except self.NotFoundError:
                 raise ValueError("unknown result for report")
-            success = self._add_to_db(ResultReport(uploader=uploader, result=result, message=message))
+            success = self._add_to_database(ResultReport(uploader=uploader, result=result, message=message))
 
         return success
 
@@ -555,7 +555,7 @@ class DatabaseFacade:
 
         uploader = self.get_uploader(uploader_id)
 
-        return self._add_to_db(Benchmark(docker_name, uploader, description=description, template=template))
+        return self._add_to_database(Benchmark(docker_name, uploader, description=description, template=template))
 
     def get_report(self, uuid: str) -> Report:
         """Fetch a single report by its UUID.
@@ -622,7 +622,7 @@ class DatabaseFacade:
         except self.NotFoundError:
             return False, None
         new_flavor = SiteFlavor(name, site, description if len(description) > 0 else None)
-        return self._add_to_db(new_flavor), new_flavor.get_uuid()
+        return self._add_to_database(new_flavor), new_flavor.get_uuid()
 
 
 # single global instance
