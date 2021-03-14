@@ -119,7 +119,7 @@ function on_fail_redirect_stub(data) {
 /**
  * Send a form to the server by AJAX.
  * @param form the HTML form with method='POST or GET' and action='/endpoint' attributes
- * @param formData the data structure to send
+ * @param formData the FormData structure to send
  * @param on_success callback taking (data, textStatus)
  * @param on_fail callback taking (data) in case of errors
  */
