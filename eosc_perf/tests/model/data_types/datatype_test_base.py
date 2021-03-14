@@ -21,10 +21,10 @@ class DatatypeTestBase(unittest.TestCase):
 
     def setUp(self):
         """Called before each test."""
-        app = Flask("test")
+        self.app = Flask("test")
         # set path to nowhere to use in-memory
         configuration.set('database-path', '')
-        configure_database(app)
+        configure_database(self.app)
 
     def tearDown(self):
         """Called after each test."""
