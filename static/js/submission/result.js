@@ -216,6 +216,7 @@ class ResultUpload {
             this.customSiteNameInput.disabled = false;
             this.customSiteAddressInput.disabled = false;
             this.customSiteDescriptionInput.disabled = false;
+            this.customSiteFlavorInput.disabled = false;
             this.flavorSelection.disabled = true;
             if (!this.benchmarksEmpty && this.agreedToLicense) {
                 this.submitButton.disabled = false;
@@ -228,6 +229,8 @@ class ResultUpload {
             this.customSiteAddressInput.value = '';
             this.customSiteDescriptionInput.disabled = true;
             this.customSiteDescriptionInput.value = '';
+            this.customSiteFlavorInput.disabled = true;
+            this.customSiteFlavorInput.value = '';
             this.flavorSelection.disabled = false;
             if (this.noSites) {
                 this.submitButton.disabled = true;
