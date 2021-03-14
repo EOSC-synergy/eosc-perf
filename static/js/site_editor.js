@@ -288,9 +288,6 @@ window.addEventListener("load", function () {
             function (data, textStatus) {
                 site_editor.update_current_site_entry();
                 document.getElementById("loading-icon").classList.add("d-none");
-            },
-            function (data) {
-                window.location.href = data.responseJSON.redirect;
             }
         );
 

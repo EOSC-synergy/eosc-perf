@@ -41,9 +41,6 @@ class ResultUpload {
                     // display success message and reset page
                     display_message('Submission successful');
                     upload_page.reset_page();
-                },
-                function (data) {
-                    window.location.href = data.responseJSON.redirect;
                 });
             if (!this.customSite) {
                 selection.options[selection.selectedIndex].innerHTML = old_html;

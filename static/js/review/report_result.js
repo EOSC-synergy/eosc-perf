@@ -6,9 +6,6 @@ window.addEventListener("load", function () {
                 // display success message and disable form
                 display_message('Submission successful');
                 $('#form input[type="submit"]').prop("disabled", true);
-            },
-            function (data) {
-                window.location.href = data.responseJSON.redirect;
             });
 
         return false;

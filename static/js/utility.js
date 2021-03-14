@@ -97,13 +97,26 @@ function display_message(message, title = null, html = false) {
 }
 
 /**
+ * Helper function for error redirects.
+ * @param data ajax error response data
+ */
+function on_fail_redirect_stub(data) {
+    if (data.hasOwnProperty("responseJSON")) {
+        window.location.href = data.responseJSON.redirect;
+    }
+    else {
+        display_message("Error response from server, no message specified")
+    }
+}
+
+/**
  * Send a form to the server by AJAX.
  * @param form the HTML form with method='POST or GET' and action='/endpoint' attributes
  * @param formData the data structure to send
  * @param on_success callback taking (data, textStatus)
  * @param on_fail callback taking (data) in case of errors
  */
-function submit_form(form, formData, on_success, on_fail) {
+function submit_form(form, formData, on_success, on_fail = on_fail_redirect_stub) {
     $.ajax({
         type: form.attr('method'),
         url: form.attr('action'),
@@ -122,7 +135,7 @@ function submit_form(form, formData, on_success, on_fail) {
  * @param success callback taking (data, textStatus)
  * @param fail callback taking (data) in case of errors
  */
-function submit_form_json(form, data, success, fail) {
+function submit_form_json(form, data, success, fail = on_fail_redirect_stub) {
     $.ajax({
         type: form.attr('method'),
         url: form.attr('action'),
