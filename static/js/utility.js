@@ -101,8 +101,15 @@ function display_message(message, title = null, html = false) {
  * @param data ajax error response data
  */
 function on_fail_redirect_stub(data) {
-    if (data.hasOwnProperty("responseJSON")) {
-        window.location.href = data.responseJSON.redirect;
+    if (data.hasOwnProperty("responseJSON") && data.responseJSON.hasOwnProperty('type')) {
+        switch (data.responseJSON.type) {
+            case 'redirect':
+                window.location.href = data.responseJSON.redirect;
+                break;
+            case 'message':
+                display_message(data.responseJSON.errorMessage, "Error");
+                break;
+        }
     }
     else {
         display_message("Error response from server, no message specified")

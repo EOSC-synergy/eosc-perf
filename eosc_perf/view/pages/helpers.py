@@ -8,6 +8,20 @@ from werkzeug.urls import url_encode
 from eosc_perf.controller.io_controller import controller
 
 
+def error_json_message(message: str) -> Response:
+    """Builder for error messages by JSON.
+
+    When received, these should display an error message to the user.
+
+    Args:
+        message (str): The error message to display.
+    Returns:
+        Response: A Flask JSON-data response.
+    """
+    json_data = json.dumps({'type': 'message', 'errorMessage': message})
+    return Response(json_data, mimetype="application/json", status=500)
+
+
 def error_json_redirect(message: str) -> Response:
     """Builder for redirect JSON responses.
 
@@ -18,7 +32,7 @@ def error_json_redirect(message: str) -> Response:
     Returns:
         Response: A Flask JSON-data response.
     """
-    json_data = json.dumps({'redirect': '/error?' + url_encode({'text': message})})
+    json_data = json.dumps({'type': 'redirect', 'redirect': '/error?' + url_encode({'text': message})})
     return Response(json_data, mimetype='application/json', status=302)
 
 
