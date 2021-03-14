@@ -3,7 +3,7 @@
 /**
  * String comparison helper using toLowerCase()
  * @param a first string
- * @param b second stringf
+ * @param b second string
  * @returns {number} -1 if a < , 1 if a > b, 0 if a == b
  */
 function compare(a, b) {
@@ -17,6 +17,11 @@ function compare(a, b) {
 }
 
 class MultiSelect {
+    /**
+     * Create a multi-item selection item
+     * @param listGroupUl a <ul class="list-group"> to add options into
+     * @param possibleValues an array of possible values you can pick
+     */
     constructor(listGroupUl, possibleValues) {
         this.container = listGroupUl;
         this.values = Array.from(possibleValues);
@@ -53,13 +58,28 @@ class MultiSelect {
         }
     }
 
+    /**
+     * Add value to selected items
+     * @param value value to select
+     * @private
+     */
     _select_value(value) {
         this.selected_values.add(value);
     }
+
+    /**
+     * Remove value from selected items
+     * @param value value to unselect
+     * @private
+     */
     _unselect_value(value) {
         this.selected_values.delete(value);
     }
 
+    /**
+     * Get an array with all selected items
+     * @returns {any[]}
+     */
     get_selected_values() {
         return Array.from(this.selected_values);
     }
@@ -143,6 +163,10 @@ class ResultUpload {
         this.fetch_benchmarks();
     }
 
+    /**
+     * Lock the submit button if any part of the form is not valid
+     * @private
+     */
     _check_submit_conditions() {
         if (this.agreedToLicense
             && !this.benchmarksEmpty
@@ -394,6 +418,9 @@ class ResultUpload {
 
 let upload_page = null;
 
+/**
+ * Create upload page object on page load
+ */
 window.addEventListener("load", function () {
     upload_page = new ResultUpload();
 });
