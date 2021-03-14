@@ -65,22 +65,24 @@ class IOController:
             return redirect('/login')
 
     @_only_authenticated(message="Only authenticated users can submit results")
-    def submit_result(self, result_json: JSON, metadata: str) -> bool:
+    def submit_result(self, result_json: JSON, uploader: str, benchmark_name: str, site: str, flavor: str,
+                      tags: List[str] = []) -> bool:
         """Submit a new benchmark result to the system.
 
         Fails if the user isn't authenticated or the result json is invalid.
 
         Args:
             result_json (JSON): The benchmark result to be uploaded.
-            metadata (str): The metadata associated with the benchmark result.
+            uploader (str): The id of the uploader that submitted the result.
+            benchmark_name (str): The identifier of the benchmark that was run.
+            site (str): The id of the site this was run on.
+            flavor (str): The virtual machine flavor this was run on.
+            tags (List[str]): A list of user-created tags to associated this result to.
         Returns:
             bool: True if the benchmark was successfully added.
         """
-        metadata_parsed = json.loads(metadata)
-        if 'benchmark' not in metadata_parsed:
-            raise ValueError("Missing benchmark identifier")
         try:
-            benchmark = facade.get_benchmark(metadata_parsed['benchmark'])
+            benchmark = facade.get_benchmark(benchmark_name)
         except facade.NotFoundError:
             raise ValueError("Unknown benchmark")
 
@@ -90,8 +92,7 @@ class IOController:
             raise ValueError("No valid result JSON")
 
         self._add_current_user_if_missing()
-        return facade.add_result(result_json, metadata_parsed['uploader'], metadata_parsed['site'],
-                                 metadata_parsed['benchmark'], metadata_parsed['site_flavor'], metadata_parsed['tags'])
+        return facade.add_result(result_json, uploader, site, benchmark_name, flavor, tags)
 
     @_only_authenticated(message="You need to be logged in to submit a benchmark.")
     def submit_benchmark(self, docker_name: str, comment: str, template: Optional[JSON] = None) -> bool:
