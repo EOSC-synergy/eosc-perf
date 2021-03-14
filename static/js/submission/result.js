@@ -45,7 +45,8 @@ class MultiSelect {
         }
         // add warning if no values available
         if (this.values.length === 0) {
-            let noValuesInfo = document.createElement("div");
+            let noValuesInfo = document.createElement("li");
+            noValuesInfo.classList.add("list-group-item", "text-muted");
             noValuesInfo.textContent = "No tags found";
             noValuesInfo.disabled = true;
             listGroupUl.appendChild(noValuesInfo);
