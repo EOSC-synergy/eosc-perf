@@ -40,7 +40,7 @@ class UploaderTests(DatatypeTestBase):
         self._add_to_database(benchmark)
         self.assertEqual(len(uploader.get_benchmarks()), 1)
 
-    def test_uplader_repr(self):
+    def test_uploader_repr(self):
         """Test if uploader repr does anything."""
         uploader = self._make_uploader()
         self.assertEquals(type(str(uploader)), str)
