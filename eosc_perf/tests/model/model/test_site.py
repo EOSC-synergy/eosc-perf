@@ -6,10 +6,10 @@ from eosc_perf.tests.model.model.model_test_base import FacadeTestBase
 class FacadeSiteTests(FacadeTestBase):
     def test_add_site_valid(self):
         """Test valid call to add_site."""
-        self.assertTrue(self.facade.add_site(*self.tested_site_params))
+        self.assertTrue(self.facade.add_site(*self.TESTED_SITE_PARAMS))
 
         try:
-            self.facade.get_site(self.tested_site_name)
+            self.facade.get_site(self.TESTED_SITE_NAME)
         except self.facade.NotFoundError:
             self.fail("added site not found")
 
@@ -17,20 +17,20 @@ class FacadeSiteTests(FacadeTestBase):
         """Test various invalid calls to add_site."""
         # empty name
         with self.assertRaises(ValueError):
-            self.facade.add_site("", self.tested_site_address)
+            self.facade.add_site("", self.TESTED_SITE_ADDRESS)
 
         # empty address
         with self.assertRaises(ValueError):
-            self.facade.add_site(self.tested_site_name, "")
+            self.facade.add_site(self.TESTED_SITE_NAME, "")
 
         self.test_add_site_valid()
-        self.assertFalse(self.facade.add_site(*self.tested_site_params))
+        self.assertFalse(self.facade.add_site(*self.TESTED_SITE_PARAMS))
 
     def test_find_site(self):
         """Test finding added site."""
         self.test_add_site_valid()
         try:
-            self.facade.get_site(self.tested_site_name)
+            self.facade.get_site(self.TESTED_SITE_NAME)
         except self.facade.NotFoundError:
             self.fail("could not find added site")
 
@@ -51,17 +51,17 @@ class FacadeSiteTests(FacadeTestBase):
     def test_remove_site(self):
         """Test removing a site."""
         self.test_add_site_valid()
-        self.assertTrue(self.facade.remove_site(self.tested_site_name))
+        self.assertTrue(self.facade.remove_site(self.TESTED_SITE_NAME))
         with self.assertRaises(self.facade.NotFoundError):
-            self.facade.get_site(self.tested_site_name)
+            self.facade.get_site(self.TESTED_SITE_NAME)
 
     def test_remove_site_invalid(self):
         """Test removing a site that doesn't exist."""
-        self.assertFalse(self.facade.remove_site(self.tested_site_name))
+        self.assertFalse(self.facade.remove_site(self.TESTED_SITE_NAME))
 
     def test_add_flavor(self):
         self.test_add_site_valid()
-        self.assertTrue(self.facade.add_flavor(self.tested_flavor_name, "", self.tested_site_name))
+        self.assertTrue(self.facade.add_flavor(self.TESTED_FLAVOR_NAME, "", self.TESTED_SITE_NAME))
 
 
 if __name__ == '__main__':

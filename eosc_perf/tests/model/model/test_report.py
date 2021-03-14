@@ -8,9 +8,9 @@ class FacadeReportTests(FacadeTestBase):
     def _add_result(self):
         content_json = '{ "tag": 3.1415926535 }'
         data = self._add_result_data()
-        self.facade.add_tag(self.tested_tag_name)
-        self.facade.add_result(content_json, self.tested_uploader_id, self.tested_site_name, self.tested_benchmark_name,
-                               data['flavor_uuid'], [self.tested_tag_name])
+        self.facade.add_tag(self.TESTED_TAG_NAME)
+        self.facade.add_result(content_json, self.TESTED_UPLOADER_ID, self.TESTED_SITE_NAME, self.TESTED_BENCHMARK_NAME,
+                               data['flavor_uuid'], [self.TESTED_TAG_NAME])
 
     def test_add_report_valid(self):
         """Test valid calls to add_report."""
@@ -19,18 +19,18 @@ class FacadeReportTests(FacadeTestBase):
 
         # site
         meta = {
-            'uploader': self.tested_uploader_id,
+            'uploader': self.TESTED_UPLOADER_ID,
             'type': 'site',
-            'value': self.tested_site_name,
+            'value': self.TESTED_SITE_NAME,
             'message': 'hello world'
         }
         self.assertTrue(self.facade.add_report(json.dumps(meta)))
 
         # benchmark
         meta = {
-            'uploader': self.tested_uploader_id,
+            'uploader': self.TESTED_UPLOADER_ID,
             'type': 'benchmark',
-            'value': self.tested_benchmark_name
+            'value': self.TESTED_BENCHMARK_NAME
         }
         self.assertTrue(self.facade.add_report(json.dumps(meta)))
 
@@ -38,7 +38,7 @@ class FacadeReportTests(FacadeTestBase):
         # result
         # no simple available way to reference test result
         # meta = {
-        #    'uploader': self.tested_uploader_id,
+        #    'uploader': self.TESTED_UPLOADER_ID,
         #    'type': 'result',
         #    'value': ?
         # }
@@ -51,14 +51,14 @@ class FacadeReportTests(FacadeTestBase):
         # no uploader
         meta = {
             'type': 'site',
-            'value': self.tested_site_name
+            'value': self.TESTED_SITE_NAME
         }
         with self.assertRaises(ValueError):
             self.facade.add_report(json.dumps(meta))
 
         # no type
         meta = {
-            'uploader': self.tested_uploader_id,
+            'uploader': self.TESTED_UPLOADER_ID,
             'value': 'something'
         }
         with self.assertRaises(ValueError):
@@ -66,7 +66,7 @@ class FacadeReportTests(FacadeTestBase):
 
         # no value
         meta = {
-            'uploader': self.tested_uploader_id,
+            'uploader': self.TESTED_UPLOADER_ID,
             'type': 'test'
         }
         with self.assertRaises(ValueError):
@@ -74,7 +74,7 @@ class FacadeReportTests(FacadeTestBase):
 
         # invalid site
         meta = {
-            'uploader': self.tested_uploader_id,
+            'uploader': self.TESTED_UPLOADER_ID,
             'type': 'site',
             'value': '!!!invalid'
         }
@@ -83,7 +83,7 @@ class FacadeReportTests(FacadeTestBase):
 
         # invalid benchmark
         meta = {
-            'uploader': self.tested_uploader_id,
+            'uploader': self.TESTED_UPLOADER_ID,
             'type': 'benchmark',
             'value': '!!!invalid'
         }
@@ -94,7 +94,7 @@ class FacadeReportTests(FacadeTestBase):
         meta = {
             'uploader': 'not an uploader',
             'type': 'site',
-            'value': self.tested_site_name
+            'value': self.TESTED_SITE_NAME
         }
         with self.assertRaises(ValueError):
             self.facade.add_report(json.dumps(meta))

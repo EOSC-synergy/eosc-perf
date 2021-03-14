@@ -9,10 +9,10 @@ class FacadeResultTests(FacadeTestBase):
         """Test valid call to add_result."""
         content_json = '{ "tag": 3.1415926535 }'
         data = self._add_result_data()
-        self.facade.add_tag(self.tested_tag_name)
-        self.assertTrue(self.facade.add_result(content_json, self.tested_uploader_id, self.tested_site_name,
-                                               self.tested_benchmark_name, data['flavor_uuid'],
-                                               [self.tested_tag_name]))
+        self.facade.add_tag(self.TESTED_TAG_NAME)
+        self.assertTrue(self.facade.add_result(content_json, self.TESTED_UPLOADER_ID, self.TESTED_SITE_NAME,
+                                               self.TESTED_BENCHMARK_NAME, data['flavor_uuid'],
+                                               [self.TESTED_TAG_NAME]))
 
     def test_add_result_invalid(self):
         """Test invalid calls to add_result."""
@@ -22,63 +22,63 @@ class FacadeResultTests(FacadeTestBase):
 
         # invalid uploader
         with self.assertRaises(ValueError):
-            self.facade.add_result(content_json, "", self.tested_site_name,
-                                   self.tested_benchmark_name, data['flavor_uuid'],
-                                   [self.tested_tag_name])
+            self.facade.add_result(content_json, "", self.TESTED_SITE_NAME,
+                                   self.TESTED_BENCHMARK_NAME, data['flavor_uuid'],
+                                   [self.TESTED_TAG_NAME])
 
         with self.assertRaises(ValueError):
-            self.facade.add_result(content_json, "???", self.tested_site_name,
-                                   self.tested_benchmark_name, data['flavor_uuid'],
-                                   [self.tested_tag_name])
+            self.facade.add_result(content_json, "???", self.TESTED_SITE_NAME,
+                                   self.TESTED_BENCHMARK_NAME, data['flavor_uuid'],
+                                   [self.TESTED_TAG_NAME])
 
         with self.assertRaises(ValueError):
-            self.facade.add_result(content_json, 1, self.tested_site_name,
-                                   self.tested_benchmark_name, data['flavor_uuid'],
-                                   [self.tested_tag_name])
+            self.facade.add_result(content_json, 1, self.TESTED_SITE_NAME,
+                                   self.TESTED_BENCHMARK_NAME, data['flavor_uuid'],
+                                   [self.TESTED_TAG_NAME])
 
         # invalid site
         with self.assertRaises(ValueError):
-            self.facade.add_result(content_json, self.tested_uploader_id, "",
-                                   self.tested_benchmark_name, data['flavor_uuid'],
-                                   [self.tested_tag_name])
+            self.facade.add_result(content_json, self.TESTED_UPLOADER_ID, "",
+                                   self.TESTED_BENCHMARK_NAME, data['flavor_uuid'],
+                                   [self.TESTED_TAG_NAME])
 
         with self.assertRaises(ValueError):
-            self.facade.add_result(content_json, self.tested_uploader_id, "???",
-                                   self.tested_benchmark_name, data['flavor_uuid'],
-                                   [self.tested_tag_name])
+            self.facade.add_result(content_json, self.TESTED_UPLOADER_ID, "???",
+                                   self.TESTED_BENCHMARK_NAME, data['flavor_uuid'],
+                                   [self.TESTED_TAG_NAME])
 
         with self.assertRaises(ValueError):
-            self.facade.add_result(content_json, self.tested_uploader_id, 1,
-                                   self.tested_benchmark_name, data['flavor_uuid'],
-                                   [self.tested_tag_name])
+            self.facade.add_result(content_json, self.TESTED_UPLOADER_ID, 1,
+                                   self.TESTED_BENCHMARK_NAME, data['flavor_uuid'],
+                                   [self.TESTED_TAG_NAME])
 
         # invalid benchmark
         with self.assertRaises(ValueError):
-            self.facade.add_result(content_json, self.tested_uploader_id, self.tested_site_name,
+            self.facade.add_result(content_json, self.TESTED_UPLOADER_ID, self.TESTED_SITE_NAME,
                                    "", data['flavor_uuid'],
-                                   [self.tested_tag_name])
+                                   [self.TESTED_TAG_NAME])
 
         with self.assertRaises(ValueError):
-            self.facade.add_result(content_json, self.tested_uploader_id, self.tested_site_name,
+            self.facade.add_result(content_json, self.TESTED_UPLOADER_ID, self.TESTED_SITE_NAME,
                                    "the moon is made of cheese", data['flavor_uuid'],
-                                   [self.tested_tag_name])
+                                   [self.TESTED_TAG_NAME])
 
         with self.assertRaises(ValueError):
-            self.facade.add_result(content_json, self.tested_uploader_id, self.tested_site_name,
+            self.facade.add_result(content_json, self.TESTED_UPLOADER_ID, self.TESTED_SITE_NAME,
                                    1, data['flavor_uuid'],
-                                   [self.tested_tag_name])
+                                   [self.TESTED_TAG_NAME])
 
         # invalid tags
         with self.assertRaises(ValueError):
-            self.facade.add_result(content_json, self.tested_uploader_id, self.tested_site_name,
-                                   self.tested_benchmark_name, data['flavor_uuid'],
+            self.facade.add_result(content_json, self.TESTED_UPLOADER_ID, self.TESTED_SITE_NAME,
+                                   self.TESTED_BENCHMARK_NAME, data['flavor_uuid'],
                                    ["oeuf"])
 
         # unknown flavor
         with self.assertRaises(ValueError):
-            self.facade.add_result(content_json, self.tested_uploader_id, self.tested_site_name,
-                                   self.tested_benchmark_name, "nil",
-                                   [self.tested_tag_name])
+            self.facade.add_result(content_json, self.TESTED_UPLOADER_ID, self.TESTED_SITE_NAME,
+                                   self.TESTED_BENCHMARK_NAME, "nil",
+                                   [self.TESTED_TAG_NAME])
 
     def test_find_results(self):
         """Test if added results can be found."""
@@ -95,19 +95,19 @@ class FacadeResultTests(FacadeTestBase):
         self.assertGreater(len(self.facade.query_results(json.dumps({"filters": [
             {
                 "type": "benchmark",
-                "value": self.tested_benchmark_name
+                "value": self.TESTED_BENCHMARK_NAME
             },
             {
                 "type": "uploader",
-                "value": self.tested_uploader_email
+                "value": self.TESTED_UPLOADER_EMAIL
             },
             {
                 "type": "site",
-                "value": self.tested_site_name
+                "value": self.TESTED_SITE_NAME
             },
             {
                 "type": "tag",
-                "value": self.tested_tag_name
+                "value": self.TESTED_TAG_NAME
             },
             {
                 "type": "json",

@@ -6,10 +6,10 @@ from eosc_perf.tests.model.model.model_test_base import FacadeTestBase
 class FacadeTagTests(FacadeTestBase):
     def test_add_tag_valid(self):
         """Test valid call to add_tag."""
-        self.assertTrue(self.facade.add_tag(self.tested_tag_name))
+        self.assertTrue(self.facade.add_tag(self.TESTED_TAG_NAME))
 
         try:
-            self.facade.get_tag(self.tested_tag_name)
+            self.facade.get_tag(self.TESTED_TAG_NAME)
         except self.facade.NotFoundError:
             self.fail("added tag not found")
 
@@ -19,13 +19,13 @@ class FacadeTagTests(FacadeTestBase):
             self.facade.add_tag("")
 
         self.test_add_tag_valid()
-        self.assertFalse(self.facade.add_tag(self.tested_tag_name))
+        self.assertFalse(self.facade.add_tag(self.TESTED_TAG_NAME))
 
     def test_find_tag(self):
         """Test finding added tag."""
         self.test_add_tag_valid()
         try:
-            self.facade.get_tag(self.tested_tag_name)
+            self.facade.get_tag(self.TESTED_TAG_NAME)
         except self.facade.NotFoundError:
             self.fail("could not find added tag")
 

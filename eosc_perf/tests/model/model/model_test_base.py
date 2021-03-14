@@ -10,19 +10,19 @@ from eosc_perf.tests.utility import setup_test_config
 
 class FacadeTestBase(unittest.TestCase):
     """Tests for facade."""
-    tested_uploader_id: str = 'test_user'
-    tested_uploader_email: str = 'test@example.com'
-    tested_uploader_name: str = 'test user'
-    tested_benchmark_name: str = 'foobar/bazbutt'
-    tested_site_name: str = 'iamasitename'
-    tested_site_address: str = 'localhost'
-    tested_site_description: str = 'hello world'
-    tested_tag_name: str = 'testtag'
-    tested_flavor_name: str = 'test-flavor'
+    TESTED_UPLOADER_ID: str = 'test_user'
+    TESTED_UPLOADER_EMAIL: str = 'test@example.com'
+    TESTED_UPLOADER_NAME: str = 'test user'
+    TESTED_BENCHMARK_NAME: str = 'foobar/bazbutt'
+    TESTED_SITE_NAME: str = 'iamasitename'
+    TESTED_SITE_ADDRESS: str = 'localhost'
+    TESTED_SITE_DESCRIPTION: str = 'hello world'
+    TESTED_TAG_NAME: str = 'testtag'
+    TESTED_FLAVOR_NAME: str = 'test-flavor'
 
-    tested_result_params = [tested_uploader_id, tested_site_name, tested_benchmark_name, tested_flavor_name]
-    tested_uploader_params = [tested_uploader_id, tested_uploader_name, tested_uploader_email]
-    tested_site_params = [tested_site_name, tested_site_address]
+    TESTED_RESULT_PARAMS = [TESTED_UPLOADER_ID, TESTED_SITE_NAME, TESTED_BENCHMARK_NAME, TESTED_FLAVOR_NAME]
+    TESTED_UPLOADER_PARAMS = [TESTED_UPLOADER_ID, TESTED_UPLOADER_NAME, TESTED_UPLOADER_EMAIL]
+    TESTED_SITE_PARAMS = [TESTED_SITE_NAME, TESTED_SITE_ADDRESS]
 
     def setUp(self):
         """Called before each test."""
@@ -44,10 +44,10 @@ class FacadeTestBase(unittest.TestCase):
         del self.app
 
     def _add_result_data(self):
-        self.assertTrue(self.facade.add_uploader(*self.tested_uploader_params))
-        self.assertTrue(self.facade.add_benchmark(self.tested_benchmark_name, self.tested_uploader_id))
-        self.assertTrue(self.facade.add_site(*self.tested_site_params))
-        success, uuid = self.facade.add_flavor(self.tested_flavor_name, "hello", self.tested_site_name)
+        self.assertTrue(self.facade.add_uploader(*self.TESTED_UPLOADER_PARAMS))
+        self.assertTrue(self.facade.add_benchmark(self.TESTED_BENCHMARK_NAME, self.TESTED_UPLOADER_ID))
+        self.assertTrue(self.facade.add_site(*self.TESTED_SITE_PARAMS))
+        success, uuid = self.facade.add_flavor(self.TESTED_FLAVOR_NAME, "hello", self.TESTED_SITE_NAME)
         self.assertTrue(success)
 
         return {
