@@ -2,6 +2,7 @@ import json
 import unittest
 
 from eosc_perf.controller.authenticator import AuthenticateError
+from eosc_perf.model.facade import facade
 from .controller_test_base import IOControllerTestBase
 
 
@@ -26,7 +27,7 @@ class ControllerSiteTests(IOControllerTestBase):
         self.facade.add_uploader(*self.UPLOADER_DATA)
         with self.app.test_request_context():
             self._login_standard_user()
-            self.assertTrue(self.controller.submit_site("name", "127.0.0.1", "long name", "description"))
+            self.assertTrue(self.controller.submit_site(self.SITE_NAME, self.SITE_ADDRESS, "long name", "description"))
 
     def test_submit_site_duplicate_name(self):
         self.facade.add_uploader(*self.UPLOADER_DATA)
@@ -92,6 +93,26 @@ class ControllerSiteTests(IOControllerTestBase):
             })
             self.controller.submit_result(self._get_sample_result_data(), metadata)
             self.assertEqual(self.controller._site_result_amount(self.SITE_NAME), 1)
+
+    def test_submit_flavor(self):
+        self.test_submit_site_success()
+        with self.app.test_request_context():
+            self._login_standard_user()
+            uuid = self.controller.submit_flavor(self.FLAVOR_NAME, "description", self.SITE_NAME)
+            self.assertIsNotNone(uuid)
+            return uuid
+
+    def test_update_flavor_success(self):
+        # test_submit_flavor comes with site
+        flavor_uuid = self.test_submit_flavor()
+        with self.app.test_request_context():
+            self._login_admin()
+            self.controller.update_flavor(flavor_uuid, self.FLAVOR_NAME + '_renamed', "description")
+
+    def test_update_flavor_unknown(self):
+        with self.app.test_request_context():
+            self._login_admin()
+            self.assertFalse(self.controller.update_flavor('invalid_uuid', self.FLAVOR_NAME + '_renamed', "description"))
 
 
 if __name__ == '__main__':

@@ -1,0 +1,13 @@
+{
+    "arguments": "",
+    "result": {
+        "!score": 1.0
+    },
+    "machine":{
+        "cpu": {
+            "brand_raw": "",
+            "!count": 1
+        }
+    },
+    "!test": ""
+}

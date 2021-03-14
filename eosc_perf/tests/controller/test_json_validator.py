@@ -2,6 +2,7 @@
 
 import json
 import unittest
+from json import JSONDecodeError
 from pathlib import Path
 
 from eosc_perf.controller.json_result_validator import JSONResultValidator
@@ -23,6 +24,9 @@ class JSONResultValidatorTest(unittest.TestCase):
     def test_empty_json(self):
         js = json.dumps({})
         self.assertRaises(ValueError, self.validator.validate_json, js)
+
+    def test_invalid_json(self):
+        self.assertFalse(self.validator.validate_json("{{{"))
 
     def test_none(self):
         self.assertRaises(TypeError, self.validator.validate_json, None)
@@ -64,6 +68,21 @@ class JSONResultValidatorTest(unittest.TestCase):
         js["new_key"] = "new value"
         js["another_new_key"] = {"new_dict_sub_key": 2}
         self.assertTrue(self.validator.validate_json(json.dumps(js)))
+
+    def test_cray_sample(self):
+        print(Path.cwd())
+        try:
+            with open("eosc_perf/tests/controller/c-ray-result.json") as file:
+                sample = file.read()
+        except (OSError, JSONDecodeError) as e:
+            self.fail("failed to open or parse sample result")
+        try:
+            with open("eosc_perf/tests/controller/c-ray-template.json") as file:
+                template = file.read()
+        except (OSError, JSONDecodeError) as e:
+            self.fail("failed to open or parse sample template")
+
+        self.assertTrue(self.validator.validate_json(sample, template))
 
     @staticmethod
     def _load_template():

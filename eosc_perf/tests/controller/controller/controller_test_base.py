@@ -13,22 +13,26 @@ from eosc_perf.configuration import configuration
 
 class IOControllerTestBase(unittest.TestCase):
     BENCHMARK_NAME: str = "name/name:tag"
+    BENCHMARK_DESCRIPTION: str = "Hello world!"
     FLAVOR_NAME: str = "test-flavor"
     SITE_NAME: str = "test-site"
-    SITE_ADDRESS: str = "localhost"
+    SITE_ADDRESS: str = "https://example.com/testsite"
     UPLOADER_ID: str = "hamburger"
     UPLOADER_EMAIL: str = "hamburger@example.com"
     UPLOADER_NAME: str = "Hamburger"
+
+    REAL_BENCHMARK: str = "rosskukulinski/leaking-app"
+    REAL_BENCHMARK2: str = "rosskukulinski/leaking-app:latest"
 
     RESULT_DATA = [UPLOADER_ID, SITE_NAME, BENCHMARK_NAME, FLAVOR_NAME]
     UPLOADER_DATA = [UPLOADER_ID, UPLOADER_NAME, UPLOADER_EMAIL]
 
     TEST_USER: dict = {
         'exp': time() + 3600,
-        'sub': 'test-user-id',
+        'sub': UPLOADER_ID,
         'info': {
-            'email': 'email@kit.edu',
-            'name': 'John Doe'
+            'email': UPLOADER_EMAIL,
+            'name': UPLOADER_NAME
         }
     }
 

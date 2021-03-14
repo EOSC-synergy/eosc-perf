@@ -19,16 +19,23 @@ class ControllerBenchmarkTests(IOControllerTestBase):
         self.facade.add_uploader(*self.UPLOADER_DATA)
         with self.app.test_request_context():
             self._login_standard_user()
-            self.assertTrue(self.controller.submit_benchmark("rosskukulinski/leaking-app", "submit comment."))
-            self.assertTrue(self.controller.submit_benchmark("rosskukulinski/leaking-app:latest", ""))
+            self.assertTrue(self.controller.submit_benchmark(self.REAL_BENCHMARK, self.BENCHMARK_DESCRIPTION))
+            self.assertTrue(self.controller.submit_benchmark(self.REAL_BENCHMARK2, self.BENCHMARK_DESCRIPTION))
+
+    def test_submit_benchmark_invalid_template(self):
+        self.facade.add_uploader(*self.UPLOADER_DATA)
+        with self.app.test_request_context():
+            self._login_standard_user()
+            self.assertRaises(ValueError, self.controller.submit_benchmark, self.REAL_BENCHMARK,
+                              self.BENCHMARK_DESCRIPTION, "{{{")
 
     def test_submit_benchmark_duplicate(self):
         self.facade.add_uploader(*self.UPLOADER_DATA)
         with self.app.test_request_context():
             self._login_standard_user()
-            self.controller.submit_benchmark("rosskukulinski/leaking-app", "submit comment.")
-            self.assertRaises(RuntimeError, self.controller.submit_benchmark, "rosskukulinski/leaking-app",
-                              "submit comment.")
+            self.controller.submit_benchmark(self.REAL_BENCHMARK, self.BENCHMARK_DESCRIPTION)
+            self.assertRaises(RuntimeError, self.controller.submit_benchmark, self.REAL_BENCHMARK,
+                              self.BENCHMARK_DESCRIPTION)
 
     def test_valid_docker_hub_name_fails(self):
         # malformed
@@ -52,8 +59,8 @@ class ControllerBenchmarkTests(IOControllerTestBase):
         self.assertFalse(self.controller._valid_docker_hub_name(":"))
 
     def test_valid_docker_hub_name(self):
-        self.assertTrue(self.controller._valid_docker_hub_name("rosskukulinski/leaking-app"))
-        self.assertTrue(self.controller._valid_docker_hub_name("rosskukulinski/leaking-app:latest"))
+        self.assertTrue(self.controller._valid_docker_hub_name(self.REAL_BENCHMARK))
+        self.assertTrue(self.controller._valid_docker_hub_name(self.REAL_BENCHMARK2))
 
 
 if __name__ == '__main__':
