@@ -7,7 +7,7 @@ from eosc_perf.model.facade import DatabaseFacade
 from eosc_perf.tests.controller.controller.controller_test_base import IOControllerTestBase
 
 
-class MyTestCase(IOControllerTestBase):
+class ControllerReportTests(IOControllerTestBase):
     def test_report_not_authenticated(self):
         with self.app.test_request_context():
             self.assertRaises(AuthenticateError, self.controller.report, "{}")
