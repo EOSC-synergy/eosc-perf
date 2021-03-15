@@ -82,7 +82,8 @@ def _pack_benchmarks(benchmarks: List[Benchmark]) -> JSON:
             result_dict["hidden"] = True
         # decode and add to structure to avoid dealing with storing json within json
         result_dict["docker_name"] = benchmark.get_docker_name()
-        result_dict["uploader"] = benchmark.get_uploader().get_email()
+        if authenticator.is_admin():
+            result_dict["uploader"] = benchmark.get_uploader().get_email()
         description = benchmark.get_description()
         result_dict["description"] = description if description is not None else "No description found."
         results_dict["results"].append(result_dict)
