@@ -17,6 +17,14 @@ const COLUMNS = {
     ACTIONS: 'Actions'
 };
 
+const COLUMN_KEYS = new Map([
+    [COLUMNS.CHECKBOX, "selected"],
+    [COLUMNS.BENCHMARK, "benchmark"],
+    [COLUMNS.SITE, "site"],
+    [COLUMNS.FLAVOR, "flavor"],
+    [COLUMNS.UPLOADER, "uploader"]
+])
+
 const FILTERS = {
     SITE: FIELDS.SITE,
     TAG: FIELDS.TAGS,
@@ -204,6 +212,11 @@ function _comparator(x, y) {
  * TODO: search field?
  */
 class JSONValueInputPrompt {
+    /**
+     * Create new JSON keypath selection prompt
+     * @param dropdownButton the button that opens the prompt
+     * @param inputBox the textbox to put selected values into
+     */
     constructor(dropdownButton, inputBox) {
         this.button = dropdownButton;
         this.button.dataset.toggle = "dropdown";
@@ -239,6 +252,10 @@ class JSONValueInputPrompt {
         $(this.button).dropdown();
     }
 
+    /**
+     * Callback to set the value to the input box
+     * @param value
+     */
     set_value(value) {
         this.inputBox.value = value;
 
@@ -256,6 +273,7 @@ class Table {
     constructor() {
         this.table = document.getElementById("result_table");
         this.columnHeads = new Map();
+        this.resultElements = new Map();
         this.sortedBy = null;
     }
 
@@ -267,16 +285,20 @@ class Table {
      * @param uuid uuid of result in displayed results
      */
     mark_result_as_removed(uuid) {
-        // index 0 == table head
-        let row = document.getElementById('table-entry-' + uuid);
-        if (row === null) {
+        let row = this.resultElements.get(uuid);
+        if (row === undefined) {
             return;
         }
+
         const childCount = row.children.length;
+        // clear columns
         clear_element_children(row);
+        // darken the row
         let shadow = document.createElement("td");
         shadow.classList.add("loading-background");
         shadow.style.opacity = "100%";
+        // add badge noting the removal of this result
+        // TODO: this is a little ugly, restyle this
         let removedBadge = document.createElement("span");
         removedBadge.classList.add("badge", "bg-danger");
         removedBadge.textContent = "Removed";
@@ -293,22 +315,23 @@ class Table {
             this.table.firstChild.remove();
         }
         this.columnHeads.clear();
+        this.resultElements.clear();
     }
 
     /**
      * Set up the top row of the table.
      */
     _create_head(columns) {
-        let table = this;
-        let head = document.createElement("THEAD");
+        let head = document.createElement("thead");
         for (const column of columns) {
             const column_name = (column in COLUMNS) ? COLUMNS[column] : _get_subkey_name(column);
 
-            let cell = document.createElement("TH");
+            let cell = document.createElement("th");
             this.columnHeads.set(column_name, {
                 element: cell
             });
 
+            // if this is a custom/json-field column
             if (!(column in COLUMNS)) {
                 cell.dataset.toggle = "tooltip";
                 cell.dataset.placement = "top";
@@ -332,44 +355,25 @@ class Table {
             }
             cell.scope = "col";
 
+
+            // add sorting callbacks
+            const columnSortHelper = function(key) {
+                return (x, y) => _comparator(x[key], y[key]);
+            };
+
             switch (column_name) {
-                case (COLUMNS.CHECKBOX): {
+                case (COLUMNS.CHECKBOX):
+                case (COLUMNS.BENCHMARK):
+                case (COLUMNS.SITE):
+                case (COLUMNS.FLAVOR):
+                case (COLUMNS.UPLOADER): {
                     // sort by selected results
                     cell.addEventListener("click", function () {
-                        search_page.sort_by((x, y) => _comparator(x["selected"], y["selected"]), column_name);
+                        search_page.sort_by(columnSortHelper(COLUMN_KEYS.get(column_name)), column_name);
                     });
-                }
-                    break;
-                case (COLUMNS.BENCHMARK): {
-                    // alphabetically sort by benchmark
-                    cell.addEventListener("click", function () {
-                        search_page.sort_by((x, y) => _comparator(x["benchmark"], y["benchmark"]), column_name);
-                    });
-                }
-                    break;
-                case (COLUMNS.SITE): {
-                    // alphabetically sort by site
-                    cell.addEventListener("click", function () {
-                        search_page.sort_by((x, y) => _comparator(x["site"], y["site"]), column_name);
-                    });
-                }
-                    break;
-                case (COLUMNS.FLAVOR): {
-                    // alphabetically sort by site flavor
-                    cell.addEventListener("click", function () {
-                        search_page.sort_by((x, y) => _comparator(x["flavor"], y["flavor"]), column_name);
-                    });
-                }
-                    break;
-                case (COLUMNS.UPLOADER): {
-                    // alphabetically sort by uploader
-                    cell.addEventListener("click", function () {
-                        search_page.sort_by((x, y) => _comparator(x["uploader"], y["uploader"]), column_name);
-                    });
-                }
-                    break;
+                } break;
                 case (COLUMNS.TAGS):
-                    // todo find order on tags
+                    // TODO: is there a sensible order for a list of tags?
                     break;
                 default:
                     cell.addEventListener("click", function() {
@@ -379,6 +383,7 @@ class Table {
                     break;
             }
 
+            // if the column is being sorted by, add arrow/chevron
             if (this.sortedBy === column_name) {
                 let arrow = document.createElement("i");
                 arrow.classList.add("bi");
@@ -406,8 +411,9 @@ class Table {
         for (let i = 0; i < results.length; i++) {
             let row = document.createElement("TR");
             const result = results[i];
-            row.id = 'table-entry-' + result.uuid;
+            this.resultElements.set(result.uuid, row);
 
+            // switch-case through columns as they may be in custom order
             for (const key of columns) {
                 const column = (key in COLUMNS) ? COLUMNS[key] : key;
                 let cell = document.createElement("TD");
@@ -433,11 +439,12 @@ class Table {
                         cell.textContent = result[JSON_KEYS.get(column)];
                     } break;
 
+                    // handle tags specially because they could be empty
                     case (COLUMNS.TAGS): {
                         const content = result[JSON_KEYS.get(column)];
                         if (content.length === 0) {
                             cell.textContent = "None";
-                            cell.style.color = "#9F9F9F";
+                            cell.classList.add("text-muted");
                         }
                         else {
                             cell.textContent = content;
@@ -445,10 +452,10 @@ class Table {
                     } break;
 
                     case COLUMNS.ACTIONS: {
-                        // actions
                         let div = document.createElement('div');
                         div.classList.add('btn-group');
 
+                        // button to view json
                         let view_button = document.createElement("button");
                         view_button.type = "button";
                         view_button.classList.add("btn", "btn-primary", "btn-sm");
@@ -485,6 +492,7 @@ class Table {
                             contactButton.appendChild(contactButtonIcon);
                             div.appendChild(contactButton);
 
+                            // remove result button
                             let actions_delete = document.createElement('button');
                             actions_delete.type = "button";
                             actions_delete.classList.add('btn', 'btn-danger', 'btn-sm');
@@ -501,6 +509,7 @@ class Table {
                         row.appendChild(cell);
                     } break;
 
+                    // generic json-keypath column, just fetch data
                     default: {
                         cell.textContent = _format_column_data(_fetch_subkey(result["data"], column));
                     } break;
@@ -524,6 +533,11 @@ class Table {
         this._fill_table(results, columns, startIndex);
     }
 
+    /**
+     * Set the column that is currently being sorted by
+     * @param columnName the name of the column
+     * @param order the order being used (SORT_ORDER)
+     */
     set_column_sort(columnName, order) {
         let cell = this.columnHeads.get(columnName).element;
         // same column, reversed order
@@ -581,7 +595,7 @@ class PageNavigation {
             it.parentElement.removeChild(it);
             it = it_next;
         }
-        // (re-)add them
+        // (re-)add them as needed
         let next_page_button = document.getElementById('nextPageButton');
         for (let i = 0; i < this.page_count; i++) {
             // link box
@@ -694,19 +708,41 @@ class PageNavigation {
 }
 
 class Diagram {
+    /**
+     * Set the list of notable keys.
+     *
+     * These may be used as suggested fields to the user when selecting data sources.
+     *
+     * @param notable_keys
+     */
     update_notable_keys(notable_keys) {
     }
+
+    /**
+     * Take in new data.
+     * @param results an array of results to display
+     */
     updateData(results) {
     }
+
+    /**
+     * Clean-up function/destructor.
+     *
+     * Called when using is swapping to another diagram.
+     */
     cleanup() {
     }
+
+    /**
+     * Generic callback for when the user changes any setting, if you want to do it nice and polymorphic.
+     */
     update_diagram_configuration() {
     }
 }
 
 class SpeedupDiagram extends Diagram {
     /**
-     * Build a new speedup diagram
+     * Build a new speedup diagram.
      */
     constructor() {
         super();
@@ -822,7 +858,7 @@ class SpeedupDiagram extends Diagram {
     }
 
     /**
-     * Pass various checks over the used data to verify if certain diagrams are viable.
+     * Pass various checks over the used data to verify if certain diagram modes are viable.
      *
      * sameSite: all results are from the same site
      * columnsAreNumbers: all columns/labels are actual numbers and can for example be put on a log scale
@@ -929,7 +965,7 @@ class SpeedupDiagram extends Diagram {
     }
 
     /**
-     * Download a csv file off current data
+     * Generate & download currently displayed data as a csv file.
      */
     downloadCSV() {
         let download = document.createElement("a");
@@ -947,7 +983,7 @@ class SpeedupDiagram extends Diagram {
     }
 
     /**
-     * Download a picture copy of the current diagram
+     * Download a picture copy of the current diagram.
      */
     downloadPNG() {
         let download = document.createElement("a");
@@ -1126,6 +1162,10 @@ class SpeedupDiagram extends Diagram {
 }
 
 class Filter {
+    /**
+     * Create a new filter entry
+     * @param searchPage reference to owning object / search page
+     */
     constructor(searchPage) {
         this.searchPage = searchPage;
 
@@ -1286,23 +1326,42 @@ class Filter {
 
     }
 
+    /**
+     * Delete the filter
+     */
     remove() {
         this.element.parentNode.removeChild(this.element);
         this.searchPage.remove_filter(this);
     }
 
+    /**
+     * Get the type of filter
+     * @returns {string} one of FILTERS
+     */
     getType() {
         return this.filterType.value;
     }
 
+    /**
+     * Get the current value being compared against
+     * @returns {string} value from text box
+     */
     getValue() {
         return this.inputBox.value;
     }
 
+    /**
+     * Get the current comparison mode
+     * @returns {string} one of JSON_MODES
+     */
     getJsonMode() {
         return this.jsonModeButton.value;
     }
 
+    /**
+     * Get the json value being compared against.
+     * @returns {string} value from text box
+     */
     getJsonValue() {
         return this.jsonValue.value;
     }
@@ -1928,6 +1987,9 @@ class ResultSearch {
 //
 let search_page = null;
 
+/**
+ * Create search page object on page load
+ */
 window.addEventListener("load", function () {
     search_page = new ResultSearch();
     search_page.onload();
