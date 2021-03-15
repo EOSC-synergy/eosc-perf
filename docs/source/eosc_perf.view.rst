@@ -13,7 +13,7 @@ Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
 
    eosc_perf.view.pages
 
@@ -32,14 +32,6 @@ eosc\_perf.view.page\_factory module
 ------------------------------------
 
 .. automodule:: eosc_perf.view.page_factory
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-eosc\_perf.view.type\_aliases module
-------------------------------------
-
-.. automodule:: eosc_perf.view.type_aliases
    :members:
    :undoc-members:
    :show-inheritance:

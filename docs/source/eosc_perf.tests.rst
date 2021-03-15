@@ -9,29 +9,30 @@ Module contents
    :undoc-members:
    :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 2
+
+   eosc_perf.tests.controller
+   eosc_perf.tests.model
+
 Submodules
 ----------
 
-eosc\_perf.tests.facade\_test module
-------------------------------------
-
-.. automodule:: eosc_perf.tests.facade_test
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-eosc\_perf.tests.io\_controller\_test module
+eosc\_perf.tests.test\_flask\_factory module
 --------------------------------------------
 
-.. automodule:: eosc_perf.tests.io_controller_test
+.. automodule:: eosc_perf.tests.test_flask_factory
    :members:
    :undoc-members:
    :show-inheritance:
 
-eosc\_perf.tests.json\_result\_validator\_test module
------------------------------------------------------
+eosc\_perf.tests.utility module
+-------------------------------
 
-.. automodule:: eosc_perf.tests.json_result_validator_test
+.. automodule:: eosc_perf.tests.utility
    :members:
    :undoc-members:
    :show-inheritance:

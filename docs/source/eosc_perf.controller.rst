@@ -36,10 +36,3 @@ eosc\_perf.controller.json\_result\_validator module
    :undoc-members:
    :show-inheritance:
 
-eosc\_perf.controller.type\_aliases module
-------------------------------------------
-
-.. automodule:: eosc_perf.controller.type_aliases
-   :members:
-   :undoc-members:
-   :show-inheritance:

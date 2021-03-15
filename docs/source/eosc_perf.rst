@@ -13,12 +13,13 @@ Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    eosc_perf.controller
    eosc_perf.model
-   eosc_perf.view
    eosc_perf.tests
+   eosc_perf.utility
+   eosc_perf.view
 
 Submodules
 ----------
@@ -31,10 +32,18 @@ eosc\_perf.configuration module
    :undoc-members:
    :show-inheritance:
 
-eosc\_perf.flask\_app module
-----------------------------
+eosc\_perf.flask\_factory module
+--------------------------------
 
-.. automodule:: eosc_perf.flask_app
+.. automodule:: eosc_perf.flask_factory
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+eosc\_perf.wsgi\_instance module
+--------------------------------
+
+.. automodule:: eosc_perf.wsgi_instance
    :members:
    :undoc-members:
    :show-inheritance:
