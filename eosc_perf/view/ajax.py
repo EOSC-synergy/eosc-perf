@@ -64,33 +64,6 @@ class ResultSearchAJAX(SearchAJAXHandler):
         return json.dumps(results_dict), 200
 
 
-def _pack_benchmarks(benchmarks: List[Benchmark]) -> JSON:
-    """Generate JSON data containing info about all supplied benchmarks.
-
-    Args:
-        benchmarks (List[Benchmark]): All benchmarks to fill into the response.
-    Returns:
-        JSON: JSON data containing query results to display.
-    """
-    results_dict = {"results": []}
-    for benchmark in benchmarks:
-        result_dict = {}
-        # do not display hidden benchmarks (= new ones)
-        if benchmark.get_hidden():
-            if not authenticator.is_admin():
-                continue
-            result_dict["hidden"] = True
-        # decode and add to structure to avoid dealing with storing json within json
-        result_dict["docker_name"] = benchmark.get_docker_name()
-        if authenticator.is_admin():
-            result_dict["uploader"] = benchmark.get_uploader().get_email()
-        description = benchmark.get_description()
-        result_dict["description"] = description if description is not None else "No description found."
-        results_dict["results"].append(result_dict)
-
-    return json.dumps(results_dict)
-
-
 class BenchmarkSearchAJAX(SearchAJAXHandler):
     """AJAX handler for benchmark searches with keywords."""
 
@@ -104,26 +77,24 @@ class BenchmarkSearchAJAX(SearchAJAXHandler):
         """
         keywords = json.loads(query)['keywords'] if query is not None else []
         benchmarks = facade.query_benchmarks(keywords)
-        return _pack_benchmarks(benchmarks), 200
 
+        results_dict = {"results": []}
+        for benchmark in benchmarks:
+            result_dict = {}
+            # do not display hidden benchmarks (= new ones)
+            if benchmark.get_hidden():
+                if not authenticator.is_admin():
+                    continue
+                result_dict["hidden"] = True
+            # decode and add to structure to avoid dealing with storing json within json
+            result_dict["docker_name"] = benchmark.get_docker_name()
+            if authenticator.is_admin():
+                result_dict["uploader"] = benchmark.get_uploader().get_email()
+            description = benchmark.get_description()
+            result_dict["description"] = description if description is not None else "No description found."
+            results_dict["results"].append(result_dict)
 
-class BenchmarkFetchAJAXHandler(AJAXHandler):
-    """AJAX handler for fetching benchmarks."""
-
-    def process(self, query: Optional[JSON] = None) -> Tuple[JSON, Optional[int]]:
-        """Fetch all benchmarks independent of given query."""
-        return self.fetch_benchmarks(), 200
-
-    @staticmethod
-    def fetch_benchmarks() -> JSON:
-        """Fetch all benchmarks.
-
-        Returns:
-            JSON: JSON data containing details about all known benchmarks.
-        """
-
-        benchmarks = facade.get_benchmarks()
-        return _pack_benchmarks(benchmarks)
+        return json.dumps(results_dict), 200
 
 
 class ReportFetchAJAXHandler(AJAXHandler):
@@ -298,7 +269,8 @@ def fetch_tags():
 @ajax_blueprint.route('/fetch_benchmarks')
 def fetch_benchmarks():
     """HTTP endpoint for benchmark AJAX fetches."""
-    handler = BenchmarkFetchAJAXHandler()
+    # equivalent to a query with no filters, reuse class
+    handler = BenchmarkSearchAJAX()
     response, code = handler.process()
     return Response(response, mimetype='application/json', status=code)
 
