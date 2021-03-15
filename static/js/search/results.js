@@ -1379,7 +1379,6 @@ class ResultSearch {
         this.results = [];
         this.filters = [];
         this.ordered_by = null;
-        this.current_filter_id = 0;
         this.filters = [];
         this.notable_keys = [];
 
@@ -1756,9 +1755,7 @@ class ResultSearch {
         }
 
         if (first_run) {
-            if (BENCHMARK_QUERY.length) {
-                this.set_benchmark(BENCHMARK_QUERY);
-            }
+            this.set_benchmark(BENCHMARK_QUERY);
             this.search();
         }
     }
