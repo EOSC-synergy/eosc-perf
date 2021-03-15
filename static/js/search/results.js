@@ -1,21 +1,21 @@
 "use strict";
 
-const FIELDS = {
+const FIELDS = Object.freeze({
     BENCHMARK: 'Benchmark',
     SITE: 'Site',
     FLAVOR: 'Site flavour',
     TAGS: 'Tags',
     UPLOADER: 'Uploader'
-};
+});
 
-const COLUMNS = {
+const COLUMNS = Object.freeze({
     CHECKBOX: 'Checkbox',
     BENCHMARK: FIELDS.BENCHMARK,
     SITE: FIELDS.SITE,
     FLAVOR: FIELDS.FLAVOR,
     TAGS: FIELDS.TAGS,
     ACTIONS: 'Actions'
-};
+});
 
 const COLUMN_KEYS = new Map([
     [COLUMNS.CHECKBOX, "selected"],
@@ -25,12 +25,12 @@ const COLUMN_KEYS = new Map([
     [COLUMNS.UPLOADER, "uploader"]
 ])
 
-const FILTERS = {
+const FILTERS = Object.freeze({
     SITE: FIELDS.SITE,
     TAG: FIELDS.TAGS,
     UPLOADER: FIELDS.UPLOADER,
     JSON: "JSON-Key"
-};
+});
 
 const FILTER_KEYS = new Map([
     [FILTERS.SITE, "site"],
@@ -100,13 +100,13 @@ const SORT_ORDER = Object.freeze({
     REVERSED: 2,
 });
 
-const SUBKEY_NOT_FOUND = "⚠ not found";
+const SUBKEY_NOT_FOUND_HINT = "⚠ not found";
 
 /**
  * Fetch a sub-key from an object, as noted by the filter JSON syntax.
  * @param obj The object to get the value from.
  * @param key_path The path to the value.
- * @returns {*} Anything.
+ * @returns {*} Anything, or SUBKEY_NOT_FOUND_HINT if not found.
  * @private
  */
 function _fetch_subkey(obj, key_path) {
@@ -115,7 +115,7 @@ function _fetch_subkey(obj, key_path) {
     for (let sub_key of keys) {
         if (typeof sub_item === "undefined") {
             console.error("Failed to fetch subkey", key_path, "from", obj);
-            return SUBKEY_NOT_FOUND;
+            return SUBKEY_NOT_FOUND_HINT;
         }
         sub_item = sub_item[sub_key];
     }
@@ -123,7 +123,7 @@ function _fetch_subkey(obj, key_path) {
 }
 
 /**
- * Get the name of the specific key accessed by a key-path of the filter JSON syntax.
+ * Get the name of the specific/final key accessed by a key-path of the filter JSON syntax.
  * @param key_path The path to the value.
  * @returns {*|string} The name of the specified key.
  * @private
@@ -144,7 +144,7 @@ function _get_subkey_name(key_path) {
  */
 function _format_column_data(item) {
     if (typeof item === 'undefined') {
-        return "⚠ not found";
+        return SUBKEY_NOT_FOUND_HINT;
     }
     if (typeof item === "number") {
         return (Math.round(item * 1000) / 1000).toString();
@@ -428,11 +428,9 @@ class Table {
                     case (COLUMNS.CHECKBOX): {
                         let select = document.createElement("input");
                         select.type = "checkbox";
-                        select.id = "selected" + i;
                         if (result[JSON_KEYS.get(FIELDS.CHECKBOX)]) {
                             select.checked = true;
                         }
-                        select.style.height = "1.5em";
                         // when clicked, select
                         select.addEventListener("click", function () {
                             search_page.select_result(i + startIndex);
@@ -1261,10 +1259,10 @@ class Filter {
                 this.suggestionsButton.classList.add("btn", "btn-outline-secondary", "dropdown-toggle", "dropdown-toggle-split");
 
                 {
-                    let suggestions_button_screenreader_hint = document.createElement("span");
-                    suggestions_button_screenreader_hint.classList.add("sr-only");
-                    suggestions_button_screenreader_hint.textContent = "Toggle Dropdown";
-                    this.suggestionsButton.appendChild(suggestions_button_screenreader_hint);
+                    let suggestionsButtonScreenreaderHint = document.createElement("span");
+                    suggestionsButtonScreenreaderHint.classList.add("sr-only");
+                    suggestionsButtonScreenreaderHint.textContent = "Toggle Dropdown";
+                    this.suggestionsButton.appendChild(suggestionsButtonScreenreaderHint);
                 }
                 inputExtras.appendChild(this.suggestionsButton);
                 this.jsonSuggestor = new JSONValueInputPrompt(this.suggestionsButton, this.inputBox);
@@ -1769,6 +1767,8 @@ class ResultSearch {
 
     /**
      * Display the column selection prompt.
+     *
+     * TODO: make this an object
      */
     make_column_select_prompt() {
         let activeColumns = document.getElementById("currentColumns");
