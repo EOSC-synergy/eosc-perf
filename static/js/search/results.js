@@ -246,6 +246,13 @@ class JSONValueInputPrompt {
                 };
                 list.appendChild(item);
             }
+            if (keys.length === 0) {
+                let item = document.createElement("li");
+                item.textContent = "No notable keys found!";
+                item.classList.add("list-group-item", "text-muted");
+                item.disabled = true;
+                list.appendChild(item);
+            }
             jsonValueInputPrompt.dropdown.appendChild(list);
         });
 
