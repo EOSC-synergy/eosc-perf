@@ -42,7 +42,7 @@ class ViewReportPageFactory(PageFactory):
 view_report_blueprint = Blueprint('view-report', __name__)
 
 
-@view_report_blueprint.route('/view_report', methods=['GET'])
+@view_report_blueprint.route('/review/result', methods=['GET'])
 @only_admin
 def view_report():
     """HTTP endpoint for the view report page."""
@@ -94,7 +94,7 @@ def view_report():
     return Response(page, mimetype='text/html')
 
 
-@view_report_blueprint.route('/view_report_submit', methods=['POST'])
+@view_report_blueprint.route('/ajax/review/result', methods=['POST'])
 @only_admin_json
 def view_report_submit():
     """HTTP endpoint to take in the reports."""

@@ -31,7 +31,7 @@ def edit_site():
     return Response(page, mimetype='text/html')
 
 
-@site_editor_blueprint.route('/update-site', methods=['POST'])
+@site_editor_blueprint.route('/ajax/update/site', methods=['POST'])
 @only_admin_json
 def edit_site_submit():
     """HTTP endpoint to take in the reports."""

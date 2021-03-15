@@ -310,7 +310,7 @@ class ResultUpload {
     submit_new_tag() {
         let tag = this.customTagInput.value.trim();
         let self = this;
-        submit_json('/upload_tag', {
+        submit_json('/ajax/submit/tag', {
                 new_tag: tag
             },
             function (data, textStatus) {
@@ -363,7 +363,7 @@ class ResultUpload {
     fetch_sites() {
         clear_element_children(this.siteSelection);
         let self = this;
-        $.ajax('/fetch_sites')
+        $.ajax('/ajax/fetch/sites')
             .done(function (data) {
                 self.fill_sites(data);
             });
@@ -374,7 +374,7 @@ class ResultUpload {
      */
     fetch_tags() {
         let self = this;
-        $.ajax('/fetch_tags')
+        $.ajax('/ajax/fetch/tags')
             .done(function (data) {
                 data.results.sort(compare);
 
@@ -388,7 +388,7 @@ class ResultUpload {
     fetch_benchmarks() {
         let benchmarkSelection = document.getElementById("bm_selection");
         clear_element_children(benchmarkSelection);
-        $.ajax('/fetch_benchmarks')
+        $.ajax('/ajax/fetch/benchmarks')
             .done(function (data) {
                 let benchmarks = data.results;
                 for (const benchmark of benchmarks) {

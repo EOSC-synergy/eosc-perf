@@ -43,7 +43,7 @@ class BenchmarkReviewPageFactory(PageFactory):
 benchmark_review_blueprint = Blueprint('benchmark-review', __name__)
 
 
-@benchmark_review_blueprint.route('/benchmark_review', methods=['GET'])
+@benchmark_review_blueprint.route('/review/benchmark', methods=['GET'])
 @only_admin
 def review_benchmark():
     """HTTP endpoint for the benchmark review page."""
@@ -97,7 +97,7 @@ def review_benchmark():
     return Response(page, mimetype='text/html')
 
 
-@benchmark_review_blueprint.route('/benchmark_review_submit', methods=['POST'])
+@benchmark_review_blueprint.route('/ajax/review/benchmark', methods=['POST'])
 @only_admin_json
 def review_benchmark_submit():
     """HTTP endpoint to take in the reports."""

@@ -4,13 +4,13 @@
 
 {% block head %}
     {{ super() }}
-    <script src="static/js/submission/benchmark.js"></script>
+    <script src="/static/js/submission/benchmark.js"></script>
 {% endblock %}
 
 {% block pageContent %}
     <div class="container">
         <h1>Add Benchmark</h1>
-        <form id="form" action="/add_benchmark_submit" method="POST">
+        <form id="form" action="/ajax/submit/benchmark" method="POST">
             <div class="m-2">
                 <label for="docker_name">Docker image name:<br/></label>
                 <input type="text" name="docker_name" id="docker_name" class="form-control inputbox small"

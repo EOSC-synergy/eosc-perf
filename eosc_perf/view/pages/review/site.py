@@ -40,7 +40,7 @@ class SiteReviewPageFactory(PageFactory):
 site_review_blueprint = Blueprint('site-review', __name__)
 
 
-@site_review_blueprint.route('/site_review', methods=['GET'])
+@site_review_blueprint.route('/review/site', methods=['GET'])
 @only_admin
 def review_site():
     """HTTP endpoint for the site review page."""
@@ -77,7 +77,7 @@ def review_site():
     return Response(page, mimetype='text/html')
 
 
-@site_review_blueprint.route('/site_review_submit', methods=['POST'])
+@site_review_blueprint.route('/ajax/review/site', methods=['POST'])
 @only_admin_json
 def review_site_submit():
     """HTTP endpoint to take in the reports."""

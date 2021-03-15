@@ -2,13 +2,13 @@
 
 <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="static/css/overlay.css" />
-    <link rel="stylesheet" type="text/css" href="static/css/main.css" />
-    <script src="static/js/jquery-3.5.1.min.js"></script>
-    <script src="static/js/popper.min.js"></script>
-    <script src="static/js/bootstrap.min.js"></script>
-    <script src="static/js/utility.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/overlay.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
+    <script src="/static/js/jquery-3.5.1.min.js"></script>
+    <script src="/static/js/popper.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/utility.js"></script>
     <title>{% block title %}{% endblock %}</title>
     <script>
         {# this must come before the rest of head, due to dependency order #}
@@ -45,7 +45,7 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href="/">Benchmark</a>
-                            <a class="dropdown-item" href="/result_search">Result</a>
+                            <a class="dropdown-item" href="/search_results">Result</a>
                         </div>
                     </li>
                     <li class="nav-item dropdown">
@@ -55,11 +55,11 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             {% if logged_in %}
-                            <a class="dropdown-item" href="/upload">Result</a>
-                            <a class="dropdown-item" href="/add_benchmark">Benchmark</a>
+                            <a class="dropdown-item" href="/submit/result">Result</a>
+                            <a class="dropdown-item" href="/submit/benchmark">Benchmark</a>
                             {% else %}
-                            <a class="dropdown-item" href="#" onclick="loginThenGoTo('/upload')">Result</a>
-                            <a class="dropdown-item" href="#" onclick="loginThenGoTo('/add_benchmark')">Benchmark</a>
+                            <a class="dropdown-item" href="#" onclick="loginThenGoTo('/submit/result')">Result</a>
+                            <a class="dropdown-item" href="#" onclick="loginThenGoTo('/submit/benchmark')">Benchmark</a>
                             {% endif %}
                         </div>
                     </li>
@@ -128,7 +128,7 @@
     </main>
     <footer class="footer mt-auto py-3">
         <div class="container">
-            <a href="/privacy" class="text-muted">Privacy Policy</a>&nbsp;
+            <a href="/privacy_policy" class="text-muted">Privacy Policy</a>&nbsp;
             <a href="mailto:{{ support_email }}" class="text-muted">Email Support</a>
         </div>
     </footer>

@@ -50,7 +50,7 @@ class BenchmarkSearch {
             let a = document.createElement('a');
             a.textContent = dockerName;
             a.title = dockerName;
-            a.href = '/result_search?benchmark=' + encodeURI(dockerName);
+            a.href = '/search_results?benchmark=' + encodeURI(dockerName);
             dockerNameCell.appendChild(a);
 
             let description = document.createElement("div");
@@ -72,7 +72,7 @@ class BenchmarkSearch {
         this.page = 0;
         let keywords = query.trim().length > 0 ? query.trim().split(" ") : [];
         this.loadingIcon.classList.add("loading");
-        $.ajax('/query_benchmarks?query='
+        $.ajax('/ajax/query/benchmarks?query='
             + encodeURI(JSON.stringify({ 'keywords': keywords })))
             .done(function (data) {
                 benchmarkSearch.results = data.results;

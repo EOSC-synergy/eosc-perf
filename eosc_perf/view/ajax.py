@@ -230,7 +230,7 @@ class FlavorUpdateAJAX(AJAXHandler):
 ajax_blueprint = Blueprint('ajax', __name__)
 
 
-@ajax_blueprint.route('/query_results')
+@ajax_blueprint.route('/ajax/query/results')
 def query_results():
     """HTTP endpoint for result AJAX queries."""
     query_json = request.args.get('query_json')
@@ -241,7 +241,7 @@ def query_results():
     return Response(response, mimetype='application/json', status=code)
 
 
-@ajax_blueprint.route('/query_benchmarks')
+@ajax_blueprint.route('/ajax/query/benchmarks')
 def query_benchmarks():
     """HTTP endpoint for benchmark AJAX queries."""
     query = request.args.get('query')
@@ -250,7 +250,7 @@ def query_benchmarks():
     return Response(response, mimetype='application/json', status=code)
 
 
-@ajax_blueprint.route('/fetch_sites')
+@ajax_blueprint.route('/ajax/fetch/sites')
 def fetch_sites():
     """HTTP endpoint for site AJAX fetches."""
     handler = SiteFetchAJAXHandler()
@@ -258,7 +258,7 @@ def fetch_sites():
     return Response(response, mimetype='application/json', status=code)
 
 
-@ajax_blueprint.route('/fetch_tags')
+@ajax_blueprint.route('/ajax/fetch/tags')
 def fetch_tags():
     """HTTP endpoint for tag AJAX fetches."""
     handler = TagFetchAJAXHandler()
@@ -266,7 +266,7 @@ def fetch_tags():
     return Response(response, mimetype='application/json', status=code)
 
 
-@ajax_blueprint.route('/fetch_benchmarks')
+@ajax_blueprint.route('/ajax/fetch/benchmarks')
 def fetch_benchmarks():
     """HTTP endpoint for benchmark AJAX fetches."""
     # equivalent to a query with no filters, reuse class
@@ -275,7 +275,7 @@ def fetch_benchmarks():
     return Response(response, mimetype='application/json', status=code)
 
 
-@ajax_blueprint.route('/fetch_reports')
+@ajax_blueprint.route('/ajax/fetch/reports')
 @only_admin_json
 def fetch_reports():
     """HTTP endpoint for benchmark AJAX fetches."""
@@ -284,7 +284,7 @@ def fetch_reports():
     return Response(response, mimetype='application/json', status=code)
 
 
-@ajax_blueprint.route('/fetch_notable_benchmark_keys')
+@ajax_blueprint.route('/ajax/fetch/notable_benchmark_keys')
 def fetch_notable_benchmark_keys():
     """HTTP endpoint for notable benchmark keys AJAX queries."""
     query_json = request.args.get('query_json')
@@ -293,7 +293,7 @@ def fetch_notable_benchmark_keys():
     return Response(response, mimetype='application/json', status=code)
 
 
-@ajax_blueprint.route('/update/flavor', methods=["POST"])
+@ajax_blueprint.route('/ajax/update/flavor', methods=["POST"])
 def update_flavor():
     handler = FlavorUpdateAJAX()
     response, code = handler.process(request.get_json())

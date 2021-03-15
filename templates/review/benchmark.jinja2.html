@@ -4,7 +4,7 @@
 
 {% block head %}
     {{ super() }}
-    <script src="static/js/review/benchmark.js"></script>
+    <script src="/static/js/review/benchmark.js"></script>
 {% endblock %}
 
 {% block pageContent %}
@@ -19,7 +19,7 @@
         <div id="docker_desc" class="jumbotron" style="overflow:scroll;height:60%">
             {{docker_desc|safe}}
         </div>
-        <form id="form" action="/benchmark_review_submit" method="POST">
+        <form id="form" action="/ajax/review/benchmark" method="POST">
             <input type="hidden" name="uuid" value="{{ uuid }}" />
             <input type="submit" class="btn btn-danger" name="remove" value="Remove benchmark" />
             <input type="submit" class="btn btn-success" name="approve" value="Approve benchmark" />

@@ -95,7 +95,7 @@ class SiteEditor {
     }
 
     _poll_sites() {
-        $.ajax('/fetch_sites').done(function (data) {
+        $.ajax('/ajax/fetch/sites').done(function (data) {
             site_editor._update_sites(data.results);
         });
     }
@@ -239,7 +239,7 @@ class SiteEditor {
         }
         $.ajax({
             type: "POST",
-            url: "/update/flavor",
+            url: "/ajax/update/flavor",
             data: JSON.stringify(update),
             contentType: "application/json",
             dataType: "json",

@@ -4,9 +4,9 @@
 
 {% block head %}
     {{ super() }}
-    <link rel="stylesheet" href="static/css/railscasts.css">
-    <script src="static/js/review/result.js"></script>
-    <script src="static/js/highlight.pack.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/railscasts.css">
+    <script src="/static/js/review/result.js"></script>
+    <script src="/static/js/highlight.pack.js"></script>
 {% endblock %}
 
 {% block pageContent %}
@@ -22,7 +22,7 @@
             Tags: {{tags}}<br/>
             JSON: <pre><code class="json rounded" style="overflow:scroll;max-height:60vh">{{ JSON }}</code></pre>
         </p>
-        <form id="form" action="/site_review_submit" method="POST">
+        <form id="form" action="/ajax/review/result" method="POST">
             <input type="hidden" name="uuid" value="{{ uuid }}" />
             <input type="submit" class="btn btn-danger" name="remove" value="Remove result" />
             <input type="submit" class="btn btn-success" name="approve" value="Approve result" />

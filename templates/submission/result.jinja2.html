@@ -4,14 +4,14 @@
 
 {% block head %}
     {{ super() }}
-    <script src="static/js/submission/result.js"></script>
+    <script src="/static/js/submission/result.js"></script>
 {% endblock %}
 
 {% block pageContent %}
     <div class="container">
         <input type="hidden" id="license" value="{{ license }}" />
         <h1>Upload Result</h1><br/>
-        <form action="/upload_submit" id="form" enctype="multipart/form-data" class="form-group" method="POST">
+        <form action="/ajax/submit/result" id="form" enctype="multipart/form-data" class="form-group" method="POST">
             <div class="card-columns upload-form">
                 <div class="card">
                     <div class="card-body">

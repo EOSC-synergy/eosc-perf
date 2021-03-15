@@ -41,7 +41,7 @@ class UploadJSONFactory(PageFactory):
 upload_json_blueprint = Blueprint('upload_json_blueprint', __name__)
 
 
-@upload_json_blueprint.route('/upload', methods=['GET'])
+@upload_json_blueprint.route('/submit/result', methods=['GET'])
 @only_authenticated
 def upload_result():
     """HTTP endpoint for the result upload page."""
@@ -54,7 +54,7 @@ def upload_result():
     return Response(page, mimetype='text/html')
 
 
-@upload_json_blueprint.route('/upload_submit', methods=['POST'])
+@upload_json_blueprint.route('/ajax/submit/result', methods=['POST'])
 @only_authenticated_json
 def upload_result_submit():
     """HTTP endpoint to take in results."""
@@ -153,7 +153,7 @@ def upload_result_submit():
     return Response('{}', mimetype='application/json', status=200)
 
 
-@upload_json_blueprint.route('/upload_tag', methods=['POST'])
+@upload_json_blueprint.route('/ajax/submit/tag', methods=['POST'])
 @only_authenticated_json
 def upload_tag():
     """HTTP endpoint to take in new tags."""

@@ -38,7 +38,7 @@ class SearchResultFactory(PageFactory):
 result_search_blueprint = Blueprint('result_search', __name__)
 
 
-@result_search_blueprint.route('/result_search')
+@result_search_blueprint.route('/search_results')
 def make_search_page():
     """Http endpoint for result search generation."""
     benchmark = request.args.get('benchmark')
@@ -55,7 +55,7 @@ def make_search_page():
     return Response(page, mimetype='text/html')
 
 
-@result_search_blueprint.route('/delete_result')
+@result_search_blueprint.route('/ajax/delete/result')
 def delete_result():
     """Http endpoint for result deletion ajax fetch."""
     if not controller.is_admin():

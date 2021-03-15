@@ -45,23 +45,23 @@ function _fill_report_item(item, data) {
 
     if (data.type === "result") {
         item.onclick = function() {
-            window.location.href = '/view_report?uuid=' + encodeURI(data.uuid);
+            window.location.href = '/review/result?uuid=' + encodeURI(data.uuid);
         }
     }
     else if (data.type === "site") {
         item.onclick = function() {
-            window.location.href = '/site_review?uuid=' + encodeURI(data.uuid);
+            window.location.href = '/review/site?uuid=' + encodeURI(data.uuid);
         }
     }
     else if (data.type === "benchmark") {
         item.onclick = function() {
-            window.location.href = '/benchmark_review?uuid=' + encodeURI(data.uuid);
+            window.location.href = '/review/benchmark?uuid=' + encodeURI(data.uuid);
         }
     }
 }
 
 window.addEventListener("load", function () {
-    $.ajax('/fetch_reports').done(function (data) {
+    $.ajax('/ajax/fetch/reports').done(function (data) {
         let list = document.getElementById("reportListGroup");
         if (data.reports.length === 0) {
             let warning = document.createElement("div");

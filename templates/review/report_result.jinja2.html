@@ -4,9 +4,9 @@
 
 {% block head %}
     {{ super() }}
-    <link rel="stylesheet" href="static/css/railscasts.css">
-    <script src="static/js/review/report_result.js"></script>
-    <script src="static/js/highlight.pack.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/railscasts.css">
+    <script src="/static/js/review/report_result.js"></script>
+    <script src="/static/js/highlight.pack.js"></script>
     <style>
         #message-box {
             width: 80%
@@ -22,7 +22,7 @@
             <pre><code class="json rounded" style="overflow:scroll;max-height:60vh">{{ page_content }}</code></pre>
         </div>
         <div class="card card-body">
-            <form id="form" action="/report_result_submit" method="POST">
+            <form id="form" action="/ajax/report/result" method="POST">
             <input type="hidden" name="uuid" value="{{ uuid }}" />
             <label for="message-box">Explanation:</label>
             <input type="text" id="message-box" class="form-control" name="message" value=""

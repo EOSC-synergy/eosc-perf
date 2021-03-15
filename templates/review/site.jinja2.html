@@ -4,7 +4,7 @@
 
 {% block head %}
     {{ super() }}
-    <script src="static/js/review/site.js"></script>
+    <script src="/static/js/review/site.js"></script>
 {% endblock %}
 
 {% block pageContent %}
@@ -19,7 +19,7 @@
         <br>
         Date: {{date}}
         </p>
-        <form id="form" action="/site_review_submit" method="POST">
+        <form id="form" action="/ajax/review/site" method="POST">
             <input type="hidden" name="uuid" value="{{ uuid }}" />
             <input type="submit" class="btn btn-danger" name="remove" value="Remove site" />
             <input type="submit" class="btn btn-success" name="approve" value="Approve site" />

@@ -1498,7 +1498,7 @@ class ResultSearch {
         document.getElementById('loading-icon').classList.add('loading');
 
         // Find get new results via ajax query.
-        $.ajax('/query_results?query_json=' + encodeURI(JSON.stringify(query)))
+        $.ajax('/ajax/query/results?query_json=' + encodeURI(JSON.stringify(query)))
             .fail(function (jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status === 401) {
                     // unauthorized query (uploader)
@@ -1594,7 +1594,7 @@ class ResultSearch {
      * @param result The result to report.
      */
     report_result(result) {
-        this.open_new_tab('./report_result' + '?uuid=' + result['uuid']);
+        this.open_new_tab('/report/result' + '?uuid=' + result['uuid']);
     }
 
     /**
@@ -1603,7 +1603,7 @@ class ResultSearch {
      * @returns {boolean} false (skip other event listener)
      */
     delete_result(result) {
-        $.ajax('/delete_result?uuid=' + encodeURI(result['uuid'])).done(function (data) {
+        $.ajax('/ajax/delete/result?uuid=' + encodeURI(result['uuid'])).done(function (data) {
             if (data.toLowerCase().includes("success")) {
                 search_page.table.mark_result_as_removed(result.uuid);
                 search_page.results = search_page.results.filter(function (r) {
@@ -1731,7 +1731,7 @@ class ResultSearch {
      * @param first_run True if this is on page load.
      */
     fetch_all_benchmarks(first_run = false) {
-        $.ajax('/fetch_benchmarks').done(function (data) {
+        $.ajax('/ajax/fetch/benchmarks').done(function (data) {
             let benchmarks = data.results;
             search_page.update_benchmark_list(benchmarks, first_run);
         });
@@ -1982,7 +1982,7 @@ class ResultSearch {
      * @private
      */
     _poll_notable_keys(benchmark_name) {
-        $.ajax('/fetch_notable_benchmark_keys?query_json=' + encodeURI(JSON.stringify({docker_name: benchmark_name}))).done(function (data) {
+        $.ajax('/ajax/fetch/notable_benchmark_keys?query_json=' + encodeURI(JSON.stringify({docker_name: benchmark_name}))).done(function (data) {
             search_page.set_notable_keys(data['notable_keys']);
         });
     }

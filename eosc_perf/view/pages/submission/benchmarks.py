@@ -23,7 +23,7 @@ class AddBenchmarkPageFactory(PageFactory):
 add_benchmark_blueprint = Blueprint('add-benchmark-factory', __name__)
 
 
-@add_benchmark_blueprint.route('/add_benchmark', methods=['GET'])
+@add_benchmark_blueprint.route('/submit/benchmark', methods=['GET'])
 @only_authenticated
 def add_benchmark():
     """HTTP endpoint for the benchmark submission page."""
@@ -33,7 +33,7 @@ def add_benchmark():
     return Response(page, mimetype='text/html')
 
 
-@add_benchmark_blueprint.route('/add_benchmark_submit', methods=['POST'])
+@add_benchmark_blueprint.route('/ajax/submit/benchmark', methods=['POST'])
 @only_authenticated_json
 def add_benchmark_submit():
     """HTTP endpoint to take in new benchmarks."""

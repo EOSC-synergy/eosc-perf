@@ -18,7 +18,7 @@ class PrivacyPolicyFactory(PageFactory):
 privacy_blueprint = Blueprint('privacy-policy-factory', __name__)
 
 
-@privacy_blueprint.route('/privacy')
+@privacy_blueprint.route('/privacy_policy')
 def privacy_page():
     """HTTP endpoint for the privacy policy page."""
     factory = PrivacyPolicyFactory()

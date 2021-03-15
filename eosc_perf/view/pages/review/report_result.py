@@ -62,7 +62,7 @@ class ResultReportPageFactory(PageFactory):
 result_report_blueprint = Blueprint('result-report-factory', __name__)
 
 
-@result_report_blueprint.route('/report_result', methods=['GET'])
+@result_report_blueprint.route('/report/result', methods=['GET'])
 @only_authenticated
 def report_result():
     """HTTP endpoint for the result report submission page."""
@@ -82,7 +82,7 @@ def report_result():
     return Response(page, mimetype='text/html')
 
 
-@result_report_blueprint.route('/report_result_submit', methods=['POST'])
+@result_report_blueprint.route('/ajax/report/result', methods=['POST'])
 @only_authenticated_json
 def report_result_submit():
     """HTTP endpoint to take in the reports."""
