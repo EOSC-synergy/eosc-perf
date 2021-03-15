@@ -35,24 +35,12 @@ class SearchAJAXHandler(AJAXHandler):
         Returns:
             JSON: A JSON response carrying the requested data.
         """
-        return self.find_results(query)
-
-    # TODO: why is this separate?
-    @abstractmethod
-    def find_results(self, query: Optional[JSON] = None) -> Tuple[JSON, Optional[int]]:
-        """Fetch search results corresponding to given query.
-
-        Args:
-            query (JSON): The metadata containing the query to fulfill.
-        Returns:
-            JSON: A JSON response carrying the requested data.
-        """
 
 
 class ResultSearchAJAX(SearchAJAXHandler):
     """AJAX handler for benchmark result searches with filters."""
 
-    def find_results(self, query: Optional[JSON] = None) -> Tuple[JSON, Optional[int]]:
+    def process(self, query: Optional[JSON] = None) -> Tuple[JSON, Optional[int]]:
         """Fetch benchmark results corresponding to given query."""
         admin = authenticator.is_admin()
         try:
@@ -105,7 +93,7 @@ def _pack_benchmarks(benchmarks: List[Benchmark]) -> JSON:
 class BenchmarkSearchAJAX(SearchAJAXHandler):
     """AJAX handler for benchmark searches with keywords."""
 
-    def find_results(self, query: Optional[JSON] = None) -> Tuple[JSON, Optional[int]]:
+    def process(self, query: Optional[JSON] = None) -> Tuple[JSON, Optional[int]]:
         """Fetch benchmarks corresponding to given query.
 
         Args:
@@ -113,7 +101,6 @@ class BenchmarkSearchAJAX(SearchAJAXHandler):
         Returns:
             JSON: JSON data containing data about all benchmarks whose docker name matches the keywords.
         """
-
         keywords = json.loads(query)['keywords'] if query is not None else []
         benchmarks = facade.query_benchmarks(keywords)
         return _pack_benchmarks(benchmarks), 200
