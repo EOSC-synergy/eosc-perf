@@ -216,7 +216,7 @@ class FlavorUpdateAJAX(AJAXHandler):
                 site_name = data["site"]
             except JSONDecodeError:
                 return '{"error": "Invalid form"}', 400
-            new_uuid = controller.submit_flavor(name=new_name, description=new_description, site_name=site_name)
+            new_uuid = controller.submit_flavor(name=new_name, description=new_description, site_identifier=site_name)
             if new_uuid is None:
                 return '{"error": "An error occurred while adding the flavor."}', 400
             return '{"uuid": "' + new_uuid + '"}', 200
