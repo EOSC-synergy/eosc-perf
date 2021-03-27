@@ -17,6 +17,9 @@ from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect, on
 class ResultReportPageFactory(PageFactory):
     """A factory to build information pages."""
 
+    def __init__(self):
+        super().__init__('review/report_result.jinja2.html')
+
     def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
         return "", {}
 
@@ -70,8 +73,6 @@ def report_result():
         return error_redirect('Result does not exist')
 
     page = factory.generate_page(
-        template='review/report_result.jinja2.html',
-        args=None,
         page_content=factory.generate_page_content(uuid),
         uuid=uuid)
     return Response(page, mimetype='text/html')
@@ -81,13 +82,12 @@ def report_result():
 @only_authenticated_json
 def report_result_submit():
     """HTTP endpoint to take in the reports."""
-    uuid = request.form['uuid'] if 'uuid' in request.form else None
-    message = request.form['message'] if 'message' in request.form else None
-
-    # validate input
-    if uuid is None:
+    try:
+        uuid = request.form.get('uuid')
+    except KeyError:
         return error_json_redirect('Incomplete report form submitted (missing UUID)')
 
+    message = request.form.get('message')
     if message is None:
         return error_json_redirect('Incomplete report form submitted (missing message)')
 

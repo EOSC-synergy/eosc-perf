@@ -5,9 +5,9 @@ from typing import Any, Tuple
 
 import jinja2 as jj
 
-from eosc_perf.utility.type_aliases import HTML, JSON
 from ..configuration import configuration
 from ..controller.io_controller import controller
+from ..utility.type_aliases import HTML, JSON
 
 
 class PageFactory:
@@ -20,28 +20,29 @@ class PageFactory:
 
     _environment: jj.Environment
 
-    def __init__(self):
-        """Set up a new PageFactory."""
+    def __init__(self, template: str):
+        """Set up a new PageFactory.
+
+        Args:
+            template (str): Path to the template to use.
+        """
         self._environment = jj.Environment(
             loader=jj.FileSystemLoader('templates/'),
             autoescape=jj.select_autoescape(['html', 'xml'])
         )
-        self._template = None
-        self._content = None
-        self._info = None
+        self._template = template
 
-    def generate_page(self, template: str, args: Any = None, **jinja_args) -> HTML:
+    def generate_page(self, args: Any = None, **jinja_args) -> HTML:
         """Generate a HTML page from the input parameters not using the
         template provided in the class.
 
         Args:
-            template (str): The filename of the template to use.
             args (JSON): Parameters used by some child classes to generate the right content.
             jinja_args (kwargs): Extra arguments for the jinja template.
         Returns:
             HTML: The finished HTML page displaying the content and information.
         """
-        template_content = self._environment.get_template(template)
+        template_content = self._environment.get_template(self._template)
         (content, extra_args) = self._generate_content(args)
         return template_content.render(
             content=content,

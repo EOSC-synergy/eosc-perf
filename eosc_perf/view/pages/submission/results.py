@@ -17,26 +17,28 @@ from eosc_perf.view.page_factory import PageFactory
 from eosc_perf.view.pages.helpers import only_authenticated_json, \
     only_authenticated, error_json_message
 
-UPLOAD_LICENSE_PATH: str = "upload_license.txt"
-
 
 class UploadJSONFactory(PageFactory):
     """A factory to build upload pages."""
 
-    def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
-        return "", {}
+    UPLOAD_LICENSE_PATH: str = "upload_license.txt"
 
-    @staticmethod
-    def get_license_string() -> str:
+    def __init__(self):
+        super().__init__('submission/result.jinja2.html')
+
+    def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
+        return "", {"license": self.get_license_string()}
+
+    def get_license_string(self) -> str:
         """Helper: Get result upload license as string.
 
         Returns:
             str: The license text.
         """
-        path = Path(Path.cwd(), UPLOAD_LICENSE_PATH)
+        path = Path(Path.cwd(), self.UPLOAD_LICENSE_PATH)
         with open(path, "r") as license_file:
             license_string = license_file.read()
-        return license_string
+        return license_string.replace('\n', '<br/>')
 
 
 upload_json_blueprint = Blueprint('upload_json_blueprint', __name__)
@@ -47,12 +49,7 @@ upload_json_blueprint = Blueprint('upload_json_blueprint', __name__)
 def upload_result():
     """HTTP endpoint for the result upload page."""
     factory = UploadJSONFactory()
-
-    page = factory.generate_page(
-        template='submission/result.jinja2.html',
-        args=None,
-        license=factory.get_license_string().replace('\n', '<br/>'))
-    return Response(page, mimetype='text/html')
+    return Response(factory.generate_page(args=None), mimetype='text/html')
 
 
 @upload_json_blueprint.route('/ajax/submit/result', methods=['POST'])
@@ -141,7 +138,6 @@ def upload_result_submit():
         except KeyError:
             return error_json_message("Missing site flavor")
 
-    print(benchmark_name)
     try:
         success = controller.submit_result(result_json, controller.get_user_id(), benchmark_name, site_id, flavor, tags)
     except (ValueError, TypeError) as error:

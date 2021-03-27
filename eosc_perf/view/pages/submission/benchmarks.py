@@ -14,6 +14,9 @@ from eosc_perf.view.pages.helpers import error_json_redirect, only_authenticated
 class AddBenchmarkPageFactory(PageFactory):
     """A factory to build benchmark submission pages."""
 
+    def __init__(self):
+        super().__init__('submission/benchmark.jinja2.html')
+
     def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
         return "", {}
 
@@ -26,9 +29,7 @@ add_benchmark_blueprint = Blueprint('add-benchmark-factory', __name__)
 def add_benchmark():
     """HTTP endpoint for the benchmark submission page."""
     factory = AddBenchmarkPageFactory()
-
-    page = factory.generate_page(template='submission/benchmark.jinja2.html')
-    return Response(page, mimetype='text/html')
+    return Response(factory.generate_page(), mimetype='text/html')
 
 
 @add_benchmark_blueprint.route('/ajax/submit/benchmark', methods=['POST'])

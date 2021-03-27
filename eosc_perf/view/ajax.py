@@ -80,23 +80,20 @@ class BenchmarkSearchAJAX(AJAXHandler):
         keywords = json.loads(query)['keywords'] if query is not None else []
         benchmarks = facade.query_benchmarks(keywords)
 
-        results_dict = {"results": []}
+        results = []
         for benchmark in benchmarks:
-            result_dict = {}
-            # do not display hidden benchmarks (= new ones)
-            if benchmark.get_hidden():
-                if not authenticator.is_admin():
-                    continue
-                result_dict["hidden"] = True
-            # decode and add to structure to avoid dealing with storing json within json
-            result_dict["docker_name"] = benchmark.get_docker_name()
-            if authenticator.is_admin():
-                result_dict["uploader"] = benchmark.get_uploader().get_email()
             description = benchmark.get_description()
-            result_dict["description"] = description if description is not None else "No description found."
-            results_dict["results"].append(result_dict)
+            if benchmark.get_hidden() and not authenticator.is_admin():
+                continue
+            result_dict = {
+                "hidden": benchmark.get_hidden(),
+                "docker_name": benchmark.get_docker_name(),
+                "uploader": benchmark.get_uploader().get_email() if authenticator.is_admin() else "",
+                "description": description if description is not None else "No description found."
+            }
+            results.append(result_dict)
 
-        return json.dumps(results_dict), 200
+        return json.dumps({"results": results}), 200
 
 
 class ReportFetchAJAXHandler(AJAXHandler):

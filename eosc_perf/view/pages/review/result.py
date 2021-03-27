@@ -1,4 +1,9 @@
-"""This module contains the factory to generate report review pages."""
+"""This module contains the factory to generate result report review pages.
+
+Exposed endpoints:
+    /review/result      - Result review page for administrators.
+    /ajax/review/result - AJAX endpoint for the verdict.
+"""
 
 import json
 from typing import Tuple, Any, Dict
@@ -11,11 +16,15 @@ from eosc_perf.model.data_types import Report, ResultReport
 from eosc_perf.model.facade import facade
 from eosc_perf.utility.type_aliases import HTML
 from eosc_perf.view.page_factory import PageFactory
-from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect, only_admin, only_admin_json
+from eosc_perf.view.pages.helpers import error_redirect, only_admin, only_admin_json
+from view.pages.review.helper import process_report_review
 
 
 class ViewReportPageFactory(PageFactory):
     """A factory to build result report view pages."""
+
+    def __init__(self):
+        super().__init__('review/result.jinja2.html')
 
     def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
         return "", {}
@@ -75,8 +84,6 @@ def view_report():
     json_data = json.dumps(json.loads(result.get_json()), indent=4)
 
     page = factory.generate_page(
-        template='review/result.jinja2.html',
-        args=None,
         reporter_name=reporter_name,
         reporter_mail=reporter_mail,
         report_message=message,
@@ -95,25 +102,4 @@ def view_report():
 @only_admin_json
 def view_report_submit():
     """HTTP endpoint to take in the reports."""
-    uuid = request.form['uuid']
-
-    # validate input
-    if uuid is None:
-        return error_json_redirect('Incomplete report form submitted (missing UUID)')
-    if 'action' not in request.form:
-        return error_json_redirect('Incomplete report form submitted (missing verdict)')
-
-    remove = None
-    if request.form['action'] == 'remove':
-        remove = True
-    elif request.form['action'] == 'approve':
-        remove = False
-
-    if remove is None:
-        return error_json_redirect('Incomplete report form submitted (empty verdict)')
-
-    # handle redirect in a special way because ajax
-    if not controller.process_report(not remove, uuid):
-        return error_json_redirect('Error while reviewing report')
-
-    return Response(json.dumps({}), mimetype='application/json', status=200)
+    return process_report_review(request)

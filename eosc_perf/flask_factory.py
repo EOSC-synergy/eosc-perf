@@ -10,14 +10,14 @@ from .model.sandbox import add_demo
 from .view.ajax import ajax_blueprint
 from .view.pages.authenticator import authenticator_blueprint
 from .view.pages.basic_pages import basic_pages
-from eosc_perf.view.pages.review.report_result import result_report_blueprint
-from eosc_perf.view.pages.review.benchmark import benchmark_review_blueprint
-from eosc_perf.view.pages.search.benchmarks import benchmark_search_blueprint
-from eosc_perf.view.pages.review.site import site_review_blueprint
-from eosc_perf.view.pages.review.result import view_report_blueprint
-from eosc_perf.view.pages.submission.benchmarks import add_benchmark_blueprint
-from eosc_perf.view.pages.submission.results import upload_json_blueprint
-from eosc_perf.view.pages.search.results import result_search_blueprint
+from .view.pages.review.report_result import result_report_blueprint
+from .view.pages.review.benchmark import benchmark_review_blueprint
+from .view.pages.search.benchmarks import benchmark_search_blueprint
+from .view.pages.review.site import site_review_blueprint
+from .view.pages.review.result import view_report_blueprint
+from .view.pages.submission.benchmarks import add_benchmark_blueprint
+from .view.pages.submission.results import upload_json_blueprint
+from .view.pages.search.results import result_search_blueprint
 from .view.pages.site_editor import site_editor_blueprint
 
 

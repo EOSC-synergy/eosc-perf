@@ -21,6 +21,9 @@ authenticator_blueprint = Blueprint('authenticator', __name__)
 class RedirectFactory(PageFactory):
     """A factory to build the page redirecting to a url in cache."""
 
+    def __init__(self):
+        super().__init__('redirect_return.jinja2.html')
+
     def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
         return args, {}
 
@@ -36,8 +39,7 @@ def authentication_redirect():
     """"OIDC-Authentication redirect through authenticator singleton."""
     if authenticator.is_authenticated():
         factory = RedirectFactory()
-        page = factory.generate_page(template='redirect_return.jinja2.html')
-        return Response(page, mimetype='text/html')
+        return Response(factory.generate_page(), mimetype='text/html')
 
     return error_redirect('Login failed')
 
@@ -47,5 +49,4 @@ def logout():
     """"Revoke current user's authentication."""
     authenticator.logout()
     factory = RedirectFactory()
-    page = factory.generate_page(template='redirect_return.jinja2.html')
-    return Response(page, mimetype='text/html')
+    return Response(factory.generate_page(), mimetype='text/html')
