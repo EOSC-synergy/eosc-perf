@@ -1,3 +1,11 @@
+"""This submodule contains endpoints for authentication redirections.
+
+Exposed endpoints:
+    /login         - Authorization redirect for login.
+    /oidc-redirect - Return endpoint after the identity provider authenticated the user.
+    /logout        - Endpoint to log out the user.
+"""
+
 from typing import Any, Dict, Tuple
 
 from flask import Blueprint, Response
@@ -16,10 +24,11 @@ class RedirectFactory(PageFactory):
     def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
         return args, {}
 
+
 @authenticator_blueprint.route('/login')
 def authenticate_user():
     """"Authenticates user through authenticator singleton."""
-    return authenticator.authenticate_user()
+    return authenticator.redirect_to_authentication()
 
 
 @authenticator_blueprint.route('/oidc-redirect')
@@ -36,9 +45,7 @@ def authentication_redirect():
 @authenticator_blueprint.route('/logout')
 def logout():
     """"Revoke current user's authentication."""
-    if authenticator.logout():
-        factory = RedirectFactory()
-        page = factory.generate_page(template='redirect_return.jinja2.html')
-        return Response(page, mimetype='text/html')
-    else:
-        return info_redirect('There is no authenticated user to log out.')
+    authenticator.logout()
+    factory = RedirectFactory()
+    page = factory.generate_page(template='redirect_return.jinja2.html')
+    return Response(page, mimetype='text/html')

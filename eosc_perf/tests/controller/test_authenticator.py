@@ -47,7 +47,7 @@ class AuthenticatorTests(unittest.TestCase):
 
     @unittest.skip("requires properly configured .env")
     def test_authentication_redirect(self):
-        authenticator.authenticate_user()
+        authenticator.redirect_to_authentication()
 
 
 if __name__ == '__main__':

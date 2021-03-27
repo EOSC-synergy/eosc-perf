@@ -1,4 +1,5 @@
-"""This module contains the factory classes generating the HTML pages."""
+"""This module contains the PageFactory base class used and extended by all other pages to generate the HTML pages.
+"""
 from abc import abstractmethod
 from typing import Any, Tuple
 
@@ -10,9 +11,11 @@ from ..controller.io_controller import controller
 
 
 class PageFactory:
-    """The PageFactory abstract class serves as a generator for pages.
+    """The PageFactory abstract class serves as a generator for pages. It fills in data used by the base template, which
+    every other page template expands upon. This includes the navigation panel at the top, and the footer at the bottom.
+
     Attributes:
-        _environment (jinja2.Environment): the environment to handle the combination of the final html file.
+        _environment (jinja2.Environment): The jinja environment used to load the jinja templates.
     """
 
     _environment: jj.Environment

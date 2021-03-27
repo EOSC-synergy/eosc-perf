@@ -1,4 +1,9 @@
-"""This module contains the factory to generate the result upload page."""
+"""This module exposes the factory to generate the result upload page.
+
+Exposed endpoints:
+    /submit/result      - Result submission page.
+    /ajax/submit/result - AJAX endpoint that takes in new result data.
+"""
 
 import json
 from pathlib import Path

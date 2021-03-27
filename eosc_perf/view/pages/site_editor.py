@@ -1,4 +1,9 @@
-"""This module contains the factory to generate site editing pages."""
+"""This module contains the factory to generate the site editor page available to administrators.
+
+Exposed endpoints:
+    /site_editor - HTML page for the user
+    /ajax/update/site - AJAX endpoint to update a given site
+"""
 from typing import Tuple, Dict, Any
 
 from flask import request, Response
@@ -24,8 +29,8 @@ site_editor_blueprint = Blueprint('edit-site-factory', __name__)
 
 @site_editor_blueprint.route('/site_editor', methods=['GET'])
 @only_admin
-def edit_site():
-    """HTTP endpoint for the benchmark submission page."""
+def site_editor():
+    """HTTP endpoint for the site editor."""
     factory = EditSitePageFactory()
     page = factory.generate_page(template='site_editor.jinja2.html')
     return Response(page, mimetype='text/html')
@@ -33,8 +38,15 @@ def edit_site():
 
 @site_editor_blueprint.route('/ajax/update/site', methods=['POST'])
 @only_admin_json
-def edit_site_submit():
-    """HTTP endpoint to take in the reports."""
+def ajax_update_site():
+    """HTTP endpoint to take in updated site information.
+
+    Required fields:
+        identifier  - Site identifier
+        description - Human-readable description text
+        full_name   - Human-readable full name
+        address     - Homepage/website of this given site
+    """
     site_name = request.form["identifier"]
     site = controller.get_site(site_name)
     if site is None:

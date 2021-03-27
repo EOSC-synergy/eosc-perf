@@ -7,3 +7,5 @@ requests-html~=0.10.0
 markdown2~=2.3.9
 aarc-g002-entitlement~=0.3.1
 python-dotenv~=0.15.0
+deprecated~=1.2.12
+Jinja2~=2.11.3

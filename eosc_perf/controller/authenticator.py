@@ -109,7 +109,7 @@ class Authenticator:
             secret=self.client_secret
         )
 
-    def authenticate_user(self):
+    def redirect_to_authentication(self):
         """Redirect user to EGI Check-In for authentication."""
         redirect_uri = 'https://' + self.hostname + '/oidc-redirect'
         return self.oauth.eosc_perf.authorize_redirect(redirect_uri)

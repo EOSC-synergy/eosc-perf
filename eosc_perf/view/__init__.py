@@ -1,1 +1,2 @@
-"""In this submodule are provided the classes implementing View functionality."""
+"""The subpackage containing all interfaces the outside world may interact with the application.
+"""
