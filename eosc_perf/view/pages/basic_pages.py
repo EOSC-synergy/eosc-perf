@@ -11,14 +11,13 @@ Provided endpoints:
 import json
 from typing import Tuple, Any, Dict
 
+from deprecated import deprecated
 from flask import request, Response
 from flask.blueprints import Blueprint
 
-from ..page_factory import PageFactory
 from eosc_perf.utility.type_aliases import HTML
-from deprecated import deprecated
-
 from .helpers import error_redirect, only_admin
+from ..page_factory import PageFactory
 
 
 class SimplePageFactory(PageFactory):

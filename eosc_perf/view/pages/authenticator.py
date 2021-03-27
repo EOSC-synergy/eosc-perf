@@ -13,7 +13,7 @@ from flask import Blueprint, Response
 from eosc_perf.controller.authenticator import authenticator
 from eosc_perf.utility.type_aliases import HTML
 from eosc_perf.view.page_factory import PageFactory
-from eosc_perf.view.pages.helpers import info_redirect, error_redirect
+from eosc_perf.view.pages.helpers import error_redirect
 
 authenticator_blueprint = Blueprint('authenticator', __name__)
 

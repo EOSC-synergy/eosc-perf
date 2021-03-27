@@ -1,5 +1,6 @@
 """"This module contains the ResultFilterer class used by the model to filter search results."""
 from typing import List
+
 from eosc_perf.model.data_types import Result, ResultIterator
 from eosc_perf.model.filters import Filter
 

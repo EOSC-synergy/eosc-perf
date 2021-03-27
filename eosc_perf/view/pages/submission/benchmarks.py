@@ -4,12 +4,10 @@ from typing import Tuple, Dict, Any
 from flask import request, Response
 from flask.blueprints import Blueprint
 
-from eosc_perf.view.page_factory import PageFactory
-from eosc_perf.utility.type_aliases import HTML
 from eosc_perf.controller.authenticator import AuthenticateError
-
 from eosc_perf.controller.io_controller import controller
-
+from eosc_perf.utility.type_aliases import HTML
+from eosc_perf.view.page_factory import PageFactory
 from eosc_perf.view.pages.helpers import error_json_redirect, only_authenticated, only_authenticated_json
 
 

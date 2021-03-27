@@ -1,7 +1,7 @@
 """This module provides the service of syntactical validation of JSON benchmark result strings."""
 
-import os
 import json
+import os
 from typing import Optional, Dict
 
 from eosc_perf.utility.type_aliases import JSON

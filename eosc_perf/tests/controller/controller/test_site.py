@@ -2,7 +2,6 @@ import json
 import unittest
 
 from eosc_perf.controller.authenticator import AuthenticateError
-from eosc_perf.model.facade import facade
 from .controller_test_base import IOControllerTestBase
 
 

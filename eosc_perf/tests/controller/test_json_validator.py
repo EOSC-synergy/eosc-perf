@@ -5,8 +5,8 @@ import unittest
 from json import JSONDecodeError
 from pathlib import Path
 
-from eosc_perf.controller.json_result_validator import JSONResultValidator
 from eosc_perf.configuration import configuration
+from eosc_perf.controller.json_result_validator import JSONResultValidator
 from eosc_perf.tests.utility import setup_test_config
 
 

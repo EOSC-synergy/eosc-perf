@@ -2,7 +2,9 @@
 function to set it up at program start.
 """
 import os.path
+
 from flask_sqlalchemy import SQLAlchemy
+
 from ..configuration import configuration
 
 db = SQLAlchemy()

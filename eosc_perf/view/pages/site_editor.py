@@ -9,12 +9,10 @@ from typing import Tuple, Dict, Any
 from flask import request, Response
 from flask.blueprints import Blueprint
 
-from ..page_factory import PageFactory
 from eosc_perf.utility.type_aliases import HTML
-
-from ...controller.io_controller import controller
-
 from .helpers import error_json_redirect, only_admin, only_admin_json
+from ..page_factory import PageFactory
+from ...controller.io_controller import controller
 
 
 class EditSitePageFactory(PageFactory):

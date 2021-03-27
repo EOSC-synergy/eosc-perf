@@ -4,13 +4,15 @@ users and everything else.
 
 from __future__ import annotations
 
-import json
-from typing import List, Optional, Dict
-import uuid
 import datetime
+import json
+import uuid
 from abc import abstractmethod
+from typing import List, Optional, Dict
+
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm.session import Session
+
 from .database import db
 from ..utility.type_aliases import JSON
 

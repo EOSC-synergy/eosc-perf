@@ -5,11 +5,12 @@ from os import urandom
 from time import time
 from typing import Optional
 from urllib.request import urlopen
+
 import requests
 from aarc_g002_entitlement import Aarc_g002_entitlement, Aarc_g002_entitlement_Error
-
-from flask import session
 from authlib.integrations.flask_client import OAuth
+from flask import session
+
 from ..configuration import configuration
 from ..model.facade import facade
 

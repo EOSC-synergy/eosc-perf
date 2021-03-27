@@ -5,11 +5,10 @@ from typing import Tuple, Any, Dict
 from flask import request, Response
 from flask.blueprints import Blueprint
 
-from eosc_perf.view.page_factory import PageFactory
-from eosc_perf.utility.type_aliases import HTML, JSON
 from eosc_perf.controller.io_controller import controller
 from eosc_perf.model.facade import facade
-
+from eosc_perf.utility.type_aliases import HTML, JSON
+from eosc_perf.view.page_factory import PageFactory
 from eosc_perf.view.pages.helpers import error_redirect
 
 

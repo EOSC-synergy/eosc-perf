@@ -1,6 +1,5 @@
 import unittest
 
-from eosc_perf.model.data_types import Uploader
 from eosc_perf.tests.model.data_types.datatype_test_base import DatatypeTestBase
 
 

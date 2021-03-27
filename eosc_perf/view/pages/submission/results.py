@@ -5,20 +5,16 @@ Exposed endpoints:
     /ajax/submit/result - AJAX endpoint that takes in new result data.
 """
 
-import json
 from pathlib import Path
 from typing import Tuple, Any, Dict
 
 from flask import request, Response
 from flask.blueprints import Blueprint
 
-from eosc_perf.model.facade import facade
-from eosc_perf.view.page_factory import PageFactory
-from eosc_perf.utility.type_aliases import HTML
-
 from eosc_perf.controller.io_controller import controller
-
-from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect, only_authenticated_json, \
+from eosc_perf.utility.type_aliases import HTML
+from eosc_perf.view.page_factory import PageFactory
+from eosc_perf.view.pages.helpers import only_authenticated_json, \
     only_authenticated, error_json_message
 
 UPLOAD_LICENSE_PATH: str = "upload_license.txt"

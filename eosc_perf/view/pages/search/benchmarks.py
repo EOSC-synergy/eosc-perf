@@ -4,8 +4,8 @@ from typing import Tuple, Dict, Any
 from flask import Response
 from flask.blueprints import Blueprint
 
-from eosc_perf.view.page_factory import PageFactory
 from eosc_perf.utility.type_aliases import HTML
+from eosc_perf.view.page_factory import PageFactory
 
 
 class BenchmarkSearchFactory(PageFactory):

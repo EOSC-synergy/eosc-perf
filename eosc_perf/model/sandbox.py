@@ -6,7 +6,7 @@ To add the sample data, use `add_demo()`.
 
 import json
 
-from .data_types import Uploader, Site, Benchmark, Result, SiteFlavor
+from .data_types import Uploader, Site, Benchmark, Result
 from .database import db
 from .facade import facade
 from ..controller.io_controller import controller

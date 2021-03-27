@@ -1,8 +1,8 @@
 """The filters module provides a few helper classes used to implement various result search filtering methods, such as
 filtering by benchmark names or user tags.
 """
-from abc import abstractmethod
 import json
+from abc import abstractmethod
 from functools import reduce
 from typing import Dict, Optional
 
