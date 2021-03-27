@@ -1,22 +1,24 @@
 """"The facade is the interface through which the rest of the application interacts with the model/database. It provides
 methods to create, find, and even remove some of the data.
 """
-from typing import List, Type, Optional, Tuple
 import json
+from typing import List, Type, Optional, Tuple
 
 from sqlalchemy import or_
 from sqlalchemy.exc import SQLAlchemyError
+
 from eosc_perf.model.data_types import Result, Tag, Benchmark, Uploader, Site, \
     ResultIterator, Report, ResultReport, BenchmarkReport, SiteReport, SiteFlavor
-from eosc_perf.model.result_filterer import ResultFilterer
-from eosc_perf.model.filters import BenchmarkFilter, UploaderFilter, SiteFilter, TagFilter,\
+from eosc_perf.model.filters import BenchmarkFilter, UploaderFilter, SiteFilter, TagFilter, \
     JsonValueFilter
+from eosc_perf.model.result_filterer import ResultFilterer
 from .database import db
 from ..utility.type_aliases import JSON
 
 
 class DatabaseFacade:
-    """Facade class that acts as a middleman between View/Controller and Model classes."""
+    """The DatabaseFacade class handles queries and submissions to the database for the rest of the application.
+    """
 
     class NotFoundError(RuntimeError):
         """Helper exception type to represent queries with no results."""

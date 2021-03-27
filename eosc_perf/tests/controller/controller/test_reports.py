@@ -131,14 +131,8 @@ class ControllerReportTests(IOControllerTestBase):
         data = self._add_test_data()
         with self.app.test_request_context():
             self._login_admin()
-            metadata = json.dumps({
-                'uploader': self.TEST_USER["sub"],
-                'benchmark': self.BENCHMARK_NAME,
-                'site': self.SITE_NAME,
-                'site_flavor': data['flavor_uuid'],
-                'tags': []
-            })
-            self.controller.submit_result(self._get_sample_result_data(), metadata)
+            self.controller.submit_result(self._get_sample_result_data(), self.TEST_USER["sub"], self.BENCHMARK_NAME,
+                                          self.SITE_NAME, data['flavor_uuid'], [])
             filters = {'filters': [
                 {
                     'type': 'uploader',

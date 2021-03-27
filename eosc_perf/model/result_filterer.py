@@ -1,11 +1,12 @@
 """"This module contains the ResultFilterer class used by the model to filter search results."""
 from typing import List
+
 from eosc_perf.model.data_types import Result, ResultIterator
 from eosc_perf.model.filters import Filter
 
 
 class ResultFilterer:
-    """Applies a list of filters to a set of results and returns the results that match all filters.
+    """The ResultFilterer applies a list of filters to a set of results and returns the results that match all filters.
     This makes use of the helper classes defined in model.filters.
     """
 

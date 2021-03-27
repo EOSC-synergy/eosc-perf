@@ -1,1 +1,2 @@
-"""This submodule contains upload and submission pages."""
+"""This subpackage exposes submission pages.
+"""

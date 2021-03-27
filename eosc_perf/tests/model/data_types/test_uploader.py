@@ -1,6 +1,5 @@
 import unittest
 
-from eosc_perf.model.data_types import Uploader
 from eosc_perf.tests.model.data_types.datatype_test_base import DatatypeTestBase
 
 
@@ -30,7 +29,7 @@ class UploaderTests(DatatypeTestBase):
     def test_uploader_get_results(self):
         """Test fetching results through uploader."""
         uploader = self._make_uploader()
-        result = self._make_result(uploader, )
+        #result = self._make_result(uploader, )
 
     def test_uploader_get_benchmarks(self):
         """Test fetching benchmarks through uploader."""

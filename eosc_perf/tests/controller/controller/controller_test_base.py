@@ -3,12 +3,12 @@ from time import time
 
 from flask import Flask, session
 
+from eosc_perf.configuration import configuration
 from eosc_perf.controller.authenticator import configure_authenticator
 from eosc_perf.controller.io_controller import controller
 from eosc_perf.model.database import configure_database
 from eosc_perf.model.facade import DatabaseFacade
 from eosc_perf.tests.utility import setup_test_config
-from eosc_perf.configuration import configuration
 
 
 class IOControllerTestBase(unittest.TestCase):

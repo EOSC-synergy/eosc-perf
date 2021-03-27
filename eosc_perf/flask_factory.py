@@ -1,4 +1,5 @@
-"""This exposes the flask app singleton and creation function."""
+"""This module exposes the function to create the Flask app object.
+"""
 
 from flask import Flask
 import sys
@@ -8,16 +9,15 @@ from .model.database import configure_database
 from .model.sandbox import add_demo
 from .view.ajax import ajax_blueprint
 from .view.pages.authenticator import authenticator_blueprint
-from .view.pages.information_page import info_blueprint
-from eosc_perf.view.pages.review.report_result import result_report_blueprint
-from eosc_perf.view.pages.review.benchmark import benchmark_review_blueprint
-from eosc_perf.view.pages.search.benchmarks import benchmark_search_blueprint
-from eosc_perf.view.pages.review.site import site_review_blueprint
-from eosc_perf.view.pages.review.result import view_report_blueprint
-from eosc_perf.view.pages.submission.benchmarks import add_benchmark_blueprint
-from eosc_perf.view.pages.submission.results import upload_json_blueprint
-from eosc_perf.view.pages.search.results import result_search_blueprint
-from eosc_perf.view.pages.privacy_policy import privacy_blueprint
+from .view.pages.basic_pages import basic_pages
+from .view.pages.review.report_result import result_report_blueprint
+from .view.pages.review.benchmark import benchmark_review_blueprint
+from .view.pages.search.benchmarks import benchmark_search_blueprint
+from .view.pages.review.site import site_review_blueprint
+from .view.pages.review.result import view_report_blueprint
+from .view.pages.submission.benchmarks import add_benchmark_blueprint
+from .view.pages.submission.results import upload_json_blueprint
+from .view.pages.search.results import result_search_blueprint
 from .view.pages.site_editor import site_editor_blueprint
 
 
@@ -50,7 +50,7 @@ def create_app(custom_configuration: dict = None):
         add_demo()
 
     flask_application.register_blueprint(ajax_blueprint)
-    flask_application.register_blueprint(info_blueprint)
+    flask_application.register_blueprint(basic_pages)
     flask_application.register_blueprint(result_report_blueprint)
     flask_application.register_blueprint(benchmark_review_blueprint)
     flask_application.register_blueprint(site_review_blueprint)
@@ -60,7 +60,6 @@ def create_app(custom_configuration: dict = None):
     flask_application.register_blueprint(authenticator_blueprint)
     flask_application.register_blueprint(upload_json_blueprint)
     flask_application.register_blueprint(result_search_blueprint)
-    flask_application.register_blueprint(privacy_blueprint)
     flask_application.register_blueprint(site_editor_blueprint)
 
     return flask_application

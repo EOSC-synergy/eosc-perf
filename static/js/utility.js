@@ -155,7 +155,7 @@ function submit_form_json(form, data, success, fail = on_fail_redirect_stub) {
 
 /**
  * Send JSON data to the server by AJAX.
- * @param form the HTML form with method='POST or GET' and action='/endpoint' attributes
+ * @param url the HTTP endpoint to call
  * @param data the data structure to send
  * @param success callback taking (data, textStatus)
  * @param fail callback taking (data) in case of errors

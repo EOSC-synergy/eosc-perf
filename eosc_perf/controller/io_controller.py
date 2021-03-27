@@ -7,11 +7,11 @@ from urllib.error import URLError
 
 from flask import session, redirect, Response
 
-from .json_result_validator import JSONResultValidator
-from .authenticator import authenticator, AuthenticateError
 from eosc_perf.utility.type_aliases import JSON
+from .authenticator import authenticator, AuthenticateError
+from .json_result_validator import JSONResultValidator
+from ..model.data_types import Report, SiteFlavor
 from ..model.facade import DatabaseFacade, facade
-from ..model.data_types import Site, Report, SiteFlavor
 from ..utility.dockerhub import decompose_dockername, build_dockerregistry_url, build_dockerregistry_tag_url
 
 
@@ -45,7 +45,9 @@ def _only_admin(function: Callable[..., Any]) -> Callable[..., Any]:
 
 
 class IOController:
-    """This class acts as a facade between view and model and validates user input.
+    """This class acts as a middleman between view and model for actions that require input validation or
+    authentication. This generally implies submitting new data or getting data exclusive to administrators.
+
     Attributes:
         _result_validator (JSONResultValidator): The validator for uploaded benchmark results.
     """
@@ -201,22 +203,6 @@ class IOController:
         """
         success, uuid = facade.add_flavor(name, description, site_identifier)
         return uuid if success else None
-
-    @staticmethod
-    def get_site(identifier: str) -> Optional[Site]:
-        """Get a single site by it's short name.
-
-        Args:
-           identifier (str): Short name of the site.
-        Returns:
-           Optional[Site]: The site with the given short name.
-                 None if no site with given name is found.
-        """
-        try:
-            site = facade.get_site(identifier)
-        except facade.NotFoundError:
-            site = None
-        return site
 
     @_only_admin
     def remove_site(self, identifier: str) -> bool:

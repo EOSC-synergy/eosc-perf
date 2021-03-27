@@ -1,22 +1,36 @@
-"""This module contains the classes responsible for AJAX queries."""
+"""This module contains the classes responsible for AJAX queries.
+
+ AJAX endpoints are provided to load data without having to reload the entire page. This module mostly contains endpoints
+ to GET data, such as searches/queries (with filters/keywords), fetches (all data). Endpoints used to update or submit
+ new data are generally defined in the respective page module that makes use of them.
+
+Exposed endpoints:
+- /ajax/query/results      - AJAX endpoint for result search queries.
+- /ajax/query/benchmarks   - AJAX endpoint for benchmark search queries.
+- /ajax/fetch/sites        - AJAX endpoint to fetch sites.
+- /ajax/fetch/tags         - AJAX endpoint to fetch tags.
+- /ajax/fetch/reports      - AJAX endpoint to fetch reports for administrators.
+- /ajax/fetch/notable_keys - AJAX endpoint to fetch JSON-paths for notable values in benchmark JSON data.
+- /ajax/update/flavor      - AJAX endpoint to update site flavor metadata.
+"""
 
 import json
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from json import JSONDecodeError
-from typing import List, Optional, Tuple
+from typing import Optional, Tuple
 
 from flask import request, Response
 from flask.blueprints import Blueprint
+from deprecated import deprecated
 
 from .pages.helpers import only_admin_json
 from ..controller.authenticator import authenticator
 from ..controller.io_controller import controller
 from eosc_perf.utility.type_aliases import JSON
-from ..model.data_types import Benchmark
 from ..model.facade import facade
 
 
-class AJAXHandler(ABC):
+class AJAXHandler:
     """Abstract class to represent any AJAX request endpoint."""
 
     @abstractmethod
@@ -24,21 +38,9 @@ class AJAXHandler(ABC):
         """Fetch data corresponding to given query."""
 
 
-class SearchAJAXHandler(AJAXHandler):
-    """Abstract class to represent a search AJAX request endpoint."""
-
-    def process(self, query: Optional[JSON] = None) -> Tuple[JSON, Optional[int]]:
-        """Fetch data corresponding to given query.
-
-        Args:
-            query (JSON): The metadata containing the query to fulfill.
-        Returns:
-            JSON: A JSON response carrying the requested data.
-        """
-
-
-class ResultSearchAJAX(SearchAJAXHandler):
-    """AJAX handler for benchmark result searches with filters."""
+class ResultSearchAJAX(AJAXHandler):
+    """AJAX handler for benchmark result searches with filters.
+    """
 
     def process(self, query: Optional[JSON] = None) -> Tuple[JSON, Optional[int]]:
         """Fetch benchmark results corresponding to given query."""
@@ -64,7 +66,7 @@ class ResultSearchAJAX(SearchAJAXHandler):
         return json.dumps(results_dict), 200
 
 
-class BenchmarkSearchAJAX(SearchAJAXHandler):
+class BenchmarkSearchAJAX(AJAXHandler):
     """AJAX handler for benchmark searches with keywords."""
 
     def process(self, query: Optional[JSON] = None) -> Tuple[JSON, Optional[int]]:
@@ -78,23 +80,20 @@ class BenchmarkSearchAJAX(SearchAJAXHandler):
         keywords = json.loads(query)['keywords'] if query is not None else []
         benchmarks = facade.query_benchmarks(keywords)
 
-        results_dict = {"results": []}
+        results = []
         for benchmark in benchmarks:
-            result_dict = {}
-            # do not display hidden benchmarks (= new ones)
-            if benchmark.get_hidden():
-                if not authenticator.is_admin():
-                    continue
-                result_dict["hidden"] = True
-            # decode and add to structure to avoid dealing with storing json within json
-            result_dict["docker_name"] = benchmark.get_docker_name()
-            if authenticator.is_admin():
-                result_dict["uploader"] = benchmark.get_uploader().get_email()
             description = benchmark.get_description()
-            result_dict["description"] = description if description is not None else "No description found."
-            results_dict["results"].append(result_dict)
+            if benchmark.get_hidden() and not authenticator.is_admin():
+                continue
+            result_dict = {
+                "hidden": benchmark.get_hidden(),
+                "docker_name": benchmark.get_docker_name(),
+                "uploader": benchmark.get_uploader().get_email() if authenticator.is_admin() else "",
+                "description": description if description is not None else "No description found."
+            }
+            results.append(result_dict)
 
-        return json.dumps(results_dict), 200
+        return json.dumps({"results": results}), 200
 
 
 class ReportFetchAJAXHandler(AJAXHandler):
@@ -197,6 +196,8 @@ class BenchmarkNotableKeysFetchAJAXHandler(AJAXHandler):
 
 
 class FlavorUpdateAJAX(AJAXHandler):
+    """AJAX handler to update site flavor metadata.
+    """
 
     def process(self, query: Optional[dict] = None) -> Tuple[JSON, Optional[int]]:
         if not controller.is_admin():
@@ -232,7 +233,11 @@ ajax_blueprint = Blueprint('ajax', __name__)
 
 @ajax_blueprint.route('/ajax/query/results')
 def query_results():
-    """HTTP endpoint for result AJAX queries."""
+    """HTTP endpoint for result AJAX queries.
+
+    JSON Args:
+        Refer to facade.query_results()
+    """
     query_json = request.args.get('query_json')
     if query_json is None:
         query_json = "{}"
@@ -243,7 +248,11 @@ def query_results():
 
 @ajax_blueprint.route('/ajax/query/benchmarks')
 def query_benchmarks():
-    """HTTP endpoint for benchmark AJAX queries."""
+    """HTTP endpoint for benchmark AJAX queries.
+
+    JSON Args:
+        keywords - Array of keywords.
+    """
     query = request.args.get('query')
     handler = BenchmarkSearchAJAX()
     response, code = handler.process(query)
@@ -252,7 +261,8 @@ def query_benchmarks():
 
 @ajax_blueprint.route('/ajax/fetch/sites')
 def fetch_sites():
-    """HTTP endpoint for site AJAX fetches."""
+    """HTTP endpoint for site AJAX fetches.
+    """
     handler = SiteFetchAJAXHandler()
     response, code = handler.process(None)
     return Response(response, mimetype='application/json', status=code)
@@ -267,9 +277,10 @@ def fetch_tags():
 
 
 @ajax_blueprint.route('/ajax/fetch/benchmarks')
+@deprecated(reason="Use /ajax/query/benchmarks")
 def fetch_benchmarks():
-    """HTTP endpoint for benchmark AJAX fetches."""
-    # equivalent to a query with no filters, reuse class
+    """HTTP endpoint for benchmark AJAX fetches.
+    """
     handler = BenchmarkSearchAJAX()
     response, code = handler.process()
     return Response(response, mimetype='application/json', status=code)
@@ -278,7 +289,8 @@ def fetch_benchmarks():
 @ajax_blueprint.route('/ajax/fetch/reports')
 @only_admin_json
 def fetch_reports():
-    """HTTP endpoint for benchmark AJAX fetches."""
+    """HTTP endpoint for benchmark AJAX fetches.
+    """
     handler = ReportFetchAJAXHandler()
     response, code = handler.process()
     return Response(response, mimetype='application/json', status=code)
@@ -286,7 +298,11 @@ def fetch_reports():
 
 @ajax_blueprint.route('/ajax/fetch/notable_benchmark_keys')
 def fetch_notable_benchmark_keys():
-    """HTTP endpoint for notable benchmark keys AJAX queries."""
+    """HTTP endpoint for notable benchmark keys AJAX queries.
+
+    JSON Args:
+        docker_name - Benchmark name.
+    """
     query_json = request.args.get('query_json')
     handler = BenchmarkNotableKeysFetchAJAXHandler()
     response, code = handler.process(query_json)
@@ -295,6 +311,13 @@ def fetch_notable_benchmark_keys():
 
 @ajax_blueprint.route('/ajax/update/flavor', methods=["POST"])
 def update_flavor():
+    """HTTP endpoint to update site flavor metadata.
+
+    JSON Args:
+        name         - New flavor name
+        description  - New flavor description
+        uuid         - The flavor's identifier
+    """
     handler = FlavorUpdateAJAX()
     response, code = handler.process(request.get_json())
     return Response(response, mimetype="application/json", status=code)

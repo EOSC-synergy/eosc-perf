@@ -1,26 +1,25 @@
-"""This module contains the factory to generate information pages."""
+"""This module contains the factory to generate information pages.
+"""
 
 import json
 from typing import Tuple, Any, Dict
 
-from flask import request, Response, redirect
+from flask import request, Response
 from flask.blueprints import Blueprint
 
-from eosc_perf.view.page_factory import PageFactory
-from eosc_perf.utility.type_aliases import HTML
-
-from eosc_perf.model.facade import facade
 from eosc_perf.controller.io_controller import controller
-from eosc_perf.configuration import configuration
-from eosc_perf.model.database import db
-from eosc_perf.model.data_types import ResultIterator
-
+from eosc_perf.model.facade import facade
+from eosc_perf.utility.type_aliases import HTML
+from eosc_perf.view.page_factory import PageFactory
 from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect, only_authenticated_json, \
     only_authenticated
 
 
 class ResultReportPageFactory(PageFactory):
     """A factory to build information pages."""
+
+    def __init__(self):
+        super().__init__('review/report_result.jinja2.html')
 
     def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
         return "", {}
@@ -75,8 +74,6 @@ def report_result():
         return error_redirect('Result does not exist')
 
     page = factory.generate_page(
-        template='review/report_result.jinja2.html',
-        args=None,
         page_content=factory.generate_page_content(uuid),
         uuid=uuid)
     return Response(page, mimetype='text/html')
@@ -85,16 +82,19 @@ def report_result():
 @result_report_blueprint.route('/ajax/report/result', methods=['POST'])
 @only_authenticated_json
 def report_result_submit():
-    """HTTP endpoint to take in the reports."""
-    uuid = request.form['uuid'] if 'uuid' in request.form else None
-    message = request.form['message'] if 'message' in request.form else None
+    """HTTP endpoint to take in the reports.
 
-    # validate input
+    JSON Args:
+        uuid    - UUID of result reported.
+        message - Report reason.
+    """
+    uuid = request.form.get('uuid')
     if uuid is None:
-        return error_json_redirect('Incomplete report form submitted (missing UUID)')
+        return error_json_redirect('Missing UUID')
 
+    message = request.form.get('message')
     if message is None:
-        return error_json_redirect('Incomplete report form submitted (missing message)')
+        return error_json_redirect('Missing report message')
 
     # parse input
     uid = controller.get_user_id()

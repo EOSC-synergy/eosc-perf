@@ -1,24 +1,28 @@
-"""This module contains the factory to generate information pages."""
+"""This module contains the factory to generate benchmark review pages.
+
+Exposed endpoints:
+ - /review/benchmark - Benchmark review page for administrators.
+ - /ajax/review/benchmark - AJAX endpoint for the verdict.
+"""
 
 import json
 import urllib.request
 from typing import Tuple, Dict, Any
+from urllib.error import URLError
 
-from flask import request, Response, redirect
-from flask.blueprints import Blueprint
 import markdown2
-from werkzeug.urls import url_encode
+from flask import request, Response
+from flask.blueprints import Blueprint
 
-from eosc_perf.view.page_factory import PageFactory
-from eosc_perf.utility.type_aliases import HTML
-
-from eosc_perf.model.facade import facade
-from eosc_perf.model.data_types import Report, BenchmarkReport
-from eosc_perf.controller.io_controller import controller
 from eosc_perf.controller.authenticator import AuthenticateError
-
-from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect, info_redirect, only_admin, only_admin_json
+from eosc_perf.controller.io_controller import controller
+from eosc_perf.model.data_types import Report, BenchmarkReport
+from eosc_perf.model.facade import facade
 from eosc_perf.utility.dockerhub import build_dockerhub_url, build_dockerregistry_url
+from eosc_perf.utility.type_aliases import HTML
+from eosc_perf.view.page_factory import PageFactory
+from eosc_perf.view.pages.helpers import error_redirect, only_admin, only_admin_json
+from eosc_perf.view.pages.review.helper import process_report_review
 
 
 def report_exists(uuid: str) -> bool:
@@ -36,6 +40,10 @@ def report_exists(uuid: str) -> bool:
 
 class BenchmarkReviewPageFactory(PageFactory):
     """A factory to build benchmark report view pages."""
+
+    def __init__(self):
+        super().__init__('review/benchmark.jinja2.html')
+
     def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
         return "", {}
 
@@ -58,7 +66,7 @@ def review_benchmark():
     try:
         report: BenchmarkReport = controller.get_report(uuid)
     except AuthenticateError:
-        return error_redirect('You are not authenticated')
+        return error_redirect('Could not find report')
 
     if report.get_report_type() != Report.BENCHMARK:
         return error_redirect('Benchmark review page opened with wrong report type')
@@ -80,12 +88,10 @@ def review_benchmark():
         dockerhub_desc = content['full_description']
         dockerhub_desc_formatted = markdown2.markdown(dockerhub_desc, extras=[
             "fenced-code-blocks", "tables", "break-on-newline", "cuddled-lists"])
-    except:
+    except (json.JSONDecodeError, URLError, KeyError):
         dockerhub_desc_formatted = "Could not load description"
 
     page = factory.generate_page(
-        template='review/benchmark.jinja2.html',
-        args=None,
         docker_name=docker_name,
         docker_link=dockerhub_link,
         docker_desc=dockerhub_desc_formatted,
@@ -100,26 +106,8 @@ def review_benchmark():
 @benchmark_review_blueprint.route('/ajax/review/benchmark', methods=['POST'])
 @only_admin_json
 def review_benchmark_submit():
-    """HTTP endpoint to take in the reports."""
-    uuid = request.form['uuid']
+    """HTTP endpoint to take in the reports.
 
-    # validate input
-    if uuid is None:
-        return error_json_redirect('Incomplete review form submitted (missing UUID)')
-    if 'action' not in request.form:
-        return error_json_redirect('Incomplete report form submitted (missing verdict)')
-
-    remove = None
-    if request.form['action'] == 'remove':
-        remove = True
-    elif request.form['action'] == 'approve':
-        remove = False
-
-    if remove is None:
-        return error_json_redirect('Incomplete report form submitted (empty verdict)')
-
-    # handle redirect in a special way because ajax
-    if not controller.process_report(not remove, uuid):
-        return error_json_redirect('Error while reviewing report')
-
-    return Response('{}', mimetype='application/json', status=200)
+    JSON Args: see helper.process_report_review()
+    """
+    return process_report_review(request)

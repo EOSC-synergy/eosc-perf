@@ -1,4 +1,5 @@
-"""Configuration structure for config files to the application."""
+"""This module provides the configuration loading system ConfigHandler.
+"""
 import json
 import os
 from json import JSONDecodeError
@@ -36,7 +37,11 @@ def _get_var(env_name: str, env_type: type = str) -> Optional[Any]:
 
 
 class ConfigHandler:
-    """Helper for config state."""
+    """ConfigHandler provides getters and setters for configuration values.
+
+    On application start, all configuration values are loaded from defaults.
+    To load environment variables from the environment, call reload().
+    """
 
     config: dict = {}
 
@@ -123,7 +128,11 @@ class ConfigHandler:
         self.config = self._load_config(False)
 
     def reload(self):
-        """Reset and reload values from file."""
+        """Reset and reload values from file.
+
+        This method is not run by default so that tests do not accidentally load paths to real data they could
+        overwrite, such as a sqlite database file.
+        """
         self.config = self._load_config(True)
 
 

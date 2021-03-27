@@ -1,12 +1,10 @@
-import os
 import unittest
 
+from dotenv import load_dotenv
 from flask import Flask
 
-from dotenv import load_dotenv
-
 from eosc_perf.configuration import configuration
-from eosc_perf.controller.authenticator import Authenticator, configure_authenticator, read_file_content, authenticator
+from eosc_perf.controller.authenticator import configure_authenticator, read_file_content, authenticator
 
 
 class AuthenticatorTests(unittest.TestCase):
@@ -47,7 +45,7 @@ class AuthenticatorTests(unittest.TestCase):
 
     @unittest.skip("requires properly configured .env")
     def test_authentication_redirect(self):
-        authenticator.authenticate_user()
+        authenticator.redirect_to_authentication()
 
 
 if __name__ == '__main__':
