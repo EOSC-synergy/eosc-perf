@@ -85,5 +85,8 @@ def review_site():
 @site_review_blueprint.route('/ajax/review/site', methods=['POST'])
 @only_admin_json
 def review_site_submit():
-    """HTTP endpoint to take in the reports."""
+    """HTTP endpoint to take in the reports.
+
+    JSON Args: see process_report_review()
+    """
     return process_report_review(request)

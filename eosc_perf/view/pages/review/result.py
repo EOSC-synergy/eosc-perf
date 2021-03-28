@@ -101,5 +101,8 @@ def view_report():
 @view_report_blueprint.route('/ajax/review/result', methods=['POST'])
 @only_admin_json
 def view_report_submit():
-    """HTTP endpoint to take in the reports."""
+    """HTTP endpoint to take in the reports.
+
+    JSON Args: see process_report_review()
+    """
     return process_report_review(request)

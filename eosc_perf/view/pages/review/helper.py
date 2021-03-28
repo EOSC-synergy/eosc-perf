@@ -9,15 +9,16 @@ def process_report_review(request):
 
     All reports are identified by an UUID, and processing them does not require referencing the reported object, so all
     reports can be processed similarly.
+
+    JSON Args:
+        uuid   - UUID of report to handle.
+        action - Verdict to apply to report.
     """
     uuid = request.form.get('uuid')
-
-    # validate input
     if uuid is None:
         return error_json_redirect('Incomplete report form submitted (missing UUID)')
 
     action = request.form.get('action')
-
     if action is None or action not in ['remove', 'approve']:
         return error_json_redirect('Incomplete report form submitted (invalid verdict)')
 

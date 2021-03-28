@@ -40,32 +40,25 @@ def site_editor():
 def ajax_update_site():
     """HTTP endpoint to take in updated site information.
 
-    Required fields:
+    JSON Args:
         identifier  - Site identifier
         description - Human-readable description text
         full_name   - Human-readable full name
         address     - Homepage/website of this given site
     """
-    site_name = request.form["identifier"]
-    try:
-        site = facade.get_site(site_name)
-    except facade.NotFoundError:
+    site_name = request.form.get("identifier")
+    site = facade.get_site(site_name)
+    if site is None:
         return error_json_redirect("Unknown site")
 
-    if "description" not in request.form:
-        return error_json_redirect("[Missing description field, file a bug]")
-    if "full_name" not in request.form:
-        return error_json_redirect("[Missing full_name field, file a bug]")
-    if "address" not in request.form:
-        return error_json_redirect("[Missing address field, file a bug]")
-
-    description = request.form["description"]
-    full_name = request.form["full_name"] if len(request.form["full_name"]) > 0 else site_name
-    address = request.form["address"]
-
-    # update fields from here
-    site.set_description(description)
-    site.set_name(full_name)
-    site.set_address(address)
+    description = request.form.get("description")
+    if description is not None:
+        site.set_description(description)
+    full_name = request.form.get("full_name", default=site_name)
+    if full_name is not None:
+        site.set_name(full_name)
+    address = request.form.get("address")
+    if address is not None:
+        site.set_address(address)
 
     return Response('{}', mimetype='application/json', status=200)

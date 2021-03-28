@@ -81,15 +81,19 @@ def report_result():
 @result_report_blueprint.route('/ajax/report/result', methods=['POST'])
 @only_authenticated_json
 def report_result_submit():
-    """HTTP endpoint to take in the reports."""
-    try:
-        uuid = request.form.get('uuid')
-    except KeyError:
-        return error_json_redirect('Incomplete report form submitted (missing UUID)')
+    """HTTP endpoint to take in the reports.
+
+    JSON Args:
+        uuid    - UUID of result reported.
+        message - Report reason.
+    """
+    uuid = request.form.get('uuid')
+    if uuid is None:
+        return error_json_redirect('Missing UUID')
 
     message = request.form.get('message')
     if message is None:
-        return error_json_redirect('Incomplete report form submitted (missing message)')
+        return error_json_redirect('Missing report message')
 
     # parse input
     uid = controller.get_user_id()

@@ -53,7 +53,11 @@ def make_search_page():
 
 @result_search_blueprint.route('/ajax/delete/result')
 def delete_result():
-    """Http endpoint for result deletion ajax fetch."""
+    """Http endpoint for result deletion ajax fetch.
+
+    JSON Args:
+        uuid - Result UUID
+    """
     if not controller.is_admin():
         return Response('You not authenticated for this action.', mimetype='text/html')
 

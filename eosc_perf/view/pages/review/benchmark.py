@@ -106,5 +106,8 @@ def review_benchmark():
 @benchmark_review_blueprint.route('/ajax/review/benchmark', methods=['POST'])
 @only_admin_json
 def review_benchmark_submit():
-    """HTTP endpoint to take in the reports."""
+    """HTTP endpoint to take in the reports.
+
+    JSON Args: see helper.process_report_review()
+    """
     return process_report_review(request)
