@@ -10,6 +10,7 @@ from flask import request, Response
 from flask.blueprints import Blueprint
 
 from eosc_perf.utility.type_aliases import HTML
+from model.facade import facade
 from .helpers import error_json_redirect, only_admin, only_admin_json
 from ..page_factory import PageFactory
 from ...controller.io_controller import controller
@@ -46,8 +47,9 @@ def ajax_update_site():
         address     - Homepage/website of this given site
     """
     site_name = request.form["identifier"]
-    site = controller.get_site(site_name)
-    if site is None:
+    try:
+        site = facade.get_site(site_name)
+    except facade.NotFoundError:
         return error_json_redirect("Unknown site")
 
     if "description" not in request.form:

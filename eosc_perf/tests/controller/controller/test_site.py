@@ -35,17 +35,6 @@ class ControllerSiteTests(IOControllerTestBase):
             self.controller.submit_site("name", address="127.0.0.1")
             self.assertFalse(self.controller.submit_site("name", address="127.0.0.2"))
 
-    def test_get_site_not_found(self):
-        with self.app.test_request_context():
-            self.assertIsNone(self.controller.get_site("name"))
-
-    def test_get_site(self):
-        self.facade.add_uploader(*self.UPLOADER_DATA)
-        with self.app.test_request_context():
-            self._login_standard_user()
-            self.controller.submit_site("name", "127.0.0.1")
-            self.assertEqual(self.controller.get_site("name").get_name(), "name")
-
     def test_remove_site_not_authenticated(self):
         with self.app.test_request_context():
             self.assertRaises(AuthenticateError, self.controller.remove_site, "name")

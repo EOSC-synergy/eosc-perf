@@ -16,6 +16,7 @@ from eosc_perf.utility.type_aliases import HTML
 from eosc_perf.view.page_factory import PageFactory
 from eosc_perf.view.pages.helpers import only_authenticated_json, \
     only_authenticated, error_json_message
+from model.facade import facade
 
 
 class UploadJSONFactory(PageFactory):
@@ -112,11 +113,15 @@ def upload_result_submit():
         if len(custom_site_name) == 0:
             return error_json_message("Custom site id empty")
 
-        site = controller.get_site(custom_site_name)
-        if site is None:
+        try:
+            site = facade.get_site(custom_site_name)
+        except facade.NotFoundError:
             if not controller.submit_site(custom_site_name, custom_site_address, description=custom_site_description):
                 return error_json_message('Failed to submit new site')
-            site = controller.get_site(custom_site_name)
+            try:
+                site = facade.get_site(custom_site_name)
+            except facade.NotFoundError:
+                return error_json_message("Site added, but failed to get it (report a bug!)")
             if len(custom_site_flavor) > 0:
                 # ignore response, if it fails, there's a flavor with the name we want, which is fine
                 controller.submit_flavor(custom_site_flavor, '', custom_site_name)

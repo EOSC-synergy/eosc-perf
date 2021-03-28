@@ -202,22 +202,6 @@ class IOController:
         success, uuid = facade.add_flavor(name, description, site_identifier)
         return uuid if success else None
 
-    @staticmethod
-    def get_site(identifier: str) -> Optional[Site]:
-        """Get a single site by it's short name.
-
-        Args:
-           identifier (str): Short name of the site.
-        Returns:
-           Optional[Site]: The site with the given short name.
-                 None if no site with given name is found.
-        """
-        try:
-            site = facade.get_site(identifier)
-        except facade.NotFoundError:
-            site = None
-        return site
-
     @_only_admin
     def remove_site(self, identifier: str) -> bool:
         """Remove a single site by it's short name.
