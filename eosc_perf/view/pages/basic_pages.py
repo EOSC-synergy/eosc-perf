@@ -47,7 +47,7 @@ def info_page():
 
 
 @basic_pages.route('/instructions')
-def privacy_page():
+def instructions():
     """This is the page that includes upload instructions on how to submit new benchmarks.
 
     TODO: is this page necessary, should the instructions be embedded into the benchmark upload page directly?

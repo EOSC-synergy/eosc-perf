@@ -14,7 +14,7 @@ from eosc_perf.controller.io_controller import controller
 from eosc_perf.model.facade import facade
 from eosc_perf.utility.type_aliases import HTML, JSON
 from eosc_perf.view.page_factory import PageFactory
-from eosc_perf.view.pages.helpers import error_redirect
+from eosc_perf.view.pages.helpers import error_redirect, only_admin_json, error_json_message
 
 
 class SearchResultFactory(PageFactory):
@@ -52,18 +52,18 @@ def make_search_page():
 
 
 @result_search_blueprint.route('/ajax/delete/result')
+@only_admin_json
 def delete_result():
     """Http endpoint for result deletion ajax fetch.
 
     JSON Args:
         uuid - Result UUID
     """
-    if not controller.is_admin():
-        return Response('You not authenticated for this action.', mimetype='text/html')
-
     uuid = request.args.get('uuid')
+    if uuid is None:
+        return error_json_message("Missing UUID")
 
     if not controller.remove_result(uuid=uuid):
-        return Response('Result search requires a valid Benchmark name', mimetype='text/html')
+        return error_json_message('Failed to remove result')
 
-    return Response("Successful removed result.", mimetype='text/html')
+    return Response("{}", mimetype='application/json')

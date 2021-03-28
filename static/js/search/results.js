@@ -1603,17 +1603,16 @@ class ResultSearch {
      * @returns {boolean} false (skip other event listener)
      */
     delete_result(result) {
-        $.ajax('/ajax/delete/result?uuid=' + encodeURI(result['uuid'])).done(function (data) {
-            if (data.toLowerCase().includes("success")) {
+        submit_json("/ajax/delete/result", {uuid: result['uuid']},
+            function(data, textStatus) {
                 search_page.table.mark_result_as_removed(result.uuid);
                 search_page.results = search_page.results.filter(function (r) {
                     return r.uuid !== result.uuid;
                 });
-            }
-            else {
-                alert("Could not remove result!");
-            }
-        });
+            },
+            function(data) {
+                display_message("Could not remove result!");
+            });
         return false;
     }
 
