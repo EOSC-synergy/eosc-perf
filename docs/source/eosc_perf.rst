@@ -1,6 +1,9 @@
 eosc\_perf package
 ==================
 
+.. image:: component-diagram.png
+  :width: 800
+
 Module contents
 ---------------
 
