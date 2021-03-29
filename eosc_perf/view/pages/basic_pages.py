@@ -27,8 +27,8 @@ class SimplePageFactory(PageFactory):
     def __init__(self, template):
         super().__init__(template)
 
-    def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
-        return "", args
+    def _generate_content(self, args: Any = "") -> Tuple[HTML, Dict]:
+        return args, {}
 
 
 basic_pages = Blueprint('simple-factory', __name__)
@@ -78,7 +78,7 @@ def code_guidelines():
     except OSError:
         info = "<Could not load template>"
     json_template = json.dumps(info, indent=4, sort_keys=True)
-    return Response(factory.generate_page(json_template), mimetype='text/html')
+    return Response(factory.generate_page(args=json_template), mimetype='text/html')
 
 
 @basic_pages.route('/error')
