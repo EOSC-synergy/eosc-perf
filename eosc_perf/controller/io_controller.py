@@ -10,7 +10,7 @@ from flask import session, redirect, Response
 from eosc_perf.utility.type_aliases import JSON
 from .authenticator import authenticator, AuthenticateError
 from .json_result_validator import JSONResultValidator
-from ..model.data_types import Site, Report, SiteFlavor
+from ..model.data_types import Report, SiteFlavor
 from ..model.facade import DatabaseFacade, facade
 from ..utility.dockerhub import decompose_dockername, build_dockerregistry_url, build_dockerregistry_tag_url
 

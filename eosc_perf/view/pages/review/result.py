@@ -17,7 +17,7 @@ from eosc_perf.model.facade import facade
 from eosc_perf.utility.type_aliases import HTML
 from eosc_perf.view.page_factory import PageFactory
 from eosc_perf.view.pages.helpers import error_redirect, only_admin, only_admin_json
-from view.pages.review.helper import process_report_review
+from eosc_perf.view.pages.review.helper import process_report_review
 
 
 class ViewReportPageFactory(PageFactory):

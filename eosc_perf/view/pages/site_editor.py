@@ -10,14 +10,16 @@ from flask import request, Response
 from flask.blueprints import Blueprint
 
 from eosc_perf.utility.type_aliases import HTML
-from model.facade import facade
+from eosc_perf.model.facade import facade
 from .helpers import error_json_redirect, only_admin, only_admin_json
 from ..page_factory import PageFactory
-from ...controller.io_controller import controller
 
 
 class EditSitePageFactory(PageFactory):
     """A factory to build site edit pages."""
+
+    def __init__(self):
+        super().__init__('site_editor.jinja2.html')
 
     def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
         return "", {}
@@ -31,7 +33,7 @@ site_editor_blueprint = Blueprint('edit-site-factory', __name__)
 def site_editor():
     """HTTP endpoint for the site editor."""
     factory = EditSitePageFactory()
-    page = factory.generate_page(template='site_editor.jinja2.html')
+    page = factory.generate_page()
     return Response(page, mimetype='text/html')
 
 

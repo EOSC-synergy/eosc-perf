@@ -1,7 +1,7 @@
 from flask import Response
 
-from controller.io_controller import controller
-from view.pages.helpers import error_json_redirect
+from eosc_perf.controller.io_controller import controller
+from eosc_perf.view.pages.helpers import error_json_redirect
 
 
 def process_report_review(request):

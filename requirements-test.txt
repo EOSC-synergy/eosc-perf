@@ -9,3 +9,4 @@ stestr~=1.0.0 # Apache-2.0
 
 pytest
 pytest-cov
+tox

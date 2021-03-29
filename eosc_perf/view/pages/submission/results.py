@@ -16,7 +16,7 @@ from eosc_perf.utility.type_aliases import HTML
 from eosc_perf.view.page_factory import PageFactory
 from eosc_perf.view.pages.helpers import only_authenticated_json, \
     only_authenticated, error_json_message
-from model.facade import facade
+from eosc_perf.model.facade import facade
 
 
 class UploadJSONFactory(PageFactory):
