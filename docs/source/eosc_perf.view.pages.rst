@@ -53,11 +53,3 @@ eosc\_perf.view.pages.site\_editor module
    :members:
    :undoc-members:
    :show-inheritance:
-
-eosc\_perf.view.pages.site\_editor module
------------------------------------------
-
-.. automodule:: eosc_perf.view.pages.site_editor
-   :members:
-   :undoc-members:
-   :show-inheritance:
