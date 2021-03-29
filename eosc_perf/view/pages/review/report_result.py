@@ -1,4 +1,5 @@
-"""This module contains the factory to generate information pages."""
+"""This module contains the factory to generate information pages.
+"""
 
 import json
 from typing import Tuple, Any, Dict

@@ -1,8 +1,8 @@
 """This module contains the factory to generate the site editor page available to administrators.
 
 Exposed endpoints:
-    /site_editor - HTML page for the user
-    /ajax/update/site - AJAX endpoint to update a given site
+- /site_editor - HTML page for the user
+- /ajax/update/site - AJAX endpoint to update a given site
 """
 from typing import Tuple, Dict, Any
 

@@ -1,4 +1,4 @@
-""""This module defines the abstracting model classes for internal data, like benchmark results, user-created tags,
+""""This module defines the abstracting model classes for application data, like benchmark results, user-created tags,
 users and everything else.
 """
 
@@ -299,6 +299,7 @@ class Benchmark(db.Model):
 
     def set_template(self, template: JSON):
         """Set a new JSON data template for this benchmark.
+
         Returns:
             template (JSON): The new JSON data template to use.
         """
@@ -307,6 +308,7 @@ class Benchmark(db.Model):
 
     def has_template(self) -> bool:
         """Check if this benchmark has a specific result template.
+
         Returns:
             bool: True if this benchmark has a unique template.
         """
@@ -314,6 +316,7 @@ class Benchmark(db.Model):
 
     def get_template(self) -> JSON:
         """Get the JSON data template for this benchmark.
+
         Returns:
             JSON: The template for this benchmark.
         """
@@ -321,6 +324,7 @@ class Benchmark(db.Model):
 
     def determine_notable_keys(self) -> List[str]:
         """Get a list containing all notable keys in the template.
+
         Returns:
             List[str]: All notable keys from this benchmarks template, [] if there is no template.
         """

@@ -1,5 +1,6 @@
 """This module contains the PageFactory base class used and extended by all other pages to generate the HTML pages.
 """
+
 from abc import abstractmethod
 from typing import Any, Tuple
 

@@ -1,8 +1,8 @@
 """This module contains the factory to generate result report review pages.
 
 Exposed endpoints:
-    /review/result      - Result review page for administrators.
-    /ajax/review/result - AJAX endpoint for the verdict.
+- /review/result      - Result review page for administrators.
+- /ajax/review/result - AJAX endpoint for the verdict.
 """
 
 import json

@@ -6,7 +6,7 @@ from eosc_perf.model.filters import Filter
 
 
 class ResultFilterer:
-    """Applies a list of filters to a set of results and returns the results that match all filters.
+    """The ResultFilterer applies a list of filters to a set of results and returns the results that match all filters.
     This makes use of the helper classes defined in model.filters.
     """
 

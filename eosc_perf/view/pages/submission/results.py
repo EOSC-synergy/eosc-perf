@@ -1,8 +1,8 @@
 """This module exposes the factory to generate the result upload page.
 
 Exposed endpoints:
-    /submit/result      - Result submission page.
-    /ajax/submit/result - AJAX endpoint that takes in new result data.
+- /submit/result      - Result submission page.
+- /ajax/submit/result - AJAX endpoint that takes in new result data.
 """
 
 from pathlib import Path

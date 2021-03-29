@@ -10,7 +10,8 @@ DEFAULT_TEMPLATE_PATH = 'config/result_template.json'
 
 
 class JSONResultValidator:
-    """Helper class to validate uploaded result json files."""
+    """Helper class to validate uploaded result json files using json templates.
+    """
 
     def __init__(self, template_path=DEFAULT_TEMPLATE_PATH):
         dirname = os.path.dirname(__file__)

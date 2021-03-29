@@ -45,7 +45,9 @@ def _only_admin(function: Callable[..., Any]) -> Callable[..., Any]:
 
 
 class IOController:
-    """This class acts as a facade between view and model and validates user input.
+    """This class acts as a middleman between view and model for actions that require input validation or
+    authentication. This generally implies submitting new data or getting data exclusive to administrators.
+
     Attributes:
         _result_validator (JSONResultValidator): The validator for uploaded benchmark results.
     """

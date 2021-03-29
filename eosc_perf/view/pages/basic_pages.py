@@ -1,13 +1,14 @@
 """This module contains the factory to generate information pages.
 
 Provided endpoints:
-    /info            - (deprecated) Simple info text page.
-    /instructions    - Benchmark upload instructions page.
-    /reports         - Page with reports viewer for administrators.
-    /code_guidelines - Guidelines and requirements for benchmark development page.
-    /error           - (deprecated) Simple error text page.
-    /privacy_policy  - Privacy policy page.
+- /info            - (deprecated) Simple info text page.
+- /instructions    - Benchmark upload instructions page.
+- /reports         - Page with reports viewer for administrators.
+- /code_guidelines - Guidelines and requirements for benchmark development page.
+- /error           - (deprecated) Simple error text page.
+- /privacy_policy  - Privacy policy page.
 """
+
 import json
 from typing import Tuple, Any, Dict
 

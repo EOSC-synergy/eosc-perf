@@ -1,8 +1,8 @@
 """This module contains the factory to generate site review pages.
 
 Exposed endpoints:
-    /review/site      - Site review page for administrators.
-    /ajax/review/site - AJAX endpoint for the verdict.
+- /review/site      - Site review page for administrators.
+- /ajax/review/site - AJAX endpoint for the verdict.
 """
 
 from typing import Tuple, Any, Dict

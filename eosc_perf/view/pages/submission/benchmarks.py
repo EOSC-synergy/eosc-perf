@@ -1,4 +1,6 @@
-"""This module contains the factory to generate benchmark submission pages."""
+"""This module contains the factory to generate benchmark submission pages.
+"""
+
 from typing import Tuple, Dict, Any
 
 from flask import request, Response

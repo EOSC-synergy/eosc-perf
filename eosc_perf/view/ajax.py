@@ -1,17 +1,17 @@
 """This module contains the classes responsible for AJAX queries.
 
-AJAX endpoints are provided to load data without having to reload the entire page. This module mostly contains endpoints
+ AJAX endpoints are provided to load data without having to reload the entire page. This module mostly contains endpoints
  to GET data, such as searches/queries (with filters/keywords), fetches (all data). Endpoints used to update or submit
  new data are generally defined in the respective page module that makes use of them.
 
 Exposed endpoints:
-    /ajax/query/results      - AJAX endpoint for result search queries.
-    /ajax/query/benchmarks   - AJAX endpoint for benchmark search queries.
-    /ajax/fetch/sites        - AJAX endpoint to fetch sites.
-    /ajax/fetch/tags         - AJAX endpoint to fetch tags.
-    /ajax/fetch/reports      - AJAX endpoint to fetch reports for administrators.
-    /ajax/fetch/notable_keys - AJAX endpoint to fetch JSON-paths for notable values in benchmark JSON data.
-    /ajax/update/flavor      - AJAX endpoint to update site flavor metadata.
+- /ajax/query/results      - AJAX endpoint for result search queries.
+- /ajax/query/benchmarks   - AJAX endpoint for benchmark search queries.
+- /ajax/fetch/sites        - AJAX endpoint to fetch sites.
+- /ajax/fetch/tags         - AJAX endpoint to fetch tags.
+- /ajax/fetch/reports      - AJAX endpoint to fetch reports for administrators.
+- /ajax/fetch/notable_keys - AJAX endpoint to fetch JSON-paths for notable values in benchmark JSON data.
+- /ajax/update/flavor      - AJAX endpoint to update site flavor metadata.
 """
 
 import json

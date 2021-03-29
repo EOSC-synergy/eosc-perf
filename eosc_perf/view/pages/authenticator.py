@@ -1,9 +1,9 @@
 """This submodule contains endpoints for authentication redirections.
 
 Exposed endpoints:
-    /login         - Authorization redirect for login.
-    /oidc-redirect - Return endpoint after the identity provider authenticated the user.
-    /logout        - Endpoint to log out the user.
+- /login         - Authorization redirect for login.
+- /oidc-redirect - Return endpoint after the identity provider authenticated the user.
+- /logout        - Endpoint to log out the user.
 """
 
 from typing import Any, Dict, Tuple

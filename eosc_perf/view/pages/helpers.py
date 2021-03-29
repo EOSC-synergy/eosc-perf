@@ -1,4 +1,6 @@
-"""Helpers for page factories."""
+"""Helpers for page factories.
+"""
+
 import json
 from typing import Callable, Any
 

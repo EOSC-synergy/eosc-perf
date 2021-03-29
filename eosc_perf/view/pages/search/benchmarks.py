@@ -1,7 +1,7 @@
 """This module contains the factory to generate pages used to search benchmarks.
 
 Exposed endpoints:
-    / - Benchmark search page. This acts as the home page.
+- / - Benchmark search page. This acts as the home page.
 """
 from typing import Tuple, Dict, Any
 

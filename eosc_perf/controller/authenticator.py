@@ -1,4 +1,5 @@
-"""This module acts as a facade between the IOController and the EGI Check-In authentication system."""
+"""This module exposes the Authenticator, which acts as an interface for the IOController to interact with the
+EGI Check-In authentication system."""
 
 import json
 from os import urandom
@@ -38,14 +39,14 @@ def read_file_content(filename: str) -> Optional[str]:
 
 
 class Authenticator:
-    """A facade between IOController and the EGI Check-In authentication system.
+    """A middle-man between IOController and the EGI Check-In authentication system.
 
     It integrates Open ID Connect into the web app.
 
     Attributes:
         oauth (OAuth): The used Flask OAuth registry for oauth clients.
         admin_entitlements (List[str]): If a user has one entitlement that is included in this list,
-            they have admin rights.
+        they have admin rights.
         hostname (str): The hostname used for redirection after authentication.
         client_secret (str): The oauth client secret.
         scope (str): The scope used for registering the oauth client.

@@ -20,6 +20,14 @@ eosc\_perf.view.pages.review.benchmark module
    :undoc-members:
    :show-inheritance:
 
+eosc\_perf.view.pages.review.helper module
+------------------------------------------
+
+.. automodule:: eosc_perf.view.pages.review.helper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 eosc\_perf.view.pages.review.report\_result module
 --------------------------------------------------
 

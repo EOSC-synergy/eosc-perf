@@ -17,7 +17,8 @@ from ..utility.type_aliases import JSON
 
 
 class DatabaseFacade:
-    """Facade class that acts as a middleman between View/Controller and Model classes."""
+    """The DatabaseFacade class handles queries and submissions to the database for the rest of the application.
+    """
 
     class NotFoundError(RuntimeError):
         """Helper exception type to represent queries with no results."""

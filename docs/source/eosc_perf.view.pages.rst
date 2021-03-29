@@ -30,6 +30,14 @@ eosc\_perf.view.pages.authenticator module
    :undoc-members:
    :show-inheritance:
 
+eosc\_perf.view.pages.basic\_pages module
+-----------------------------------------
+
+.. automodule:: eosc_perf.view.pages.basic_pages
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 eosc\_perf.view.pages.helpers module
 ------------------------------------
 
@@ -38,18 +46,10 @@ eosc\_perf.view.pages.helpers module
    :undoc-members:
    :show-inheritance:
 
-eosc\_perf.view.pages.information\_page module
-----------------------------------------------
+eosc\_perf.view.pages.site\_editor module
+-----------------------------------------
 
-.. automodule:: eosc_perf.view.pages.information_page
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-eosc\_perf.view.pages.privacy\_policy module
---------------------------------------------
-
-.. automodule:: eosc_perf.view.pages.privacy_policy
+.. automodule:: eosc_perf.view.pages.site_editor
    :members:
    :undoc-members:
    :show-inheritance:

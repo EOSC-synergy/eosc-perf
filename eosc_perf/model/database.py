@@ -1,5 +1,6 @@
 """This module declares the database object that internal components of the model will interact with, and exposes a
-function to set it up at program start.
+function to set it up at program start. Modules outside the model subpackage should not make use of the database object
+directly.
 """
 import os.path
 
