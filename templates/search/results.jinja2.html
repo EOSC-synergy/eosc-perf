@@ -19,8 +19,8 @@
     </style>
 {% endblock %}
 {% block content %}
-    admin = {{ admin }};
-    BENCHMARK_QUERY = {{ benchmark }};
+    let admin = {{ admin_bool }};
+    let BENCHMARK_QUERY = "{{ benchmark }}";
 {% endblock %}
 {% block pageContent %}
     <div class="container-fluid">

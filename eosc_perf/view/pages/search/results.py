@@ -31,7 +31,7 @@ class SearchResultFactory(PageFactory):
         Returns:
             HTML: JS variables for 'benchmark' and 'admin'.
         """
-        return "", {"benchmark": args["benchmark"], 'admin': controller.is_admin()}
+        return "", {"benchmark": args["benchmark"], "admin_bool": str(controller.is_admin()).lower()}
 
 
 result_search_blueprint = Blueprint('result_search', __name__)
@@ -46,12 +46,11 @@ def make_search_page():
             facade.get_benchmark(docker_name=benchmark)
         except facade.NotFoundError:
             return error_redirect('Result search requires a valid Benchmark name')
-    args = json.dumps({'benchmark': benchmark})
     factory = SearchResultFactory()
-    return Response(factory.generate_page(args=args), mimetype='text/html')
+    return Response(factory.generate_page(args={'benchmark': benchmark}), mimetype='text/html')
 
 
-@result_search_blueprint.route('/ajax/delete/result')
+@result_search_blueprint.route('/ajax/delete/result', methods=['POST'])
 @only_admin_json
 def delete_result():
     """Http endpoint for result deletion ajax fetch.
@@ -59,7 +58,7 @@ def delete_result():
     JSON Args:
         uuid - Result UUID
     """
-    uuid = request.args.get('uuid')
+    uuid = request.form.get('uuid')
     if uuid is None:
         return error_json_message("Missing UUID")
 
