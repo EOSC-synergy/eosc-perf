@@ -1,8 +1,8 @@
 """This module contains the factory to generate benchmark review pages.
 
 Exposed endpoints:
-- /review/benchmark      - Benchmark review page for administrators.
-- /ajax/review/benchmark - AJAX endpoint for the verdict.
+ - /review/benchmark - Benchmark review page for administrators.
+ - /ajax/review/benchmark - AJAX endpoint for the verdict.
 """
 
 import json

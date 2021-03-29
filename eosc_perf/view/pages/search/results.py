@@ -1,7 +1,7 @@
 """This module contains the factory to generate result search pages.
 
 Exposed endpoints:
-- /search_results - Result search page
+ - /search_results - Result search page
 """
 
 import json
