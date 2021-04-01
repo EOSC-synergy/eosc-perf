@@ -1111,10 +1111,8 @@ class SpeedupDiagram extends Diagram {
 
         this.properties = this._determineDataProperties();
 
-        if (this.properties.sameSite) {
-            document.getElementById("speedupDiagramMode").children.namedItem("speedupDiagramMode-linear").disabled = !this.properties.columnsAreNumbers;
-            document.getElementById("speedupDiagramMode").children.namedItem("speedupDiagramMode-log").disabled = !this.properties.columnsAreNumbers;
-        }
+        document.getElementById("speedupDiagramMode").children.namedItem("speedupDiagramMode-linear").disabled = !this.properties.columnsAreNumbers;
+        document.getElementById("speedupDiagramMode").children.namedItem("speedupDiagramMode-log").disabled = !this.properties.columnsAreNumbers;
 
         if (this.properties.columnsAreNumbers === false && (this.mode === "log" || this.mode === "linear")) {
             this.mode = "simple";
