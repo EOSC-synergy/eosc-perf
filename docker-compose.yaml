@@ -37,12 +37,12 @@ services:
       context: ./reverse_proxy
     depends_on:
       - frontend
-      - certbot
+      - certificate
     env_file: .env    
     volumes:
       - ./static:/var/www/web/
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot/
+      - ./certificate/conf:/etc/letsencrypt
+      - ./certificate/www:/var/www/certbot/
     secrets:
       - source: nginx_api_secret
         target: nginx_api_credentials
@@ -50,16 +50,16 @@ services:
       - "80:80"
       - "443:443"
 
-  certbot:
-    image: certbot
+  certificate:
+    container_name: certificate
     restart: unless-stopped
+    image: certificate
     build:
-      context: docker/certbot
-      dockerfile: Dockerfile
+      context: ./certificate
+    env_file: .env      
     volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    env_file: .env
+      - ./certificate/conf:/etc/letsencrypt
+      - ./certificate/www:/var/www/certbot
     secrets:
       - source: nginx_api_secret
         target: nginx_api_credentials
