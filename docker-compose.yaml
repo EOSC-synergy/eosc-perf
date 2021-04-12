@@ -11,14 +11,14 @@ services:
   frontend:
     container_name: frontend
     restart: unless-stopped
+    image: frontend    
     build:
       context: ./frontend
       # target: ${FRONTEND_ENV}
-    image: frontend
+    env_file: .env      
     volumes:
       - << : *sqlite-db-dir
         target: /app/data/
-    env_file: .env
     secrets:
       - source: oidc_secret
         target: oidc_client_secret
@@ -29,26 +29,26 @@ services:
         uid: 'uwsgi'
         mode: 0400
 
-  nginx:
-    image: nginx
-    restart: unless-stopped
+  reverse_proxy:
+    container_name: reverse_proxy
+    restart: unless-stopped    
+    image: reverse_proxy
     build:
-      context: docker/nginx
-      dockerfile: Dockerfile
+      context: ./reverse_proxy
     depends_on:
       - frontend
       - certbot
-    ports:
-      - "80:80"
-      - "443:443"
+    env_file: .env    
     volumes:
       - ./static:/var/www/web/
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot/
-    env_file: .env
     secrets:
       - source: nginx_api_secret
         target: nginx_api_credentials
+    ports:
+      - "80:80"
+      - "443:443"
 
   certbot:
     image: certbot
