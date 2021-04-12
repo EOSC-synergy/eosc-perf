@@ -1,0 +1,43 @@
+# Everything needed in production
+
+# Flask
+Flask==1.1.2
+Werkzeug==0.16.1
+click>=7.0
+
+# Database
+Flask-SQLAlchemy==2.5.1
+SQLAlchemy==1.4.1
+psycopg2-binary==2.8.6
+
+# Migrations
+Flask-Migrate==2.7.0
+
+# Schemas
+marshmallow>=3.10.)
+
+# REST GUI 
+apispec>=4.4.0
+flask_smorest>=0.29.0
+
+# Deployment
+gevent==21.1.2
+gunicorn>=19.9.0
+supervisor==4.2.2
+
+# Flask Static Digest
+Flask-Static-Digest==0.2.1
+
+# Auth
+Flask-Bcrypt==0.7.1
+Flaat>=0.12.1
+requests==2.24.0
+
+# Caching
+Flask-Caching>=1.7.2
+
+# Debug toolbar
+Flask-DebugToolbar==0.11.0
+
+# Environment variable parsing
+environs==9.3.1
