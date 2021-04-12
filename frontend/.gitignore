@@ -133,16 +133,7 @@ dmypy.json
 
 # IDE files
 .vscode/
-workspace.code-workspace
 .idea/
 
-# webapp files
-*.db
-*.db.*
+# Application files
 upload_license.txt
-nginx/certs/*
-/certbot/
-
-oidc_secret.txt
-cookie_secret.txt
-nginx_api_credentials.txt
