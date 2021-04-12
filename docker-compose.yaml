@@ -34,7 +34,7 @@ services:
     restart: unless-stopped    
     image: reverse_proxy
     build:
-      context: ./reverse_proxy
+      context: ./service_rproxy
     depends_on:
       - frontend
       - certificate
