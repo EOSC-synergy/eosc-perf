@@ -69,7 +69,7 @@ services:
     restart: unless-stopped
     image: database_backup
     build:
-      context: ./database_backup
+      context: ./service_backup
     volumes:
       - <<: *sqlite-db-dir
         target: /workdir/
