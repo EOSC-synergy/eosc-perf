@@ -7,7 +7,7 @@ from . import models, schemas
 from eosc_perf.authorization import login_required, admin_required
 
 blp = Blueprint(
-    'user', __name__, description='Operations on users'
+    'users', __name__, description='Operations on users'
 )
 
 
