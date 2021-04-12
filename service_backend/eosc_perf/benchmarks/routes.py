@@ -18,7 +18,7 @@ class Query(MethodView):
     @blp.response(200, schemas.Benchmark(many=True))
     def get(self, args):
         """List benchmarks"""
-        return models.Benchmark.get(filters=args)
+        return models.Benchmark.filter_by(**args)
 
 
 @blp.route('/submit')

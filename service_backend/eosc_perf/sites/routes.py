@@ -18,7 +18,7 @@ class Query(MethodView):
     @blp.response(200, schemas.Site(many=True))
     def get(self, args):
         """List sites."""
-        return models.Site.get(filters=args)
+        return models.Site.filter_by(**args)
 
 
 @blp.route('/update/<uuid:id>')

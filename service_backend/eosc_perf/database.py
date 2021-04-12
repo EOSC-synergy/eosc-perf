@@ -60,6 +60,6 @@ class PkModel(Model):
             abort(400)
 
     @classmethod
-    def get(cls, filters):
+    def filter_by(cls, **filters):
         """Get record by filtering."""
         return cls.query.filter_by(**filters)

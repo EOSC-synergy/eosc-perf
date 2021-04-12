@@ -43,4 +43,4 @@ class Query(MethodView):
     @blp.response(200, schemas.User(many=True))
     def get(self, args):
         """List users"""
-        return models.User.get(filters=args)
+        return models.User.filter_by(**args)
