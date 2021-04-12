@@ -64,12 +64,12 @@ services:
       - source: nginx_api_secret
         target: nginx_api_credentials
 
-  sqlite-backuper:
-    image: sqlite-backuper
-    build:
-      context: docker/sqlite-backuper
-      dockerfile: Dockerfile
+  database_backup:
+    container_name: database_backup
     restart: unless-stopped
+    image: database_backup
+    build:
+      context: ./database_backup
     volumes:
       - <<: *sqlite-db-dir
         target: /workdir/
