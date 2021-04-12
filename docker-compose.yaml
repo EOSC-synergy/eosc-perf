@@ -7,12 +7,14 @@ x-sqlite-db-dir:
 
 
 services:
-  flask:
-    image: flask
+
+  frontend:
+    container_name: frontend
     restart: unless-stopped
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ./frontend
+      # target: ${FRONTEND_ENV}
+    image: frontend
     volumes:
       - << : *sqlite-db-dir
         target: /app/data/
@@ -34,7 +36,7 @@ services:
       context: docker/nginx
       dockerfile: Dockerfile
     depends_on:
-      - flask
+      - frontend
       - certbot
     ports:
       - "80:80"
