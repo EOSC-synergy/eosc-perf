@@ -11,9 +11,9 @@ services:
   frontend:
     container_name: frontend
     restart: unless-stopped
-    image: frontend    
+    image: frontend 
     build:
-      context: ./frontend
+      context: ./service_frontend
       # target: ${FRONTEND_ENV}
     env_file: .env      
     volumes:
