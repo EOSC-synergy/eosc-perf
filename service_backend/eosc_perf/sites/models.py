@@ -5,8 +5,8 @@ from eosc_perf.database import PkModel, db
 
 flavor_association = db.Table(
     'site_flavor',
-    db.Column('site_id', db.String(40), db.ForeignKey('site.id'), primary_key=True),
-    db.Column('flavor_id', db.String(40), db.ForeignKey('flavor.id'), primary_key=True)
+    db.Column('site_id', db.UUID, db.ForeignKey('site.id'), primary_key=True),
+    db.Column('flavor_id', db.UUID, db.ForeignKey('flavor.id'), primary_key=True)
 )
 
 
@@ -26,7 +26,7 @@ class Site(PkModel):
         Returns:
             str: A human-readable representation string of the site.
         """
-        return '<{} {}>'.format(self.__class__.__name__, self.identifier)
+        return '<{} {}>'.format(self.__class__.__name__, self.name)
 
 
 class Flavor(PkModel):

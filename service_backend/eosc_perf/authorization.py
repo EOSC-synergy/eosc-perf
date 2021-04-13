@@ -32,8 +32,11 @@ flaat.set_client_secret(Configuration.EGI_CLIENT_SECRET)
 
 
 # Decorators collected from flaat
-group_required = flaat.group_required
-login_required = flaat.login_required
+def group_required(*args, **kwargs):
+    return flaat.group_required(*args, **kwargs)
+
+def login_required(*args, **kwargs):
+    return flaat.login_required(*args, **kwargs)
 
 def admin_required(**kwargs):
     """Decorator to define admin requirements"""

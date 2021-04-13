@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """User models."""
 from eosc_perf.database import PkModel, db
-from eosc_perf.users.models import Uploader
+from eosc_perf.users.models import User 
 
 
 class Benchmark(PkModel):
@@ -10,10 +10,10 @@ class Benchmark(PkModel):
     Benchmarks are tied down to a specific docker image version to avoid confusion and misleading comparisons in case
     the benchmark images change their metrics or scoring scale from version to version.
     """
-    docker_name = db.Column(db.Text(), nullable=False, primary_key=True)
+    docker_name = db.Column(db.Text(), unique=True, nullable=True)
     hidden = db.Column(db.Boolean, nullable=False, default=True)
-    uploader_id = db.Column(db.ForeignKey(Uploader.id))
-    uploader = db.relationship(Uploader)
+    uploader_id = db.Column(db.ForeignKey(User.id))
+    uploader = db.relationship(User)
     description = db.Column(db.Text, nullable=True)
     template = db.Column(db.Text, nullable=True)
 

@@ -2,13 +2,17 @@
 """Database module, including the SQLAlchemy database object and DB-related utilities."""
 import uuid
 
-from flask import abort
+import sqlalchemy_utils
 
 from eosc_perf.extensions import db
 
+# Extend db types
+db.UUID = sqlalchemy_utils.UUIDType
+
 
 class CRUDMixin(object):
-    """Mixin that adds convenience methods for CRUD (create, read, update, delete) operations."""
+    """Mixin that adds convenience methods for CRUD 
+    (create, read, update, delete) operations."""
 
     @classmethod
     def create(cls, **kwargs):
@@ -37,27 +41,23 @@ class CRUDMixin(object):
 
 class Model(CRUDMixin, db.Model):
     """Base model class that includes CRUD convenience methods."""
-
     __abstract__ = True
 
 
 class PkModel(Model):
-    """Base model class that includes CRUD convenience methods, plus adds a 'primary key' column named ``id``."""
-
+    """Base model class that includes CRUD convenience methods, 
+    plus adds a 'primary key' column named ``id``."""
     __abstract__ = True
-    id = db.Column(db.String(40), primary_key=True)
+    id = db.Column(db.UUID(binary=False), primary_key=True)
 
-    def __init__(cls, id=str(uuid.uuid4()), **kwargs):
+    def __init__(self, id=None, **kwargs):
         super().__init__(**kwargs)
-        cls.id = id
+        self.id = id if id else uuid.uuid4()
 
     @classmethod
-    def get_by_id(cls, record_id=None):
+    def get_by_id(cls, id):
         """Get record by ID."""
-        if record_id:
-            return cls.query.get_or_404(record_id)
-        else:
-            abort(400)
+        return cls.query.get_or_404(id)
 
     @classmethod
     def filter_by(cls, **filters):

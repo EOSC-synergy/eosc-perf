@@ -1,24 +1,27 @@
 # -*- coding: utf-8 -*-
 """User schemas."""
-import marshmallow as ma
+from marshmallow import Schema, fields
 from eosc_perf.users.schemas import Uploader
 
 
-class Benchmark(ma.Schema):
-    id = ma.fields.String()
-    docker_name = ma.fields.String()
-    hidden = ma.fields.Boolean()
-    uploader = ma.fields.Nested(Uploader)
-    description = ma.fields.String()
-    template = ma.fields.String()
+class Benchmark(Schema):
+    docker_name = fields.String()
+    hidden = fields.Boolean()
+    uploader = fields.Pluck(Uploader, 'email')
+    description = fields.String()
+    template = fields.String()
 
 
-class BenchmarksQueryArgs(ma.Schema):
-    docker_name = ma.fields.String()
-    hidden = ma.fields.Boolean()
-    description = ma.fields.String()
-    template = ma.fields.String()
+class BenchmarksCreateArgs(Schema):
+    docker_name = fields.String(required=True)
+    uploader_id = fields.UUID(required=True)
+    description = fields.String()
+    template = fields.String()
 
 
-class BenchmarksQueryId(ma.Schema):
-    record_id = ma.fields.String()
+class BenchmarksQueryArgs(Schema):
+    docker_name = fields.String()
+    hidden = fields.Boolean()
+    uploader_id = fields.UUID()
+    description = fields.String()
+    template = fields.String()
