@@ -24,7 +24,7 @@ class Site(MethodView):
     @blp.arguments(schemas.SitesCreateArgs)
     @blp.response(204)  # https://github.com/marshmallow-code/flask-smorest/issues/166
     def put(self, args, id):
-        """Updates (or creates) site."""
+        """Updates an existing site."""
         return models.Site.get_by_id(id).update(**args)
 
     # @admin_required()

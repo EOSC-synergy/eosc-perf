@@ -23,7 +23,7 @@ class User(MethodView):
     @blp.arguments(schemas.UsersCreateArgs)
     @blp.response(204)  # https://github.com/marshmallow-code/flask-smorest/issues/166
     def put(self, args, id):
-        """Updates (or creates) user."""
+        """Updates an existing user."""
         return models.User.get_by_id(id).update(**args)
 
     # @admin_required()

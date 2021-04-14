@@ -25,7 +25,7 @@ class Benchmark(MethodView):
     @blp.arguments(schemas.BenchmarksCreateArgs)
     @blp.response(204)  # https://github.com/marshmallow-code/flask-smorest/issues/166
     def put(self, args, id):
-        """Updates (or creates) benchmark."""
+        """Updates an existing benchmark."""
         return models.Benchmark.get_by_id(id).update(**args)
 
     # @admin_required()
