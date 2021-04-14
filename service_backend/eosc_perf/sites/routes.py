@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """Sites routes."""
-from operator import mod
 from flask.views import MethodView
-from flask_smorest import Blueprint, abort, blueprint
+from flask_smorest import Blueprint, abort
 
 from . import models, schemas
 from eosc_perf.authorization import login_required, admin_required
@@ -17,7 +16,7 @@ class Site(MethodView):
 
     @blp.response(200, schemas.Site)
     def get(self, id):
-        """Retrieves site details"""
+        """Retrieves site details."""
         return models.Site.get_by_id(id)
 
     # @admin_required()
@@ -30,7 +29,7 @@ class Site(MethodView):
     # @admin_required()
     @blp.response(204)
     def delete(self, id):
-        """Deletes an existing site"""
+        """Deletes an existing site."""
         return models.Site.get_by_id(id).delete()
 
 
@@ -41,7 +40,7 @@ class Submit(MethodView):
     @blp.arguments(schemas.SitesCreateArgs)
     @blp.response(201, schemas.Site)
     def post(self, args):
-        """Creates a new site"""
+        """Creates a new site."""
         return models.Site.create(**args)
 
 

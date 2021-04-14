@@ -18,7 +18,7 @@ class Benchmark(MethodView):
 
     @blp.response(200, schemas.Benchmark)
     def get(self, id):
-        """Retrieves benchmark details"""
+        """Retrieves benchmark details."""
         return models.Benchmark.get_by_id(id)
 
     # @admin_required()
@@ -31,7 +31,7 @@ class Benchmark(MethodView):
     # @admin_required()
     @blp.response(204)
     def delete(self, id):
-        """Deletes an existing benchmark"""
+        """Deletes an existing benchmark."""
         return models.Benchmark.get_by_id(id).delete()
 
 
@@ -42,7 +42,7 @@ class Submit(MethodView):
     @blp.arguments(schemas.BenchmarksCreateArgs)
     @blp.response(201, schemas.Benchmark)
     def post(self, args):
-        """Creates a new benchmark"""
+        """Creates a new benchmark."""
         return models.Benchmark.create(**args)
 
 
@@ -52,5 +52,5 @@ class Query(MethodView):
     @blp.arguments(schemas.BenchmarksQueryArgs, location='query')
     @blp.response(200, schemas.Benchmark(many=True))
     def get(self, args):
-        """Filters and list benchmarks"""
+        """Filters and list benchmarks."""
         return models.Benchmark.filter_by(**args)

@@ -16,7 +16,7 @@ class User(MethodView):
 
     @blp.response(200, schemas.User)
     def get(self, id):
-        """Retrieves user details"""
+        """Retrieves user details."""
         return models.User.get_by_id(id)
 
     # @admin_required()
@@ -29,7 +29,7 @@ class User(MethodView):
     # @admin_required()
     @blp.response(204)
     def delete(self, id):
-        """Deletes an existing user"""
+        """Deletes an existing user."""
         return models.User.get_by_id(id).delete()
 
 
@@ -40,7 +40,7 @@ class Submit(MethodView):
     @blp.arguments(schemas.UsersCreateArgs)
     @blp.response(201, schemas.User)
     def post(self, args):
-        """Creates a new user"""
+        """Creates a new user."""
         return models.User.create(**args)
 
 
@@ -50,7 +50,7 @@ class Query(MethodView):
     @blp.arguments(schemas.UsersQueryArgs, location='query')
     @blp.response(200, schemas.User(many=True))
     def get(self, args):
-        """Filters and list users"""
+        """Filters and list users."""
         return models.User.filter_by(**args)
 
 
@@ -60,5 +60,5 @@ class Admin(MethodView):
     @admin_required()
     @blp.response(204)
     def get(self):
-        """Returns 204 if you are admin """
+        """Returns 204 if you are admin."""
         return True

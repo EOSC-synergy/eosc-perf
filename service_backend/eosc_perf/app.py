@@ -5,7 +5,7 @@ import sys
 
 from flask import Flask, redirect
 
-from . import benchmarks, sites, users
+from . import benchmarks, flavors, sites, users
 from .extensions import api  # Api interface module
 from .extensions import bcrypt  # Encrypt passwords and others
 from .extensions import cache  # Caches responses
@@ -39,6 +39,7 @@ def register_extensions(app):
 def register_blueprints(app):
     """Register Flask blueprints."""
     api.register_blueprint(benchmarks.blueprint, url_prefix='/benchmarks')
+    api.register_blueprint(flavors.blueprint, url_prefix='/flavors')
     api.register_blueprint(sites.blueprint, url_prefix='/sites')
     api.register_blueprint(users.blueprint, url_prefix='/users')
 

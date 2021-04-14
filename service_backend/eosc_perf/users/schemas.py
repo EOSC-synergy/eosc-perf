@@ -4,6 +4,7 @@ from marshmallow import Schema, fields
 
 
 class User(Schema):
+    id = fields.UUID()
     email = fields.Email()
     created_at = fields.String()
 

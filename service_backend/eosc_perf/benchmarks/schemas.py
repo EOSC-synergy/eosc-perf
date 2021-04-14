@@ -5,6 +5,7 @@ from eosc_perf.users.schemas import Uploader
 
 
 class Benchmark(Schema):
+    id = fields.UUID()
     docker_name = fields.String()
     hidden = fields.Boolean()
     uploader = fields.Pluck(Uploader, 'email')
