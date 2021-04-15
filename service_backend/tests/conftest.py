@@ -4,12 +4,13 @@ See: https://pytest-flask.readthedocs.io/en/latest/features.html
 """
 import logging
 
-import pytest
 from eosc_perf.app import create_app
 from eosc_perf.database import db as _db
+from flask import url_for
+from pytest import fixture
 
 
-@pytest.fixture(scope="session")
+@fixture(scope="session")
 def app():
     """Create application for the tests."""
     app = create_app(config_object="eosc_perf.settings.TestingConfig")
@@ -17,7 +18,7 @@ def app():
     return app
 
 
-@pytest.fixture
+@fixture
 def db(app):
     """Create database for the tests."""
     _db.app = app
@@ -26,3 +27,35 @@ def db(app):
     # Explicitly close DB connection
     _db.session.close()
     _db.drop_all()
+
+
+# General parametrization for indirect marks
+@fixture
+def query(request):
+    raise NotImplementedError
+
+@fixture
+def path(request, query):
+    return url_for(request.param, **query)
+
+@fixture
+def body(request):
+    return request.param if hasattr(request, 'param') else None
+
+
+# Method response fixtures
+@fixture
+def response_GET(client, path, body):
+    return client.get(path=path, json=body)
+
+@fixture
+def response_POST(client, path, body):
+    return client.post(path=path, json=body)
+
+@fixture
+def response_PUT(client, path, body):
+    return client.put(path=path, json=body)
+
+@fixture
+def response_DELETE(client, path, body):
+    return client.delete(path=path, json=body)
