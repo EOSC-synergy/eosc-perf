@@ -61,18 +61,13 @@ class ProductionConfig(
     ENV = 'production'
 
 
-class DevelopmentConfig(
-    BaseConfig, DbConfig, CacheConfig, AuthConfig, ApiConfig
-):
+class DevelopmentConfig(ProductionConfig):
     """Uses development configuration server."""
     ENV = 'development'
 
 
-class TestingConfig(
-    BaseConfig, DbConfig, AuthConfig
-):
+class TestingConfig(DevelopmentConfig):
     """Configuration used for testing."""
-    ENV = 'development'
     TESTING = True
 
 
