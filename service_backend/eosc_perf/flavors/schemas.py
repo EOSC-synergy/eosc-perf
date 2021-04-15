@@ -12,8 +12,3 @@ class Flavor(Schema):
 class FlavorsCreateArgs(Schema):
     name = fields.String(required=True)
     custom_text = fields.String()
-
-
-class FlavorsQueryArgs(Schema):
-    name = fields.String()
-    custom_text = fields.String()
