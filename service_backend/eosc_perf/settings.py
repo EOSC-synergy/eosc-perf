@@ -69,6 +69,11 @@ class DevelopmentConfig(ProductionConfig):
 class TestingConfig(DevelopmentConfig):
     """Configuration used for testing."""
     TESTING = True
+    SQLALCHEMY_DATABASE_URI = "sqlite://"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SECRET_KEY = "not-so-secret-in-tests"
+    BCRYPT_LOG_ROUNDS = (4)  # For faster tests; 4 to avoid "Invalid rounds"
+    CACHE_TYPE = "simple"  # Can be "memcached", "redis", etc.
 
 
 FLASK_ENV = env.str("FLASK_ENV", default="production")
