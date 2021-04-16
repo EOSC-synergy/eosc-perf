@@ -16,6 +16,8 @@ Flask-Migrate==2.7.0
 
 # Schemas
 marshmallow>=3.10.0
+marshmallow-sqlalchemy>=0.24.2
+flask-marshmallow>=0.14.0
 
 # REST GUI 
 apispec>=4.4.0
