@@ -19,6 +19,7 @@ def app():
 
 
 @fixture
+# @fixture(scope='session')
 def db(app):
     """Create database for the tests."""
     _db.app = app
