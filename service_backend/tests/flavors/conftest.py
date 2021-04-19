@@ -37,6 +37,4 @@ def body(request, name, custom_text):
 
 @fixture
 def flavor(db):
-    flavor = FlavorFactory()
-    db.session.commit()
-    return flavor
+    return FlavorFactory()

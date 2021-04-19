@@ -36,10 +36,7 @@ class SiteFactory(BaseFactory):
     address = Sequence(lambda n: f"address{n}")
     description = Sequence(lambda n: f"Desc {n}")
     hidden = True
-
-    @post_generation
-    def flavors(obj, create, extracted, **kwargs):
-        return extracted or [UserFactory(name=x) for x in obj.flavors]
+    flavors = []
 
 
 class UserFactory(BaseFactory):

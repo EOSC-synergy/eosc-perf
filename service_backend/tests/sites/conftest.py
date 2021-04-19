@@ -19,15 +19,17 @@ def address(request):
 @fixture
 def flavors(request, db):
     if hasattr(request, 'param'):
-        flavors = [FlavorFactory(name=name) for name in request.param]
-        db.session.commit()
-        return flavors
+        return [FlavorFactory(name=name) for name in request.param]
     else:
-        return []
+        return [FlavorFactory(name=name) for name in ["f1", "f2", "f3"]]
 
 @fixture
 def flavor_ids(flavors):
     return [flavor.id for flavor in flavors]
+
+@fixture
+def site(db, flavors):
+    return SiteFactory(flavors=flavors)
 
 
 @fixture
@@ -48,11 +50,5 @@ def body(request, name, address, flavor_ids):
         if address:
             body['address'] = address
         if flavor_ids != []:
-            body['flavor_ids'] = flavor_ids
+            body['flavors'] = flavor_ids
         return body
-
-@fixture
-def site(db):
-    site = SiteFactory(flavors=["f1", "f2", "f3"])
-    db.session.commit()
-    return site
