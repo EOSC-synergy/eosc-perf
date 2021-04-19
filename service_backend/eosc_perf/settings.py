@@ -12,9 +12,17 @@ class BaseConfig(object):
     """Base config, with default values."""
     SECRET_KEY = env.str("SECRET_KEY")
 
+
 class DbConfig(object):
     """Database configuration."""
-    SQLALCHEMY_DATABASE_URI = env.str("DATABASE_URL")
+    DB_ENGINE = env.str("DB_ENGINE")
+    DB_USER = env.str("DB_USER")
+    DB_PASSWORD = env.str("DB_PASSWORD")
+    DB_HOST = env.str("DB_HOST")
+    DB_PORT = env.str("DB_PORT")
+    DB_NAME = env.str("DB_NAME")
+    DB_CONNECTION = f'{DB_ENGINE}://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}'
+    SQLALCHEMY_DATABASE_URI = f'{DB_CONNECTION}/{DB_NAME}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class BCryptConfig(object):
@@ -69,7 +77,7 @@ class DevelopmentConfig(ProductionConfig):
 class TestingConfig(DevelopmentConfig):
     """Configuration used for testing."""
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = "sqlite://"
+    SQLALCHEMY_DATABASE_URI = f'{DbConfig.DB_CONNECTION}/tests'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = "not-so-secret-in-tests"
     BCRYPT_LOG_ROUNDS = (4)  # For faster tests; 4 to avoid "Invalid rounds"
