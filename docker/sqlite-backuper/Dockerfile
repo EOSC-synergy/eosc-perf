@@ -2,7 +2,7 @@ FROM alpine:3.13.1
 
 
 COPY /backup.sh /
-RUN mkdir /workdir && chmod +x /backup.sh && apk add --no-cache bash
+RUN mkdir /workdir && mkdir /db-backup && chmod +x /backup.sh && apk add --no-cache bash
 
 # copy crontabs for root user
 COPY cronjobs /etc/crontabs/root

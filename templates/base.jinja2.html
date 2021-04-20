@@ -9,6 +9,25 @@
     <script src="/static/js/popper.min.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/utility.js"></script>
+    <!-- Cookie Consent -->
+    <link rel="stylesheet" type="text/css" href="/static/css/cookieconsent.min.css" />
+    <script src="/static/js/cookieconsent.min.js"></script>
+    <script>
+    window.addEventListener("load", function(){
+        window.cookieconsent.initialise({
+          "palette": {
+            "popup": {
+              "background": "#050101"
+            },
+            "button": {
+              "background": "#337ab7"
+            }
+          },
+          "theme": "classic",
+          "position": "bottom"
+        })
+    });
+    </script>
     <title>{% block title %}{% endblock %}</title>
     <script>
         {# this must come before the rest of head, due to dependency order #}
@@ -126,10 +145,16 @@
         {% block pageContent %}
         {% endblock %}
     </main>
-    <footer class="footer mt-auto py-3">
-        <div class="container">
-            <a href="/privacy_policy" class="text-muted">Privacy Policy</a>&nbsp;
-            <a href="mailto:{{ support_email }}" class="text-muted">Email Support</a>
+    <footer class="footer mt-auto py-0">
+        <div class="container text-center text-md-center">
+           <ul class="list-unstyled list-inline my-0">
+             <li class="list-inline-item mx-5">
+               <a href="/privacy_policy" class="text-muted">Privacy Policy</a>
+             </li>
+             <li class="list-inline-item mx-5">  
+               <a href="mailto:{{ support_email }}" class="text-muted">Email Support</a>
+             </li>
+           </ul>
         </div>
     </footer>
 </body>

@@ -3,7 +3,7 @@ version: '3.5'
 x-sqlite-db-dir:
   &sqlite-db-dir
   type: bind
-  source: ./data/
+  source: /mnt/perf-storage/
 
 
 services:
@@ -71,6 +71,7 @@ services:
     volumes:
       - <<: *sqlite-db-dir
         target: /workdir/
+      - /mnt/perf-storage/db-backup:/db-backup/
 
 secrets:
   oidc_secret:
