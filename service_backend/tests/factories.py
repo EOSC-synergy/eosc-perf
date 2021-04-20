@@ -1,35 +1,35 @@
 # -*- coding: utf-8 -*-
 """Factories to help in tests."""
 from attr import __description__
-from factory import post_generation, Sequence
-from factory.alchemy import SQLAlchemyModelFactory
-
 from eosc_perf.database import db
 from eosc_perf.flavors.models import Flavor
 from eosc_perf.sites.models import Site
 from eosc_perf.users.models import User
+from factory import Sequence, post_generation
+from factory.alchemy import SQLAlchemyModelFactory
+
+from . import conftest
 
 
-class BaseFactory(SQLAlchemyModelFactory):
-    """Base factory."""
-    class Meta:
-        """Factory configuration."""
-        abstract = True
-        sqlalchemy_session = db.session
+class BaseMeta:
+    """Factory configuration."""
+    # Use the not-so-global scoped_session
+    # Warning: DO NOT USE common.Session()!
+    sqlalchemy_session = conftest.Session
 
 
-class FlavorFactory(BaseFactory):
+class FlavorFactory(SQLAlchemyModelFactory):
     """Flavor factory."""
-    class Meta:
+    class Meta(BaseMeta):
         model = Flavor
 
     name = Sequence(lambda n: f"flavor{n}")
     custom_text = Sequence(lambda n: f"Text {n}")
 
 
-class SiteFactory(BaseFactory):
+class SiteFactory(SQLAlchemyModelFactory):
     """Site factory."""
-    class Meta:
+    class Meta(BaseMeta):
         model = Site
 
     name = Sequence(lambda n: f"site{n}")
@@ -39,9 +39,9 @@ class SiteFactory(BaseFactory):
     flavors = []
 
 
-class UserFactory(BaseFactory):
+class UserFactory(SQLAlchemyModelFactory):
     """User factory."""
-    class Meta:
+    class Meta(BaseMeta):
         model = User
 
     username = Sequence(lambda n: f"user{n}")

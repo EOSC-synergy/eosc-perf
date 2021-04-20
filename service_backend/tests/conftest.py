@@ -4,30 +4,56 @@ See: https://pytest-flask.readthedocs.io/en/latest/features.html
 """
 import logging
 
+from eosc_perf import database
 from eosc_perf.app import create_app
-from eosc_perf.database import db as _db
 from flask import url_for
 from pytest import fixture
+from pytest_postgresql.factories import DatabaseJanitor
+from sqlalchemy import orm
+
+TEST_DB = 'test_database'
+VERSION = 12.2  # postgresql version number
+Session = orm.scoped_session(orm.sessionmaker())
+
+@fixture(scope='session')
+def connection(postgresql_proc):
+    """Create a temp Postgres database for the tests."""
+    USER = postgresql_proc.user
+    HOST = postgresql_proc.host
+    PORT = postgresql_proc.port
+    with DatabaseJanitor(USER, HOST, PORT, TEST_DB, VERSION):
+        yield f'postgresql://{USER}:@{HOST}:{PORT}/{TEST_DB}'
 
 
 @fixture(scope="session")
-def app():
+def app(connection):
     """Create application for the tests."""
-    app = create_app(config_object="eosc_perf.settings.TestingConfig")
+    app = create_app(
+        config_base="eosc_perf.settings.TestingConfig",
+        SQLALCHEMY_DATABASE_URI=connection)
     app.logger.setLevel(logging.CRITICAL)
     return app
 
 
-@fixture
-# @fixture(scope='session')
+@fixture(scope='session')
 def db(app):
     """Create database for the tests."""
-    _db.app = app
-    _db.create_all()
-    yield _db
-    # Explicitly close DB connection
-    _db.session.close()
-    _db.drop_all()
+    database.db.app = app
+    Session.configure(bind=database.db.engine)
+    database.db.session = Session
+    database.db.create_all()
+    yield database.db
+    database.db.drop_all()
+
+
+@fixture(scope='function')
+def session(db):
+    """Creates a new database session for a test."""
+    session = Session()  # Prepare a new, clean session
+    session.begin(nested=True)  # Rollback app commits
+    yield session
+    session.rollback()  # Discard test changes
+    Session.remove()  # Next test gets a new Session()
 
 
 # General parametrization for indirect marks

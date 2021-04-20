@@ -77,7 +77,7 @@ class DevelopmentConfig(ProductionConfig):
 class TestingConfig(DevelopmentConfig):
     """Configuration used for testing."""
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = f'{DbConfig.DB_CONNECTION}/tests'
+    SQLALCHEMY_DATABASE_URI = "to-define-on-test-config"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = "not-so-secret-in-tests"
     BCRYPT_LOG_ROUNDS = (4)  # For faster tests; 4 to avoid "Invalid rounds"
