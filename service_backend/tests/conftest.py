@@ -6,7 +6,6 @@ import logging
 
 from eosc_perf import database
 from eosc_perf.app import create_app
-from flask import url_for
 from pytest import fixture
 from pytest_postgresql.factories import DatabaseJanitor
 from sqlalchemy import orm
@@ -54,35 +53,3 @@ def session(db):
     yield session
     session.rollback()  # Discard test changes
     Session.remove()  # Next test gets a new Session()
-
-
-# General parametrization for indirect marks
-@fixture
-def query(request):
-    raise NotImplementedError
-
-@fixture
-def path(request, query):
-    return url_for(request.param, **query)
-
-@fixture
-def body(request):
-    return request.param if hasattr(request, 'param') else None
-
-
-# Method response fixtures
-@fixture
-def response_GET(client, path, body):
-    return client.get(path=path, json=body)
-
-@fixture
-def response_POST(client, path, body):
-    return client.post(path=path, json=body)
-
-@fixture
-def response_PUT(client, path, body):
-    return client.put(path=path, json=body)
-
-@fixture
-def response_DELETE(client, path, body):
-    return client.delete(path=path, json=body)

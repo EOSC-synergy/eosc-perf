@@ -6,7 +6,7 @@ pytest==6.2.2
 pytest-flask==1.2.0
 pytest-xdist==2.2.1
 pytest-postgresql==2.6.1
-factory-boy==3.2.0
+pytest-factoryboy==2.1.0
 psycopg2==2.8.6
 
 # Lint and code style

@@ -42,9 +42,14 @@ services:
       - database        
     env_file: .env      
     environment:
-      FLASK_DEBUG: ${BACKEND_DEBUG}
       FLASK_ENV: ${BACKEND_ENV}
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/${POSTGRES_DB}
+      FLASK_DEBUG: ${BACKEND_DEBUG}
+      DB_ENGINE: postgresql
+      DB_PORT: 5432
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: ${DB_HOST}
+      DB_NAME: ${DB_NAME}
       GUNICORN_WORKERS: ${BACKEND_WORKERS}
       LOG_LEVEL: ${BACKEND_LOG_LEVEL}
       OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
@@ -56,16 +61,15 @@ services:
       - backend-net
     ports:
       - "5000:5000"
-      - "2992:2992"
 
   database:
     container_name: database
     restart: unless-stopped    
     image: postgres
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
       PGDATA: /data
     volumes:
       - postgres:/data

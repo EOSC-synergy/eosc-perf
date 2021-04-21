@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 """Factories to help in tests."""
-from attr import __description__
-from eosc_perf.database import db
 from eosc_perf.flavors.models import Flavor
 from eosc_perf.sites.models import Site
 from eosc_perf.users.models import User
@@ -24,7 +22,7 @@ class FlavorFactory(SQLAlchemyModelFactory):
         model = Flavor
 
     name = Sequence(lambda n: f"flavor{n}")
-    custom_text = Sequence(lambda n: f"Text {n}")
+    custom_text = "Text"
 
 
 class SiteFactory(SQLAlchemyModelFactory):
@@ -34,9 +32,13 @@ class SiteFactory(SQLAlchemyModelFactory):
 
     name = Sequence(lambda n: f"site{n}")
     address = Sequence(lambda n: f"address{n}")
-    description = Sequence(lambda n: f"Desc {n}")
+    description = "Text"
     hidden = True
-    flavors = []
+
+    @post_generation
+    def flavors(self, create, flavors, **kwargs):
+        flavors = flavors if flavors else [FlavorFactory()]
+        [self.flavors.append(x) for x in flavors]
 
 
 class UserFactory(SQLAlchemyModelFactory):

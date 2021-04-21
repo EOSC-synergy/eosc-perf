@@ -38,3 +38,6 @@ EXPOSE 2992
 EXPOSE 5000
 ENTRYPOINT ["flask"]
 CMD ["run", "--host=0.0.0.0"]
+
+# ================================= TESTING ====================================
+# TODO: add target for testing with postgress installed
