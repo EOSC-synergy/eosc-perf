@@ -20,11 +20,11 @@ class Id(MethodView):
         return models.Flavor.get_by_id(id)
 
     # @admin_required()
-    @blp.arguments(schemas.Flavor(exclude=['id']))
+    @blp.arguments(schemas.FlavorEdit, as_kwargs=True)
     @blp.response(204)  # https://github.com/marshmallow-code/flask-smorest/issues/166
-    def put(self, args, id):
+    def put(self, id, **kwargs):
         """Updates an existing flavor."""
-        models.Flavor.get_by_id(id).update(**args)
+        models.Flavor.get_by_id(id).update(**kwargs)
 
     # @admin_required()
     @blp.response(204)
@@ -37,7 +37,7 @@ class Id(MethodView):
 class Query(MethodView):
 
     # @login_required()  # Mitigate DoS attack
-    @blp.arguments(schemas.Flavor(exclude=['id']), location='query')
+    @blp.arguments(schemas.FlavorQuery, location='query')
     @blp.response(200, schemas.Flavor(many=True))
     def get(self, args):
         """Filters and list flavors."""
@@ -50,8 +50,8 @@ class Query(MethodView):
 class Submit(MethodView):
 
     # @admin_required()
-    @blp.arguments(schemas.FlavorsCreateArgs)
+    @blp.arguments(schemas.Flavor, as_kwargs=True)
     @blp.response(201, schemas.Flavor)
-    def post(self, args):
+    def post(self, **kwargs):
         """Creates a new flavor."""
-        return models.Flavor.create(**args)
+        return models.Flavor.create(**kwargs)
