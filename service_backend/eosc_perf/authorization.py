@@ -3,8 +3,7 @@
 # Simplify code when Authlib V1.0 using https://docs.authlib.org/en/latest/specs/rfc7662.html#use-introspection-in-resource-server
 
 from .extensions import flaat
-from .settings import Configuration
-
+from .settings import ADMIN_ASSURANCE, EGI_CLIENT_ID, EGI_CLIENT_SECRET
 
 flaat.set_web_framework('flask')
 flaat.set_cache_lifetime(120)  # seconds; default is 300
@@ -27,8 +26,8 @@ flaat.set_verbosity(0)
 
 
 # Required for using token introspection endpoint:
-flaat.set_client_id(Configuration.EGI_CLIENT_ID)
-flaat.set_client_secret(Configuration.EGI_CLIENT_SECRET)
+flaat.set_client_id(EGI_CLIENT_ID)
+flaat.set_client_secret(EGI_CLIENT_SECRET)
 
 
 # Decorators collected from flaat
@@ -41,5 +40,5 @@ def login_required(*args, **kwargs):
 def admin_required(**kwargs):
     """Decorator to define admin requirements"""
     return group_required(
-        group=[Configuration.ADMIN_ASSURANCE],
+        group=[ADMIN_ASSURANCE],
         claim='eduperson_assurance', **kwargs)

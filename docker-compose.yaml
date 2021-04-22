@@ -43,12 +43,12 @@ services:
     env_file: .env      
     environment:
       FLASK_ENV: ${BACKEND_ENV}
-      FLASK_DEBUG: ${BACKEND_DEBUG}
+      FLASK_APP: autoapp.py
       DB_ENGINE: postgresql
+      DB_HOST: database
       DB_PORT: 5432
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
-      DB_HOST: ${DB_HOST}
       DB_NAME: ${DB_NAME}
       GUNICORN_WORKERS: ${BACKEND_WORKERS}
       LOG_LEVEL: ${BACKEND_LOG_LEVEL}

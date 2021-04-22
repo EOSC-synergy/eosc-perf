@@ -4,40 +4,58 @@ FROM python:${INSTALL_PYTHON_VERSION}-slim-buster AS backend
 
 WORKDIR /app
 
-RUN useradd -m sid
-RUN chown -R sid:sid /app
-USER sid
-
 ENV PATH="/home/sid/.local/bin:${PATH}"
 ENV FLASK_APP="autoapp.py"
 
 COPY eosc_perf eosc_perf
 COPY autoapp.py ./
 COPY setup.cfg ./
+COPY requirements requirements
+
+RUN pip install --no-cache -r requirements/prod.txt
 
 # ================================= PRODUCTION =================================
-FROM backend as production
-
-COPY requirements requirements
-RUN pip install --no-cache --user -r requirements/prod.txt
+FROM backend AS production
 
 COPY supervisord.conf /etc/supervisor/supervisord.conf
 COPY supervisord_programs /etc/supervisor/conf.d
 
+RUN useradd -m sid
+RUN chown -R sid:sid /app
+USER sid
+
+ENV FLASK_ENV="production"
 EXPOSE 5000
-ENTRYPOINT ["/bin/bash", "shell_scripts/supervisord_entrypoint.sh"]
+ENTRYPOINT ["supervisord"]
 CMD ["-c", "/etc/supervisor/supervisord.conf"]
 
 # ================================= DEVELOPMENT ================================
 FROM backend AS development
 
-COPY requirements requirements
 RUN pip install --no-cache -r requirements/dev.txt
+ENV FLASK_ENV="development"
 
-EXPOSE 2992
+RUN useradd -m sid
+RUN chown -R sid:sid /app
+USER sid
+
 EXPOSE 5000
 ENTRYPOINT ["flask"]
 CMD ["run", "--host=0.0.0.0"]
 
 # ================================= TESTING ====================================
-# TODO: add target for testing with postgress installed
+FROM backend AS testing
+
+RUN pip install --no-cache -r requirements/dev.txt
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    postgresql \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+COPY tests tests
+
+RUN useradd -m sid
+RUN chown -R sid:sid /app
+USER sid
+
+ENV FLASK_ENV="testing"
+ENTRYPOINT ["pytest"]

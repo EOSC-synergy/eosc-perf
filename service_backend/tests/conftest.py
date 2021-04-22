@@ -4,8 +4,7 @@ See: https://pytest-flask.readthedocs.io/en/latest/features.html
 """
 import logging
 
-from eosc_perf import database
-from eosc_perf.app import create_app
+from eosc_perf import create_app, database
 from pytest import fixture
 from pytest_postgresql.factories import DatabaseJanitor
 from sqlalchemy import orm
@@ -28,7 +27,8 @@ def connection(postgresql_proc):
 def app(connection):
     """Create application for the tests."""
     app = create_app(
-        config_base="eosc_perf.settings.TestingConfig",
+        config_base="eosc_perf.settings",
+        TESTING=True,
         SQLALCHEMY_DATABASE_URI=connection)
     app.logger.setLevel(logging.CRITICAL)
     return app
