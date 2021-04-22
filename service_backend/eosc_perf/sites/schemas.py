@@ -1,27 +1,31 @@
 # -*- coding: utf-8 -*-
 """Sites schemas."""
-from marshmallow import Schema, fields
-from eosc_perf.flavors.schemas import Flavor
+from eosc_perf.extensions import ma
+
+from eosc_perf.flavors.schemas import Flavor, Flavor_names
+from . import models
 
 
-class Site(Schema):
-    id = fields.UUID()
-    name = fields.String()
-    address = fields.String()
-    description = fields.String()
-    hidden = fields.Boolean()
-    flavors = fields.List(fields.Nested(Flavor))
+class Base(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = models.Site
+
+    id = ma.UUID(dump_only=True)
+    hidden = ma.Boolean(dump_only=True)
+
+class Site(Base):
+    # https://github.com/marshmallow-code/apispec/issues/459
+    # flavor_names = ma.Pluck(Flavor, 'name', many=True)
+    flavors = Flavor_names()
 
 
-class SitesCreateArgs(Schema):
-    name = fields.String(required=True)
-    address = fields.String(required=True)
-    description = fields.String()
-    flavors = fields.List(fields.UUID())
+class SiteEdit(Site):
+    name = ma.auto_field(required=False)
+    address = ma.auto_field(required=False)
+    hidden = ma.Boolean(dump_only=False)
 
 
-class SitesQueryArgs(Schema):
-    name = fields.String()
-    address = fields.String()
-    description = fields.String()
-    hidden = fields.Boolean()
+class SiteQuery(Base):
+    name = ma.auto_field(required=False)
+    address = ma.auto_field(required=False)
+    hidden = ma.Boolean(dump_only=False)

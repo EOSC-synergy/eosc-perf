@@ -12,7 +12,7 @@ blp = Blueprint(
 
 
 @blp.route('/<uuid:id>')
-class Site(MethodView):
+class Id(MethodView):
 
     @blp.response(200, schemas.Site)
     def get(self, id):
@@ -20,35 +20,38 @@ class Site(MethodView):
         return models.Site.get_by_id(id)
 
     # @admin_required()
-    @blp.arguments(schemas.SitesCreateArgs)
+    @blp.arguments(schemas.SiteEdit, as_kwargs=True)
     @blp.response(204)  # https://github.com/marshmallow-code/flask-smorest/issues/166
-    def put(self, args, id):
+    def put(self, id, **kwargs):
         """Updates an existing site."""
-        return models.Site.get_by_id(id).update(**args)
+        models.Site.get_by_id(id).update(**kwargs)
 
     # @admin_required()
     @blp.response(204)
     def delete(self, id):
         """Deletes an existing site."""
-        return models.Site.get_by_id(id).delete()
+        models.Site.get_by_id(id).delete()
+
+
+@blp.route('/query')
+class Query(MethodView):
+
+    # @login_required()  # Mitigate DoS attack
+    @blp.arguments(schemas.SiteQuery, location='query')
+    @blp.response(200, schemas.Site(many=True))
+    def get(self, args):
+        """Filters and list sites."""
+        if args == {}:  # Avoid long query
+            abort(422)
+        return models.Site.filter_by(**args)
 
 
 @blp.route('/submit')
 class Submit(MethodView):
 
     # @admin_required()
-    @blp.arguments(schemas.SitesCreateArgs)
+    @blp.arguments(schemas.Site, as_kwargs=True)
     @blp.response(201, schemas.Site)
-    def post(self, args):
+    def post(self, **kwargs):
         """Creates a new site."""
-        return models.Site.create(**args)
-
-
-@blp.route('/query')
-class Query(MethodView):
-
-    @blp.arguments(schemas.SitesQueryArgs, location='query')
-    @blp.response(200, schemas.Site(many=True))
-    def get(self, args):
-        """Filters and list sites."""
-        return models.Site.filter_by(**args)
+        return models.Site.create(**kwargs)

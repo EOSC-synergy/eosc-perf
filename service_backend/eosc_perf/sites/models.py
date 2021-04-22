@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Sites models."""
 from eosc_perf.database import PkModel, db
+from eosc_perf.flavors.models import Flavor
 
 
 flavor_association = db.Table(
@@ -14,7 +15,7 @@ class Site(PkModel):
     """The Site class represents a location where a benchmark can be executed.
     This generally refers to the different virtual machine providers.
     """
-    name = db.Column(db.Text(), unique=True, nullable=True)
+    name = db.Column(db.Text(), unique=True, nullable=False)
     address = db.Column(db.Text(), nullable=False)
     description = db.Column(db.Text(), nullable=True)
     hidden = db.Column(db.Boolean, nullable=False, default=True)
