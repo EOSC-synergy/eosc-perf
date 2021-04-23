@@ -1,13 +1,16 @@
 *.py[cod]
 
+# Pep8
+flake8.log
+
 # C extensions
 *.so
 
 # Packages
 *.egg
 *.egg-info
+.eggs
 build
-eggs
 parts
 bin
 var
@@ -23,6 +26,7 @@ pip-log.txt
 # Unit test / coverage reports
 .coverage
 .tox
+htmlcov
 nosetests.xml
 
 # Translations
