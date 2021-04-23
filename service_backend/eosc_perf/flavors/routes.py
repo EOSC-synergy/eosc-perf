@@ -19,14 +19,14 @@ class Id(MethodView):
         """Retrieves flavor details."""
         return models.Flavor.get_by_id(id)
 
-    # @admin_required()
+    @admin_required()
     @blp.arguments(schemas.FlavorEdit, as_kwargs=True)
     @blp.response(204)  # https://github.com/marshmallow-code/flask-smorest/issues/166
     def put(self, id, **kwargs):
         """Updates an existing flavor."""
         models.Flavor.get_by_id(id).update(**kwargs)
 
-    # @admin_required()
+    @admin_required()
     @blp.response(204)
     def delete(self, id):
         """Deletes an existing flavor."""
@@ -36,7 +36,7 @@ class Id(MethodView):
 @blp.route('/query')
 class Query(MethodView):
 
-    # @login_required()  # Mitigate DoS attack
+    @login_required()  # Mitigate DoS attack
     @blp.arguments(schemas.FlavorQuery, location='query')
     @blp.response(200, schemas.Flavor(many=True))
     def get(self, args):
@@ -49,7 +49,7 @@ class Query(MethodView):
 @blp.route('/submit')
 class Submit(MethodView):
 
-    # @admin_required()
+    @admin_required()
     @blp.arguments(schemas.Flavor, as_kwargs=True)
     @blp.response(201, schemas.Flavor)
     def post(self, **kwargs):

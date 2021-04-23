@@ -13,6 +13,7 @@ TEST_DB = 'test_database'
 VERSION = 12.2  # postgresql version number
 Session = orm.scoped_session(orm.sessionmaker())
 
+
 @fixture(scope='session')
 def connection(postgresql_proc):
     """Create a temp Postgres database for the tests."""
@@ -53,3 +54,12 @@ def session(db):
     yield session
     session.rollback()  # Discard test changes
     Session.remove()  # Next test gets a new Session()
+
+
+@fixture(scope='function')
+def skip_authorization(monkeypatch):
+    """Patch ENV to skip the authorization step."""
+    monkeypatch.setenv(
+        "DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER",
+        "YES"
+    )

@@ -19,14 +19,14 @@ class Id(MethodView):
         """Retrieves site details."""
         return models.Site.get_by_id(id)
 
-    # @admin_required()
+    @admin_required()
     @blp.arguments(schemas.SiteEdit, as_kwargs=True)
     @blp.response(204)  # https://github.com/marshmallow-code/flask-smorest/issues/166
     def put(self, id, **kwargs):
         """Updates an existing site."""
         models.Site.get_by_id(id).update(**kwargs)
 
-    # @admin_required()
+    @admin_required()
     @blp.response(204)
     def delete(self, id):
         """Deletes an existing site."""
@@ -36,7 +36,7 @@ class Id(MethodView):
 @blp.route('/query')
 class Query(MethodView):
 
-    # @login_required()  # Mitigate DoS attack
+    @login_required()  # Mitigate DoS attack
     @blp.arguments(schemas.SiteQuery, location='query')
     @blp.response(200, schemas.Site(many=True))
     def get(self, args):
@@ -49,7 +49,7 @@ class Query(MethodView):
 @blp.route('/submit')
 class Submit(MethodView):
 
-    # @admin_required()
+    @admin_required()
     @blp.arguments(schemas.Site, as_kwargs=True)
     @blp.response(201, schemas.Site)
     def post(self, **kwargs):
