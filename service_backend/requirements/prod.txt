@@ -32,7 +32,7 @@ flask-static-digest==0.2.1
 
 # Auth
 flask-bcrypt==0.7.1
-flaat>=0.12.1
+flaat>=0.13.0
 requests==2.24.0
 
 # Caching
