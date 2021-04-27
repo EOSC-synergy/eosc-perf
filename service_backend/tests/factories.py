@@ -46,6 +46,6 @@ class UserFactory(SQLAlchemyModelFactory):
     class Meta(BaseMeta):
         model = User
 
-    username = Sequence(lambda n: f"user{n}")
+    sub = Sequence(lambda n: f"user{n}")
+    iss = "egi.com"
     email = Sequence(lambda n: f"user{n}@example.com")
-    active = True

@@ -44,6 +44,7 @@ class TestId:
         response_PUT = client.put(path=url_for(path, id=flavor.id), json=body)
         assert response_PUT.status_code == 401
 
+    @mark.usefixtures("skip_authorization")
     @mark.parametrize('flavor_id', ['non_existing'])
     @mark.parametrize('body', [{'custom_text': 'new_text'}])
     def test_PUT_404(self, client, path, flavor_id, body):
@@ -71,6 +72,7 @@ class TestId:
         response_DELETE = client.delete(path=url_for(path, id=flavor.id))
         assert response_DELETE.status_code == 401
 
+    @mark.usefixtures("skip_authorization")
     @mark.parametrize('flavor_id', ['non_existing'])
     def test_DELETE_404(self, client, path, flavor_id):
         """DELETE method fails 404 if no id found."""
@@ -125,7 +127,7 @@ class TestSubmit:
 
     @mark.usefixtures("skip_authorization")
     @mark.parametrize('body', [
-        {'name': "f1", 'custom_text': None},
+        {'name': "f1"},
         {'name': "f1", 'custom_text': "text"}
     ])
     def test_POST_201(self, client, path, body):

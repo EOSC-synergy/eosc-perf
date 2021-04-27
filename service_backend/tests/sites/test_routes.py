@@ -53,6 +53,7 @@ class TestId:
         response_PUT = client.put(path=url_for(path, id=flavor.id), json=body)
         assert response_PUT.status_code == 401
 
+    @mark.usefixtures("skip_authorization")
     @mark.parametrize('site_id', ["non_existing"])
     @mark.parametrize('body', [{'address': 'new_addr'}])
     def test_PUT_404(self, client, path, site_id, body):
@@ -75,6 +76,7 @@ class TestId:
         response_GET = client.get(path=url_for(path, id=site.id))
         assert response_GET.status_code == 404
 
+    @mark.usefixtures("skip_authorization")
     @mark.parametrize('site_id', ["non_existing"])
     def test_DELETE_404(self, client, path, site_id):
         """DELETE method fails 404 if no id found."""
