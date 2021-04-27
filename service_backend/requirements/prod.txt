@@ -2,14 +2,11 @@
 
 # Flask
 flask==1.1.2
-werkzeug==0.16.1
-click>=7.0
 
 # Database
 flask-SQLAlchemy==2.5.1
 sqlalchemy-utils>=0.37.0
 SQLAlchemy==1.4.1
-psycopg2-binary==2.8.6
 
 # Migrations
 flask-migrate==2.7.0
@@ -22,13 +19,10 @@ marshmallow-sqlalchemy>=0.24.2
 apispec>=4.4.0
 flask-smorest>=0.29.0
 
-# Deployment
+# Deployment in production
 gevent==21.1.2
 gunicorn>=19.9.0
 supervisor==4.2.2
-
-# Flask Static Digest
-flask-static-digest==0.2.1
 
 # Auth
 flask-bcrypt==0.7.1
@@ -37,9 +31,6 @@ requests==2.24.0
 
 # Caching
 flask-caching>=1.7.2
-
-# Debug toolbar
-flask-debugToolbar==0.11.0
 
 # Environment variable parsing
 environs==9.3.1
