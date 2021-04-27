@@ -11,15 +11,13 @@ class User(Schema):
 
 
 class UserEdit(User):
-    email = fields.String()  # required=False
-
     class Meta:
-        exclude = ('sub', 'iss', 'created_at')
+        exclude = ("sub", "iss", "created_at")
 
 
 class UserQuery(User):
-    sub = fields.String()    # required=False
-    iss = fields.String()    # required=False
+    sub = fields.String()  # required=False
+    iss = fields.String()  # required=False
     email = fields.String()  # required=False
 
 

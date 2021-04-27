@@ -73,7 +73,7 @@ class Admin(MethodView):
 class Register(MethodView):
 
     @login_required()
-    @blp.arguments(schemas.User(only={'email'}), as_kwargs=True)
+    @blp.arguments(schemas.UserEdit, as_kwargs=True)
     @blp.response(201, schemas.User)
     def post(self, email):
         """Registers the logged in user."""
