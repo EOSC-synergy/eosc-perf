@@ -3,21 +3,16 @@
 from datetime import datetime as dt
 
 from eosc_perf.database import Model, db
-from sqlalchemy.orm import backref
 
 
 class User(Model):
     """A user of the app."""
+
     sub = db.Column(db.Text(), primary_key=True, nullable=False)
     iss = db.Column(db.Text(), primary_key=True, nullable=False)
     email = db.Column(db.Text(), unique=True, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=dt.utcnow)
-
-    benchmarks = db.relationship(
-        'Benchmark',
-        backref="user",
-        lazy=True
-    )
+    benchmarks = db.relationship("Benchmark")
 
     @classmethod
     def get_by_subiss(cls, sub, iss):
@@ -37,4 +32,4 @@ class User(Model):
         Returns:
             str: A human-readable representation string of the user.
         """
-        return '<{} {}>'.format(self.__class__.__name__, self.email)
+        return "<{} {}>".format(self.__class__.__name__, self.email)
