@@ -1,32 +1,30 @@
 # -*- coding: utf-8 -*-
 """Flavors schemas."""
-from eosc_perf.extensions import ma
-
+from marshmallow import Schema, fields
 from . import models
 
 
-class Flavor(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = models.Flavor
-
-    id = ma.UUID(dump_only=True)
+class Flavor(Schema):
+    id = fields.UUID(dump_only=True)
+    name = fields.String(required=True)
+    custom_text = fields.String()
 
 
 class FlavorEdit(Flavor):
-    name = ma.auto_field(required=False)
+    name = fields.String(required=False)
 
 
 class FlavorQuery(Flavor):
-    name = ma.auto_field(required=False)
+    name = fields.String(required=False)
 
 
-class Flavor_names(ma.List):
+class FlavorNames(fields.List):
     """Field that serializes and deserializes flavor_name from flavors.
     Fix for https://github.com/marshmallow-code/apispec/issues/459
     """
 
     def __init__(self, **kwargs):
-        super().__init__(ma.String(), **kwargs)
+        super().__init__(fields.String(), **kwargs)
 
     def _serialize(self, value, attr, obj, **kwargs):
         return [x.name for x in obj.flavors]

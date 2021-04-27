@@ -43,6 +43,11 @@ class Model(CRUDMixin, db.Model):
     """Base model class that includes CRUD convenience methods."""
     __abstract__ = True
 
+    @classmethod
+    def filter_by(cls, **filters):
+        """Get record by filtering."""
+        return cls.query.filter_by(**filters)
+
 
 class PkModel(Model):
     """Base model class that includes CRUD convenience methods, 
@@ -58,8 +63,3 @@ class PkModel(Model):
     def get_by_id(cls, id):
         """Get record by ID."""
         return cls.query.get_or_404(id)
-
-    @classmethod
-    def filter_by(cls, **filters):
-        """Get record by filtering."""
-        return cls.query.filter_by(**filters)

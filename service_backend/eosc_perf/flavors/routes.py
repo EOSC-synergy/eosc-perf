@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """Flavors routes."""
+from eosc_perf.authorization import admin_required, login_required
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 
 from . import models, schemas
-from eosc_perf.authorization import login_required, admin_required
 
 blp = Blueprint(
     'flavors', __name__, description='Operations on flavors'
@@ -21,7 +21,7 @@ class Id(MethodView):
 
     @admin_required()
     @blp.arguments(schemas.FlavorEdit, as_kwargs=True)
-    @blp.response(204)  # https://github.com/marshmallow-code/flask-smorest/issues/166
+    @blp.response(204)
     def put(self, id, **kwargs):
         """Updates an existing flavor."""
         models.Flavor.get_by_id(id).update(**kwargs)

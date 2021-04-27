@@ -4,17 +4,23 @@ from marshmallow import Schema, fields
 
 
 class User(Schema):
-    id = fields.UUID()
-    email = fields.Email()
-    created_at = fields.String()
+    sub = fields.String(required=True)
+    iss = fields.String(required=True)
+    email = fields.Email(required=True)
+    created_at = fields.String(dump_only=True)
 
 
-class UsersCreateArgs(Schema):
-    email = fields.String(required=True)
+class UserEdit(User):
+    email = fields.String()  # required=False
+
+    class Meta:
+        exclude = ('sub', 'iss', 'created_at')
 
 
-class UsersQueryArgs(Schema):
-    email = fields.String()
+class UserQuery(User):
+    sub = fields.String()    # required=False
+    iss = fields.String()    # required=False
+    email = fields.String()  # required=False
 
 
 class Uploader(User):

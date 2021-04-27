@@ -5,24 +5,21 @@ from eosc_perf.users.schemas import Uploader
 
 
 class Benchmark(Schema):
-    id = fields.UUID()
-    docker_name = fields.String()
-    hidden = fields.Boolean()
-    uploader = fields.Pluck(Uploader, 'email')
-    description = fields.String()
-    template = fields.String()
-
-
-class BenchmarksCreateArgs(Schema):
+    id = fields.UUID(dump_only=True)
     docker_name = fields.String(required=True)
-    uploader_id = fields.UUID(required=True)
-    description = fields.String()
     template = fields.String()
+    hidden = fields.Boolean(dump_only=True)
+    description = fields.String()
+    uploader = fields.Pluck(Uploader, 'email')
 
 
-class BenchmarksQueryArgs(Schema):
-    docker_name = fields.String()
-    hidden = fields.Boolean()
-    uploader_id = fields.UUID()
-    description = fields.String()
-    template = fields.String()
+class BenchmarkEdit(Benchmark):
+    docker_name = fields.String()  # required=False
+    hidden = fields.Boolean()      # dump_only=False
+    uploader_id = fields.UUID()    # required=False
+
+
+class BenchmarkQuery(Benchmark):
+    docker_name = fields.String()  # required=False
+    hidden = fields.Boolean()      # dump_only=False
+    uploader_id = fields.UUID()    # required=False

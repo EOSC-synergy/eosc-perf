@@ -10,7 +10,6 @@ from .extensions import api  # Api interface module
 from .extensions import bcrypt  # Encrypt passwords and others
 from .extensions import cache  # Caches responses
 from .extensions import db  # SQLAlchemy instance
-from .extensions import ma  # Marshmallow for beautiful APIs
 from .extensions import migrate  # Alembic ext. manage db migrations
 
 
@@ -38,7 +37,6 @@ def register_extensions(app):
     bcrypt.init_app(app)
     cache.init_app(app)
     db.init_app(app)
-    ma.init_app(app)  # Initialize SQLAlchemy before Marshmallow
     migrate.init_app(app, db)
 
 

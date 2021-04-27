@@ -1,31 +1,28 @@
 # -*- coding: utf-8 -*-
 """Sites schemas."""
-from eosc_perf.extensions import ma
-
-from eosc_perf.flavors.schemas import Flavor, Flavor_names
-from . import models
+from eosc_perf.flavors.schemas import FlavorNames
+from marshmallow import Schema, fields
 
 
-class Base(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = models.Site
-
-    id = ma.UUID(dump_only=True)
-    hidden = ma.Boolean(dump_only=True)
-
-class Site(Base):
-    # https://github.com/marshmallow-code/apispec/issues/459
-    # flavor_names = ma.Pluck(Flavor, 'name', many=True)
-    flavors = Flavor_names()
+class Site(Schema):
+    id = fields.UUID(dump_only=True)
+    name = fields.String(required=True)
+    address = fields.String(required=True)
+    hidden = fields.Boolean(dump_only=True)
+    description = fields.String()
+    flavors = FlavorNames()
 
 
 class SiteEdit(Site):
-    name = ma.auto_field(required=False)
-    address = ma.auto_field(required=False)
-    hidden = ma.Boolean(dump_only=False)
+    name = fields.String()     # required=False
+    address = fields.String()  # required=False
+    hidden = fields.Boolean()  # dump_only=False
 
 
-class SiteQuery(Base):
-    name = ma.auto_field(required=False)
-    address = ma.auto_field(required=False)
-    hidden = ma.Boolean(dump_only=False)
+class SiteQuery(Site):
+    name = fields.String()     # required=False
+    address = fields.String()  # required=False
+    hidden = fields.Boolean()  # dump_only=False
+
+    class Meta:
+        exclude = ('flavors',)

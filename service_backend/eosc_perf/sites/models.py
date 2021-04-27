@@ -17,8 +17,8 @@ class Site(PkModel):
     """
     name = db.Column(db.Text(), unique=True, nullable=False)
     address = db.Column(db.Text(), nullable=False)
-    description = db.Column(db.Text(), nullable=True)
     hidden = db.Column(db.Boolean, nullable=False, default=True)
+    description = db.Column(db.Text(), nullable=True)
     flavors = db.relationship("Flavor", secondary=flavor_association)
 
     def __repr__(self) -> str:
