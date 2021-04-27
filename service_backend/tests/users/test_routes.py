@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """Functional tests using pytest-flask."""
-import json
 from flask import url_for
 from pytest import mark
 
@@ -24,7 +23,7 @@ class TestId:
         response_GET = client.get(url_for(path, iss=iss, sub=sub))
         assert response_GET.status_code == 404
 
-    @mark.usefixtures("skip_authorization")
+    @mark.usefixtures("grant_admin")
     @mark.parametrize('body', [
         {'email': 'new_email@gmail.com'}
     ])
@@ -48,7 +47,7 @@ class TestId:
         response_PUT = client.put(path, json=body)
         assert response_PUT.status_code == 401
 
-    @mark.usefixtures("skip_authorization")
+    @mark.usefixtures("grant_admin")
     @mark.parametrize('iss', ["non_existing"])
     @mark.parametrize('sub', ["non_existing"])
     @mark.parametrize('body', [{'email': 'new_email@gmail.com'}])
@@ -58,7 +57,7 @@ class TestId:
         response_PUT = client.put(path, json=body)
         assert response_PUT.status_code == 404
 
-    @mark.usefixtures("skip_authorization")
+    @mark.usefixtures("grant_admin")
     @mark.parametrize('body', [
         {'bad_field': ""},
         {'sub': 'new_sub'},  # Should not be editable
@@ -71,7 +70,7 @@ class TestId:
         response_PUT = client.put(path, json=body)
         assert response_PUT.status_code == 422
 
-    @mark.usefixtures("skip_authorization")
+    @mark.usefixtures("grant_admin")
     def test_DELETE_204(self, client, path, user):
         """DELETE method succeeded 204."""
         path = url_for(path, iss=user.iss, sub=user.sub)
@@ -86,7 +85,7 @@ class TestId:
         response_DELETE = client.delete(path)
         assert response_DELETE.status_code == 401
 
-    @mark.usefixtures("skip_authorization")
+    @mark.usefixtures("grant_admin")
     @mark.parametrize('iss', ["non_existing"])
     @mark.parametrize('sub', ["non_existing"])
     def test_DELETE_404(self, client, path, iss, sub):
@@ -101,7 +100,7 @@ class TestId:
 class TestQuery:
     """Tests for 'Query' route in blueprint."""
 
-    @mark.usefixtures("skip_authorization")
+    @mark.usefixtures("grant_admin")
     @mark.parametrize('users', [['u1@k.de', 'u2@k.de']], indirect=True)
     @mark.parametrize('query', [
         {'iss': "egi.com"},  # Multiple results
@@ -125,7 +124,7 @@ class TestQuery:
         response_GET = client.get(path=url_for(path, **query))
         assert response_GET.status_code == 401
 
-    @mark.usefixtures("skip_authorization")
+    @mark.usefixtures("grant_admin")
     @mark.parametrize('query', [
         {},  # This is an empty query
         {'bad_key': "This is a non expected query key"}
@@ -141,7 +140,7 @@ class TestQuery:
 class TestSubmit:
     """Tests for 'Submit' route in blueprint."""
 
-    @mark.usefixtures("skip_authorization")
+    @mark.usefixtures("grant_admin")
     @mark.parametrize('body', [
         {'sub': "u1", 'iss': "my_iss", 'email': "u1@k.de"}
     ])
@@ -161,7 +160,7 @@ class TestSubmit:
         response_POST = client.post(path=url_for(path), json=body)
         assert response_POST.status_code == 401
 
-    @mark.usefixtures("skip_authorization")
+    @mark.usefixtures("grant_admin")
     @mark.parametrize('body', [
         {'sub': "u1", 'iss': "my_iss"},  # Missing email
         {'sub': "u1", 'email': "u1@k.de"},  # Missing iss
@@ -178,12 +177,13 @@ class TestSubmit:
 class TestAdmin:
     """Tests for 'Admin' route in blueprint."""
 
-    @mark.usefixtures("skip_authorization")
+    @mark.usefixtures("grant_admin")
     def test_GET_204(self, client, path):
         """GET method succeeded 201."""
         response_GET = client.get(path=url_for(path))
         assert response_GET.status_code == 204
 
+    @mark.usefixtures("grant_logged")
     def test_POST_401(self, client, path):
         """POST method fails 401 if not authorized."""
         response_GET = client.get(path=url_for(path))
@@ -195,7 +195,7 @@ class TestAdmin:
 class TestRegister:
     """Tests for 'Register' route in blueprint."""
 
-    @mark.usefixtures("skip_authorization", "patch_accesstoken")
+    @mark.usefixtures("grant_logged", "patch_accesstoken")
     @mark.parametrize('body', [
         {'email': "u1@k.de"}
     ])

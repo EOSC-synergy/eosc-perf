@@ -25,7 +25,7 @@ class TestId:
         response_GET = client.get(path=url_for(path, id=site_id))
         assert response_GET.status_code == 404
 
-    @mark.usefixtures("skip_authorization")
+    @mark.usefixtures("grant_admin")
     @mark.parametrize('flavors', [['f1', 'f2']], indirect=True)
     @mark.parametrize('body', [
         {'address': "new_addr"},
@@ -53,7 +53,7 @@ class TestId:
         response_PUT = client.put(path=url_for(path, id=flavor.id), json=body)
         assert response_PUT.status_code == 401
 
-    @mark.usefixtures("skip_authorization")
+    @mark.usefixtures("grant_admin")
     @mark.parametrize('site_id', ["non_existing"])
     @mark.parametrize('body', [{'address': 'new_addr'}])
     def test_PUT_404(self, client, path, site_id, body):
@@ -61,14 +61,14 @@ class TestId:
         response_PUT = client.put(path=url_for(path, id=site_id), json=body)
         assert response_PUT.status_code == 404
 
-    @mark.usefixtures("skip_authorization")
+    @mark.usefixtures("grant_admin")
     @mark.parametrize('body', [{'bad_field': ""}])
     def test_PUT_422(self, client, path, site, body):
         """PUT method fails 422 if bad request body."""
         response_PUT = client.put(path=url_for(path, id=site.id), json=body)
         assert response_PUT.status_code == 422
 
-    @mark.usefixtures("skip_authorization")
+    @mark.usefixtures("grant_admin")
     def test_DELETE_204(self, client, path, site):
         """DELETE method succeeded 204."""
         response_DELETE = client.delete(path=url_for(path, id=site.id))
@@ -76,7 +76,7 @@ class TestId:
         response_GET = client.get(path=url_for(path, id=site.id))
         assert response_GET.status_code == 404
 
-    @mark.usefixtures("skip_authorization")
+    @mark.usefixtures("grant_admin")
     @mark.parametrize('site_id', ["non_existing"])
     def test_DELETE_404(self, client, path, site_id):
         """DELETE method fails 404 if no id found."""
@@ -89,7 +89,7 @@ class TestId:
 class TestQuery:
     """Tests for 'Query' route in blueprint."""
 
-    @mark.usefixtures("skip_authorization")
+    @mark.usefixtures("grant_logged")
     @mark.parametrize('sites', [['s1', 's2']], indirect=True)
     @mark.parametrize('query', [
         {'name': 's1', 'hidden': True},
@@ -113,7 +113,7 @@ class TestQuery:
         response_GET = client.get(path=url_for(path, **query))
         assert response_GET.status_code == 401
 
-    @mark.usefixtures("skip_authorization")
+    @mark.usefixtures("grant_logged")
     @mark.parametrize('query', [
         {},  # Empty queries should return error
         {'flavors': ['f1', 'f2']},  # flavors search not supported
@@ -130,7 +130,7 @@ class TestQuery:
 class TestSubmit:
     """Tests for 'Submit' route in blueprint."""
 
-    @mark.usefixtures("skip_authorization")
+    @mark.usefixtures("grant_logged")
     @mark.parametrize('flavors', [['f1', 'f2']], indirect=True)
     @mark.parametrize('body', [
         {'name': "f1", 'address': "a1"},
@@ -153,7 +153,7 @@ class TestSubmit:
         response_POST = client.post(path=url_for(path), json=body)
         assert response_POST.status_code == 401
 
-    @mark.usefixtures("skip_authorization")
+    @mark.usefixtures("grant_logged")
     @mark.parametrize('body', [
         {'address': "this body is missing a name"},
         {'name': "f1", 'address': "a1", 'hidden': False},

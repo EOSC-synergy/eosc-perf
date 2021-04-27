@@ -49,7 +49,7 @@ class Query(MethodView):
 @blp.route('/submit')
 class Submit(MethodView):
 
-    @admin_required()
+    @login_required()
     @blp.arguments(schemas.Site, as_kwargs=True)
     @blp.response(201, schemas.Site)
     def post(self, **kwargs):

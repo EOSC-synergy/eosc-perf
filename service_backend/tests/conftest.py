@@ -4,7 +4,7 @@ See: https://pytest-flask.readthedocs.io/en/latest/features.html
 """
 import logging
 
-from eosc_perf import create_app, database
+from eosc_perf import authorization, create_app, database
 from pytest import fixture
 from pytest_postgresql.factories import DatabaseJanitor
 from sqlalchemy import orm
@@ -57,9 +57,18 @@ def session(db):
 
 
 @fixture(scope='function')
-def skip_authorization(monkeypatch):
-    """Patch ENV to skip the authorization step."""
+def grant_logged(monkeypatch):
+    """Patch fixture to test function as logged user."""
     monkeypatch.setenv(
         "DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER",
+        "YES"
+    )
+
+
+@fixture(scope='function')
+def grant_admin(monkeypatch, grant_logged):
+    """Patch fixture to test function as admin user."""
+    monkeypatch.setenv(
+        "DISABLE_AUTHENTICATION_AND_ASSUME_VALID_GROUPS",
         "YES"
     )
