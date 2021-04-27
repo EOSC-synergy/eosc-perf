@@ -17,7 +17,7 @@ pip install -r requirements/dev.txt
 Prepare your `.env` file with the following variables:
 ```ini
 # General configuation
-FLASK_APP=autoapp.py
+FLASK_APP=service_backend/autoapp.py
 FLASK_ENV=development
 
 # Database configuration
@@ -89,3 +89,18 @@ If you will deploy your application remotely (e.g on Heroku) you should add the 
 
 
 # Running Tests
+
+Tests are automated to run with [tox](https://tox.readthedocs.io), although as are based in pytest you can directly discover, call and debug them with your pytest IDE extension.
+
+To execute tests using tox run
+
+```bash
+tox  # Run tests using tox (includes coverage, style and security)
+```
+
+To execute tests using pytest, ensure you have the `requirements/dev.txt` dependencies installed and run
+
+```bash
+pytest service_backend  # Run tests using pytest
+```
+
