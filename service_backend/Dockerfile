@@ -7,7 +7,7 @@ WORKDIR /app
 ENV PATH="/home/sid/.local/bin:${PATH}"
 ENV FLASK_APP="autoapp.py"
 
-COPY eosc_perf eosc_perf
+COPY eosc_perf_backend eosc_perf_backend
 COPY autoapp.py ./
 COPY requirements requirements
 

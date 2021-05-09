@@ -4,7 +4,7 @@ import uuid
 
 import sqlalchemy_utils
 
-from eosc_perf.extensions import db
+from eosc_perf_backend.extensions import db
 
 # Extend db types
 db.UUID = sqlalchemy_utils.UUIDType

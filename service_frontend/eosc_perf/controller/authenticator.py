@@ -102,7 +102,7 @@ class Authenticator:
 
         self.oauth = OAuth(flask_app)
         self.oauth.register(
-            name='eosc_perf',
+            name='eosc_perf_backend',
             userinfo_endpoint=self.userinfo_url,
             server_metadata_url=self.conf_url,
             client_kwargs={
@@ -192,7 +192,7 @@ class Authenticator:
             return False
         response = requests.post(
             endpoint,
-            params={'client_id': "eosc_perf",
+            params={'client_id': "eosc_perf_backend",
                     'client_secret': self.client_secret,
                     'grant_type': "refresh_token",
                     'refresh_token': refresh_token,

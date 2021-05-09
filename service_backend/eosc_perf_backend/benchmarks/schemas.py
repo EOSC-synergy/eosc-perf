@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """User schemas."""
 from marshmallow import Schema, fields
-from eosc_perf.users.schemas import Uploader
+from eosc_perf_backend.users.schemas import Uploader
 
 
 class Benchmark(Schema):
