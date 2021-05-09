@@ -19,6 +19,9 @@ services:
     volumes:
       - <<: *sqlite-db-dir
         target: /app/data/
+    networks:
+      - frontend-net
+      - backend-net
     secrets:
       - source: oidc_secret
         target: oidc_client_secret
