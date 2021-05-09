@@ -48,3 +48,8 @@ docs/_build
 
 # Virtualenvs
 env/
+
+# .whl side effects
+AUTHORS
+ChangeLog
+dist/
