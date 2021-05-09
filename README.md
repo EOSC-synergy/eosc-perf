@@ -5,8 +5,6 @@
 
 EOSC-Perf is a webapp made to host, search, compare and analyze benchmark results from many very diverse university server clusters.
 
-
-
 #### ****************** EDIT FROM SERVICE BACKEND *******************
 This is an example of env configuration to run backend with a database service based in postgres container image using the current docker-compose.yaml file.
 
@@ -58,37 +56,17 @@ To deploy the application:
 1. To generate HTTPS certs & nginx configuration:
    * If you want to deploy to production: Run `bash init-lentsencrypt.sh`
    * If you want to develop locally (on `localhost`): Run `bash init-dev-certs.sh`
+1. Generate the backend .whl file:
+   * `cd service_backend`
+   * `pip install --upgrade build` # TODO: venv?
+   * `python -m build`
+1. Copy the .whl file to the frontend: `cp service_backend/dist/*.whl service_frontend/`
 1. Run `docker-compose build`
 1. Run `docker-compose up`
-
-To install the application locally:
-1. Run `pip install .`
 
 To set up a development environment:
 1. Set up a virtual environment: `python -m venv venv`
 1. Enable the virtual environment: `. ./venv/bin/activate`
 1. Install requirements: `pip install -r requirements.txt`
     * The requirements will only be installed within the virtual environment.
-
-To generate the documentation:
-1. Enable the virtual environment: `. ./venv/bin/activate`
-1. Go to `docs/`
-1. (Optional) Run `make clean`
-1. Run `make html`
-
-Steps to regenerate documentation:
-1. Enable the virtual environment: `. ./venv/bin/activate`
-1. Go to `docs/`
-1. (Optional) Run `make clean`
-1. Run `sphinx-apidoc -fo source ../eosc_perf`
-1. Move 'Module contents' to the top of the .rst files, under title and main description   
-1. Run `make html`
-
-To run tests (requires virtual environment):
-1. Enable the virtual environment: `. ./venv/bin/activate`
-1. Run `pip install tox`
-1. Run `tox` (it should install test requirements automatically)
-
-Tips:
-- To enable debug mode, set `EOSC_PERF_DEBUG=true` in the `.env`
-
+1. Install backend wheel: # TODO: reliable steps
