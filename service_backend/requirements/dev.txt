@@ -8,6 +8,8 @@ pytest-xdist==2.2.1
 pytest-postgresql==2.6.1
 pytest-factoryboy==2.1.0
 pytest-cov==2.11.1
+pytest-env==0.6.2
+pytest-timeout==1.4.2
 psycopg2-binary==2.8.6
 
 # Lint and code style
