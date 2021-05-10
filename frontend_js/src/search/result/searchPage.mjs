@@ -4,6 +4,8 @@ import { Filter } from './filter.mjs';
 import { SpeedupDiagram } from './diagram.mjs';
 import { clear_select, FIELDS, JSON_KEYS, validate_keypath } from './helpers.mjs';
 
+import * as hljs from '../../dependencies/highlight.pack.js';
+
 /**
  * Get all attributes/keys from an object.
  * @param obj The object to get the keys from.
