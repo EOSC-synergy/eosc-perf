@@ -11,13 +11,13 @@ services:
   frontend:
     container_name: frontend
     restart: unless-stopped
-    image: frontend 
+    image: frontend
     build:
       context: ./service_frontend
       # target: ${FRONTEND_ENV}
-    env_file: .env      
+    env_file: .env
     volumes:
-      - << : *sqlite-db-dir
+      - <<: *sqlite-db-dir
         target: /app/data/
     secrets:
       - source: oidc_secret
@@ -39,8 +39,8 @@ services:
       args:
         INSTALL_PYTHON_VERSION: 3
     depends_on:
-      - database        
-    env_file: .env      
+      - database
+    env_file: .env
     environment:
       FLASK_ENV: ${BACKEND_ENV}
       FLASK_APP: autoapp.py
@@ -55,7 +55,7 @@ services:
       OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
       OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
     volumes:
-      - ./service_backend/:/app    
+      - ./service_backend/:/app
     networks:
       - frontend-net
       - backend-net
@@ -64,7 +64,7 @@ services:
 
   database:
     container_name: database
-    restart: unless-stopped    
+    restart: unless-stopped
     image: postgres
     environment:
       POSTGRES_USER: ${DB_USER}
@@ -80,14 +80,14 @@ services:
 
   reverse_proxy:
     container_name: reverse_proxy
-    restart: unless-stopped    
+    restart: unless-stopped
     image: reverse_proxy
     build:
       context: ./service_rproxy
     depends_on:
       - frontend
       - certificate
-    env_file: .env    
+    env_file: .env
     volumes:
       - ./static:/var/www/web/
       - ./service_certificate/conf:/etc/letsencrypt
@@ -105,7 +105,7 @@ services:
     image: certificate
     build:
       context: ./service_certificate
-    env_file: .env      
+    env_file: .env
     volumes:
       - ./service_certificate/conf:/etc/letsencrypt
       - ./service_certificate/www:/var/www/certbot
