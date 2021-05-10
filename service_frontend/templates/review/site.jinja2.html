@@ -11,13 +11,13 @@
     <div class="container">
         <h1>Site review</h1>
         <p>
-        New site: {{site_human_name}} ({{site_name}})
-        <br>
-        Description: {{site_description}}
-        <br>
-        Uploader: {{uploader_name}} ({{uploader_mail}})
-        <br>
-        Date: {{date}}
+            New site: {{ site_human_name }} ({{ site_name }})
+            <br>
+            Description: {{ site_description }}
+            <br>
+            Uploader: {{ uploader_name }} ({{ uploader_mail }})
+            <br>
+            Date: {{ date }}
         </p>
         <form id="form" action="/ajax/review/site" method="POST">
             <input type="hidden" name="uuid" value="{{ uuid }}" />

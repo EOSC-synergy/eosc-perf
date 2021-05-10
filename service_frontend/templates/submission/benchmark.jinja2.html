@@ -12,17 +12,18 @@
         <h1>Add Benchmark</h1>
         <form id="form" action="/ajax/submit/benchmark" method="POST">
             <div class="m-2">
-                <label for="docker_name">Docker image name:<br/></label>
+                <label for="docker_name">Docker image name:<br /></label>
                 <input type="text" name="docker_name" id="docker_name" class="form-control inputbox small"
                        placeholder="user/image:tag" onkeyup="stopped_typing()" />
             </div>
             <div class="m-2">
-                <label for="message-box">Benchmark description (optional):<br/></label>
+                <label for="message-box">Benchmark description (optional):<br /></label>
                 <textarea type="text" id="message-box" class="form-control textbox" name="message" value=""
                           placeholder="Enter a description of the new benchmark here."></textarea>
             </div>
             <div class="m-2">
-                <label for="template">Benchmark result JSON template (optional, <a href="/code_guidelines#json">example here</a>):<br/></label>
+                <label for="template">Benchmark result JSON template (optional, <a href="/code_guidelines#json">example
+                    here</a>):<br /></label>
                 <textarea type="text" id="template" class="form-control textbox" name="template" value=""
                           placeholder="{ &quot;required_arg&quot;: 5, &quot;!notable_argument&quot;: 10 }"></textarea>
             </div>
