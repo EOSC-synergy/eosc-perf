@@ -35,6 +35,13 @@ server {
   include /etc/letsencrypt/options-ssl-nginx.conf;
   ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
+  # Add support for javascript modules
+  include mime.types;
+  types
+  {
+    application/javascript mjs;
+  }
+
   location / {
     autoindex off;
     include uwsgi_params;
