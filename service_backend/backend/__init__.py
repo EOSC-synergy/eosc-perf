@@ -14,7 +14,7 @@ from .extensions import migrate  # Alembic ext. manage db migrations
 
 
 def create_app(
-        config_base="eosc_perf.settings",
+        config_base="backend.settings",
         **settings_override
 ):
     """Create application factory, as explained here: 

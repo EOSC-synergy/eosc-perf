@@ -28,3 +28,6 @@ workspace.code-workspace
 oidc_secret.txt
 cookie_secret.txt
 nginx_api_credentials.txt
+
+# Compiled documentation
+docs/build/

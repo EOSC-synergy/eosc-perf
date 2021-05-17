@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Flavors routes."""
-from eosc_perf.authorization import admin_required, login_required
+from backend.authorization import admin_required, login_required
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 

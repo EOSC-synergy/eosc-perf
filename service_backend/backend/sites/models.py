@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Sites models."""
-from eosc_perf.database import PkModel, db
-from eosc_perf.flavors.models import Flavor
+from backend.database import PkModel, db
+from backend.flavors.models import Flavor
 
 
 flavor_association = db.Table(
