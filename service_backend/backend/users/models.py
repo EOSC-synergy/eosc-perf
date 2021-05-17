@@ -2,7 +2,7 @@
 """User models."""
 from datetime import datetime as dt
 
-from eosc_perf_backend.database import Model, db
+from backend.database import Model, db
 
 
 class User(Model):

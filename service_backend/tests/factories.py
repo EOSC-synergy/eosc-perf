@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Factories to help in tests."""
-from eosc_perf_backend.flavors.models import Flavor
-from eosc_perf_backend.sites.models import Site
-from eosc_perf_backend.users.models import User
+from backend.flavors.models import Flavor
+from backend.sites.models import Site
+from backend.users.models import User
 from factory import Sequence, post_generation
 from factory.alchemy import SQLAlchemyModelFactory
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Sites schemas."""
-from eosc_perf_backend.flavors.schemas import FlavorNames
+from backend.flavors.schemas import FlavorNames
 from marshmallow import Schema, fields
 
 

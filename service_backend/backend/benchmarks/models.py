@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """User models."""
-from eosc_perf_backend.database import PkModel, db
+from backend.database import PkModel, db
 
 
 class Benchmark(PkModel):

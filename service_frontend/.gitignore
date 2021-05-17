@@ -136,7 +136,7 @@ dmypy.json
 .idea/
 
 # backend .whl file
-eosc_perf_backend-*.whl
+backend-*.whl
 
 # Application files
 upload_license.txt

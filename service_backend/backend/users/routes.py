@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """User routes."""
-from eosc_perf_backend.authorization import admin_required, login_required
+from backend.authorization import admin_required, login_required
 from flaat import tokentools
 from flask import request
 from flask.views import MethodView

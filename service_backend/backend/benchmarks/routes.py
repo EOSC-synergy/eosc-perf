@@ -4,7 +4,7 @@ from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 
 from . import models, schemas
-from eosc_perf_backend.authorization import login_required, admin_required
+from backend.authorization import login_required, admin_required
 
 blp = Blueprint(
     'benchmarks', __name__, description='Operations on benchmarks'
