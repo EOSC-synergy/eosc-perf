@@ -10,10 +10,9 @@ class BenchmarkTests(DatatypeTestBase):
         benchmark = self._make_benchmark(uploader)
         with self.app.test_request_context():  # required for get_hidden defaulting to false
             self._add_to_database(benchmark)
-            self.assertEqual(self.BENCHMARK_DOCKER_NAME, benchmark.get_docker_name())
-            self.assertEqual(uploader, benchmark.get_uploader())
-            print(benchmark.get_hidden())
-            self.assertEqual(True, benchmark.get_hidden())  # true by default
+            self.assertEqual(self.BENCHMARK_DOCKER_NAME, benchmark.docker_name)
+            self.assertEqual(uploader, benchmark.uploader)
+            self.assertEqual(True, benchmark.hidden)  # true by default
             # requires flask_sqlalchemy session
             # self.assertEqual(ResultIterator, type(benchmark.get_results()))
 
@@ -22,8 +21,8 @@ class BenchmarkTests(DatatypeTestBase):
         uploader = self._make_uploader()
         benchmark = self._make_benchmark(uploader)
         description: str = "Hello world :)"
-        benchmark.set_description(description)
-        self.assertEqual(description, benchmark.get_description())
+        benchmark.description = description
+        self.assertEqual(description, benchmark.description)
 
     def test_benchmark_set_template(self):
         """Test if we can set the benchmark template."""
@@ -31,9 +30,9 @@ class BenchmarkTests(DatatypeTestBase):
         benchmark = self._make_benchmark(uploader)
         # validity is not checked in Benchmark class itself!
         template: str = "{{}}"
-        benchmark.set_template(template)
+        benchmark.template = template
         self.assertTrue(benchmark.has_template())
-        self.assertEquals(template, benchmark.get_template())
+        self.assertEquals(template, benchmark.template)
 
     def test_notable_keys(self):
         """Test if the notable keys determining function works properly."""
@@ -44,10 +43,10 @@ class BenchmarkTests(DatatypeTestBase):
         self.assertEqual([], benchmark.determine_notable_keys())
 
         template = '{"important": false}'
-        benchmark.set_template(template)
+        benchmark.template = template
         self.assertEqual([], benchmark.determine_notable_keys())
         template = '{"!important": false}'
-        benchmark.set_template(template)
+        benchmark.template = template
         self.assertCountEqual(["important"], benchmark.determine_notable_keys())
 
     def test_benchmark_repr(self):

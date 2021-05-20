@@ -54,7 +54,7 @@ class ControllerResultTests(IOControllerTestBase):
             ]}
             results = self.facade.query_results(json.dumps(filters))
             self.assertEqual(len(results), 1)
-            self.assertTrue(self.controller.remove_result(results[0].get_uuid()))
+            self.assertTrue(self.controller.remove_result(results[0].uuid))
             # make sure that result is now hidden
             results = self.facade.query_results(json.dumps(filters))
             self.assertEqual(len(results), 0)

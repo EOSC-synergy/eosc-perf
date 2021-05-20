@@ -69,7 +69,7 @@ class Authenticator:
             flask_app (Flask): The flask app for which to set up OIDC functionality.
         """
 
-        if len(configuration.get('oidc_client_secret_file')) == 0\
+        if len(configuration.get('oidc_client_secret_file')) == 0 \
                 or configuration.get('oidc_client_secret_file') == 'SET_ME':
             raise ValueError("Please configure OIDC client secret")
         self.client_secret = read_file_content(configuration.get('oidc_client_secret_file'))
@@ -248,8 +248,8 @@ class Authenticator:
             return
         email = session['user']['info']['email']
         name = session['user']['info']['name']
-        uploader.set_email(email)
-        uploader.set_name(name)
+        uploader.email = email
+        uploader.name = name
 
 
 # single global instance

@@ -44,8 +44,8 @@ class ControllerReportTests(IOControllerTestBase):
             self._login_admin()
             self.controller.submit_site("name", "127.0.0.1")
             report = self.controller.get_reports()[0]
-            uuid = report.get_uuid()
-            self.assertEqual(uuid, self.controller.get_report(uuid).get_uuid())
+            uuid = report.uuid
+            self.assertEqual(uuid, self.controller.get_report(uuid).uuid)
 
     def test_get_reports_not_authenticated(self):
         with self.app.test_request_context():
@@ -91,7 +91,7 @@ class ControllerReportTests(IOControllerTestBase):
             self._login_admin()
             self.controller.submit_site("name", "127.0.0.1")
             report = self.controller.get_reports()[0]
-            uuid = report.get_uuid()
+            uuid = report.uuid
             self.assertEqual(self.controller.process_report(True, uuid), True)
 
     def test_process_report_benchmark(self):
@@ -100,7 +100,7 @@ class ControllerReportTests(IOControllerTestBase):
             self._login_admin()
             self.controller.submit_benchmark("rosskukulinski/leaking-app", "submit comment.")
             report = self.controller.get_reports()[0]
-            uuid = report.get_uuid()
+            uuid = report.uuid
             self.assertEqual(self.controller.process_report(True, uuid), True)
 
     def test_process_report_result(self):
@@ -115,7 +115,7 @@ class ControllerReportTests(IOControllerTestBase):
                     'value': self.TEST_USER["info"]["email"]},
             ]}
             result = self.facade.query_results(json.dumps(filters))[0]
-            self.controller.report(Report.RESULT, result.get_uuid(), "msg", self.TEST_USER["sub"], )
+            self.controller.report(Report.RESULT, result.uuid, "msg", self.TEST_USER["sub"], )
             reports = self.controller.get_reports()
             result_report = None
             for report in reports:

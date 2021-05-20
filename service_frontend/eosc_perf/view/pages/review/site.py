@@ -64,17 +64,17 @@ def review_site():
     if report.get_report_type() != Report.SITE:
         return error_redirect('Site review page opened with wrong report type')
 
-    site_name = report.get_site().get_identifier()
-    reporter = report.get_reporter()
-    uploader_name = reporter.get_name()
-    uploader_mail = reporter.get_email()
+    site_name = report.site.identifier
+    reporter = report.reporter
+    uploader_name = reporter.name
+    uploader_mail = reporter.email
 
-    date = report.get_date()
+    date = report.date
 
     page = factory.generate_page(
         site_name=site_name,
-        site_description=report.get_site().get_description(),
-        site_human_name=report.get_site().get_name(),
+        site_description=report.site.description,
+        site_human_name=report.site.name,
         uploader_name=uploader_name,
         uploader_mail=uploader_mail,
         date=date,

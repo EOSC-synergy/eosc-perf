@@ -71,12 +71,12 @@ def review_benchmark():
     if report.get_report_type() != Report.BENCHMARK:
         return error_redirect('Benchmark review page opened with wrong report type')
 
-    docker_name = report.get_benchmark().get_docker_name()
-    reporter = report.get_reporter()
-    uploader_name = reporter.get_name()
-    uploader_mail = reporter.get_email()
+    docker_name = report.benchmark.docker_name
+    reporter = report.reporter
+    uploader_name = reporter.name
+    uploader_mail = reporter.email
 
-    date = report.get_date()
+    date = report.date
 
     # link to the image on docker hub
     dockerhub_link = build_dockerhub_url(docker_name)
@@ -95,7 +95,7 @@ def review_benchmark():
         docker_name=docker_name,
         docker_link=dockerhub_link,
         docker_desc=dockerhub_desc_formatted,
-        desc=report.get_message(),
+        desc=report.message,
         uploader_name=uploader_name,
         uploader_mail=uploader_mail,
         date=date,

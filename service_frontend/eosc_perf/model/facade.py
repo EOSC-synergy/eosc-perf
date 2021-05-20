@@ -467,7 +467,7 @@ class DatabaseFacade:
         try:
             site = self.get_site(identifier)
             # clear all flavors associated to this site
-            for flavor in site.get_flavors():
+            for flavor in site.flavors:
                 self._remove_from_database(flavor)
             return self._remove_from_database(site)
         except self.NotFoundError:
@@ -618,7 +618,7 @@ class DatabaseFacade:
         except self.NotFoundError:
             return False, None
         new_flavor = SiteFlavor(name, site, description if len(description) > 0 else None)
-        return self._add_to_database(new_flavor), new_flavor.get_uuid()
+        return self._add_to_database(new_flavor), new_flavor.uuid
 
 
 # single global instance

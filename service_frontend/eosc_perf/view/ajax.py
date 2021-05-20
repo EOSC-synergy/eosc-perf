@@ -52,13 +52,13 @@ class ResultSearchAJAX(AJAXHandler):
         results_dict = {"results": []}
         for result in results:
             result_dict = {
-                "data": json.loads(result.get_json()),
-                "uuid": result.get_uuid(),
-                "site": result.get_site().get_identifier(),
-                "benchmark": result.get_benchmark().get_docker_name(),
-                "uploader": result.get_uploader().get_email() if admin else None,
-                "tags": [tag.get_name() for tag in result.get_tags()],
-                "flavor": result.get_flavor().get_name()
+                "data": json.loads(result.json),
+                "uuid": result.uuid,
+                "site": result.site.identifier,
+                "benchmark": result.benchmar.docker_name,
+                "uploader": result.uploader.email if admin else None,
+                "tags": [tag.name for tag in result.tags],
+                "flavor": result.flavor.name
             }
             # decode and add to structure to avoid dealing with storing json within json
             results_dict["results"].append(result_dict)
@@ -82,13 +82,13 @@ class BenchmarkSearchAJAX(AJAXHandler):
 
         results = []
         for benchmark in benchmarks:
-            description = benchmark.get_description()
-            if benchmark.get_hidden() and not authenticator.is_admin():
+            description = benchmark.description
+            if benchmark.hidden and not authenticator.is_admin():
                 continue
             result_dict = {
-                "hidden": benchmark.get_hidden(),
-                "docker_name": benchmark.get_docker_name(),
-                "uploader": benchmark.get_uploader().get_email() if authenticator.is_admin() else "",
+                "hidden": benchmark.hidden,
+                "docker_name": benchmark.docker_name,
+                "uploader": benchmark.uploader.email if authenticator.is_admin() else "",
                 "description": description if description is not None else "No description found."
             }
             results.append(result_dict)
@@ -115,11 +115,11 @@ class ReportFetchAJAXHandler(AJAXHandler):
 
         for report in facade.get_reports(only_unanswered=False):
             report_data.append({
-                'uuid': report.get_uuid(),
+                'uuid': report.uuid,
                 'type': report.get_field_name(),
-                'submitter': report.get_reporter().get_name(),
-                'message': report.get_message(),
-                'verdict': report.get_status()
+                'submitter': report.reporter.name,
+                'message': report.message,
+                'verdict': report.status
             })
 
         return json.dumps({'reports': report_data})
@@ -144,14 +144,14 @@ class SiteFetchAJAXHandler(AJAXHandler):
         for site in sites:
             result_dict = {}
             # do not display hidden sites
-            if site.get_hidden():
+            if site.hidden:
                 continue
-            result_dict["name"] = site.get_name()
-            result_dict["identifier"] = site.get_identifier()
-            result_dict["description"] = site.get_description()
-            result_dict["address"] = site.get_address()
-            result_dict["flavors"] = [{'name': flavor.get_name(), 'description': flavor.get_description(),
-                                       'uuid': flavor.get_uuid()} for flavor in site.get_flavors()]
+            result_dict["name"] = site.name
+            result_dict["identifier"] = site.identifier
+            result_dict["description"] = site.description
+            result_dict["address"] = site.address
+            result_dict["flavors"] = [{'name': flavor.name, 'description': flavor.description,
+                                       'uuid': flavor.uuid} for flavor in site.flavors]
             results_dict["results"].append(result_dict)
         return json.dumps(results_dict), 200
 
@@ -178,8 +178,8 @@ class TagFetchAJAXHandler(AJAXHandler):
         tags = facade.get_tags()
         for tag in tags:
             result_dict = {
-                "name": tag.get_name(),
-                "description": tag.get_description()
+                "name": tag.name,
+                "description": tag.description
             }
             results_dict["results"].append(result_dict)
         return json.dumps(results_dict), 200
@@ -321,4 +321,3 @@ def update_flavor():
     handler = FlavorUpdateAJAX()
     response, code = handler.process(request.get_json())
     return Response(response, mimetype="application/json", status=code)
-

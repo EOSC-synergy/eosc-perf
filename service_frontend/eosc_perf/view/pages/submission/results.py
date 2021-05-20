@@ -123,7 +123,7 @@ def upload_result_submit():
             we_added_site = True
 
         # if site with same name exists but is hidden, add result anyway, as it was probably added by this same user
-        if site.get_hidden() is False:
+        if site.hidden is False:
             return error_json_message('There is already a site with name "{}"'.format(custom_site_name))
         else:
             pass

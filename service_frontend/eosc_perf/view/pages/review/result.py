@@ -65,23 +65,23 @@ def view_report():
     if report.get_report_type() != Report.RESULT:
         return error_redirect('View report page opened with wrong report type')
 
-    message = report.get_message()
-    reporter = report.get_reporter()
-    reporter_name = reporter.get_name()
-    reporter_mail = reporter.get_email()
-    date = report.get_date()
+    message = report.message
+    reporter = report.reporter
+    reporter_name = reporter.name
+    reporter_mail = reporter.email
+    date = report.date
 
-    result = report.get_result()
-    uploader = result.get_uploader()
-    uploader_name = uploader.get_name()
-    uploader_mail = uploader.get_email()
+    result = report.result
+    uploader = result.uploader
+    uploader_name = uploader.name
+    uploader_mail = uploader.email
 
-    site = result.get_site().get_name()
-    benchmark = result.get_benchmark().get_docker_name()
+    site = result.site.name
+    benchmark = result.benchmark.docker_name
 
-    tags = [t.get_name() for t in result.get_tags()]
+    tags = [tag.name for tag in result.tags]
     tag_str = ', '.join(tags)
-    json_data = json.dumps(json.loads(result.get_json()), indent=4)
+    json_data = json.dumps(json.loads(result.json), indent=4)
 
     page = factory.generate_page(
         reporter_name=reporter_name,

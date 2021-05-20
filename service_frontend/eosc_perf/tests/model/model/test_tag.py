@@ -37,11 +37,11 @@ class FacadeTagTests(FacadeTestBase):
     def test_find_tags(self):
         """Test finding all tags."""
         self.test_add_tag_valid()
-        self.assertGreater(len(self.facade.get_tags()), 0)
+        self.assertGreater(len(self.facade.tags), 0)
 
     def test_find_tags_empty(self):
         """Test finding no tags."""
-        self.assertEqual(len(self.facade.get_tags()), 0)
+        self.assertEqual(len(self.facade.tags), 0)
 
 
 if __name__ == '__main__':

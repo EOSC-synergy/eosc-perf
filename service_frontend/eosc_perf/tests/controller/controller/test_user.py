@@ -28,10 +28,10 @@ class ControllerUserTests(IOControllerTestBase):
     def test_get_email(self):
         with self.app.test_request_context():
             self._login_standard_user()
-            self.assertEqual(self.controller.get_email(), self.TEST_USER["info"]["email"])
+            self.assertEqual(self.controller.email, self.TEST_USER["info"]["email"])
             self._logout()
         with self.app.test_request_context():
-            self.assertIsNone(self.controller.get_email())
+            self.assertIsNone(self.controller.email)
 
     def test_get_full_name(self):
         with self.app.test_request_context():

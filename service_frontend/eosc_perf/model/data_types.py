@@ -126,8 +126,6 @@ class Uploader(db.Model):
     _email = db.Column(db.Text, nullable=False)
     _name = db.Column(db.Text, nullable=False)
 
-    _benchmarks: db.Column
-
     def __init__(self, identifier: str, email: str, name: str):
         """Create a new uploader entry object.
 
@@ -138,7 +136,8 @@ class Uploader(db.Model):
         """
         super(Uploader, self).__init__(_identifier=identifier, _email=email, _name=name)
 
-    def get_id(self) -> str:
+    @property
+    def id(self) -> str:
         """Get the unique identifier for this uploader.
 
         Returns:
@@ -146,7 +145,8 @@ class Uploader(db.Model):
         """
         return self._identifier
 
-    def get_email(self) -> str:
+    @property
+    def email(self) -> str:
         """Get the email address associated with this uploader.
 
         Returns:
@@ -154,7 +154,8 @@ class Uploader(db.Model):
         """
         return self._email
 
-    def set_email(self, email: str):
+    @email.setter
+    def email(self, email: str):
         """Update the email address associated with the uploader.
 
         Args:
@@ -163,7 +164,8 @@ class Uploader(db.Model):
         self._email = email
         db.session.commit()
 
-    def get_name(self) -> str:
+    @property
+    def name(self) -> str:
         """Get a human-readable human name.
 
         Returns:
@@ -171,7 +173,8 @@ class Uploader(db.Model):
         """
         return self._name
 
-    def set_name(self, name: str):
+    @name.setter
+    def name(self, name: str):
         """Update the human-readable human human name.
 
         Args:
@@ -179,23 +182,6 @@ class Uploader(db.Model):
         """
         self._name = name
         db.session.commit()
-
-    def get_results(self) -> ResultIterator:
-        """Get an iterator for all the results associated with this uploader.
-
-        Returns:
-            ResultIterator: A ResultIterator configured for all results of this uploader.
-        """
-
-        return ResultIterator(Session.object_session(self), uploader=self)
-
-    def get_benchmarks(self) -> List[Benchmark]:
-        """Get all benchmarks associated with this uploader.
-
-        Returns:
-            List[Benchmark]: All benchmarks associated with this uploader.
-        """
-        return self._benchmarks
 
     def __repr__(self) -> str:
         """Get a human-readable representation string of the uploader.
@@ -218,12 +204,11 @@ class Benchmark(db.Model):
 
     # value columns
     _docker_name = db.Column(db.Text(), nullable=False, primary_key=True)
-
     _hidden = db.Column(db.Boolean, nullable=False, default=True)
 
     # relationship columns
     _uploader_id = db.Column(db.Text, db.ForeignKey('uploader._email'), nullable=False)
-    _uploader = db.relationship('Uploader', backref=db.backref('_benchmarks', lazy=True))
+    _uploader = db.relationship('Uploader')
 
     _description = db.Column(db.Text, nullable=True)
 
@@ -242,7 +227,8 @@ class Benchmark(db.Model):
         super(Benchmark, self).__init__(_docker_name=docker_name, _uploader=uploader, _description=description,
                                         _template=template)
 
-    def get_docker_name(self) -> str:
+    @property
+    def docker_name(self) -> str:
         """Get the docker hub identifier of the benchmark, formatted as \"user/image:tagname\".
 
         Returns:
@@ -250,7 +236,8 @@ class Benchmark(db.Model):
         """
         return self._docker_name
 
-    def get_uploader(self) -> Uploader:
+    @property
+    def uploader(self) -> Uploader:
         """Get the user that submitted this benchmark.
 
         Returns:
@@ -258,15 +245,17 @@ class Benchmark(db.Model):
         """
         return self._uploader
 
-    def get_results(self) -> ResultIterator:
-        """Get an iterator for all the results associated to this benchmark.
+    @property
+    def hidden(self) -> bool:
+        """Get the hide state of the benchmark.
 
         Returns:
-            ResultIterator: An iterator over the associated results.
+            bool: True if hidden.
         """
-        return ResultIterator(Session.object_session(self), benchmark=self)
+        return self._hidden
 
-    def set_hidden(self, state: bool):
+    @hidden.setter
+    def hidden(self, state: bool):
         """Set the hide state of the benchmark.
 
         Args:
@@ -275,35 +264,20 @@ class Benchmark(db.Model):
         self._hidden = state
         db.session.commit()
 
-    def get_hidden(self) -> bool:
-        """Get the hide state of the benchmark.
-
-        Returns:
-            bool: True if hidden.
+    @property
+    def description(self):
+        """Get the benchmark description.
         """
-        return self._hidden
+        return self._description
 
-    def set_description(self, description: str):
+    @description.setter
+    def description(self, description: str):
         """Set the description of the benchmark.
 
         Args:
             description (str): The new description.
         """
         self._description = description
-        db.session.commit()
-
-    def get_description(self):
-        """Get the benchmark description.
-        """
-        return self._description
-
-    def set_template(self, template: JSON):
-        """Set a new JSON data template for this benchmark.
-
-        Returns:
-            template (JSON): The new JSON data template to use.
-        """
-        self._template = template
         db.session.commit()
 
     def has_template(self) -> bool:
@@ -314,13 +288,24 @@ class Benchmark(db.Model):
         """
         return self._template is not None
 
-    def get_template(self) -> JSON:
+    @property
+    def template(self) -> JSON:
         """Get the JSON data template for this benchmark.
 
         Returns:
             JSON: The template for this benchmark.
         """
         return self._template
+
+    @template.setter
+    def template(self, template: JSON):
+        """Set a new JSON data template for this benchmark.
+
+        Returns:
+            template (JSON): The new JSON data template to use.
+        """
+        self._template = template
+        db.session.commit()
 
     def determine_notable_keys(self) -> List[str]:
         """Get a list containing all notable keys in the template.
@@ -330,7 +315,7 @@ class Benchmark(db.Model):
         """
         if not self.has_template():
             return []
-        dictionary: Dict = json.loads(self.get_template())
+        dictionary: Dict = json.loads(self.template)
 
         def folder(key: str, keydict: Dict) -> List[str]:
             if key.startswith('!') and not isinstance(keydict[key], dict):
@@ -379,7 +364,7 @@ class Site(db.Model):
 
     _flavors: List[SiteFlavor]
 
-    def __init__(self, identifier: str, address: str, **kwargs):
+    def __init__(self, identifier: str, address: str, *, name: Optional[str] = None, description: Optional[str] = None):
         """Create a new site entry object.
 
         Arg:
@@ -390,16 +375,17 @@ class Site(db.Model):
         """
         new_args = {}
         # name defaults to identifier if left out
-        if 'name' in kwargs and kwargs['name'] is not None:
-            new_args['_name'] = kwargs['name']
+        if name is not None:
+            new_args['_name'] = name
         else:
             new_args['_name'] = identifier
-        if 'description' in kwargs and kwargs['description'] is not None:
-            new_args['_description'] = kwargs['description']
+        if description is not None:
+            new_args['_description'] = description
 
         super(Site, self).__init__(_identifier=identifier, _address=address, **new_args)
 
-    def get_address(self) -> str:
+    @property
+    def address(self) -> str:
         """Get the network address of the site.
 
         Returns:
@@ -407,7 +393,8 @@ class Site(db.Model):
         """
         return self._address
 
-    def set_address(self, address: str):
+    @address.setter
+    def address(self, address: str):
         """Update the current network address of the site.
 
         Args:
@@ -416,7 +403,8 @@ class Site(db.Model):
         self._address = address
         db.session.commit()
 
-    def get_description(self) -> str:
+    @property
+    def description(self) -> str:
         """Get the human-readable description of the site.
 
         Returns:
@@ -424,7 +412,8 @@ class Site(db.Model):
         """
         return self._description
 
-    def set_description(self, desc: str):
+    @description.setter
+    def description(self, desc: str):
         """Update the current description of the site.
 
         Args:
@@ -433,7 +422,17 @@ class Site(db.Model):
         self._description = desc
         db.session.commit()
 
-    def set_name(self, name: str):
+    @property
+    def name(self) -> str:
+        """Get the human-readable name of the site.
+
+        Returns:
+            str: The human-readable name of the site.
+        """
+        return self._name
+
+    @name.setter
+    def name(self, name: str):
         """Update the full name of the site.
 
         Args:
@@ -441,6 +440,38 @@ class Site(db.Model):
         """
         self._name = name
         db.session.commit()
+
+    @property
+    def identifier(self) -> str:
+        """Get the site's identifier.
+
+        Returns:
+            str: The site's identifier.
+        """
+        return self._identifier
+
+    @property
+    def hidden(self) -> bool:
+        """Get the hide state of the site.
+
+        Returns:
+            bool: True if the site is hidden.
+        """
+        return self._hidden
+
+    @hidden.setter
+    def hidden(self, state: bool):
+        """Set the hide state of the site.
+
+        Args:
+            state (bool): Set to true if the site should be hidden.
+        """
+        self._hidden = state
+        db.session.commit()
+
+    @property
+    def flavors(self) -> List[SiteFlavor]:
+        return self._flavors
 
     def add_flavor(self, flavor: SiteFlavor):
         """Add a new flavor to a site.
@@ -450,50 +481,6 @@ class Site(db.Model):
         """
         self._flavors.append(flavor)
         db.session.commit()
-
-    def get_results(self) -> ResultIterator:
-        """Get an iterator for all results associated to this site.
-
-        Returns:
-            ResultIterator: An iterator over all results associated with the site.
-        """
-        return ResultIterator(Session.object_session(self), site=self)
-
-    def get_name(self) -> str:
-        """Get the human-readable name of the site.
-
-        Returns:
-            str: The human-readable name of the site.
-        """
-        return self._name
-
-    def get_identifier(self) -> str:
-        """Get the site's identifier.
-
-        Returns:
-            str: The site's identifier.
-        """
-        return self._identifier
-
-    def set_hidden(self, state: bool):
-        """Set the hide state of the site.
-
-        Args:
-            state (bool): Set to true if the site should be hidden.
-        """
-        self._hidden = state
-        db.session.commit()
-
-    def get_hidden(self) -> bool:
-        """Get the hide state of the site.
-
-        Returns:
-            bool: True if the site is hidden.
-        """
-        return self._hidden
-
-    def get_flavors(self) -> List[SiteFlavor]:
-        return self._flavors
 
     @abstractmethod
     def __repr__(self) -> str:
@@ -533,7 +520,8 @@ class SiteFlavor(db.Model):
         """
         super(SiteFlavor, self).__init__(_name=name, _site=site, _custom_text=custom_text)
 
-    def get_name(self) -> str:
+    @property
+    def name(self) -> str:
         """Get the name of this virtual machine flavor.
 
         Returns:
@@ -541,31 +529,8 @@ class SiteFlavor(db.Model):
         """
         return self._name
 
-    def get_site(self) -> Site:
-        """Get the site this flavor exists on.
-
-        Returns:
-            Site - The site the flavor exists on.
-        """
-        return self._site
-
-    def get_description(self) -> Optional[str]:
-        """Get a user description of a custom flavor, if it exists.
-
-        Returns:
-            Optional[str] - The user description of the flavor.
-        """
-        return self._custom_text
-
-    def get_uuid(self) -> str:
-        """Get the UUID for a flavor.
-
-        Returns:
-            str - The UUID.
-        """
-        return self._uuid
-
-    def set_name(self, name: str):
+    @name.setter
+    def name(self, name: str):
         """Set a new name for a site flavor.
 
         Args:
@@ -574,7 +539,17 @@ class SiteFlavor(db.Model):
         self._name = name
         db.session.commit()
 
-    def set_description(self, description: str):
+    @property
+    def description(self) -> Optional[str]:
+        """Get a user description of a custom flavor, if it exists.
+
+        Returns:
+            Optional[str] - The user description of the flavor.
+        """
+        return self._custom_text
+
+    @description.setter
+    def description(self, description: str):
         """Set a new description for a site flavor.
 
         Args:
@@ -582,6 +557,15 @@ class SiteFlavor(db.Model):
         """
         self._custom_text = description
         db.session.commit()
+
+    @property
+    def uuid(self) -> str:
+        """Get the UUID for a flavor.
+
+        Returns:
+            str - The UUID.
+        """
+        return self._uuid
 
     def is_unique(self) -> bool:
         """Check if this flavor is a unique flavor or a custom/user-added flavor.
@@ -619,7 +603,8 @@ class Tag(db.Model):
 
         super(Tag, self).__init__(_name=name, **new_args)
 
-    def get_description(self) -> str:
+    @property
+    def description(self) -> str:
         """Get the tag's human-readable description.
 
         Returns:
@@ -627,7 +612,8 @@ class Tag(db.Model):
         """
         return self._description
 
-    def set_description(self, description: str):
+    @description.setter
+    def description(self, description: str):
         """Update the current tag's human-readable description.
 
         Args:
@@ -636,21 +622,14 @@ class Tag(db.Model):
         self._description = description
         db.session.commit()
 
-    def get_name(self) -> str:
+    @property
+    def name(self) -> str:
         """Get the name of the tag.
 
         Returns:
             str: The name of the tag.
         """
         return self._name
-
-    def get_results(self) -> ResultIterator:
-        """Get an iterator for all the results associated with this tag.
-
-        Returns:
-            ResultIterator: An iterator over all results associated with this tag.
-        """
-        return ResultIterator(Session.object_session(self), tags=[self])
 
     def __repr__(self) -> str:
         """Get a human-readable representation string of the tag.
@@ -697,7 +676,8 @@ class Result(db.Model):
 
     _tags = db.relationship('Tag', secondary=tag_result_association, backref="_results")
 
-    def __init__(self, json_data: str, uploader: Uploader, site: Site, benchmark: Benchmark, flavor: SiteFlavor, **kwargs):
+    def __init__(self, json_data: str, uploader: Uploader, site: Site, benchmark: Benchmark, flavor: SiteFlavor,
+                 **kwargs):
         """Create a new result entry object.
 
         Args:
@@ -712,10 +692,12 @@ class Result(db.Model):
         if 'tags' in kwargs and len(kwargs['tags']) > 0:
             new_args['_tags'] = kwargs['tags']
 
-        super(Result, self).__init__(_json=json_data, _uploader=uploader, _site=site, _benchmark=benchmark, _flavor=flavor,
+        super(Result, self).__init__(_json=json_data, _uploader=uploader, _site=site, _benchmark=benchmark,
+                                     _flavor=flavor,
                                      **new_args)
 
-    def get_json(self) -> str:
+    @property
+    def json(self) -> str:
         """Get the json data of the result.
 
         Returns:
@@ -723,7 +705,8 @@ class Result(db.Model):
         """
         return self._json
 
-    def get_site(self) -> Site:
+    @property
+    def site(self) -> Site:
         """Get the execution site associated with the result.
 
         Returns:
@@ -731,7 +714,8 @@ class Result(db.Model):
         """
         return self._site
 
-    def get_benchmark(self) -> Benchmark:
+    @property
+    def benchmark(self) -> Benchmark:
         """Get the benchmark associated with the result.
 
         Returns:
@@ -739,7 +723,8 @@ class Result(db.Model):
         """
         return self._benchmark
 
-    def get_uploader(self) -> Uploader:
+    @property
+    def uploader(self) -> Uploader:
         """Get the uploader associated with the result.
 
         Returns:
@@ -747,7 +732,8 @@ class Result(db.Model):
         """
         return self._uploader
 
-    def get_tags(self) -> List[Tag]:
+    @property
+    def tags(self) -> List[Tag]:
         """Get all the tags associated with this result.
 
         Returns:
@@ -755,7 +741,8 @@ class Result(db.Model):
         """
         return self._tags
 
-    def get_flavor(self) -> SiteFlavor:
+    @property
+    def flavor(self) -> SiteFlavor:
         """Get the flavor of virtual machine the benchmark was run on.
 
         Returns:
@@ -763,7 +750,17 @@ class Result(db.Model):
         """
         return self._flavor
 
-    def set_hidden(self, state: bool):
+    @property
+    def hidden(self) -> bool:
+        """Get the hide state of the result.
+
+        Returns:
+            bool: True if the result is hidden.
+        """
+        return self._hidden
+
+    @hidden.setter
+    def hidden(self, state: bool):
         """Set the hide state of the result.
 
         Args:
@@ -772,15 +769,8 @@ class Result(db.Model):
         self._hidden = state
         db.session.commit()
 
-    def get_hidden(self) -> bool:
-        """Get the hide state of the result.
-
-        Returns:
-            bool: True if the result is hidden.
-        """
-        return self._hidden
-
-    def get_uuid(self) -> str:
+    @property
+    def uuid(self) -> str:
         """Get the result's UUID.
 
         Returns:
@@ -832,9 +822,8 @@ class Result(db.Model):
         Returns:
             str: A human-readable representation string of the result.
         """
-        return '<{} {} ({} {} {} {})>\n'.format(
-            self.__class__.__name__, self._uuid,
-            self._uploader, self._benchmark, self._site, str(self._tags))
+        return '<{} {} ({} {} {} {})>\n'.format(self.__class__.__name__, self._uuid,
+                                                self._uploader, self._benchmark, self._site, str(self._tags))
 
 
 class Report(db.Model):
@@ -880,7 +869,8 @@ class Report(db.Model):
         # pass to sqlalchemy constructor
         super(Report, self).__init__(_verified=False, _verdict=False, **new_args)
 
-    def get_date(self) -> datetime.datetime:
+    @property
+    def date(self) -> datetime.datetime:
         """Get the publication date of the report.
 
         Returns:
@@ -888,7 +878,8 @@ class Report(db.Model):
         """
         return self._date
 
-    def get_message(self) -> str:
+    @property
+    def message(self) -> str:
         """Get the description message of the report.
 
         Returns:
@@ -896,7 +887,8 @@ class Report(db.Model):
         """
         return self._message
 
-    def get_reporter(self) -> Uploader:
+    @property
+    def reporter(self) -> Uploader:
         """Get the user that submitted this report.
 
         Returns:
@@ -904,7 +896,8 @@ class Report(db.Model):
         """
         return self._uploader
 
-    def get_status(self) -> str:
+    @property
+    def status(self) -> str:
         """Get the current status of the report.
 
         Returns:
@@ -926,7 +919,8 @@ class Report(db.Model):
         self._verified = True
         db.session.commit()
 
-    def get_uuid(self) -> str:
+    @property
+    def uuid(self) -> str:
         """Get the UUID of this report.
 
         Returns:
@@ -986,7 +980,8 @@ class ResultReport(Report):
         """
         super(ResultReport, self).__init__(uploader=uploader, result=result, message=message)
 
-    def get_result(self) -> Result:
+    @property
+    def result(self) -> Result:
         """Get the result associated with the report.
 
         Returns:
@@ -1038,7 +1033,8 @@ class BenchmarkReport(Report):
         """
         super(BenchmarkReport, self).__init__(uploader=uploader, benchmark=benchmark, message=message)
 
-    def get_benchmark(self) -> Benchmark:
+    @property
+    def benchmark(self) -> Benchmark:
         """Get the benchmark associated with the report."""
         return self._benchmark
 
@@ -1086,7 +1082,8 @@ class SiteReport(Report):
         """
         super(SiteReport, self).__init__(uploader=uploader, site=site, message=message)
 
-    def get_site(self) -> Site:
+    @property
+    def site(self) -> Site:
         """Get the site associated with the report.
 
         Returns:

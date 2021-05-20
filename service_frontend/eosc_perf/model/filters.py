@@ -42,7 +42,7 @@ class BenchmarkFilter(Filter):
         Returns:
             bool: True if the result is from the associated benchmark.
         """
-        return self.docker_name in result.get_benchmark().get_docker_name()
+        return self.docker_name in result.benchmark.docker_name
 
 
 class UploaderFilter(Filter):
@@ -64,7 +64,7 @@ class UploaderFilter(Filter):
         Returns:
             bool: True if the result was uploaded by the associated uploader.
         """
-        return result.get_uploader().get_email() == self.email
+        return result.uploader.email == self.email
 
 
 class SiteFilter(Filter):
@@ -86,7 +86,7 @@ class SiteFilter(Filter):
         Returns:
             bool: True if the result is from the associated site.
         """
-        return self.site in result.get_site().get_identifier()
+        return self.site in result.site.identifier
 
 
 class TagFilter(Filter):
@@ -108,7 +108,7 @@ class TagFilter(Filter):
         Returns:
             bool: True if the result is associated with the associated tag.
         """
-        return self.tag in [t.get_name() for t in result.get_tags()]
+        return self.tag in [t.name for t in result.tags]
 
 
 class JsonValueFilter(Filter):
@@ -147,7 +147,7 @@ class JsonValueFilter(Filter):
         Returns:
             bool: True if the result's checked JSON field passes the comparison.
         """
-        val = self._deep_get(json.loads(result.get_json()), self.template)
+        val = self._deep_get(json.loads(result.json), self.template)
         if val is not None:
             if self.mode == 'equals' and isinstance(val, str):
                 return val == self.value

@@ -13,13 +13,8 @@ from ..controller.io_controller import controller
 
 
 def _add_result(result):
-    facade.add_result(result.get_json(),
-                      result.get_uploader().get_id(),
-                      result.get_site().get_identifier(),
-                      result.get_benchmark().get_docker_name(),
-                      result.get_flavor().get_uuid(),
-                      [tag.get_name() for tag in result.get_tags()]
-                      )
+    facade.add_result(result.json, result.uploader.get_id, result.site.identifier, result.benchmark().docker_name,
+                      result.flavor.uuid, [tag.name for tag in result.tags])
 
 
 def add_demo():
@@ -33,10 +28,10 @@ def add_demo():
         name='Mister Example')
 
     try:
-        uploader = facade.get_uploader(demo_uploader.get_id())
+        uploader = facade.get_uploader(demo_uploader.id)
     except facade.NotFoundError:
-        facade.add_uploader(demo_uploader.get_id(), demo_uploader.get_name(), demo_uploader.get_email())
-        uploader = facade.get_uploader(demo_uploader.get_id())
+        facade.add_uploader(demo_uploader.id, demo_uploader.name, demo_uploader.email)
+        uploader = facade.get_uploader(demo_uploader.id)
 
     # virtualbox archlinux installation I use for development
     sample_sites = [
@@ -69,24 +64,24 @@ def add_demo():
     for entry in sample_sites:
         site_info = entry['site']
         try:
-            site = facade.get_site(site_info.get_identifier())
+            site = facade.get_site(site_info.identifier)
         except facade.NotFoundError:
-            facade.add_site(site_info.get_identifier(), site_info.get_address(),
-                            description=site_info.get_description(),
-                            full_name=site_info.get_name())
-            site = facade.get_site(site_info.get_identifier())
+            facade.add_site(site_info.identifier, site_info.address,
+                            description=site_info.description,
+                            full_name=site_info.name)
+            site = facade.get_site(site_info.identifier)
             # add 'unknown' flavor to mirror controller behaviour
             facade.add_flavor('unknown', "Pick this if you don't know the flavor or it is not listed",
-                              site.get_identifier())
+                              site.identifier)
 
         for flavor_name in entry['flavors']:
             try:
-                facade.get_site_flavor_by_name(site.get_identifier(), flavor_name)
+                facade.get_site_flavor_by_name(site.identifier, flavor_name)
             except facade.NotFoundError:
-                facade.add_flavor(flavor_name, '', site.get_identifier())
-                facade.get_site_flavor_by_name(site.get_identifier(), flavor_name)
+                facade.add_flavor(flavor_name, '', site.identifier)
+                facade.get_site_flavor_by_name(site.identifier, flavor_name)
 
-        site.set_hidden(False)
+        site.hidden = False
 
     with open('eosc_perf/model/sample_data/template.json') as file:
         # the benchmark is real
@@ -94,15 +89,15 @@ def add_demo():
                                    description="Compare cpu perf with multithreaded raytracing", template=file.read())
 
     try:
-        benchmark = facade.get_benchmark(demo_benchmark.get_docker_name())
+        benchmark = facade.get_benchmark(demo_benchmark.docker_name)
     except facade.NotFoundError:
         facade.add_benchmark(
-            demo_benchmark.get_docker_name(),
-            uploader.get_id(),
-            description=demo_benchmark.get_description(),
-            template=demo_benchmark.get_template())
-        benchmark = facade.get_benchmark(demo_benchmark.get_docker_name())
-    benchmark.set_hidden(False)
+            demo_benchmark.docker_name,
+            uploader.id,
+            description=demo_benchmark.description,
+            template=demo_benchmark.template)
+        benchmark = facade.get_benchmark(demo_benchmark.docker_name)
+    benchmark.hidden = False
 
     # load demo results
     demo_results = []
@@ -140,7 +135,7 @@ def add_demo():
         with open('eosc_perf/model/sample_data/{}'.format(result_info['file'])) as file:
             data_raw = file.read()
             data = json.loads(data_raw)
-        if not controller._result_validator.validate_json(data_raw, benchmark.get_template()):
+        if not controller._result_validator.validate_json(data_raw, benchmark.template):
             raise ValueError("demo data " + result_info['file'] + " does *not* pass demo template")
         demo_results.append(Result(
             json_data=json.dumps(data),
@@ -150,8 +145,8 @@ def add_demo():
             flavor=flavor))
 
     filters = {'filters': [
-        {'type': 'site', 'value': sample_sites[0]['site'].get_identifier()},
-        {'type': 'benchmark', 'value': benchmark.get_docker_name()}
+        {'type': 'site', 'value': sample_sites[0]['site'].identifier},
+        {'type': 'benchmark', 'value': benchmark.docker_name}
     ]}
     results = facade.query_results(json.dumps(filters))
     # only add test results if there aren't any results from my fake machine

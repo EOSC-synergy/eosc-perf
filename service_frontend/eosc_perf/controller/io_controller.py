@@ -92,7 +92,7 @@ class IOController:
         except facade.NotFoundError:
             raise ValueError("Unknown benchmark")
 
-        template = benchmark.get_template() if benchmark.has_template() else None
+        template = benchmark.template if benchmark.has_template() else None
 
         if not self._result_validator.validate_json(result_json, template):
             raise ValueError("No valid result JSON")
@@ -232,7 +232,7 @@ class IOController:
         }
         success, report = facade.add_report(types[report_type], target, uploader, message)
         if success:
-            self._report_mailer.mail_entry(report_type, message, report.get_uuid())
+            self._report_mailer.mail_entry(report_type, message, report.uuid)
             return True
         return False
 
@@ -276,11 +276,11 @@ class IOController:
             return False
         report.set_verdict(verdict)
         if report.get_report_type() == Report.BENCHMARK:
-            report.get_benchmark().set_hidden(not verdict)
+            report.benchmark.hidden = not verdict
         elif report.get_report_type() == Report.SITE:
-            report.get_site().set_hidden(not verdict)
+            report.site.hidden = not verdict
         elif report.get_report_type() == Report.RESULT:
-            report.get_result().set_hidden(not verdict)
+            report.result.hidden = not verdict
 
         return True
 
@@ -297,7 +297,7 @@ class IOController:
             result = facade.get_result(uuid)
         except DatabaseFacade.NotFoundError:
             return False
-        result.set_hidden(True)
+        result.hidden = True
         return True
 
     @_only_admin
@@ -313,8 +313,8 @@ class IOController:
             flavor = facade.get_site_flavor(uuid)
         except facade.NotFoundError:
             return False
-        flavor.set_name(name)
-        flavor.set_description(description)
+        flavor.name = name
+        flavor.description = description
         return True
 
     # @_only_authenticated

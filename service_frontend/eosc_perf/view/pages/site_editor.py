@@ -55,12 +55,12 @@ def ajax_update_site():
 
     description = request.form.get("description")
     if description is not None:
-        site.set_description(description)
+        site.description = description
     full_name = request.form.get("full_name", default=site_name)
     if full_name is not None:
-        site.set_name(full_name)
+        site.name = full_name
     address = request.form.get("address")
     if address is not None:
-        site.set_address(address)
+        site.address = address
 
     return Response('{}', mimetype='application/json', status=200)
