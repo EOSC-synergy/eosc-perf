@@ -18,95 +18,31 @@ class FacadeReportTests(FacadeTestBase):
         self._add_result()
 
         # site
-        meta = {
-            'uploader': self.TESTED_UPLOADER_ID,
-            'type': 'site',
-            'value': self.TESTED_SITE_NAME,
-            'message': 'hello world'
-        }
-        self.assertTrue(self.facade.add_report(json.dumps(meta)))
+        self.assertTrue(
+            self.facade.add_report('site', self.TESTED_SITE_NAME, self.TESTED_UPLOADER_ID, 'hello world')[0])
 
         # benchmark
-        meta = {
-            'uploader': self.TESTED_UPLOADER_ID,
-            'type': 'benchmark',
-            'value': self.TESTED_BENCHMARK_NAME
-        }
-        self.assertTrue(self.facade.add_report(json.dumps(meta)))
-
-        #
-        # result
-        # no simple available way to reference test result
-        # meta = {
-        #    'uploader': self.TESTED_UPLOADER_ID,
-        #    'type': 'result',
-        #    'value': ?
-        # }
-        # self.assertTrue(self.facade.add_report(json.dumps(meta)))
+        self.assertTrue(self.facade.add_report('benchmark', self.TESTED_BENCHMARK_NAME, self.TESTED_UPLOADER_ID)[0])
 
     def test_add_report_invalid(self):
         """Test various invalid calls to add_report."""
         self._add_result_data()
 
-        # no uploader
-        meta = {
-            'type': 'site',
-            'value': self.TESTED_SITE_NAME
-        }
-        with self.assertRaises(ValueError):
-            self.facade.add_report(json.dumps(meta))
-
-        # no type
-        meta = {
-            'uploader': self.TESTED_UPLOADER_ID,
-            'value': 'something'
-        }
-        with self.assertRaises(ValueError):
-            self.facade.add_report(json.dumps(meta))
-
-        # no value
-        meta = {
-            'uploader': self.TESTED_UPLOADER_ID,
-            'type': 'test'
-        }
-        with self.assertRaises(ValueError):
-            self.facade.add_report(json.dumps(meta))
-
         # invalid site
-        meta = {
-            'uploader': self.TESTED_UPLOADER_ID,
-            'type': 'site',
-            'value': '!!!invalid'
-        }
         with self.assertRaises(ValueError):
-            self.facade.add_report(json.dumps(meta))
+            self.facade.add_report('site', '!!!invalid!!!', self.TESTED_UPLOADER_ID)
 
         # invalid benchmark
-        meta = {
-            'uploader': self.TESTED_UPLOADER_ID,
-            'type': 'benchmark',
-            'value': '!!!invalid'
-        }
         with self.assertRaises(ValueError):
-            self.facade.add_report(json.dumps(meta))
+            self.facade.add_report('benchmark', '!!!invalid!!!', self.TESTED_UPLOADER_ID)
 
         # invalid uploader
-        meta = {
-            'uploader': 'not an uploader',
-            'type': 'site',
-            'value': self.TESTED_SITE_NAME
-        }
         with self.assertRaises(ValueError):
-            self.facade.add_report(json.dumps(meta))
+            self.facade.add_report('site', self.TESTED_SITE_NAME, 'inexistent uploader')
 
         # invalid result
-        meta = {
-            'uploader': 'not an uploader',
-            'type': 'result',
-            'value': 'ceci n\'est pas une UUID'
-        }
         with self.assertRaises(ValueError):
-            self.facade.add_report(json.dumps(meta))
+            self.facade.add_report('result', 'not an uuid lol', self.TESTED_UPLOADER_ID)
 
     def test_find_reports(self):
         """Test if added reports can be found."""

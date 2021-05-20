@@ -485,55 +485,44 @@ class DatabaseFacade:
             raise ValueError("tag name too short")
         return self._add_to_database(Tag(name=name))
 
-    def add_report(self, metadata: str) -> Tuple[bool, Optional[Result]]:
+    def add_report(self, report_type: str, target: str, uploader: str, message: Optional[str] = None) \
+            -> Tuple[bool, Optional[Result]]:
         """Add a new report.
 
         Args:
-            metadata (str): The metadata of the report to add.
+            report_type (str): Report type.
+            target (str): The item being reported.
+            uploader (str): The id of the uploader.
+            message (Optional[str]): The report message/explanation.
         Returns:
             Tuple[bool, Optional[Result]]: True if adding the report was successful, with the newly added report.
         """
-        #
-        dictionary = json.loads(metadata)
-
-        # unpack optional message
-        message = None
-        if 'message' in dictionary:
-            message = dictionary['message']
-
-        # sanity checks
-        if 'type' not in dictionary:
-            raise ValueError("report missing type")
-        if 'value' not in dictionary:
-            raise ValueError("report missing value")
-        if 'uploader' not in dictionary:
-            raise ValueError("no uploader in report")
 
         try:
-            uploader = self.get_uploader(dictionary['uploader'])
+            uploader = self.get_uploader(uploader)
         except self.NotFoundError:
             raise ValueError("unknown uploader")
 
         # check if specified report target exists
         success = False
         report = None
-        if dictionary['type'] == 'site':
+        if report_type == 'site':
             try:
-                site = self.get_site(dictionary['value'])
+                site = self.get_site(target)
             except self.NotFoundError:
                 raise ValueError("unknown site for report")
             report = SiteReport(uploader=uploader, site=site, message=message)
             success = self._add_to_database(report)
-        elif dictionary['type'] == 'benchmark':
+        elif report_type == 'benchmark':
             try:
-                benchmark = self.get_benchmark(dictionary['value'])
+                benchmark = self.get_benchmark(target)
             except self.NotFoundError:
                 raise ValueError("unknown benchmark for report")
             report = BenchmarkReport(uploader=uploader, benchmark=benchmark, message=message)
             success = self._add_to_database(report)
-        elif dictionary['type'] == 'result':
+        elif report_type == 'result':
             try:
-                result = self.get_result(dictionary['value'])
+                result = self.get_result(target)
             except self.NotFoundError:
                 raise ValueError("unknown result for report")
             report = ResultReport(uploader=uploader, result=result, message=message)
