@@ -77,9 +77,9 @@ class DatabaseFacade:
             Result: The desired flavour.
         """
         # prepare query
-        results = db.session.query(SiteFlavor)\
-            .filter(SiteFlavor._site_identifier == site_name)\
-            .filter(SiteFlavor._name == flavor_name)\
+        results = db.session.query(SiteFlavor) \
+            .filter(SiteFlavor._site_identifier == site_name) \
+            .filter(SiteFlavor._name == flavor_name) \
             .all()
         db.session.commit()
 
@@ -264,7 +264,8 @@ class DatabaseFacade:
 
         # add filter for every keyword
         for keyword in keywords:
-            results = results.filter(or_(Benchmark._docker_name.contains(keyword), Benchmark._description.contains(keyword)))
+            results = results.filter(
+                or_(Benchmark._docker_name.contains(keyword), Benchmark._description.contains(keyword)))
 
         results = results.all()
         db.session.commit()
@@ -484,13 +485,13 @@ class DatabaseFacade:
             raise ValueError("tag name too short")
         return self._add_to_database(Tag(name=name))
 
-    def add_report(self, metadata: str) -> bool:
+    def add_report(self, metadata: str) -> Tuple[bool, Optional[Result]]:
         """Add a new report.
 
         Args:
             metadata (str): The metadata of the report to add.
         Returns:
-            bool: True if adding the report was successful.
+            Tuple[bool, Optional[Result]]: True if adding the report was successful, with the newly added report.
         """
         #
         dictionary = json.loads(metadata)
@@ -515,26 +516,30 @@ class DatabaseFacade:
 
         # check if specified report target exists
         success = False
+        report = None
         if dictionary['type'] == 'site':
             try:
                 site = self.get_site(dictionary['value'])
             except self.NotFoundError:
                 raise ValueError("unknown site for report")
-            success = self._add_to_database(SiteReport(uploader=uploader, site=site, message=message))
+            report = SiteReport(uploader=uploader, site=site, message=message)
+            success = self._add_to_database(report)
         elif dictionary['type'] == 'benchmark':
             try:
                 benchmark = self.get_benchmark(dictionary['value'])
             except self.NotFoundError:
                 raise ValueError("unknown benchmark for report")
-            success = self._add_to_database(BenchmarkReport(uploader=uploader, benchmark=benchmark, message=message))
+            report = BenchmarkReport(uploader=uploader, benchmark=benchmark, message=message)
+            success = self._add_to_database(report)
         elif dictionary['type'] == 'result':
             try:
                 result = self.get_result(dictionary['value'])
             except self.NotFoundError:
                 raise ValueError("unknown result for report")
-            success = self._add_to_database(ResultReport(uploader=uploader, result=result, message=message))
+            report = ResultReport(uploader=uploader, result=result, message=message)
+            success = self._add_to_database(report)
 
-        return success
+        return success, report
 
     def add_benchmark(self, docker_name: str, uploader_id: str, description: Optional[str] = None,
                       template: Optional[JSON] = None) -> bool:

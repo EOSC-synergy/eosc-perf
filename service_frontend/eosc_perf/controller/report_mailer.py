@@ -74,14 +74,19 @@ class ReportMailer:
         self.smtp.send_message(multipart)
         self._finalize_smtp()
 
-    def mail_entry(self, report_type: int, message: str):
+    def mail_entry(self, report_type: int, message: str, uuid: str):
         titles = {
             Report.SITE: "New site submitted",
             Report.RESULT: "Result reported",
             Report.BENCHMARK: "New benchmark submitted"
         }
+        domains = {
+            Report.SITE: "https://" + os.environ["DOMAIN"] + "/review/site?uuid=",
+            Report.RESULT: "https://" + os.environ["DOMAIN"] + "/review/result?uuid=",
+            Report.BENCHMARK: "https://" + os.environ["DOMAIN"] + "/review/benchmark?uuid=",
+        }
         title = "New report: {}".format(titles[report_type])
         body = message
         template = self.jinja.get_template('email_template.html.jinja')
-        text = template.render(title=title, body=body)
+        text = template.render(title=title, body=body, link=domains[report_type] + uuid)
         self.send_mail_html(text, title)

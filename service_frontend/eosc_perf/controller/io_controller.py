@@ -230,13 +230,14 @@ class IOController:
             Report.SITE: 'site',
             Report.BENCHMARK: 'benchmark'
         }
-        if facade.add_report(json.dumps({
+        success, report = facade.add_report(json.dumps({
             'type': types[report_type],
             'value': target,
             'message': message,
             'uploader': uploader
-        })):
-            self._report_mailer.mail_entry(report_type, message)
+        }))
+        if success:
+            self._report_mailer.mail_entry(report_type, message, report.get_uuid())
             return True
         return False
 
