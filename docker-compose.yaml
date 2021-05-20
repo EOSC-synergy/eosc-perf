@@ -47,7 +47,7 @@ services:
         INSTALL_PYTHON_VERSION: 3
     depends_on:
       - database
-    env_file: .env-backend
+    env_file: .env
     environment:
       FLASK_ENV: ${BACKEND_ENV}
       FLASK_APP: autoapp.py
