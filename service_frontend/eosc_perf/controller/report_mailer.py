@@ -10,7 +10,18 @@ import configparser
 from ..model.data_types import Report
 
 
-class ReportMailer:
+class MockMailer:
+    def send_mail(self, message: str, subject: str = 'Notification'):
+        pass
+
+    def send_mail_html(self, html_message: str, subject: str = 'Notification'):
+        pass
+
+    def mail_entry(self, report_type: int, message: str, uuid: str):
+        pass
+
+
+class ReportMailer(MockMailer):
     @dataclass
     class Configuration:
         host: str

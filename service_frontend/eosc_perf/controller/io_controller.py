@@ -10,7 +10,7 @@ from flask import session, redirect, Response
 from eosc_perf.utility.type_aliases import JSON
 from .authenticator import authenticator, AuthenticateError
 from .json_result_validator import JSONResultValidator
-from .report_mailer import ReportMailer
+from .report_mailer import ReportMailer, MockMailer
 from ..model.data_types import Report, SiteFlavor, UUID
 from ..model.facade import DatabaseFacade, facade
 from ..utility.dockerhub import decompose_dockername, build_dockerregistry_url, build_dockerregistry_tag_url
@@ -58,6 +58,10 @@ class IOController:
     def __init__(self):
         """Constructor: create a new instance of IOController."""
         self._result_validator = JSONResultValidator()
+        self._report_mailer: MockMailer = MockMailer()
+
+    def load_mailer(self):
+        """Late initialization helper to make testing easier."""
         self._report_mailer = ReportMailer()
 
     def authenticate(self) -> Optional[Response]:
