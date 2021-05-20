@@ -1,0 +1,14 @@
+<html lang="en">
+<head>
+</head>
+<body>
+{# <a href="{{ link }}"> #} <u>{{ title }}</u> {# </a> #} <br />
+{% if body is defined and body|length %}
+    <br />
+    Message:
+    <div style="border-left: 6px solid #2196f3;background-color: #b0e5ff;padding: 0.7em">
+        {{ body }}
+    </div>
+{% endif %}
+</body>
+</html>

@@ -31,6 +31,10 @@ services:
         target: cookie_secret
         uid: 'uwsgi'
         mode: 0400
+      - source: email_credentials
+        target: email_credentials
+        uid: 'uwsgi'
+        mode: 0400
 
   backend:
     container_name: backend
@@ -142,3 +146,5 @@ secrets:
     file: ./cookie_secret.txt
   nginx_api_secret:
     file: ./nginx_api_credentials.txt
+  email_credentials:
+    file: ./email_credentials.ini

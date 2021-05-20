@@ -30,6 +30,7 @@ workspace.code-workspace
 oidc_secret.txt
 cookie_secret.txt
 nginx_api_credentials.txt
+email_credentials.ini
 
 # Compiled documentation
 docs/build/

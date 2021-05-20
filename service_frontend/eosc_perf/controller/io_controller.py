@@ -10,7 +10,8 @@ from flask import session, redirect, Response
 from eosc_perf.utility.type_aliases import JSON
 from .authenticator import authenticator, AuthenticateError
 from .json_result_validator import JSONResultValidator
-from ..model.data_types import Report, SiteFlavor
+from .report_mailer import ReportMailer
+from ..model.data_types import Report, SiteFlavor, UUID
 from ..model.facade import DatabaseFacade, facade
 from ..utility.dockerhub import decompose_dockername, build_dockerregistry_url, build_dockerregistry_tag_url
 
@@ -21,6 +22,7 @@ def _only_authenticated(message: str = "Not authenticated.") -> Callable[..., An
     Args:
         message (str): Message to return if the user is not authenticated.
     """
+
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         def wrapper(self, *args, **kwargs) -> Callable[..., Any]:
             # use self because controller is not declared yet
@@ -36,6 +38,7 @@ def _only_authenticated(message: str = "Not authenticated.") -> Callable[..., An
 def _only_admin(function: Callable[..., Any]) -> Callable[..., Any]:
     """Decorator helper for authentication.
     """
+
     def wrapper(self, *args, **kwargs) -> Callable[..., Any]:
         if not self.is_admin():
             raise AuthenticateError("Not an administrator.")
@@ -55,6 +58,7 @@ class IOController:
     def __init__(self):
         """Constructor: create a new instance of IOController."""
         self._result_validator = JSONResultValidator()
+        self._report_mailer = ReportMailer()
 
     def authenticate(self) -> Optional[Response]:
         """Authenticate the current user. Redirects user to '/login' which again redirects the user to EGI Check-In
@@ -128,12 +132,7 @@ class IOController:
         if comment is not None and len(comment) > 0:
             message += ", description: {}".format(comment)
 
-        return self.report(json.dumps({
-            'message': message,
-            'type': 'benchmark',
-            'value': docker_name,
-            'uploader': self.get_user_id()
-        }))
+        return self.report(Report.BENCHMARK, docker_name, message, self.get_user_id())
 
     @_only_authenticated(message="You must be logged in to submit a site")
     def submit_site(self, identifier: str, address: str, name: str = None, description: str = None) -> bool:
@@ -161,12 +160,7 @@ class IOController:
         if description is not None:
             message += ", description: {}".format(description)
 
-        if not self.report(json.dumps({
-            'message': message,
-            'type': 'site',
-            'value': identifier,
-            'uploader': self.get_user_id()
-        })):
+        if not self.report(Report.SITE, identifier, message, self.get_user_id()):
             # delete site if submitting a report failed to avoid orphans
             facade.remove_site(identifier)
             return False
@@ -219,18 +213,32 @@ class IOController:
             raise RuntimeError("Only sites without results can be removed.")
 
     @_only_authenticated("You must be logged in to submit a report.")
-    def report(self, metadata: JSON) -> bool:
+    def report(self, report_type: int, target, message: str, uploader: str) -> bool:
         """Add a Report to the model and notify an admin about it.
 
         Args:
-            metadata (JSON): The metadata in json format containing the benchmark 'result_id' and
-                the associated 'user_message'.
+            report_type (int): What is being reported.
+            target (UUID): The item being report.
+            message (str): An explanation of the report.
+            uploader (str): The identifier of the uploader.
         Returns:
             bool: True If the report was successfully added.
         """
         self._add_current_user_if_missing()
-        # TODO: notify admin per email
-        return facade.add_report(metadata)
+        types = {
+            Report.RESULT: 'result',
+            Report.SITE: 'site',
+            Report.BENCHMARK: 'benchmark'
+        }
+        if facade.add_report(json.dumps({
+            'type': types[report_type],
+            'value': target,
+            'message': message,
+            'uploader': uploader
+        })):
+            self._report_mailer.mail_entry(report_type, message)
+            return True
+        return False
 
     @_only_admin
     def get_report(self, uuid: str) -> Report:
@@ -313,7 +321,7 @@ class IOController:
         flavor.set_description(description)
         return True
 
-    #@_only_authenticated
+    # @_only_authenticated
     def _add_current_user_if_missing(self):
         """Add the current user as an uploader if they do not exist yet."""
         uid = self.get_user_id()

@@ -10,36 +10,19 @@ from eosc_perf.tests.controller.controller.controller_test_base import IOControl
 class ControllerReportTests(IOControllerTestBase):
     def test_report_not_authenticated(self):
         with self.app.test_request_context():
-            self.assertRaises(AuthenticateError, self.controller.report, "{}")
-
-    def test_report_incomplete(self):
-        with self.app.test_request_context():
-            self._login_standard_user()
-            self.assertRaises(ValueError, self.controller.report, "{}")
+            self.assertRaises(AuthenticateError, self.controller.report, "", 0, "", "")
 
     def test_report_non_existent_object(self):
         with self.app.test_request_context():
             self._login_standard_user()
-            report = {
-                "type": "site",
-                "uploader": self.TEST_USER["sub"],
-                "value": "name",
-                "message": "msg"
-            }
-            self.assertRaises(ValueError, self.controller.report, json.dumps(report))
+            self.assertRaises(ValueError, self.controller.report, Report.SITE, "name", "msg", self.TEST_USER["sub"], )
 
     def test_report(self):
         self.facade.add_uploader(*self.UPLOADER_DATA)
         with self.app.test_request_context():
             self._login_standard_user()
             self.controller.submit_site("name", "127.0.0.1")
-            report = {
-                "type": "site",
-                "uploader": self.TEST_USER["sub"],
-                "value": "name",
-                "message": "msg"
-            }
-            self.assertTrue(self.controller.report(json.dumps(report)))
+            self.assertTrue(self.controller.report(Report.SITE, "name", "msg", self.TEST_USER["sub"]))
 
     def test_get_report_not_authenticated(self):
         with self.app.test_request_context():
@@ -83,15 +66,8 @@ class ControllerReportTests(IOControllerTestBase):
         with self.app.test_request_context():
             self._login_admin()
             self.controller.submit_site("name", "127.0.0.1")
-            report = {
-                "type": "site",
-                "uploader": self.TEST_USER["sub"],
-                "value": "name",
-                "message": "msg"
-            }
-            self.controller.report(json.dumps(report))
-            report["message"] = "msg2"
-            self.controller.report(json.dumps(report))
+            self.controller.report(Report.SITE, "name", "msg", self.TEST_USER["sub"], )
+            self.controller.report(Report.SITE, "name", "msg2", self.TEST_USER["sub"], )
             # 3 reports: 2 submitted manually, 1 automatically generated for submitted site
             self.assertEqual(len(self.controller.get_reports(True)), 3)
 
@@ -139,13 +115,7 @@ class ControllerReportTests(IOControllerTestBase):
                     'value': self.TEST_USER["info"]["email"]},
             ]}
             result = self.facade.query_results(json.dumps(filters))[0]
-            report = {
-                "type": "result",
-                "uploader": self.TEST_USER["sub"],
-                "value": result.get_uuid(),
-                "message": "msg"
-            }
-            self.controller.report(json.dumps(report))
+            self.controller.report(Report.RESULT, result.get_uuid(), "msg", self.TEST_USER["sub"], )
             reports = self.controller.get_reports()
             result_report = None
             for report in reports:

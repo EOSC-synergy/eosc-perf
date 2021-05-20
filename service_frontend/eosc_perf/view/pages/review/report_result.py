@@ -14,6 +14,8 @@ from eosc_perf.view.page_factory import PageFactory
 from eosc_perf.view.pages.helpers import error_json_redirect, error_redirect, only_authenticated_json, \
     only_authenticated
 
+from ....model.data_types import Report
+
 
 class ResultReportPageFactory(PageFactory):
     """A factory to build information pages."""
@@ -101,15 +103,8 @@ def report_result_submit():
     if uid is None or len(uid) == 0:
         return error_json_redirect('Could not submit report (not logged in?)')
 
-    metadata = {
-        'type': 'result',
-        'value': uuid,
-        'message': message,
-        'uploader': uid
-    }
-
     # handle redirect in a special way because ajax
-    if not controller.report(json.dumps(metadata)):
+    if not controller.report(Report.RESULT, uuid, message, uid):
         return error_json_redirect('Failed to submit report')
 
     return Response('{}', mimetype='application/json', status=200)
