@@ -98,6 +98,8 @@ services:
     secrets:
       - source: nginx_api_secret
         target: nginx_api_credentials
+    networks:
+      - frontend-net
     ports:
       - "80:80"
       - "443:443"
