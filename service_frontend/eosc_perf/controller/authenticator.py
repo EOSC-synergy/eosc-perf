@@ -102,7 +102,7 @@ class Authenticator:
 
         self.oauth = OAuth(flask_app)
         self.oauth.register(
-            name='backend',
+            name='eosc_perf',
             userinfo_endpoint=self.userinfo_url,
             server_metadata_url=self.conf_url,
             client_kwargs={
