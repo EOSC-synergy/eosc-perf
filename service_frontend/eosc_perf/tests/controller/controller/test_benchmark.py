@@ -5,34 +5,26 @@ from eosc_perf.tests.controller.controller.controller_test_base import IOControl
 
 
 class ControllerBenchmarkTests(IOControllerTestBase):
-    def test_submit_benchmark_unauthenticated(self):
-        with self.app.test_request_context():
-            self.assertRaises(AuthenticateError, self.controller.submit_benchmark, "", "")
-
     def test_submit_benchmark_malformed_docker_name(self):
         with self.app.test_request_context():
-            self._login_standard_user()
             self.assertRaises(RuntimeError, self.controller.submit_benchmark, ":", "")
             self.assertRaises(RuntimeError, self.controller.submit_benchmark, None, "")
 
     def test_submit_benchmark_success(self):
         self.facade.add_uploader(*self.UPLOADER_DATA)
         with self.app.test_request_context():
-            self._login_standard_user()
             self.assertTrue(self.controller.submit_benchmark(self.REAL_BENCHMARK, self.BENCHMARK_DESCRIPTION))
             self.assertTrue(self.controller.submit_benchmark(self.REAL_BENCHMARK2, self.BENCHMARK_DESCRIPTION))
 
     def test_submit_benchmark_invalid_template(self):
         self.facade.add_uploader(*self.UPLOADER_DATA)
         with self.app.test_request_context():
-            self._login_standard_user()
             self.assertRaises(ValueError, self.controller.submit_benchmark, self.REAL_BENCHMARK,
                               self.BENCHMARK_DESCRIPTION, "{{{")
 
     def test_submit_benchmark_duplicate(self):
         self.facade.add_uploader(*self.UPLOADER_DATA)
         with self.app.test_request_context():
-            self._login_standard_user()
             self.controller.submit_benchmark(self.REAL_BENCHMARK, self.BENCHMARK_DESCRIPTION)
             self.assertRaises(RuntimeError, self.controller.submit_benchmark, self.REAL_BENCHMARK,
                               self.BENCHMARK_DESCRIPTION)

@@ -1,11 +1,10 @@
 import unittest
 from time import time
 
-from flask import Flask, session
+from flask import Flask
 
 from eosc_perf.configuration import configuration
-from eosc_perf.controller.authenticator import configure_authenticator
-from eosc_perf.controller.io_controller import controller
+from eosc_perf.controller.io_controller import IOController
 from eosc_perf.model.database import configure_database
 from eosc_perf.model.facade import DatabaseFacade
 from eosc_perf.tests.utility import setup_test_config
@@ -46,11 +45,9 @@ class IOControllerTestBase(unittest.TestCase):
 
         # use memory database, reset entirely every time
         setup_test_config(configuration)
-        #print('"', configuration.get('oidc_client_secret'), '"')
-        configure_authenticator(self.app)
         configure_database(self.app)
 
-        self.controller = controller
+        self.controller = IOController()
         self.facade = DatabaseFacade()
 
     def tearDown(self):
@@ -69,21 +66,7 @@ class IOControllerTestBase(unittest.TestCase):
             'flavor_uuid': uuid
         }
 
-    def _login_standard_user(self):
-        session['user'] = self.TEST_USER
-        session['user']['info'].pop('eduperson_entitlement', None)
-
-    def _login_admin(self):
-        self._login_standard_user()
-        admin_entitlement = configuration.get('debug_admin_entitlements')[:1]
-        admin_entitlement[0] += '#aai.egi.eu'
-        session['user']['info']['eduperson_entitlement'] = admin_entitlement
-
     @staticmethod
     def _get_sample_result_data():
         with open("eosc_perf/tests/controller/sample_result.json") as file:
             return file.read()
-
-    @staticmethod
-    def _logout():
-        session.pop('user', None)

@@ -15,14 +15,14 @@ class UploaderTests(DatatypeTestBase):
         """Test setting uploader email."""
         uploader = self._make_uploader()
         new_email: str = self.UPLOADER_EMAIL + '___'
-        uploader.set_email(new_email)
+        uploader.email = new_email
         self.assertEqual(uploader.email, new_email)
 
     def test_uploader_set_name(self):
         """Test setting uploader name."""
         uploader = self._make_uploader()
         new_name: str = self.UPLOADER_NAME + '___'
-        uploader.set_name(new_name)
+        uploader.name = new_name
         self.assertEqual(uploader.name, new_name)
 
     @unittest.skip("missing helpers")
@@ -38,7 +38,7 @@ class UploaderTests(DatatypeTestBase):
         self._add_to_database(uploader)
         benchmark = self._make_benchmark(uploader)
         self._add_to_database(benchmark)
-        self.assertEqual(len(uploader.get_benchmarks()), 1)
+        self.assertEqual(len(uploader.benchmarks), 1)
 
     def test_uploader_repr(self):
         """Test if uploader repr does anything."""

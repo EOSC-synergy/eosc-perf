@@ -5,10 +5,10 @@ from json import JSONDecodeError
 from typing import List, Optional, Callable, Any
 from urllib.error import URLError
 
-from flask import session, redirect, Response
+from flask import session, redirect, Response, Flask
 
 from eosc_perf.utility.type_aliases import JSON
-from .authenticator import authenticator, AuthenticateError
+from .authenticator import AuthenticateError, Authenticator, MockAuthenticator
 from .json_result_validator import JSONResultValidator
 from .report_mailer import ReportMailer, MockMailer
 from ..model.data_types import Report, SiteFlavor, UUID
@@ -59,10 +59,14 @@ class IOController:
         """Constructor: create a new instance of IOController."""
         self._result_validator = JSONResultValidator()
         self._report_mailer: MockMailer = MockMailer()
+        self._authenticator: MockAuthenticator = MockAuthenticator()
 
     def load_mailer(self):
         """Late initialization helper to make testing easier."""
         self._report_mailer = ReportMailer()
+
+    def load_authenticator(self, app):
+        self._authenticator = Authenticator(app)
 
     def authenticate(self) -> Optional[Response]:
         """Authenticate the current user. Redirects user to '/login' which again redirects the user to EGI Check-In
@@ -375,59 +379,49 @@ class IOController:
         results = facade.query_results(json.dumps(filters))
         return len(results)
 
-    @staticmethod
-    def get_email() -> Optional[str]:
+    def get_email(self) -> Optional[str]:
         """Get current user's unique identifier, if logged in.
 
         Returns:
            Optional[str]: The current user's email, or None if no user is logged in.
         """
-        try:
-            return session['user']['info']['email']
-        except KeyError:
-            return None
+        return self._authenticator.get_email()
 
-    @staticmethod
-    def get_full_name() -> Optional[str]:
+    def get_full_name(self) -> Optional[str]:
         """Get current user's full name, if logged in.
 
         Returns:
            Optional[str]: The current user's full name, or None if no user is logged in.
         """
-        try:
-            return session['user']['info']['name']
-        except KeyError:
-            return None
+        return self._authenticator.get_full_name()
 
-    @staticmethod
-    def get_user_id() -> Optional[str]:
+    def get_user_id(self) -> Optional[str]:
         """Get current user's unique identifier, if logged in.
 
         Returns:
            Optional[str]: The current user's unique identifier, or None if no user is logged in.
         """
-        try:
-            return session['user']['sub']
-        except KeyError:
-            return None
+        return self._authenticator.get_user_id()
 
-    @staticmethod
-    def is_admin() -> bool:
+    @property
+    def authenticator(self) -> MockAuthenticator:
+        return self._authenticator
+
+    def is_admin(self) -> bool:
         """Checks if current user has admin right, if one is logged on.
 
         Returns:
             bool: True if current user is admin.
         """
-        return authenticator.is_admin()
+        return self._authenticator.is_admin()
 
-    @staticmethod
-    def is_authenticated() -> bool:
+    def is_authenticated(self) -> bool:
         """Check if the current user is authenticated.
 
         Returns:
             bool: True if the user is authenticated.
         """
-        return authenticator.is_authenticated()
+        return self._authenticator.is_authenticated()
 
 
 controller = IOController()

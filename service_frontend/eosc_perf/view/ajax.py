@@ -24,7 +24,6 @@ from flask.blueprints import Blueprint
 from deprecated import deprecated
 
 from .pages.helpers import only_admin_json
-from ..controller.authenticator import authenticator
 from ..controller.io_controller import controller
 from eosc_perf.utility.type_aliases import JSON
 from ..model.facade import facade
@@ -44,7 +43,7 @@ class ResultSearchAJAX(AJAXHandler):
 
     def process(self, query: Optional[JSON] = None) -> Tuple[JSON, Optional[int]]:
         """Fetch benchmark results corresponding to given query."""
-        admin = authenticator.is_admin()
+        admin = controller.is_admin()
         try:
             results = facade.query_results(query, not admin)
         except ValueError:
@@ -83,12 +82,12 @@ class BenchmarkSearchAJAX(AJAXHandler):
         results = []
         for benchmark in benchmarks:
             description = benchmark.description
-            if benchmark.hidden and not authenticator.is_admin():
+            if benchmark.hidden and not controller.is_admin():
                 continue
             result_dict = {
                 "hidden": benchmark.hidden,
                 "docker_name": benchmark.docker_name,
-                "uploader": benchmark.uploader.email if authenticator.is_admin() else "",
+                "uploader": benchmark.uploader.email if controller.is_admin() else "",
                 "description": description if description is not None else "No description found."
             }
             results.append(result_dict)

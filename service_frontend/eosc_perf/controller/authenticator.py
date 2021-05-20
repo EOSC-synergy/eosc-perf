@@ -10,7 +10,7 @@ from urllib.request import urlopen
 import requests
 from aarc_g002_entitlement import Aarc_g002_entitlement, Aarc_g002_entitlement_Error
 from authlib.integrations.flask_client import OAuth
-from flask import session
+from flask import session, Flask
 
 from ..configuration import configuration
 from ..model.facade import facade
@@ -38,7 +38,30 @@ def read_file_content(filename: str) -> Optional[str]:
         return None
 
 
-class Authenticator:
+class MockAuthenticator:
+    def redirect_to_authentication(self):
+        return None
+
+    def is_authenticated(self) -> bool:
+        return True
+
+    def is_admin(self) -> bool:
+        return True
+
+    def logout(self) -> bool:
+        return True
+
+    def get_email(self) -> Optional[str]:
+        return "user@example.com"
+
+    def get_full_name(self) -> Optional[str]:
+        return "Max Mustermann"
+
+    def get_user_id(self) -> Optional[str]:
+        return "a very unique individual :)"
+
+
+class Authenticator(MockAuthenticator):
     """A middle-man between IOController and the EGI Check-In authentication system.
 
     It integrates Open ID Connect into the web app.
@@ -52,7 +75,12 @@ class Authenticator:
         scope (str): The scope used for registering the oauth client.
     """
 
-    def __init__(self):
+    def __init__(self, flask_app):
+        """Set up OIDC authentication functionality for the web app.
+
+        Args:
+            flask_app (Flask): The flask app for which to set up OIDC functionality.
+        """
         self.oauth = None
         self.admin_entitlements = []
         self.hostname = None
@@ -61,13 +89,6 @@ class Authenticator:
         self.scope = 'openid email profile eduperson_entitlement offline_access'
         self.conf_url = ""
         self.userinfo_url = ""
-
-    def configure_authenticator(self, flask_app):
-        """Set up OIDC authentication functionality for the web app.
-
-        Args:
-            flask_app (Flask): The flask app for which to set up OIDC functionality.
-        """
 
         if len(configuration.get('oidc_client_secret_file')) == 0 \
                 or configuration.get('oidc_client_secret_file') == 'SET_ME':
@@ -251,11 +272,20 @@ class Authenticator:
         uploader.email = email
         uploader.name = name
 
+    def get_email(self) -> Optional[str]:
+        try:
+            return session['user']['info']['email']
+        except KeyError:
+            return None
 
-# single global instance
-authenticator = Authenticator()
+    def get_full_name(self) -> Optional[str]:
+        try:
+            return session['user']['info']['name']
+        except KeyError:
+            return None
 
-
-def configure_authenticator(app):
-    """Configures the authenticator for given app and config."""
-    authenticator.configure_authenticator(app)
+    def get_user_id(self) -> Optional[str]:
+        try:
+            return session['user']['sub']
+        except KeyError:
+            return None

@@ -6,39 +6,21 @@ from eosc_perf.tests.controller.controller.controller_test_base import IOControl
 
 
 class ControllerResultTests(IOControllerTestBase):
-    def test_submit_result_unauthenticated(self):
-        data = self._add_test_data()
-        with self.app.test_request_context():
-            self.assertRaises(AuthenticateError, self.controller.submit_result, "", self.TEST_USER["sub"],
-                              self.BENCHMARK_NAME, self.SITE_NAME, data['flavor_uuid'], [])
-
     def test_submit_result_malformed_json(self):
         data = self._add_test_data()
         with self.app.test_request_context():
-            self._login_standard_user()
             self.assertRaises(ValueError, self.controller.submit_result, "---", self.TEST_USER["sub"],
                               self.BENCHMARK_NAME, self.SITE_NAME, data['flavor_uuid'], [])
 
     def test_submit_result_success(self):
         data = self._add_test_data()
         with self.app.test_request_context():
-            self._login_standard_user()
             self.controller.submit_result(self._get_sample_result_data(), self.TEST_USER["sub"], self.BENCHMARK_NAME,
                                           self.SITE_NAME, data['flavor_uuid'], [])
-
-    def test_remove_result_not_authenticated(self):
-        with self.app.test_request_context():
-            self.assertRaises(AuthenticateError, self.controller.remove_result, "name")
-
-    def test_remove_result_not_admin(self):
-        with self.app.test_request_context():
-            self._login_standard_user()
-            self.assertRaises(AuthenticateError, self.controller.remove_result, "name")
 
     def test_remove_result_not_found(self):
         data = self._add_test_data()
         with self.app.test_request_context():
-            self._login_admin()
             self.controller.submit_result(self._get_sample_result_data(), self.TEST_USER["sub"], self.BENCHMARK_NAME,
                                           self.SITE_NAME, data['flavor_uuid'], [])
             self.assertFalse(self.controller.remove_result("wrong_uuid"))
@@ -46,7 +28,6 @@ class ControllerResultTests(IOControllerTestBase):
     def test_remove_result(self):
         data = self._add_test_data()
         with self.app.test_request_context():
-            self._login_admin()
             self.controller.submit_result(self._get_sample_result_data(), self.TEST_USER["sub"], self.BENCHMARK_NAME,
                                           self.SITE_NAME, data['flavor_uuid'], [])
             filters = {'filters': [

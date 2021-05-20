@@ -4,7 +4,6 @@
 from flask import Flask
 import sys
 from .configuration import configuration
-from .controller.authenticator import configure_authenticator
 from .controller.io_controller import controller
 from .model.database import configure_database
 from .model.sandbox import add_demo
@@ -46,7 +45,7 @@ def create_app(custom_configuration: dict = None):
     flask_application.app_context().push()
     configure_database(flask_application)
     configure_authenticator(flask_application)
-    
+
     controller.load_mailer()
 
     if configuration.get('debug') and configuration.get('debug-db-demo-items'):

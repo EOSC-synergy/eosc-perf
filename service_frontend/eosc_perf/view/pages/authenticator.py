@@ -10,7 +10,7 @@ from typing import Any, Dict, Tuple
 
 from flask import Blueprint, Response
 
-from eosc_perf.controller.authenticator import authenticator
+from eosc_perf.controller.io_controller import controller
 from eosc_perf.utility.type_aliases import HTML
 from eosc_perf.view.page_factory import PageFactory
 from eosc_perf.view.pages.helpers import error_redirect
@@ -31,13 +31,13 @@ class RedirectFactory(PageFactory):
 @authenticator_blueprint.route('/login')
 def authenticate_user():
     """"Authenticates user through authenticator singleton."""
-    return authenticator.redirect_to_authentication()
+    return controller.authenticator.redirect_to_authentication()
 
 
 @authenticator_blueprint.route('/oidc-redirect')
 def authentication_redirect():
     """"OIDC-Authentication redirect through authenticator singleton."""
-    if authenticator.is_authenticated():
+    if controller.is_authenticated():
         factory = RedirectFactory()
         return Response(factory.generate_page(), mimetype='text/html')
 
@@ -47,6 +47,6 @@ def authentication_redirect():
 @authenticator_blueprint.route('/logout')
 def logout():
     """"Revoke current user's authentication."""
-    authenticator.logout()
+    controller.authenticator.logout()
     factory = RedirectFactory()
     return Response(factory.generate_page(), mimetype='text/html')

@@ -5,25 +5,18 @@ from eosc_perf.tests.controller.controller.controller_test_base import IOControl
 
 
 class SubmitTagTests(IOControllerTestBase):
-    def test_submit_tag_unauthenticated(self):
-        with self.app.test_request_context():
-            self.assertRaises(AuthenticateError, self.controller.submit_tag, "tag")
-
     def test_submit_tag_malformed(self):
         with self.app.test_request_context():
-            self._login_standard_user()
             self.assertRaises(ValueError, self.controller.submit_tag, None)
             self.assertRaises(ValueError, self.controller.submit_tag, "")
 
     def test_submit_tag_success(self):
         with self.app.test_request_context():
-            self._login_standard_user()
             self.assertTrue(self.controller.submit_tag("tag"))
             self.assertTrue(self.controller.submit_tag("tag2"))
 
     def test_submit_tag_duplicate(self):
         with self.app.test_request_context():
-            self._login_standard_user()
             self.controller.submit_tag("tag")
             self.assertFalse(self.controller.submit_tag("tag"))
 
