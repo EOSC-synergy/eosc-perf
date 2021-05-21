@@ -26,8 +26,7 @@ USER uwsgi
 FROM frontend-base AS development
 
 COPY requirements-docs.txt requirements-test.txt ./
-RUN pip install --no-cache -r requirements-docs.txt
-RUN pip install --no-cache -r requirements-test.txt
+RUN pip install --no-cache -r requirements-docs.txt -r requirements-test.txt
 
 # copy the whole webapp
 COPY uwsgi.ini upload_license.txt ./
