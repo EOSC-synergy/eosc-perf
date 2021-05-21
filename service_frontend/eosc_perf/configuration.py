@@ -3,7 +3,9 @@
 import json
 import os
 from json import JSONDecodeError
-from typing import Any, Optional
+from typing import Any, Optional, Union
+
+from dataclasses import dataclass
 from dotenv import load_dotenv
 
 
@@ -36,6 +38,13 @@ def _get_var(env_name: str, env_type: type = str) -> Optional[Any]:
     return os.environ[env_name]
 
 
+def _get_var_or(env_name: str, alternative: Any, env_type: type = str) -> Any:
+    value = _get_var(env_name, env_type)
+    if value is None:
+        return alternative
+    return value
+
+
 class ConfigHandler:
     """ConfigHandler provides getters and setters for configuration values.
 
@@ -52,7 +61,6 @@ class ConfigHandler:
         'oidc_redirect_hostname': 'localhost',
         'admin_entitlements': ['urn:mace:egi.eu:group:mteam.data.kit.edu:role=member'],
         'infrastructure_href': 'https://example.com',
-        'database-path': '',  # diverge from example to use in-memory database
         'debug': False,
         'debug-db-reset': False,
         'debug-db-demo-items': False,
@@ -61,11 +69,33 @@ class ConfigHandler:
         'support_email': 'perf-support@lists.kit.edu'
     }
 
+    @dataclass
+    class DatabaseConfiguration:
+        engine: str = "sqlite"
+        name: Optional[str] = None
+        user: Optional[str] = None
+        password: Optional[str] = None
+        host: Optional[str] = None
+        port: Optional[int] = None
+
+        def determine_sqlalchemy_url(self) -> str:
+            values = [self.user, self.password, self.host, self.port]
+            booleans = [value is None or type(value) is str and len(value) == 0 for value in values]
+            if any(booleans) and not all(booleans):
+                raise ValueError("incomplete database configuration")
+            if all(booleans):
+                # example: sqlite
+                if self.name is None:
+                    return f"{self.engine}://"
+                return f"{self.engine}:///{self.name}"
+            return f"{self.engine}://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}"
+
     def __init__(self):
         """Set up a new configuration."""
         self.reset()
         if os.path.exists('.env'):
             load_dotenv('.env')
+        self.database = self.DatabaseConfiguration()
 
     def _load_config(self, load_env: bool = False) -> dict:
         """Load the config, optionally from the environment.
@@ -76,6 +106,7 @@ class ConfigHandler:
             dict: A dictionary containing all loaded configuration values.
         """
         config = self.DEFAULTS
+        self.database = self.DatabaseConfiguration()
 
         if load_env:
             env_values: dict = {
@@ -85,7 +116,6 @@ class ConfigHandler:
                 'oidc_redirect_hostname': _get_var('DOMAIN'),
                 'admin_entitlements': _get_var('ADMIN_ENTITLEMENTS', list),
                 'infrastructure_href': _get_var('IM_HREF'),
-                'database-path': _get_var('DB_PATH'),
                 'debug': _get_var('EOSC_PERF_DEBUG', bool),
                 'debug-db-reset': _get_var('EOSC_PERF_DEBUG_DB_RESET', bool),
                 'debug-db-demo-items': _get_var('EOSC_PERF_DEBUG_DB_DEMO_ITEMS', bool),
@@ -93,6 +123,15 @@ class ConfigHandler:
                 'debug_admin_entitlements': _get_var('EOSC_PERF_DEBUG_ADMIN_ENTITLEMENTS', list),
                 'support_email': _get_var('SUPPORT_EMAIL')
             }
+
+            self.database = self.DatabaseConfiguration(
+                engine=_get_var_or("DB_ENGINE", self.DatabaseConfiguration.engine),
+                name=_get_var_or("DB_NAME", self.DatabaseConfiguration.name),
+                user=_get_var("DB_USER"),
+                password=_get_var("DB_PASS"),
+                host=_get_var("DB_HOST"),
+                port=_get_var("DB_PORT", int)
+            )
 
             for key, value in self.DEFAULTS.items():
                 env_value = env_values[key]
