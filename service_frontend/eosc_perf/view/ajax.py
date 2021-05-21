@@ -54,7 +54,7 @@ class ResultSearchAJAX(AJAXHandler):
                 "data": json.loads(result.json),
                 "uuid": result.uuid,
                 "site": result.site.identifier,
-                "benchmark": result.benchmar.docker_name,
+                "benchmark": result.benchmark.docker_name,
                 "uploader": result.uploader.email if admin else None,
                 "tags": [tag.name for tag in result.tags],
                 "flavor": result.flavor.name
