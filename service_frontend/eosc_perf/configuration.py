@@ -79,19 +79,19 @@ class ConfigHandler:
 
         if load_env:
             env_values: dict = {
-                'secret_key_file': _get_var('EOSC_PERF_COOKIE_CRYPT_KEY_PATH'),
-                'oidc_client_secret_file': _get_var('EOSC_PERF_OIDC_CLIENT_SECRET_PATH'),
-                'oidc_client_id': _get_var('EOSC_PERF_OIDC_CLIENT_ID'),
+                'secret_key_file': _get_var('COOKIE_KEY_PATH'),
+                'oidc_client_secret_file': _get_var('OIDC_CLIENT_SECRET_PATH'),
+                'oidc_client_id': _get_var('OIDC_CLIENT_ID'),
                 'oidc_redirect_hostname': _get_var('DOMAIN'),
-                'admin_entitlements': _get_var('EOSC_PERF_ADMIN_ENTITLEMENTS', list),
-                'infrastructure_href': _get_var('EOSC_PERF_INFRASTRUCTURE_HREF'),
-                'database-path': _get_var('EOSC_PERF_DB_PATH'),
+                'admin_entitlements': _get_var('ADMIN_ENTITLEMENTS', list),
+                'infrastructure_href': _get_var('IM_HREF'),
+                'database-path': _get_var('DB_PATH'),
                 'debug': _get_var('EOSC_PERF_DEBUG', bool),
                 'debug-db-reset': _get_var('EOSC_PERF_DEBUG_DB_RESET', bool),
                 'debug-db-demo-items': _get_var('EOSC_PERF_DEBUG_DB_DEMO_ITEMS', bool),
                 'debug-logged-in-is-admin': _get_var('EOSC_PERF_DEBUG_LOGGED_IN_IS_ADMIN', bool),
                 'debug_admin_entitlements': _get_var('EOSC_PERF_DEBUG_ADMIN_ENTITLEMENTS', list),
-                'support_email': _get_var('EOSC_PERF_SUPPORT_EMAIL')
+                'support_email': _get_var('SUPPORT_EMAIL')
             }
 
             for key, value in self.DEFAULTS.items():
