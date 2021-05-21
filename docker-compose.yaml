@@ -14,7 +14,7 @@ services:
     image: frontend
     build:
       context: ./service_frontend
-      # target: ${FRONTEND_ENV}
+      target: ${FRONTEND_ENV}
     env_file: .env
     volumes:
       - <<: *sqlite-db-dir
