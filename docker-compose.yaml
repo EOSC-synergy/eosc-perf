@@ -97,7 +97,7 @@ services:
     env_file: .env
     volumes:
       - ./static:/var/www/web/
-      - ./frontend_js/src:/var/www/web/js/
+      - ./frontend_client/src:/var/www/web/js/
       - ./service_certificate/conf:/etc/letsencrypt
       - ./service_certificate/www:/var/www/certbot/
     secrets:
