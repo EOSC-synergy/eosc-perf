@@ -16,8 +16,8 @@ FROM frontend-base as production
 
 # copy the whole webapp
 COPY uwsgi.ini upload_license.txt ./
-COPY ./templates/ templates/
-COPY ./eosc_perf/ eosc_perf/
+COPY templates/ templates/
+COPY frontend/ frontend/
 # set up user, files and permissions
 RUN groupadd uwsgi && useradd -g uwsgi uwsgi && mkdir -p $APP $APP/data && chown -R uwsgi $APP
 USER uwsgi
@@ -31,8 +31,8 @@ RUN pip install --no-cache -r requirements-test.txt
 
 # copy the whole webapp
 COPY uwsgi.ini upload_license.txt ./
-COPY ./templates/ templates/
-COPY ./eosc_perf/ eosc_perf/
+COPY templates/ templates/
+COPY frontend/ frontend/
 # set up user, files and permissions
 RUN groupadd uwsgi && useradd -g uwsgi uwsgi && mkdir -p $APP $APP/data && chown -R uwsgi $APP
 USER uwsgi
