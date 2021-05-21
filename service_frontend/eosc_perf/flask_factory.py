@@ -44,9 +44,9 @@ def create_app(custom_configuration: dict = None):
 
     flask_application.app_context().push()
     configure_database(flask_application)
-    configure_authenticator(flask_application)
 
     controller.load_mailer()
+    controller.load_authenticator(flask_application)
 
     if configuration.get('debug') and configuration.get('debug-db-demo-items'):
         add_demo()
