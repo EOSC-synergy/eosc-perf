@@ -160,10 +160,9 @@ class TestRoot:
 ])
 @mark.parametrize('endpoint', ['results.Result'], indirect=True)
 @mark.parametrize('result_id', [uuid4()], indirect=True)
-@mark.parametrize('result', indirect=True, argvalues=[
-    result_1,
-    result_2
-])
+@mark.parametrize('benchmark__docker_image', [benchmark_1['docker_image']])
+@mark.parametrize('site__name', [site_1['name']])
+@mark.parametrize('flavor__name', [site_1['flavors'][0]])
 class TestResult:
     """Tests for 'Result' route in blueprint."""
 
@@ -173,7 +172,7 @@ class TestResult:
         asserts.correct_result(response_GET.json)
         asserts.match_result(response_GET.json, result)
 
-    @mark.parametrize('result__id', [uuid4()], indirect=True)
+    @mark.parametrize('result__id', [uuid4()])
     def test_GET_404(self, response_GET):
         """GET method fails 404 if no id found."""
         assert response_GET.status_code == 404

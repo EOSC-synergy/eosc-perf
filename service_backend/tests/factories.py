@@ -91,6 +91,7 @@ class ResultFactory(SQLAlchemyModelFactory):
     class Meta(BaseMeta):
         model = Result
 
+    id = LazyFunction(uuid.uuid4)
     json = Sequence(lambda n: {'name': f"report_{n}"})
     benchmark = SubFactory(BenchmarkFactory)
     site = SubFactory(SiteFactory)
