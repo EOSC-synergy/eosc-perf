@@ -11,18 +11,12 @@ flavor_3 = {'name': 'f3', 'description': "text"}
 site_1 = {'name': "s1", 'address': "addr1"}
 site_1['description'] = "text"
 site_1['flavors'] = []
+site_1['flavors__description'] = ["site1 flavor"]
 
 site_2 = {'name': "s2", 'address': "addr1"}
 site_2['description'] = "text"
-site_2['flavors'] = [flavor_1]
-
-site_3 = {'name': "s3", 'address': "addr2"}
-site_3['description'] = "text"
-site_3['flavors'] = [flavor_1, flavor_2]
-
-site_4 = {'name': "s1", 'address': "addr2"}
-site_4['description'] = "text"
-site_4['flavors'] = [flavor_2]
+site_2['flavors'] = ["f1"]
+site_2['flavors__description'] = ["site2 flavor"]
 
 
 @mark.usefixtures('session', 'db_sites')
@@ -63,7 +57,11 @@ class TestRoot:
 
     @mark.usefixtures('grant_logged')
     @mark.parametrize('body', indirect=True, argvalues=[
-        site_3
+        {'name': "s3", 'address': "addr2", 'description': "Text"},
+        {'name': "s3", 'address': "addr2", 'flavors': [
+            {'name': 'f1', 'description': "text"},
+            {'name': 'f2', 'description': "text"}
+        ]}
     ])
     def test_POST_201(self, response_POST, url, body):
         """POST method succeeded 201."""
@@ -73,7 +71,7 @@ class TestRoot:
         asserts.match_body(response_POST.json, body)
 
     @mark.parametrize('body', indirect=True, argvalues=[
-        site_3,
+        {'name': "s3", 'address': "addr2", 'description': "Text"},
         {}  # Empty body
     ])
     def test_POST_401(self, response_POST):
@@ -82,9 +80,8 @@ class TestRoot:
 
     @mark.usefixtures('grant_logged')
     @mark.parametrize('body', indirect=True, argvalues=[
-        site_1,
-        site_2,
-        site_4
+        {'name': "s1", 'address': "addrX"},
+        {'name': "s2", 'address': "addrX"}
     ])
     def test_POST_409(self, response_POST):
         """POST method fails 409 if resource already exists."""
@@ -92,8 +89,8 @@ class TestRoot:
 
     @mark.usefixtures('grant_logged')
     @mark.parametrize('body', indirect=True, argvalues=[
-        {k: site_3[k] for k in site_3.keys() - {'name'}},  # Missingname
-        {k: site_3[k] for k in site_3.keys() - {'address'}},  # Missingaddress
+        {'name': "site"},  # Missingaddress
+        {'address': "address"},  # Missingname
         {}  # Empty body
     ])
     def test_POST_422(self, response_POST):

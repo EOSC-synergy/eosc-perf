@@ -45,13 +45,12 @@ def db_sites(request, site_factory):
 
 @fixture(scope='function')
 def flavor(flavor_factory, flavor__name, site):
-    flavor = flavor_factory(site=site, name=flavor__name)
-    site.flavors.append(flavor)
+    flavor = flavor_factory(site_id=site.id, name=flavor__name)
     return flavor
 
 
 @fixture(scope='function')
 def db_flavors(request, flavor_factory, site):
-    flavors = [flavor_factory(site=site, **kwargs) for kwargs in request.param]
-    [site.flavors.append(x) for x in flavors]
+    flavors = [flavor_factory(site_id=site.id, **kwargs)
+               for kwargs in request.param]
     return flavors

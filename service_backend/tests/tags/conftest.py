@@ -28,4 +28,3 @@ def url(endpoint, tag_id, query):
 @fixture(scope='function')
 def db_tags(request, tag_factory):
     return [tag_factory(**kwargs) for kwargs in request.param]
-
