@@ -44,7 +44,7 @@ post_query = {
     'benchmark_tag': benchmark_1['docker_tag'],
     'site_name': site_1['name'],
     'flavor_name': site_1['flavors'][0],
-    'tags': [tag['name'] for tag in result_1['tags']]
+    'tag_names': [tag['name'] for tag in result_1['tags']]
 }
 
 
@@ -62,7 +62,7 @@ class TestRoot:
         {'benchmark_image': "b1"},
         {'site_name': "s1"},
         {'flavor_name': "f1"},
-        {'tags': ["tag1", "tag2"]},
+        {'tag_names': ["tag1", "tag2"]},
         {}  # Multiple results
     ])
     def test_GET_200(self, response_GET, url):
@@ -121,7 +121,7 @@ class TestRoot:
         {**post_query, **{'benchmark_image': "not-existing"}},
         {**post_query, **{'site_name': "not-existing"}},
         {**post_query, **{'flavor_name': "not-existing"}},
-        {**post_query, **{'tags': ["tag1", "tag2", "not-existing"]}}
+        {**post_query, **{'tag_names': ["tag1", "not-existing"]}}
     ])
     @mark.parametrize('body', indirect=True, argvalues=[
         {'json_field_1': "Content", 'time': 10}
@@ -183,7 +183,7 @@ class TestResult:
         {'benchmark_tag': "v1.0"},
         {'site_name': "site2"},
         {'flavor_name': "flavor3"},
-        {'tags': ["tag1"]}
+        {'tag_names': ["tag1"]}
     ])
     def test_PUT_204(self, response_PUT, response_GET, body):
         """PUT method succeeded 204."""

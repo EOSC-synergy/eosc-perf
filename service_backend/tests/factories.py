@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime
 
 from backend.benchmarks.models import Benchmark
-from backend.reports.models import BenchmarkReport, ResultReport, SiteReport
+from backend.reports.models import BenchmarkReport, FlavorReport, ResultReport, SiteReport
 from backend.results.models import Result
 from backend.sites.models import Flavor, Site
 from backend.tags.models import Tag
@@ -106,18 +106,58 @@ class ResultFactory(SQLAlchemyModelFactory):
             self.tags = []
 
 
-
-
-
-
 class BenchmarkReportFactory(SQLAlchemyModelFactory):
     """BenchmarkReport factory."""
     class Meta(BaseMeta):
         model = BenchmarkReport
 
-    docker_image = Sequence(lambda n: f"benchmark{n}")
+    id = LazyFunction(uuid.uuid4)
     date = fdt.fuzz()
     verified = True
     verdict = True
     message = "Benchmark report message"
     uploader = SubFactory(UserFactory)
+    benchmark = SubFactory(BenchmarkFactory)
+
+
+class ResultReportFactory(SQLAlchemyModelFactory):
+    """ResultReport factory."""
+    class Meta(BaseMeta):
+        model = ResultReport
+
+    id = LazyFunction(uuid.uuid4)
+    date = fdt.fuzz()
+    verified = True
+    verdict = True
+    message = "Result report message"
+    uploader = SubFactory(UserFactory)
+    result = SubFactory(ResultFactory)
+
+
+class SiteReportFactory(SQLAlchemyModelFactory):
+    """SiteReport factory."""
+    class Meta(BaseMeta):
+        model = SiteReport
+
+    id = LazyFunction(uuid.uuid4)
+    date = fdt.fuzz()
+    verified = True
+    verdict = True
+    message = "Site report message"
+    uploader = SubFactory(UserFactory)
+    site = SubFactory(SiteFactory)
+
+
+class FlavorReportFactory(SQLAlchemyModelFactory):
+    """FlavorReport factory."""
+    class Meta(BaseMeta):
+        model = FlavorReport
+
+    id = LazyFunction(uuid.uuid4)
+    date = fdt.fuzz()
+    verified = True
+    verdict = True
+    message = "Flavor report message"
+    uploader = SubFactory(UserFactory)
+    site = SubFactory(SiteFactory)
+    flavor = SubFactory(FlavorFactory, site_id=SelfAttribute('..site.id'))

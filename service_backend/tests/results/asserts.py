@@ -13,8 +13,8 @@ def correct_result(json):
     assert 'benchmark_tag' in json and type(json['benchmark_tag']) is str
     assert 'site_name' in json and type(json['site_name']) is str
     assert 'flavor_name' in json and type(json['flavor_name']) is str
-    assert 'tags' in json and type(json['tags']) is list
-    for tag in json['tags']:
+    assert 'tag_names' in json and type(json['tag_names']) is list
+    for tag in json['tag_names']:
         assert type(tag) is str
 
 
@@ -26,6 +26,7 @@ def match_result(json, result):
     assert json['benchmark_tag'] == result.benchmark.docker_tag
     assert json['site_name'] == result.site.name
     assert json['flavor_name'] == result.flavor.name
+    # TODO: tag_names
 
 
 def match_query(json, url):

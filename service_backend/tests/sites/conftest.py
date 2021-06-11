@@ -17,7 +17,7 @@ def site_id(request):
 @fixture(scope='function')
 def site__id(site_id):
     """Use, if defined, the id for the site factory."""
-    return site_id if site_id else None
+    return site_id
 
 
 @fixture(scope='function')
@@ -29,7 +29,7 @@ def flavor_name(request):
 @fixture(scope='function')
 def flavor__name(flavor_name):
     """Use, if defined, the name for the flavor factory."""
-    return flavor_name if flavor_name else None
+    return flavor_name
 
 
 @fixture(scope='function')
