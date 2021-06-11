@@ -1,16 +1,20 @@
-# -*- coding: utf-8 -*-
 """Main application package."""
 import logging
 import sys
 
+import marshmallow as ma
 from flask import Flask
+from webargs.flaskparser import FlaskParser
 
-from . import benchmarks, flavors, sites, users
+from . import benchmarks, reports, results, sites, tags, users
 from .extensions import api  # Api interface module
 from .extensions import bcrypt  # Encrypt passwords and others
 from .extensions import cache  # Caches responses
 from .extensions import db  # SQLAlchemy instance
 from .extensions import migrate  # Alembic ext. manage db migrations
+
+# Raise ValidationError when unknown fields in query
+FlaskParser.DEFAULT_UNKNOWN_BY_LOCATION["query"] = ma.RAISE
 
 
 def create_app(
@@ -43,8 +47,10 @@ def register_extensions(app):
 def register_blueprints(app):
     """Register Flask blueprints."""
     api.register_blueprint(benchmarks.blueprint, url_prefix='/benchmarks')
-    api.register_blueprint(flavors.blueprint, url_prefix='/flavors')
+    api.register_blueprint(reports.blueprint, url_prefix='/reports')
+    api.register_blueprint(results.blueprint, url_prefix='/results')
     api.register_blueprint(sites.blueprint, url_prefix='/sites')
+    api.register_blueprint(tags.blueprint, url_prefix='/tags')
     api.register_blueprint(users.blueprint, url_prefix='/users')
 
 

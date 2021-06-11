@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
-"""Sites routes."""
+"""Site routes."""
 from flask.views import MethodView
-from flask_smorest import Blueprint, abort
+from flask_smorest import Blueprint
 
 from . import models, schemas
 from backend.authorization import login_required, admin_required
@@ -11,47 +10,98 @@ blp = Blueprint(
 )
 
 
-@blp.route('/<uuid:id>')
-class Id(MethodView):
-
-    @blp.response(200, schemas.Site)
-    def get(self, id):
-        """Retrieves site details."""
-        return models.Site.get_by_id(id)
-
-    @admin_required()
-    @blp.arguments(schemas.SiteEdit, as_kwargs=True)
-    @blp.response(204)  # https://github.com/marshmallow-code/flask-smorest/issues/166
-    def put(self, id, **kwargs):
-        """Updates an existing site."""
-        models.Site.get_by_id(id).update(**kwargs)
-
-    @admin_required()
-    @blp.response(204)
-    def delete(self, id):
-        """Deletes an existing site."""
-        models.Site.get_by_id(id).delete()
-
-
-@blp.route('/query')
-class Query(MethodView):
+@blp.route('')
+class Root(MethodView):
 
     @login_required()  # Mitigate DoS attack
-    @blp.arguments(schemas.SiteQuery, location='query')
+    @blp.arguments(schemas.SiteQueryArgs, location='query')
     @blp.response(200, schemas.Site(many=True))
     def get(self, args):
         """Filters and list sites."""
-        if args == {}:  # Avoid long query
-            abort(422)
         return models.Site.filter_by(**args)
-
-
-@blp.route('/submit')
-class Submit(MethodView):
 
     @login_required()
     @blp.arguments(schemas.Site, as_kwargs=True)
     @blp.response(201, schemas.Site)
-    def post(self, **kwargs):
+    def post(self, flavors=[], **kwargs):
         """Creates a new site."""
-        return models.Site.create(**kwargs)
+        site = models.Site(**kwargs)
+        flavors = [models.Flavor(site_id=site.id, **x) for x in flavors]
+        return site.update(flavors=flavors)
+
+
+@blp.route('/<uuid:site_id>')
+class Site(MethodView):
+
+    @blp.response(200, schemas.Site)
+    def get(self, site_id):
+        """Retrieves site details."""
+        return models.Site.get_by_id(site_id)
+
+    @admin_required()
+    @blp.arguments(schemas.EditSite, as_kwargs=True)
+    @blp.response(204)
+    def put(self, site_id, flavors=None, **kwargs):
+        """Updates an existing site."""
+        site = models.Site.get_by_id(site_id).update(commit=False, **kwargs)
+        if flavors:
+            flavors = [models.Flavor(site_id=site_id, **x) for x in flavors]
+            site.update(commit=False, flavors=flavors)
+        site.save()
+
+    @admin_required()
+    @blp.response(204)
+    def delete(self, site_id):
+        """Deletes an existing site."""
+        models.Site.get_by_id(site_id).delete()
+
+
+@blp.route('/<uuid:site_id>/flavors')
+class Flavors(MethodView):
+
+    @login_required()  # Mitigate DoS attack
+    @blp.arguments(schemas.FlavorQueryArgs, location='query')
+    @blp.response(200, schemas.Flavor(many=True))
+    def get(self, args, site_id):
+        """Filters and list flavors."""
+        site_flavors = models.Site.get_by_id(site_id).flavors
+        filter = lambda x, **kw: all(getattr(x, k) == v for k, v in kw.items())
+        return [x for x in site_flavors if filter(x, **args)]
+
+    @login_required()
+    @blp.arguments(schemas.Flavor, as_kwargs=True)
+    @blp.response(201, schemas.Flavor)
+    def post(self, site_id, **kwargs):
+        """Creates a new flavor on a site."""
+        site = models.Site.get_by_id(site_id)
+        flavors = site.flavors
+        flavor = models.Flavor(site_id=site.id, **kwargs)
+        site.update(flavors=flavors+[flavor])
+        return flavor
+
+
+@blp.route('/<uuid:site_id>/flavors/<string:flavor_name>')
+class Flavor(MethodView):
+
+    @blp.response(200, schemas.Flavor)
+    def get(self, site_id, flavor_name):
+        """Retrieves flavor details."""
+        flavors = models.Flavor.filter_by(site_id=site_id, name=flavor_name)
+        return flavors.first_or_404()
+
+    @admin_required()
+    @blp.arguments(schemas.EditFlavor, as_kwargs=True)
+    @blp.response(204)
+    def put(self, site_id, flavor_name, **kwargs):
+        """Updates an existing site."""
+        flavors = models.Flavor.filter_by(site_id=site_id, name=flavor_name)
+        flavor = flavors.first_or_404()
+        flavor.update(**kwargs)
+
+    @admin_required()
+    @blp.response(204)
+    def delete(self, site_id, flavor_name):
+        """Deletes an existing site."""
+        flavors = models.Flavor.filter_by(site_id=site_id, name=flavor_name)
+        flavor = flavors.first_or_404()
+        flavor.delete()
