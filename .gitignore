@@ -8,6 +8,9 @@ env.bak/
 venv.bak/
 .venv*
 
+# Doc files
+docs/build
+
 # Spyder project settings
 .spyderproject
 .spyproject
