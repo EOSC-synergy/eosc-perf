@@ -73,6 +73,25 @@ services:
         target: /workdir/
       - /mnt/perf-storage/db-backup:/db-backup/
 
+  perf-postfix:
+    image: perf-postfix
+    restart: unless-stopped
+    container_name: perf-postfix
+    build:
+      context: docker/postfix
+      dockerfile: Dockerfile
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./logs/postfix:/var/log
+    env_file: .env
+    ports:
+      - "25:25"
+    networks:
+      - perfmail
+
+networks:
+  perfmail:
+
 secrets:
   oidc_secret:
     file: ./oidc_secret.txt
