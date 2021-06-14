@@ -28,6 +28,7 @@ services:
         mode: 0400
     networks:
       - perfmail
+      - perfweb
 
   nginx:
     image: nginx
@@ -49,6 +50,8 @@ services:
     secrets:
       - source: nginx_api_secret
         target: nginx_api_credentials
+    networks:
+      - perfweb
 
   certbot:
     image: certbot
@@ -91,6 +94,7 @@ services:
       - perfmail
 
 networks:
+  perfweb:
   perfmail:
 
 secrets:
