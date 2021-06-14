@@ -14,7 +14,7 @@ services:
     image: frontend
     build:
       context: ./service_frontend
-      # target: ${FRONTEND_ENV}
+      target: ${FRONTEND_ENV}
     env_file: .env
     volumes:
       - <<: *sqlite-db-dir
@@ -29,6 +29,10 @@ services:
         mode: 0400
       - source: cookie_secret
         target: cookie_secret
+        uid: 'uwsgi'
+        mode: 0400
+      - source: email_credentials
+        target: email_credentials
         uid: 'uwsgi'
         mode: 0400
 
@@ -62,8 +66,6 @@ services:
     networks:
       - frontend-net
       - backend-net
-    ports:
-      - "5000:5000"
 
   database:
     container_name: database
@@ -93,11 +95,14 @@ services:
     env_file: .env
     volumes:
       - ./static:/var/www/web/
+      - ./frontend_client/src:/var/www/web/js/
       - ./service_certificate/conf:/etc/letsencrypt
       - ./service_certificate/www:/var/www/certbot/
     secrets:
       - source: nginx_api_secret
         target: nginx_api_credentials
+    networks:
+      - frontend-net
     ports:
       - "80:80"
       - "443:443"
@@ -140,3 +145,5 @@ secrets:
     file: ./cookie_secret.txt
   nginx_api_secret:
     file: ./nginx_api_credentials.txt
+  email_credentials:
+    file: ./email_credentials.ini

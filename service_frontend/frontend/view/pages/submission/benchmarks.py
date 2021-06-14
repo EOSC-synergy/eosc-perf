@@ -1,0 +1,62 @@
+"""This module contains the factory to generate benchmark submission pages.
+"""
+
+from typing import Tuple, Dict, Any
+
+from flask import request, Response
+from flask.blueprints import Blueprint
+
+from frontend.controller.authenticator import AuthenticateError
+from frontend.controller.io_controller import controller
+from frontend.utility.type_aliases import HTML
+from frontend.view.page_factory import PageFactory
+from frontend.view.pages.helpers import error_json_redirect, only_authenticated, only_authenticated_json
+
+
+class AddBenchmarkPageFactory(PageFactory):
+    """A factory to build benchmark submission pages."""
+
+    def __init__(self):
+        super().__init__('submission/benchmark.jinja2.html')
+
+    def _generate_content(self, args: Any) -> Tuple[HTML, Dict]:
+        return "", {}
+
+
+add_benchmark_blueprint = Blueprint('add-benchmark-factory', __name__)
+
+
+@add_benchmark_blueprint.route('/submit/benchmark', methods=['GET'])
+@only_authenticated
+def add_benchmark():
+    """HTTP endpoint for the benchmark submission page."""
+    factory = AddBenchmarkPageFactory()
+    return Response(factory.generate_page(), mimetype='text/html')
+
+
+@add_benchmark_blueprint.route('/ajax/submit/benchmark', methods=['POST'])
+@only_authenticated_json
+def add_benchmark_submit():
+    """HTTP endpoint to take in new benchmarks.
+
+    JSON Args:
+        docker_name - Name of benchmark to use
+        message     - Benchmark description
+        template    - Template to use for benchmark
+    """
+    docker_name = request.form.get('docker_name', default=None)
+    message = request.form.get('message', default="No description given.")
+    template = request.form.get('template', default="{}")
+
+    # validate input
+    if docker_name is None:
+        return error_json_redirect('⚠ Incomplete report form submitted (missing Docker name)')
+
+    # handle redirect in a special way because ajax
+    try:
+        if not controller.submit_benchmark(docker_name, message, template):
+            return error_json_redirect('Failed to submit benchmark')
+    except (RuntimeError, ValueError, AuthenticateError) as exception:
+        return error_json_redirect('⚠ ' + str(exception))
+
+    return Response('{}', mimetype='application/json', status=200)

@@ -36,19 +36,25 @@
         <h1>Benchmark Search</h1>
         <form id="form" action="/ajax/query/benchmark" class="flexbox" method="POST">
             <label for="query" class="sr-only">Query:</label>
-            <input type="text" name="query" id="query" class="form-control" style="flex: 10 1 0" placeholder="Enter your query here, keywords separated by spaces" />
+            <input type="text" name="query" id="query" class="form-control" style="flex: 10 1 0"
+                   placeholder="Enter your query here, keywords separated by spaces" />
             <input type="submit" class="btn btn-info" name="submit" value="Search" />
         </form>
         {# TODO: Use card style? Would avoid position:relative tweak #}
         <div class="container" style="position:relative">
             <div class="overlay loading-background loading center-contents" id="loadingIcon">
-                <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+                <div class="lds-ellipsis">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
             </div>
             <table>
                 <thead>
-                    <tr>
-                        <th>Benchmarks</th>
-                    </tr>
+                <tr>
+                    <th>Benchmarks</th>
+                </tr>
                 </thead>
                 <tbody id="resultTableBody">
                 </tbody>
@@ -56,8 +62,11 @@
         </div>
         <br />
         <p id="pageIndex" class="text-right"></p>
-        <button type="button" onclick="benchmarkSearch.next_page()" class="btn btn-info float-right mr-1" id="next_button">Next</button>
+        <button type="button" onclick="benchmarkSearch.next_page()" class="btn btn-info float-right mr-1"
+                id="next_button">Next
+        </button>
         <button type="button" onclick="benchmarkSearch.prev_page()" class="btn btn-info float-right mr-1"
-            id="previous_button">Previous</button>
+                id="previous_button">Previous
+        </button>
     </div>
 {% endblock %}

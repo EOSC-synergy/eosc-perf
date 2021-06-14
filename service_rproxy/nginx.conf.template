@@ -35,6 +35,13 @@ server {
   include /etc/letsencrypt/options-ssl-nginx.conf;
   ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
+  # Add support for javascript modules
+  include mime.types;
+  types
+  {
+    application/javascript mjs;
+  }
+
   location / {
     autoindex off;
     include uwsgi_params;
@@ -43,6 +50,16 @@ server {
 
   location /static {
     alias /var/www/web;
+  }
+
+  location /api {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Scheme $scheme;
+    proxy_set_header X-Script-Name /api;
+    proxy_set_header Host $http_host;
+
+    proxy_redirect off;
+    proxy_pass http://backend:5000;
   }
 
   # Deny .htaccess etc

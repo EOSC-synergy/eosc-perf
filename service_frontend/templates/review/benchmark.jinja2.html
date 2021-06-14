@@ -11,13 +11,13 @@
     <div class="container">
         <h1>Benchmark review</h1>
         <p>
-        Uploader: {{uploader_name}} ({{uploader_mail}})<br/>
-        Description: {{desc}}<br/>
-        Date: {{date}}
+            Uploader: {{ uploader_name }} ({{ uploader_mail }})<br />
+            Description: {{ desc }}<br />
+            Date: {{ date }}
         </p>
-        <h4>Dockerhub description for <a href="{{docker_link}}">'{{docker_name}}'</a></h4>
+        <h4>Dockerhub description for <a href="{{ docker_link }}">'{{ docker_name }}'</a></h4>
         <div id="docker_desc" class="jumbotron" style="overflow:scroll;height:60%">
-            {{docker_desc|safe}}
+            {{ docker_desc|safe }}
         </div>
         <form id="form" action="/ajax/review/benchmark" method="POST">
             <input type="hidden" name="uuid" value="{{ uuid }}" />
