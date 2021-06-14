@@ -26,6 +26,9 @@ services:
         target: cookie_secret
         uid: 'uwsgi'
         mode: 0400
+    networks:
+      - perfmail
+      - perfweb
 
   nginx:
     image: nginx
@@ -47,6 +50,8 @@ services:
     secrets:
       - source: nginx_api_secret
         target: nginx_api_credentials
+    networks:
+      - perfweb
 
   certbot:
     image: certbot
@@ -72,6 +77,25 @@ services:
       - <<: *sqlite-db-dir
         target: /workdir/
       - /mnt/perf-storage/db-backup:/db-backup/
+
+  perf-postfix:
+    image: perf-postfix
+    restart: unless-stopped
+    container_name: perf-postfix
+    build:
+      context: docker/postfix
+      dockerfile: Dockerfile
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+    env_file: .env
+    ports:
+      - "25:25"
+    networks:
+      - perfmail
+
+networks:
+  perfweb:
+  perfmail:
 
 secrets:
   oidc_secret:
