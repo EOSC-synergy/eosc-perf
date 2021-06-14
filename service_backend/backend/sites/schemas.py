@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-"""Sites schemas."""
-from backend.flavors.schemas import FlavorNames
+"""Site schemas."""
 from marshmallow import Schema, fields
 
 
@@ -8,21 +6,29 @@ class Site(Schema):
     id = fields.UUID(dump_only=True)
     name = fields.String(required=True)
     address = fields.String(required=True)
-    hidden = fields.Boolean(dump_only=True)
     description = fields.String()
-    flavors = FlavorNames()
+    flavors = fields.Nested("Flavor", many=True)
 
 
-class SiteEdit(Site):
-    name = fields.String()     # required=False
-    address = fields.String()  # required=False
-    hidden = fields.Boolean()  # dump_only=False
+class Flavor(Schema):
+    name = fields.String(required=True)
+    description = fields.String()
 
 
-class SiteQuery(Site):
-    name = fields.String()     # required=False
-    address = fields.String()  # required=False
-    hidden = fields.Boolean()  # dump_only=False
+class EditSite(Schema):
+    name = fields.String()
+    address = fields.String()
 
-    class Meta:
-        exclude = ('flavors',)
+
+class EditFlavor(Schema):
+    name = fields.String()
+    description = fields.String()
+
+
+class SiteQueryArgs(Schema):
+    name = fields.String()
+    address = fields.String()
+
+
+class FlavorQueryArgs(Schema):
+    name = fields.String()

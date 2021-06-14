@@ -1,164 +1,315 @@
-# -*- coding: utf-8 -*-
 """Functional tests using pytest-flask."""
-from flask import url_for
+from uuid import uuid4
+
 from pytest import mark
+from . import asserts
+
+flavor_1 = {'name': 'f1', 'description': "text"}
+flavor_2 = {'name': 'f2', 'description': "text"}
+flavor_3 = {'name': 'f3', 'description': "text"}
+
+site_1 = {'name': "s1", 'address': "addr1"}
+site_1['description'] = "text"
+site_1['flavors'] = []
+site_1['flavors__description'] = ["site1 flavor"]
+
+site_2 = {'name': "s2", 'address': "addr1"}
+site_2['description'] = "text"
+site_2['flavors'] = ["f1"]
+site_2['flavors__description'] = ["site2 flavor"]
 
 
-@mark.parametrize('path', ['sites.Id'])
-@mark.usefixtures("session")
-class TestId:
-    """Tests for 'Id' route in blueprint."""
+@mark.usefixtures('session', 'db_sites')
+@mark.parametrize('endpoint', ['sites.Root'], indirect=True)
+@mark.parametrize('db_sites', indirect=True, argvalues=[
+    [site_1, site_2]
+])
+class TestRoot:
+    """Tests for 'Root' route in blueprint."""
 
-    def test_GET_200(self, client, path, site):
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {'name': 's1', 'address': "addr1"},
+        {'address': "addr1"},  # Query with 1 field
+        {}  # Multiple results
+    ])
+    def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
-        response_GET = client.get(path=url_for(path, id=site.id))
         assert response_GET.status_code == 200
-        assert response_GET.json['name'] == site.name
-        assert response_GET.json['address'] == site.address
-        assert response_GET.json['description'] == site.description
-        assert response_GET.json['hidden'] == site.hidden
-        assert response_GET.json['flavors'] == [x.name for x in site.flavors]
+        for element in response_GET.json:
+            asserts.correct_site(element)
+            asserts.match_query(element, url)
 
-    @mark.parametrize('site_id', ["non_existing"])
-    def test_GET_404(self, client, path, site_id):
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {'name': 's1'}
+    ])
+    def test_GET_401(self, response_GET):
+        """GET method fails 401 if not logged in."""
+        assert response_GET.status_code == 401
+
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {'bad_key': "This is a non expected query key"}
+    ])
+    def test_GET_422(self, response_GET):
+        """GET method fails 422 if bad request body."""
+        assert response_GET.status_code == 422
+
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'name': "s3", 'address': "addr2", 'description': "Text"},
+        {'name': "s3", 'address': "addr2", 'flavors': [
+            {'name': 'f1', 'description': "text"},
+            {'name': 'f2', 'description': "text"}
+        ]}
+    ])
+    def test_POST_201(self, response_POST, url, body):
+        """POST method succeeded 201."""
+        assert response_POST.status_code == 201
+        asserts.correct_site(response_POST.json)
+        asserts.match_query(response_POST.json, url)
+        asserts.match_body(response_POST.json, body)
+
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'name': "s3", 'address': "addr2", 'description': "Text"},
+        {}  # Empty body
+    ])
+    def test_POST_401(self, response_POST):
+        """POST method fails 401 if not authorized."""
+        assert response_POST.status_code == 401
+
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'name': "s1", 'address': "addrX"},
+        {'name': "s2", 'address': "addrX"}
+    ])
+    def test_POST_409(self, response_POST):
+        """POST method fails 409 if resource already exists."""
+        assert response_POST.status_code == 409
+
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'name': "site"},  # Missingaddress
+        {'address': "address"},  # Missingname
+        {}  # Empty body
+    ])
+    def test_POST_422(self, response_POST):
+        """POST method fails 422 if missing required."""
+        assert response_POST.status_code == 422
+
+
+@mark.usefixtures('session', 'site')
+@mark.parametrize('endpoint', ['sites.Site'], indirect=True)
+@mark.parametrize('site_id', [uuid4()], indirect=True)
+class TestSite:
+    """Tests for 'Site' route in blueprint."""
+
+    def test_GET_200(self, site, response_GET):
+        """GET method succeeded 200."""
+        assert response_GET.status_code == 200
+        asserts.correct_site(response_GET.json)
+        asserts.match_site(response_GET.json, site)
+
+    @mark.parametrize('site__id', [uuid4()])
+    def test_GET_404(self, response_GET):
         """GET method fails 404 if no id found."""
-        response_GET = client.get(path=url_for(path, id=site_id))
         assert response_GET.status_code == 404
 
-    @mark.usefixtures("grant_admin")
-    @mark.parametrize('flavors', [['f1', 'f2']], indirect=True)
-    @mark.parametrize('body', [
-        {'address': "new_addr"},
-        {'flavors': ["f1", "f2"]},
+    @mark.usefixtures('grant_admin')
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'name': "new_name", 'address': "addr1"},
+        {'name': "new_name"},
+        {'address': "new_addr"}
     ])
-    def test_PUT_204(self, client, path, site, body, flavors):
+    def test_PUT_204(self, response_PUT, response_GET, body):
         """PUT method succeeded 204."""
-        response_PUT = client.put(path=url_for(path, id=site.id), json=body)
         assert response_PUT.status_code == 204
-        response_GET = client.get(path=url_for(path, id=site.id))
-        fields = {'name', 'address', 'description', 'hidden'}
-        for k in fields - body.keys():
-            assert response_GET.json[k] == site.__getattribute__(k)
-        for k in body.keys():
-            assert response_GET.json[k] == body[k]
-        if 'flavors' not in body:
-            flavors = [x.name for x in site.flavors]
-            assert response_GET.json['flavors'] == flavors
-        else:
-            assert response_GET.json['flavors'] == body['flavors']
+        assert response_GET.status_code == 200
+        asserts.correct_site(response_GET.json)
+        asserts.match_body(response_GET.json, body)
 
-    @mark.parametrize('body', [{'address': 'new_addr'}])
-    def test_PUT_401(self, client, path, flavor, body):
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'name': 'new_name', 'address': "new_addr"}
+    ])
+    def test_PUT_401(self, response_PUT):
         """PUT method fails 401 if not authorized."""
-        response_PUT = client.put(path=url_for(path, id=flavor.id), json=body)
         assert response_PUT.status_code == 401
 
-    @mark.usefixtures("grant_admin")
-    @mark.parametrize('site_id', ["non_existing"])
-    @mark.parametrize('body', [{'address': 'new_addr'}])
-    def test_PUT_404(self, client, path, site_id, body):
+    @mark.usefixtures('grant_admin')
+    @mark.parametrize('site__id', [uuid4()])
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'name': 'new_name', 'address': "new_addr"}
+    ])
+    def test_PUT_404(self, response_PUT):
         """PUT method fails 404 if no id found."""
-        response_PUT = client.put(path=url_for(path, id=site_id), json=body)
         assert response_PUT.status_code == 404
 
-    @mark.usefixtures("grant_admin")
-    @mark.parametrize('body', [{'bad_field': ""}])
-    def test_PUT_422(self, client, path, site, body):
+    @mark.usefixtures('grant_admin')
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'bad_field': ""}
+    ])
+    def test_PUT_422(self, response_PUT):
         """PUT method fails 422 if bad request body."""
-        response_PUT = client.put(path=url_for(path, id=site.id), json=body)
         assert response_PUT.status_code == 422
 
-    @mark.usefixtures("grant_admin")
-    def test_DELETE_204(self, client, path, site):
+    @mark.usefixtures('grant_admin')
+    def test_DELETE_204(self, response_DELETE, response_GET):
         """DELETE method succeeded 204."""
-        response_DELETE = client.delete(path=url_for(path, id=site.id))
         assert response_DELETE.status_code == 204
-        response_GET = client.get(path=url_for(path, id=site.id))
         assert response_GET.status_code == 404
 
-    @mark.usefixtures("grant_admin")
-    @mark.parametrize('site_id', ["non_existing"])
-    def test_DELETE_404(self, client, path, site_id):
+    def test_DELETE_401(self, response_DELETE):
+        """DELETE method fails 401 if not authorized."""
+        assert response_DELETE.status_code == 401
+
+    @mark.usefixtures('grant_admin')
+    @mark.parametrize('site__id', [uuid4()])
+    def test_DELETE_404(self, response_DELETE):
         """DELETE method fails 404 if no id found."""
-        response_DELETE = client.delete(path=url_for(path, id=site_id))
         assert response_DELETE.status_code == 404
 
 
-@mark.parametrize('path', ['sites.Query'])
-@mark.usefixtures("session")
-class TestQuery:
-    """Tests for 'Query' route in blueprint."""
+@mark.usefixtures('session', 'site', 'db_flavors')
+@mark.parametrize('endpoint', ['sites.Flavors'], indirect=True)
+@mark.parametrize('site_id', [uuid4()], indirect=True)
+@mark.parametrize('db_flavors', indirect=True, argvalues=[
+    [flavor_1, flavor_2]
+])
+class TestFlavors:
+    """Tests for 'Flavors' route in blueprint."""
 
-    @mark.usefixtures("grant_logged")
-    @mark.parametrize('sites', [['s1', 's2']], indirect=True)
-    @mark.parametrize('query', [
-        {'name': 's1', 'hidden': True},
-        {'name': 's2'},  # Query with 1 field
-        {'hidden': True}  # Multiple results
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {'name': 'f1'},
+        {'name': 'f2'},
+        {}  # Multiple results
     ])
-    def test_GET_200(self, client, path, query, sites):
+    def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
-        response_GET = client.get(path=url_for(path, **query))
         assert response_GET.status_code == 200
-        assert response_GET.json != []
-        assert type(response_GET.json) is list
-        fields = ['name', 'address', 'description', 'hidden', 'flavors']
         for element in response_GET.json:
-            assert all([x in element for x in fields])
-            assert all([element[k] == v for k, v in query.items()])
+            asserts.correct_flavor(element)
+            asserts.match_query(element, url)
 
-    @mark.parametrize('query', [{'hidden': True}])
-    def test_GET_401(self, client, path, query):
-        """GET method fails 401 if not authorized."""
-        response_GET = client.get(path=url_for(path, **query))
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {'name': 'f1'}
+    ])
+    def test_GET_401(self, response_GET):
+        """GET method fails 401 if not logged in."""
         assert response_GET.status_code == 401
 
-    @mark.usefixtures("grant_logged")
-    @mark.parametrize('query', [
-        {},  # Empty queries should return error
-        {'flavors': ['f1', 'f2']},  # flavors search not supported
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('query', indirect=True, argvalues=[
         {'bad_key': "This is a non expected query key"}
     ])
-    def test_GET_422(self, client, path, query):
+    def test_GET_422(self, response_GET):
         """GET method fails 422 if bad request body."""
-        response_GET = client.get(path=url_for(path, **query))
         assert response_GET.status_code == 422
 
-
-@mark.parametrize('path', ['sites.Submit'])
-@mark.usefixtures("session")
-class TestSubmit:
-    """Tests for 'Submit' route in blueprint."""
-
-    @mark.usefixtures("grant_logged")
-    @mark.parametrize('flavors', [['f1', 'f2']], indirect=True)
-    @mark.parametrize('body', [
-        {'name': "f1", 'address': "a1"},
-        {'name': "f1", 'address': "a1", "flavors": ["f1", "f2"]}
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('body', indirect=True, argvalues=[
+        flavor_3
     ])
-    def test_POST_201(self, client, path, body, flavors):
+    def test_POST_201(self, response_POST, url, body):
         """POST method succeeded 201."""
-        response_POST = client.post(path=url_for(path), json=body)
         assert response_POST.status_code == 201
-        fields = ['name', 'address', 'description', 'hidden', 'flavors']
-        assert all([x in response_POST.json for x in fields])
-        assert all([response_POST.json[k] == v for k, v in body.items()])
+        asserts.correct_flavor(response_POST.json)
+        asserts.match_query(response_POST.json, url)
+        asserts.match_body(response_POST.json, body)
+        asserts.site_has_flavor(response_POST.json, url)
 
-    @mark.parametrize('body', [
-        {'name': "f1", 'address': "a1"},
-        {'address': "this body is missing a name"}
+    @mark.parametrize('body', indirect=True, argvalues=[
+        flavor_3,
+        {}  # Empty body
     ])
-    def test_POST_401(self, client, path, body):
+    def test_POST_401(self, response_POST):
         """POST method fails 401 if not authorized."""
-        response_POST = client.post(path=url_for(path), json=body)
         assert response_POST.status_code == 401
 
-    @mark.usefixtures("grant_logged")
-    @mark.parametrize('body', [
-        {'address': "this body is missing a name"},
-        {'name': "f1", 'address': "a1", 'hidden': False},
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('body', indirect=True, argvalues=[
+        flavor_1,
+        flavor_2
     ])
-    def test_POST_422(self, client, path, body):
+    def test_POST_409(self, response_POST):
+        """POST method fails 409 if resource already exists."""
+        assert response_POST.status_code == 409
+
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {k: flavor_1[k] for k in flavor_1.keys() - {'name'}},  # Missingname
+        {}  # Empty body
+    ])
+    def test_POST_422(self, response_POST):
         """POST method fails 422 if missing required."""
-        response_POST = client.post(path=url_for(path), json=body)
         assert response_POST.status_code == 422
+
+
+@mark.usefixtures('session', 'site', 'flavor')
+@mark.parametrize('endpoint', ['sites.Flavor'], indirect=True)
+@mark.parametrize('site_id', [uuid4()], indirect=True)
+@mark.parametrize('flavor_name', ["f1"], indirect=True)
+class TestFlavor:
+    """Tests for 'Flavor' route in blueprint."""
+
+    def test_GET_200(self, flavor, response_GET):
+        """GET method succeeded 200."""
+        assert response_GET.status_code == 200
+        asserts.correct_flavor(response_GET.json)
+        asserts.match_flavor(response_GET.json, flavor)
+
+    @mark.parametrize('flavor__name', ["f2"])
+    def test_GET_404(self, response_GET):
+        """GET method fails 404 if no id found."""
+        assert response_GET.status_code == 404
+
+    @mark.usefixtures('grant_admin')
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'description': "new_text"},
+        {}  # Note, edit name changes url for response_GET
+    ])
+    def test_PUT_204(self, response_PUT, response_GET, body):
+        """PUT method succeeded 204."""
+        assert response_PUT.status_code == 204
+        asserts.correct_flavor(response_GET.json)
+        asserts.match_body(response_GET.json, body)
+
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'description': "new_text"}
+    ])
+    def test_PUT_401(self, response_PUT):
+        """PUT method fails 401 if not authorized."""
+        assert response_PUT.status_code == 401
+
+    @mark.usefixtures('grant_admin')
+    @mark.parametrize('flavor__name', ["f2"])
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'description': "new_text"}
+    ])
+    def test_PUT_404(self, response_PUT):
+        """PUT method fails 404 if no id found."""
+        assert response_PUT.status_code == 404
+
+    @mark.usefixtures('grant_admin')
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'bad_field': ""}
+    ])
+    def test_PUT_422(self, response_PUT):
+        """PUT method fails 422 if bad request body."""
+        assert response_PUT.status_code == 422
+
+    @mark.usefixtures('grant_admin')
+    def test_DELETE_204(self, response_DELETE, response_GET):
+        """DELETE method succeeded 204."""
+        assert response_DELETE.status_code == 204
+        assert response_GET.status_code == 404
+
+    def test_DELETE_401(self, response_DELETE):
+        """DELETE method fails 401 if not authorized."""
+        assert response_DELETE.status_code == 401
+
+    @mark.usefixtures('grant_admin')
+    @mark.parametrize('flavor__name', ["f2"])
+    def test_DELETE_404(self, response_DELETE):
+        """DELETE method fails 404 if no id found."""
+        assert response_DELETE.status_code == 404

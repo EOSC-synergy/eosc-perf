@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Authorization module."""
 # Simplify code when Authlib V1.0 using https://docs.authlib.org/en/latest/specs/rfc7662.html#use-introspection-in-resource-server
 

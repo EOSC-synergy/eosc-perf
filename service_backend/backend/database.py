@@ -1,13 +1,18 @@
-# -*- coding: utf-8 -*-
 """Database module, including the SQLAlchemy database object and DB-related utilities."""
 import uuid
 
+import flask
+import sqlalchemy
 import sqlalchemy_utils
+from sqlalchemy.ext import associationproxy
 
 from backend.extensions import db
 
 # Extend db types
 db.UUID = sqlalchemy_utils.UUIDType
+db.Json = sqlalchemy.dialects.postgresql.JSON
+db.exc = sqlalchemy.exc
+db.association_proxy = associationproxy.association_proxy
 
 
 class CRUDMixin(object):
@@ -30,7 +35,10 @@ class CRUDMixin(object):
         """Save the record."""
         db.session.add(self)
         if commit:
-            db.session.commit()
+            try:
+                db.session.commit()
+            except db.exc.IntegrityError:
+                flask.abort(409)
         return self
 
     def delete(self, commit=True):
@@ -39,17 +47,18 @@ class CRUDMixin(object):
         return commit and db.session.commit()
 
 
-class Model(CRUDMixin, db.Model):
+class BaseModel(CRUDMixin, db.Model):
     """Base model class that includes CRUD convenience methods."""
     __abstract__ = True
 
     @classmethod
     def filter_by(cls, **filters):
         """Get record by filtering."""
+        filters = {k: v for k, v in filters.items() if v}
         return cls.query.filter_by(**filters)
 
 
-class PkModel(Model):
+class PkModel(BaseModel):
     """Base model class that includes CRUD convenience methods, 
     plus adds a 'primary key' column named ``id``."""
     __abstract__ = True
