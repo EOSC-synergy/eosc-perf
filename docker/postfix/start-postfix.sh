@@ -34,7 +34,13 @@ echo "$PERF_HOSTNAME" > /etc/mailname
 echo "$PERF_HOSTNAME" > /etc/hostname
 
 # place to keep log, maillog
-postconf -e maillog_file="/var/log/postfix.log"
+# http://www.postfix.org/MAILLOG_README.html
+#postconf -e maillog_file="/var/log/postfix.log"
+# Logging to stdout is useful when Postfix runs in a container, as it eliminates a syslogd dependency.
+postconf -e maillog_file="/dev/stdout"
+# Following works for postfix>=3.4.
+# Hmm, next line seems to hang server, comment. It is already in master.cf (Ubuntu 20.04)
+#postconf -M postlog/unix-dgram="postlog unix-dgram n - n - 1 postlog" 
 
 # set myhostname and mynetworks
 postconf -e myhostname="$PERF_HOSTNAME"
@@ -43,6 +49,7 @@ postconf -e mynetworks="127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 172.16.0.0/
 
 # TLS parameters
 postconf -e smtpd_use_tls=yes
+# we use Letsencrypt certificates obtained via certbot (other container)
 postconf -e smtpd_tls_cert_file=/etc/letsencrypt/live/\$myhostname/fullchain.pem
 postconf -e smtpd_tls_key_file=/etc/letsencrypt/live/\$myhostname/privkey.pem
 postconf -e smtpd_tls_CApath=/etc/ssl/certs
@@ -63,5 +70,5 @@ postconf -e masquerade_domains="\$myhostname"
 # switch chroot off for smtp
 postconf -F smtp/*/chroot=n
 
-# start postfix
+# start postfix in foreground for running in a contianer
 /usr/sbin/postfix start-fg

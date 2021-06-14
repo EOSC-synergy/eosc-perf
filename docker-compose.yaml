@@ -26,6 +26,8 @@ services:
         target: cookie_secret
         uid: 'uwsgi'
         mode: 0400
+    networks:
+      - perfmail
 
   nginx:
     image: nginx
@@ -82,7 +84,6 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./certbot/conf:/etc/letsencrypt
-      - ./logs/postfix:/var/log
     env_file: .env
     ports:
       - "25:25"
