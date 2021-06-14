@@ -1,10 +1,12 @@
-# -*- coding: utf-8 -*-
 """Defines fixtures available to all tests.
 See: https://pytest-flask.readthedocs.io/en/latest/features.html
 """
 import logging
 
 from backend import authorization, create_app, database
+from backend.extensions import flaat
+from flaat import tokentools
+from flask import url_for
 from pytest import fixture
 from pytest_postgresql.factories import DatabaseJanitor
 from sqlalchemy import orm
@@ -72,3 +74,83 @@ def grant_admin(monkeypatch, grant_logged):
         "DISABLE_AUTHENTICATION_AND_ASSUME_VALID_GROUPS",
         "YES"
     )
+
+
+@fixture(scope='function')
+def token_sub(request):
+    """Returns the sub to include on the user token."""
+    return request.param if hasattr(request, 'param') else None
+
+
+@fixture(scope='function')
+def token_iss(request):
+    """Returns the iss to include on the user token."""
+    return request.param if hasattr(request, 'param') else None
+
+
+@fixture(scope='function')
+def mock_token_info(monkeypatch, token_sub, token_iss):
+    """Patch fixture to test function with valid oidc token."""
+    monkeypatch.setattr(
+        tokentools,
+        "get_accesstoken_info",
+        lambda _: {'body': {'sub': token_sub, 'iss': token_iss}}
+    )
+
+
+@fixture(scope='function')
+def introspection_email(request):
+    """Returns the email to be returned by the introspection endpoint."""
+    return request.param if hasattr(request, 'param') else None
+
+
+@fixture(scope='function')
+def mock_introspection_info(monkeypatch, introspection_email):
+    """Patch fixture to test function with valid oidc token."""
+    monkeypatch.setattr(
+        flaat,
+        "get_info_from_introspection_endpoints",
+        lambda _: {'email': introspection_email}
+    )
+
+
+@fixture(scope='function')
+def endpoint(request):
+    """Fixture that return the endpoint for the request."""
+    return request.param
+
+
+@fixture(scope='function')
+def query(request):
+    """Fixture that return the query for the request."""
+    return request.param if hasattr(request, 'param') else {}
+
+
+@fixture(scope='function')
+def body(request):
+    """Fixture that return the body for the request."""
+    return request.param if hasattr(request, 'param') else {}
+
+
+@fixture(scope='function')
+def response_GET(client, url):
+    """Fixture that return the result of a GET request."""
+    return client.get(url)
+
+
+@fixture(scope='function')
+def response_POST(client, url, body):
+    """Fixture that return the result of a POST request."""
+    return client.post(url, json=body)
+
+
+@fixture(scope='function')
+def response_PUT(client, url, body):
+    """Fixture that return the result of a PUT request."""
+    return client.put(url, json=body)
+
+
+@fixture(scope='function')
+def response_DELETE(client, url):
+    """Fixture that return the result of a DELETE request."""
+    return client.delete(url)

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Application configuration.
 For local development, use a .env file to set environment variables.
 """
@@ -63,7 +62,9 @@ else:
     EGI_CLIENT_ID = env.str("OIDC_CLIENT_ID", default="not-defined")
     EGI_CLIENT_SECRET = env.str("OIDC_CLIENT_SECRET", default="not-defined")
 
-ADMIN_ASSURANCE = env.str("ADMIN_ASSURANCE", default="https://refeds.org/assurance/IAP/low")
+ADMIN_ASSURANCE = env.str(
+    "ADMIN_ASSURANCE", 
+    default="https://refeds.org/assurance/IAP/low")
 
 
 # API specs configuration

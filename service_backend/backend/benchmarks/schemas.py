@@ -1,25 +1,17 @@
-# -*- coding: utf-8 -*-
-"""User schemas."""
+"""Benchmark schemas."""
 from marshmallow import Schema, fields
-from backend.users.schemas import Uploader
 
 
 class Benchmark(Schema):
     id = fields.UUID(dump_only=True)
-    docker_name = fields.String(required=True)
-    template = fields.String()
-    hidden = fields.Boolean(dump_only=True)
-    description = fields.String()
-    uploader = fields.Pluck(Uploader, 'email')
+    docker_image = fields.String(required=True)
+    docker_tag = fields.String(required=True)
 
 
-class BenchmarkEdit(Benchmark):
-    docker_name = fields.String()  # required=False
-    hidden = fields.Boolean()      # dump_only=False
-    uploader_id = fields.UUID()    # required=False
+class EditBenchmark(Schema):
+    docker_image = fields.String()
+    docker_tag = fields.String()
 
 
-class BenchmarkQuery(Benchmark):
-    docker_name = fields.String()  # required=False
-    hidden = fields.Boolean()      # dump_only=False
-    uploader_id = fields.UUID()    # required=False
+class BenchmarkQueryArgs(Schema):
+    docker_image = fields.String()

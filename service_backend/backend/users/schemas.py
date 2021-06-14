@@ -1,25 +1,19 @@
-# -*- coding: utf-8 -*-
 """User schemas."""
+from json import dump
 from marshmallow import Schema, fields
 
 
 class User(Schema):
-    sub = fields.String(required=True)
-    iss = fields.String(required=True)
-    email = fields.Email(required=True)
+    sub = fields.String(dump_only=True)
+    iss = fields.String(dump_only=True)
+    email = fields.Email(dump_only=True)
     created_at = fields.String(dump_only=True)
 
 
 class UserEdit(User):
-    class Meta:
-        exclude = ("sub", "iss", "created_at")
+    email = fields.Email()
 
 
 class UserQuery(User):
-    sub = fields.String()  # required=False
-    iss = fields.String()  # required=False
-    email = fields.String()  # required=False
-
-
-class Uploader(User):
-    pass
+    iss = fields.String()
+    email = fields.String()

@@ -66,8 +66,6 @@ services:
     networks:
       - frontend-net
       - backend-net
-    ports:
-      - "5000:5000"
 
   database:
     container_name: database
@@ -97,6 +95,7 @@ services:
     env_file: .env
     volumes:
       - ./static:/var/www/web/
+      - ./frontend_client/src:/var/www/web/js/
       - ./service_certificate/conf:/etc/letsencrypt
       - ./service_certificate/www:/var/www/certbot/
     secrets:
