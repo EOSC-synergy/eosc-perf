@@ -9,7 +9,7 @@ env.read_env()
 
 FLASK_ENV = env.str("FLASK_ENV", default="production")
 
-available_environments = ["production", "development", "testing"]
+available_environments = ["production", "development"]
 if FLASK_ENV not in available_environments:
     raise Exception(
         f"""Wrong FLASK_ENV configuration as {FLASK_ENV}
@@ -23,9 +23,6 @@ if FLASK_ENV == 'production':
 else:
     DEBUG = env.bool("DEBUG", default=True)
     SECRET_KEY = env.str("SECRET_KEY", default="not-so-secret")
-
-if FLASK_ENV == 'testing':
-    TESTING = env.bool("TESTING", default=True)
 
 
 # Database configuration
@@ -63,7 +60,7 @@ else:
     EGI_CLIENT_SECRET = env.str("OIDC_CLIENT_SECRET", default="not-defined")
 
 ADMIN_ASSURANCE = env.str(
-    "ADMIN_ASSURANCE", 
+    "ADMIN_ASSURANCE",
     default="https://refeds.org/assurance/IAP/low")
 
 
