@@ -8,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { ModuleBase } from './modules/module-base';
 
 function App() {
-    const [currentTab, setCurrentTab] = useState('dashboard');
+    const [currentTab, setCurrentTab] = useState('BenchmarkSearch');
 
     /**
      * Create navbar-dropdown button for a subpage

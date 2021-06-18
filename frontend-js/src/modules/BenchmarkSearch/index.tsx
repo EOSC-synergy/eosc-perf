@@ -4,7 +4,7 @@ const BenchmarkSearch = () => <div>Benchmark search!</div>;
 
 export default {
     routeProps: {
-        path: '/benchmark-search',
+        path: '/',
         component: BenchmarkSearch,
     },
     name: 'BenchmarkSearch',
