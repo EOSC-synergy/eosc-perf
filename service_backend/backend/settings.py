@@ -1,32 +1,42 @@
 """Application configuration.
 For local development, use a .env file to set environment variables.
 """
-from environs import Env
+import os
+
+from environs import Env, EnvError
 
 env = Env()
 env.read_env()
 
 
-FLASK_ENV = env.str("FLASK_ENV", default="production")
+ENV = env.str("FLASK_ENV", default="production")
 
 available_environments = ["production", "development"]
-if FLASK_ENV not in available_environments:
+if ENV not in available_environments:
     raise Exception(
-        f"""Wrong FLASK_ENV configuration as {FLASK_ENV}
+        f"""Wrong FLASK_ENV configuration as {ENV}
         Use only {available_environments}"""
     )
 
 
 # Base configuration
-if FLASK_ENV == 'production':
-    SECRET_KEY = env.str("SECRET_KEY")
+if ENV == 'production':
+    try:
+        SECRET_KEY = env.str("SECRET_KEY")
+    except EnvError:
+        SECRET_KEY_FILE = env.str("SECRET_KEY_FILE")
+        SECRET_KEY = open(SECRET_KEY_FILE).read().rstrip('\n')
 else:
     DEBUG = env.bool("DEBUG", default=True)
-    SECRET_KEY = env.str("SECRET_KEY", default="not-so-secret")
+    SECRET_KEY_FILE = env.str("SECRET_KEY_FILE", "")
+    if SECRET_KEY_FILE == "":
+        SECRET_KEY = env.str("SECRET_KEY", default="not-so-secret")
+    else:
+        SECRET_KEY = open(SECRET_KEY_FILE).read().rstrip('\n')
 
 
 # Database configuration
-if FLASK_ENV == 'production':
+if ENV == 'production':
     DB_ENGINE = env.str("DB_ENGINE")
     DB_USER = env.str("DB_USER")
     DB_PASSWORD = env.str("DB_PASSWORD")
@@ -52,7 +62,7 @@ CACHE_TYPE = "simple"  # Can be "memcached", "redis", etc.
 
 
 # Authorization configuration.
-if FLASK_ENV == 'production':
+if ENV == 'production':
     EGI_CLIENT_ID = env.str("OIDC_CLIENT_ID")
     EGI_CLIENT_SECRET = env.str("OIDC_CLIENT_SECRET")
 else:
