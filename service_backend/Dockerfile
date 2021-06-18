@@ -53,6 +53,5 @@ RUN useradd -m sid
 RUN chown -R sid:sid /app
 USER sid
 
-ENV FLASK_ENV="development"
-ENV TESTING="true"
+ENV FLASK_ENV="production"
 ENTRYPOINT ["tox"]

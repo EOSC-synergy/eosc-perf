@@ -2,11 +2,11 @@
 See: https://pytest-flask.readthedocs.io/en/latest/features.html
 """
 import logging
+import os
 
-from backend import authorization, create_app, database
+from backend import create_app, database
 from backend.extensions import flaat
 from flaat import tokentools
-from flask import url_for
 from pytest import fixture
 from pytest_postgresql.factories import DatabaseJanitor
 from sqlalchemy import orm
@@ -17,22 +17,36 @@ Session = orm.scoped_session(orm.sessionmaker())
 
 
 @fixture(scope='session')
-def connection(postgresql_proc):
+def sql_database(postgresql_proc):
     """Create a temp Postgres database for the tests."""
     USER = postgresql_proc.user
     HOST = postgresql_proc.host
     PORT = postgresql_proc.port
-    with DatabaseJanitor(USER, HOST, PORT, TEST_DB, VERSION):
-        yield f'postgresql://{USER}:@{HOST}:{PORT}/{TEST_DB}'
+    with DatabaseJanitor(USER, HOST, PORT, TEST_DB, VERSION) as db:
+        yield db
+
+
+@fixture(scope='session')
+def session_environment(sql_database):
+    """Patch fixture to set test env variables."""
+    # Flask framework environments
+    os.environ['SECRET_KEY'] = 'not-so-secret-for-testing'
+    # Database environments
+    os.environ['DB_ENGINE'] = 'postgresql'
+    os.environ['DB_USER'] = str(sql_database.user)
+    os.environ['DB_PASSWORD'] = ""
+    os.environ['DB_HOST'] = str(sql_database.host)
+    os.environ['DB_PORT'] = str(sql_database.port)
+    os.environ['DB_NAME'] = str(sql_database.db_name)
+    # OIDC environments
+    os.environ['OIDC_CLIENT_ID'] = "eosc-perf"
+    os.environ['OIDC_CLIENT_SECRET'] = "not-so-secret-for-testing"
 
 
 @fixture(scope="session")
-def app(connection):
+def app(session_environment):
     """Create application for the tests."""
-    app = create_app(
-        config_base="backend.settings",
-        TESTING=True,
-        SQLALCHEMY_DATABASE_URI=connection)
+    app = create_app(config_base="backend.settings", TESTING=True)
     app.logger.setLevel(logging.CRITICAL)
     return app
 
