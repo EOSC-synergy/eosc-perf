@@ -105,5 +105,8 @@ API_SPEC_OPTIONS['components'] = {
             "scheme": "bearer",
             "bearerFormat": "JWT"
         }
-    }
+    },
+    "servers": [
+        {"url": "/api"}
+    ]
 }
