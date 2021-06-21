@@ -1,8 +1,6 @@
 export interface ModuleBase {
-    routeProps: {
-        path: string;
-        component: () => JSX.Element;
-    };
+    path: string;
+    element: any;
     name: string;
     dropdownName: string;
 }

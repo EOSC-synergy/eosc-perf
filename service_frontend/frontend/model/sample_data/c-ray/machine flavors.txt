@@ -1,9 +1,0 @@
-ifca-lcg2  	1 m1.small 		2 cm4.large		4 m1.large 		8 m1.xlarge		16 cm4.4xlarge		32 <not enough cores>
-cesnet-mcc 	1 standard.small 	2 standard.medium	4 standard.large	8 hpc.8core-16ram	16 <not enough cores>
-iisas-fedcloud 	1 m1.small		2 m1.medium		4 m1.large		8 m1.xlarge		16 <failed to create>
-ncg-ingrid-pt	1 svc1.s		2 svc2.s		4 svc2.m		8 svc2.l		16 svc2.xl		32 svc2.xxl
-
-cesga		1 cor1mem2hd10		2 cor2mem2hd20		4 cor4mem4hd40		8
-
-bifi & ceta grid: routing/firewall issues
-cesga: was dead, or had no public IPs (only gave private IPs in 192.168.9)

@@ -5,10 +5,10 @@ import BenchmarkSubmission from './BenchmarkSubmission';
 import CodeGuidelines from './CodeGuidelines';
 
 export default {
-    all: [BenchmarkSearch, ResultSearch, ResultSubmission, BenchmarkSubmission, CodeGuidelines],
-    BenchmarkSearch,
+    all: [ResultSearch, ResultSubmission, BenchmarkSubmission, CodeGuidelines, BenchmarkSearch],
     ResultSearch,
     ResultSubmission,
     BenchmarkSubmission,
     CodeGuidelines,
+    BenchmarkSearch,
 };

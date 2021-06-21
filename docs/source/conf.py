@@ -17,7 +17,7 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('../../service_frontend/frontend/'))
+sys.path.insert(0, os.path.abspath('../../service_frontend_auth/frontend/'))
 sys.path.insert(0, os.path.abspath('../../'))
 
 # -- Project information -----------------------------------------------------

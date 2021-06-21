@@ -1,14 +1,40 @@
-import React from 'react';
-import { useState } from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import React, { useState } from 'react';
 import './App.css';
-import modules from './modules'; // All the parent knows is that it has modules ...
-import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
+
+// styling
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './main.css';
+
+// app-switching
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import modules from './modules'; // All the parent knows is that it has modules ...
 import { ModuleBase } from './modules/module-base';
+import Switch from 'react-bootstrap/Switch';
+
+// html
+import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
+
+// data fetch
+import axios from 'axios';
+import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
+
+const queryClient = new QueryClient();
+
+type UserInfo = {
+    token: string;
+    email: string;
+    name: string;
+};
 
 function App() {
+    // state
     const [currentTab, setCurrentTab] = useState('BenchmarkSearch');
+
+    const { status, isLoading, isError, data, isSuccess } = useQuery('userInfo', () =>
+        axios.get<UserInfo>('https://localhost/auth/whoami')
+    );
+
+    // const auth = useAuth();
 
     /**
      * Create navbar-dropdown button for a subpage
@@ -21,7 +47,7 @@ function App() {
     function LinkTo(page: ModuleBase) {
         return (
             <Link
-                to={page.routeProps.path}
+                to={page.path}
                 onClick={() => setCurrentTab(page.name)}
                 className={'dropdown-item'}
             >
@@ -34,9 +60,7 @@ function App() {
         <Router>
             <header>
                 <Navbar bg="dark" expand={'lg'} variant={'dark'}>
-                    <Navbar.Brand href={modules.BenchmarkSearch.routeProps.path}>
-                        EOSC-Perf
-                    </Navbar.Brand>
+                    <Navbar.Brand href={modules.BenchmarkSearch.path}>EOSC-Perf</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className={'mr-auto'}>
@@ -58,8 +82,18 @@ function App() {
                             </Nav.Link>
                         </Nav>
                         <Nav>
-                            <NavDropdown id={'base-login-dropdown'} title={'Not logged in'}>
-                                <NavDropdown.Item href={'/login'}>Login</NavDropdown.Item>
+                            <NavDropdown
+                                id={'base-login-dropdown'}
+                                title={isSuccess ? data?.data.name : 'Not logged in.'}
+                                alignRight={true}
+                            >
+                                {isSuccess ? (
+                                    <NavDropdown.Item href={'/auth/logout'}>
+                                        Logout
+                                    </NavDropdown.Item>
+                                ) : (
+                                    <NavDropdown.Item href={'/auth/login'}>Login</NavDropdown.Item>
+                                )}
                             </NavDropdown>
                         </Nav>
                     </Navbar.Collapse>
@@ -67,9 +101,18 @@ function App() {
             </header>
             <div className="App">
                 <div className="App-content">
-                    {modules.all.map((module) => (
-                        <Route {...module.routeProps} key={module.name} />
-                    ))}
+                    <Switch>
+                        {modules.all.map((module) => (
+                            <Route
+                                path={module.path}
+                                render={(props) => (
+                                    // @ts-ignore
+                                    <module.element {...props} {...{ token: data?.data.token }} />
+                                )}
+                                key={module.name}
+                            />
+                        ))}
+                    </Switch>
                 </div>
             </div>
             <footer className="footer mt-auto py-3 bg-light">
@@ -92,23 +135,12 @@ function App() {
     );
 }
 
-/*
-<header className="App-header">
-                    <img src={logo} className="App-logo" alt="logo" />
-                    <ul className="App-nav">
-                        {modules.all.map(module => ( // with a name, and routes
-                        <li key={module.name} className={currentTab === module.name ? 'active' : ''}>
-                        <Link to={module.routeProps.path} onClick={() => setCurrentTab(module.name)}>{module.name}</Link>
-                        </li>
-                    ))}
-                    </ul>
-              </header>
-              <div className="App-content">
-                  {modules.all.map(module => (
-                      <Route {...module.routeProps} key={module.name} />
-                  ))}
-
-              </div>
- */
-
-export default App;
+const hof = (WrappedComponent: any) => {
+    // Its job is to return a react component warpping the baby component
+    return (props: {}) => (
+        <QueryClientProvider client={queryClient}>
+            <WrappedComponent {...props} />
+        </QueryClientProvider>
+    );
+};
+export default hof(App);
