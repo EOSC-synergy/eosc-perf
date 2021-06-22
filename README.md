@@ -35,17 +35,9 @@ Password = YOUR_PASSWORD
 8. To generate HTTPS certs & nginx configuration: #TODO
     * If you want to deploy to production: Run `bash init-lentsencrypt.sh`
     * If you want to develop locally (on `localhost`): Run `bash init-dev-certs.sh`
-9. Generate the backend .whl file:
-
-```bash
-cd service_backend
-pip install --upgrade build # TODO: venv?
-python -m build
-```
-
-10. Copy the .whl file to the frontend: `cp service_backend/dist/*.whl service_frontend/`
-11. Run `docker-compose build`
-12. Run `docker-compose up`
+9. Run `docker-compose build`
+10. Run backend build steps in a venv   
+10. Run `docker-compose up`
 
 To set up a development environment:
 
@@ -53,7 +45,6 @@ To set up a development environment:
 1. Enable the virtual environment: `. ./venv/bin/activate`
 1. Install requirements: `pip install -r requirements.txt`
     * The requirements will only be installed within the virtual environment.
-1. Install backend wheel: # TODO: reliable steps
 
 To build the backend:
 
