@@ -14,14 +14,20 @@ export function Table(props: { results: Result[] }) {
                 </tr>
             </thead>
             <tbody>
-                {props.results.map((result: Result) => (
+                {props.results.length > 0 ? (
+                    props.results.map((result: Result) => (
+                        <tr>
+                            <td>
+                                {result.dockerImage + ':' + result.dockerTag}
+                                <div> {result.description} </div>
+                            </td>
+                        </tr>
+                    ))
+                ) : (
                     <tr>
-                        <td>
-                            {result.dockerImage + ':' + result.dockerTag}
-                            <div> {result.description} </div>
-                        </td>
+                        <td>No results found!</td>
                     </tr>
-                ))}
+                )}
             </tbody>
         </table>
     );
