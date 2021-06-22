@@ -6,13 +6,11 @@ import { SearchForm } from './searchForm';
 import { Table } from './table';
 import { LoadingOverlay } from '../loadingOverlay';
 
-type PageState = {
-    results: Result[];
-    page: number;
-    resultsPerPage: number;
+type PageProps = {
+    token: string;
 };
 
-function Page(props: { token: string }) {
+function Page(props: PageProps) {
     const [resultsPerPage, setResultsPerPage] = useState(10);
     const [page, setPage] = useState(0);
 
