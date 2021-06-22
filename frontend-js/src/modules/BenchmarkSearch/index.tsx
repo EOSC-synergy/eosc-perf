@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Result } from './types';
 import { SearchForm } from './searchForm';
 import { Table } from './table';
+import { LoadingOverlay } from '../loadingOverlay';
 
 type PageState = {
     results: Result[];
@@ -46,17 +47,7 @@ function Page(props: { token: string }) {
             <h1>Benchmark Search</h1>
             <SearchForm />
             <div style={{ position: 'relative' }}>
-                <div
-                    className="overlay loading-background loading center-contents"
-                    id="loadingIcon"
-                >
-                    <div className="lds-ellipsis">
-                        <div />
-                        <div />
-                        <div />
-                        <div />
-                    </div>
-                </div>
+                {isLoading && <LoadingOverlay />}
                 <Table
                     results={
                         data
