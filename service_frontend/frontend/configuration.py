@@ -128,7 +128,7 @@ class ConfigHandler:
                 engine=_get_var_or("DB_ENGINE", self.DatabaseConfiguration.engine),
                 name=_get_var_or("DB_NAME", self.DatabaseConfiguration.name),
                 user=_get_var("DB_USER"),
-                password=_get_var("DB_PASS"),
+                password=_get_var("DB_PASSWORD"),
                 host=_get_var("DB_HOST"),
                 port=_get_var("DB_PORT", int)
             )
