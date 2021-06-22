@@ -5,7 +5,7 @@ type TableProps = {
     results: Result[];
 };
 
-export function Table(props: { results: Result[] }) {
+export function Table(props: TableProps) {
     return (
         <table>
             <thead>

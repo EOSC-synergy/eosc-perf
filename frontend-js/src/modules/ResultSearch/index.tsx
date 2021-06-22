@@ -1,10 +1,16 @@
 import React from 'react';
 
-const ResultSearch = () => <div>Result search!</div>;
+type ResultSearchProps = {};
 
-export default {
+function ResultSearch(props: ResultSearchProps) {
+    return <div>Result search!</div>;
+}
+
+const ResultSearchModule = {
     path: '/result-search',
     element: ResultSearch,
     name: 'ResultSearch',
     dropdownName: 'Results',
 };
+
+export default ResultSearchModule;

@@ -58,9 +58,11 @@ function Page(props: PageProps) {
     );
 }
 
-export default {
+const BenchmarkSearchModule = {
     path: '/benchmark-search',
     element: Page,
     name: 'BenchmarkSearch',
     dropdownName: 'Benchmarks',
 };
+
+export default BenchmarkSearchModule;
