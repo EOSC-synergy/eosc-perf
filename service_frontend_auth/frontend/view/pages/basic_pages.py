@@ -67,20 +67,6 @@ def report_list():
     return Response(factory.generate_page(), mimetype='text/html')
 
 
-@basic_pages.route('/code_guidelines')
-def code_guidelines():
-    """Page containing the guidelines and requirements for benchmark development.
-    """
-    factory = SimplePageFactory('submission/benchmark_code_guidelines.jinja2.html')
-    try:
-        with open('frontend/model/sample_data/template.json') as min_template:
-            info = json.loads(min_template.read())
-    except OSError:
-        info = "<Could not load template>"
-    json_template = json.dumps(info, indent=4, sort_keys=True)
-    return Response(factory.generate_page(args=json_template), mimetype='text/html')
-
-
 @basic_pages.route('/error')
 @deprecated(reason="Use modals and popups instead")
 def error():
