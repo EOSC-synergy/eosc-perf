@@ -37,18 +37,22 @@ class ReportMailer(MockMailer):
         sender = os.environ['MAIL_FROM']
         receiver = os.environ['MAIL_TO']
 
-        credentials = configparser.ConfigParser()
-        credentials.read('/run/secrets/email_credentials')
+        # TODO: set up authentication (bring up at meeting)
+        # credentials = configparser.ConfigParser()
+        # credentials.read('/run/secrets/email_credentials')
 
-        if 'Mail' not in credentials:
-            raise ValueError("malformed email credentials file")
-        if 'Username' not in credentials['Mail']:
-            raise ValueError("missing username in mail credentials")
-        if 'Password' not in credentials['Mail']:
-            raise ValueError("missing password in mail credentials")
+        # if 'Mail' not in credentials:
+        #    raise ValueError("malformed email credentials file")
+        # if 'Username' not in credentials['Mail']:
+        #    raise ValueError("missing username in mail credentials")
+        # if 'Password' not in credentials['Mail']:
+        #    raise ValueError("missing password in mail credentials")
 
-        username = credentials['Mail']['Username']
-        password = credentials['Mail']['Password']
+        # username = credentials['Mail']['Username']
+        # password = credentials['Mail']['Password']
+
+        username = ""
+        password = ""
 
         self.config = ReportMailer.Configuration(host=host, port=port, from_address=sender, to_address=receiver,
                                                  username=username, password=password)
@@ -64,7 +68,8 @@ class ReportMailer(MockMailer):
     def _init_smtp(self):
         self.smtp = smtplib.SMTP(self.config.host, self.config.port)
         self.smtp.starttls()
-        self.smtp.login(self.config.username, self.config.password)
+        # TODO: set up authentication (bring up at meeting)
+        # self.smtp.login(self.config.username, self.config.password)
 
     def _finalize_smtp(self):
         self.smtp.quit()

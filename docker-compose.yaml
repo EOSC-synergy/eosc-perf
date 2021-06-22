@@ -18,6 +18,7 @@ services:
     networks:
       - frontend-net
       - backend-net
+      - mail-net
     secrets:
       - cookie_secret
       - oidc_secret
@@ -94,6 +95,7 @@ services:
       - nginx_api_credentials
     networks:
       - frontend-net
+      - mail-net
     ports:
       - "80:80"
       - "443:443"
@@ -112,9 +114,25 @@ services:
       - nginx_api_credentials
 
 
+  postfix:
+    image: postfix
+    restart: unless-stopped
+    container_name: postfix
+    build:
+      context: service_postfix
+      dockerfile: Dockerfile
+    volumes:
+      - ./service_certificate/conf:/etc/letsencrypt
+    env_file: .env
+    ports:
+      - "25:25"
+    networks:
+      - mail-net
+
 networks:
   frontend-net:
   backend-net:
+  mail-net:
 
 volumes:
   postgres:

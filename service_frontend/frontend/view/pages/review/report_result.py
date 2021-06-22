@@ -40,7 +40,7 @@ class ResultReportPageFactory(PageFactory):
         result = facade.get_result(uuid)
 
         # return a pretty-printed version
-        result_json = json.loads(result.get_json())
+        result_json = json.loads(result.json)
         string = json.dumps(result_json, indent=4, sort_keys=True)
         return string
 
