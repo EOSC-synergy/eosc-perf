@@ -85,7 +85,7 @@ function App() {
                             <NavDropdown
                                 id={'base-login-dropdown'}
                                 title={isSuccess ? data?.data.name : 'Not logged in.'}
-                                alignRight={true}
+                                className="justify-content-end"
                             >
                                 {isSuccess ? (
                                     <NavDropdown.Item href={'/auth/logout'}>

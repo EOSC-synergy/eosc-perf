@@ -6,12 +6,14 @@
     display: flex;
     align-items: center;
 }
+
 .flexbox * {
     min-width: 0;
     margin: 4px 0 4px 4px;
     width: unset;
     flex: 1 1 0;
 }
+
 .flexbox :last-child {
     margin-right: 4px;
 }
@@ -62,7 +64,7 @@ select {
     align-items: center;
 }
 
-[data-toggle="collapse"] > .dropdown-arrow {
+.dropdown-arrow {
     display: inline-block;
     content: "";
     /* https://icons.getbootstrap.com/icons/chevron-up/ */
@@ -73,19 +75,19 @@ select {
     background-size: 1rem 1rem;
 }
 
-[data-toggle="collapse"].collapsed > .dropdown-arrow {
+.dropdown-arrow.opened {
     /* https://icons.getbootstrap.com/icons/chevron-down/ */
     background-image: url('data:image/svg+xml,<svg viewBox="0 0 16 16" class="bi bi-chevron-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');
 }
 
 @media (min-width: 576px) {
-    .card-columns.upload-form  {
+    .card-columns.upload-form {
         column-count: 2;
     }
 }
 
 @media (min-width: 992px) {
-    .card-columns.upload-form  {
+    .card-columns.upload-form {
         column-count: 3;
     }
 
@@ -116,4 +118,8 @@ select {
 
 .scrollable-dropdown > .list-group > .list-group-item:hover {
     background-color: #7abaff;
+}
+
+.list-group-item-small {
+    padding: 0.25rem 0.75rem;
 }
