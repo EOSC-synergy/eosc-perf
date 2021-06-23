@@ -24,6 +24,7 @@ type UserInfo = {
     token: string;
     email: string;
     name: string;
+    admin: boolean;
 };
 
 function App() {
@@ -74,6 +75,12 @@ function App() {
                             <NavDropdown title={'Instructions'} id={'base-instructions-dropdown'}>
                                 <LinkTo reference={modules.CodeGuidelines} />
                             </NavDropdown>
+                            {data && data.data.admin && (
+                                <NavDropdown title={'Admin'} id={'base-admin-dropdown'}>
+                                    <LinkTo reference={modules.ReportViewModule} />
+                                    <LinkTo reference={modules.SiteEditorModule} />
+                                </NavDropdown>
+                            )}
                             <Nav.Link
                                 href={'https://appsgrycap.i3m.upv.es:31443/im-dashboard/login'}
                             >

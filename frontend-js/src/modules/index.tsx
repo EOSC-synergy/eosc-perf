@@ -4,6 +4,8 @@ import ResultSubmission from './ResultSubmission';
 import BenchmarkSubmission from './BenchmarkSubmission';
 import CodeGuidelines from './CodeGuidelines';
 import PrivacyPolicyModule from './PrivacyPolicy';
+import ReportViewModule from './ReportView';
+import SiteEditorModule from './SiteEditor';
 
 export default {
     all: [
@@ -13,6 +15,8 @@ export default {
         CodeGuidelines,
         BenchmarkSearch,
         PrivacyPolicyModule,
+        ReportViewModule,
+        SiteEditorModule,
     ],
     ResultSearch,
     ResultSubmission,
@@ -20,4 +24,6 @@ export default {
     CodeGuidelines,
     BenchmarkSearch,
     PrivacyPolicyModule,
+    ReportViewModule,
+    SiteEditorModule,
 };
