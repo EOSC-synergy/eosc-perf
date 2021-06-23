@@ -18,6 +18,7 @@ export function Table(props: TableProps) {
                     props.results.map((result: Result) => (
                         <tr>
                             <td>
+                                {/* TODO: link to result search module with query strings */}
                                 {result.dockerImage + ':' + result.dockerTag}
                                 <div> {result.description} </div>
                             </td>
