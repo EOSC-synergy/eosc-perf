@@ -1,6 +1,103 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Button, Container, Form } from 'react-bootstrap';
 
-const BenchmarkSubmission = () => <div>Benchmark submission!</div>;
+// TODO: do not show invalid on first load
+//       use default state valid?
+
+function BenchmarkSubmission() {
+    const [dockerName, setDockerName] = useState('');
+    const [dockerTag, setDockerTag] = useState('');
+    const [description, setDescription] = useState('');
+    const [template, setTemplate] = useState('');
+
+    function isDockerNameValid() {
+        // match pattern (...)/(...)
+        console.log(dockerName, '/[^\\/]+\\/[^\\/]+/', dockerName.match(/[^\/]+\/[^\/]+/));
+        return dockerName.match(/[^\/]+\/[^\/]+/);
+    }
+
+    function isDockerTagValid() {
+        return dockerTag.length >= 1;
+    }
+
+    function isTemplateValid() {
+        try {
+            JSON.parse(template);
+            return true;
+        } catch (SyntaxError) {
+            return false;
+        }
+    }
+
+    function isFormValid() {
+        return isDockerNameValid() && isDockerTagValid() && isTemplateValid();
+    }
+
+    function onSubmit() {
+        if (!isFormValid()) {
+            return;
+        }
+        // TODO!
+    }
+
+    return (
+        <Container>
+            <h1>Add Benchmark</h1>
+            <Form>
+                <div className="m-2">
+                    {/* TODO: side-by-side, with infix . */}
+                    <Form.Group>
+                        <Form.Label htmlFor="docker_name">Docker image name:</Form.Label>
+                        <Form.Control
+                            name="docker_name"
+                            id="docker_name"
+                            placeholder="user/image"
+                            onChange={(e) => setDockerName(e.target.value)}
+                            isInvalid={!isDockerNameValid()}
+                        />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Control
+                            name="docker_tag"
+                            id="docker_tag"
+                            placeholder="tag"
+                            onChange={(e) => setDockerTag(e.target.value)}
+                            isInvalid={!isDockerTagValid()}
+                        />
+                    </Form.Group>
+                </div>
+                <div className="m-2">
+                    <Form.Label htmlFor="docker_name">Benchmark description (optional):</Form.Label>
+                    <Form.Control
+                        name="description"
+                        id="description"
+                        placeholder="Enter a description of the new benchmark here."
+                        onChange={(e) => setDescription(e.target.value)}
+                        as="textarea"
+                    />
+                </div>
+                <div className="m-2">
+                    <Form.Label htmlFor="template">
+                        Benchmark result JSON template (optional,{' '}
+                        {/* TODO: react-router-hash-link */}
+                        <a href="/code-guidelines#json">example here</a>):
+                    </Form.Label>
+                    <Form.Control
+                        name="template"
+                        id="template"
+                        placeholder='{ "required_arg": 5, "!notable_argument": 10 }'
+                        onChange={(e) => setTemplate(e.target.value)}
+                        as="textarea"
+                        isInvalid={!isTemplateValid()}
+                    />
+                </div>
+                <Button variant="success" onClick={onSubmit} disabled={!isFormValid()}>
+                    Submit
+                </Button>
+            </Form>
+        </Container>
+    );
+}
 
 const BenchmarkSubmissionModule = {
     path: '/benchmark-submission',
