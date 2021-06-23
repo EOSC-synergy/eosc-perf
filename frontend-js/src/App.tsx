@@ -12,7 +12,7 @@ import { ModuleBase } from './modules/module-base';
 import Switch from 'react-bootstrap/Switch';
 
 // html
-import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 
 // data fetch
 import axios from 'axios';
@@ -43,12 +43,12 @@ function App() {
      *
      * Notes: cannot use <NavDropdown.Item> due to <Link>, dropdown-item class added manually
      */
-    function LinkTo(props: { reference: ModuleBase }) {
+    function LinkTo(props: { reference: ModuleBase; className?: string }) {
         return (
             <Link
                 to={props.reference.path}
                 onClick={() => setCurrentTab(props.reference.name)}
-                className={"dropdown-item"}
+                className={props.className ? props.className : 'dropdown-item'}
             >
                 {props.reference.dropdownName}
             </Link>
@@ -62,16 +62,16 @@ function App() {
                     <Navbar.Brand href={modules.BenchmarkSearch.path}>EOSC-Perf</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className={"mr-auto"}>
-                            <NavDropdown title={"Search"} id={"base-search-dropdown"}>
+                        <Nav className={'mr-auto'}>
+                            <NavDropdown title={'Search'} id={'base-search-dropdown'}>
                                 <LinkTo reference={modules.BenchmarkSearch} />
                                 <LinkTo reference={modules.ResultSearch} />
                             </NavDropdown>
-                            <NavDropdown title={"Submit"} id={"base-submit-dropdown"}>
+                            <NavDropdown title={'Submit'} id={'base-submit-dropdown'}>
                                 <LinkTo reference={modules.ResultSubmission} />
                                 <LinkTo reference={modules.BenchmarkSubmission} />
                             </NavDropdown>
-                            <NavDropdown title={"Instructions"} id={"base-instructions-dropdown"}>
+                            <NavDropdown title={'Instructions'} id={'base-instructions-dropdown'}>
                                 <LinkTo reference={modules.CodeGuidelines} />
                             </NavDropdown>
                             <Nav.Link
@@ -115,20 +115,23 @@ function App() {
                 </div>
             </div>
             <footer className="footer mt-auto py-3 bg-light">
-                <div className="container text-center text-md-center">
-                    <ul className="list-unstyled list-inline my-0">
-                        <li className="list-inline-item mx-5">
-                            <a href="/privacy_policy" className="text-muted">
-                                Privacy Policy
-                            </a>
-                        </li>
-                        <li className="list-inline-item mx-5">
-                            <a href="mailto:perf-support@lists.kit.edu" className="text-muted">
-                                Email Support
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+                <Container>
+                    <div className="text-center text-md-center">
+                        <ul className="list-unstyled list-inline my-0">
+                            <li className="list-inline-item mx-5">
+                                <LinkTo
+                                    reference={modules.PrivacyPolicyModule}
+                                    className="text-muted"
+                                />
+                            </li>
+                            <li className="list-inline-item mx-5">
+                                <a href="mailto:perf-support@lists.kit.edu" className="text-muted">
+                                    Email Support
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </Container>
             </footer>
         </Router>
     );
