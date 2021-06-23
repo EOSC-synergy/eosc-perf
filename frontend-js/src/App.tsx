@@ -38,20 +38,19 @@ function App() {
 
     /**
      * Create navbar-dropdown button for a subpage
-     * @param page target page
-     * @returns {JSX.Element} JSX Element to display
+     * @param props { reference: reference to module to link to }
      * @constructor
      *
      * Notes: cannot use <NavDropdown.Item> due to <Link>, dropdown-item class added manually
      */
-    function LinkTo(page: ModuleBase) {
+    function LinkTo(props: { reference: ModuleBase }) {
         return (
             <Link
-                to={page.path}
-                onClick={() => setCurrentTab(page.name)}
-                className={'dropdown-item'}
+                to={props.reference.path}
+                onClick={() => setCurrentTab(props.reference.name)}
+                className={"dropdown-item"}
             >
-                {page.dropdownName}
+                {props.reference.dropdownName}
             </Link>
         );
     }
@@ -63,17 +62,17 @@ function App() {
                     <Navbar.Brand href={modules.BenchmarkSearch.path}>EOSC-Perf</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className={'mr-auto'}>
-                            <NavDropdown title={'Search'} id={'base-search-dropdown'}>
-                                {LinkTo(modules.BenchmarkSearch)}
-                                {LinkTo(modules.ResultSearch)}
+                        <Nav className={"mr-auto"}>
+                            <NavDropdown title={"Search"} id={"base-search-dropdown"}>
+                                <LinkTo reference={modules.BenchmarkSearch} />
+                                <LinkTo reference={modules.ResultSearch} />
                             </NavDropdown>
-                            <NavDropdown title={'Submit'} id={'base-submit-dropdown'}>
-                                {LinkTo(modules.ResultSubmission)}
-                                {LinkTo(modules.BenchmarkSubmission)}
+                            <NavDropdown title={"Submit"} id={"base-submit-dropdown"}>
+                                <LinkTo reference={modules.ResultSubmission} />
+                                <LinkTo reference={modules.BenchmarkSubmission} />
                             </NavDropdown>
-                            <NavDropdown title={'Instructions'} id={'base-instructions-dropdown'}>
-                                {LinkTo(modules.CodeGuidelines)}
+                            <NavDropdown title={"Instructions"} id={"base-instructions-dropdown"}>
+                                <LinkTo reference={modules.CodeGuidelines} />
                             </NavDropdown>
                             <Nav.Link
                                 href={'https://appsgrycap.i3m.upv.es:31443/im-dashboard/login'}
