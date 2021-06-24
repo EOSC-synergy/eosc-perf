@@ -60,7 +60,9 @@ function App() {
         <Router>
             <header>
                 <Navbar bg="dark" expand={'lg'} variant={'dark'}>
-                    <Navbar.Brand href={modules.BenchmarkSearch.path}>EOSC-Perf</Navbar.Brand>
+                    <Navbar.Brand href={modules.BenchmarkSearch.path}>
+                        <img src="/images/eosc-perf-logo.svg" height="40" alt="EOSC-Performance" />
+                    </Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className={'mr-auto'}>
