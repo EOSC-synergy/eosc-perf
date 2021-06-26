@@ -12,7 +12,11 @@ To build production files:
 
 1. `npm run build`
 
-(all this gibberish also explained in the default README below)
+To generate new api classes from OpenAPI/swagger specification:
+
+1. `npx openapi --input <spec.json> --output ./src/api --exportCore false --exportServices false`
+
+(default create-react-app gibberish below)
 
 ## Getting Started with Create React App
 

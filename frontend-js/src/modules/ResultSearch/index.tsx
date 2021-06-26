@@ -3,13 +3,14 @@ import { Accordion, Button, Card, Container } from 'react-bootstrap';
 import { LoadingOverlay } from '../loadingOverlay';
 import { useQuery } from 'react-query';
 import axios from 'axios';
-import { Result } from '../BenchmarkSearch/types';
 import { ColumnSelectModal } from './columnSelectModal';
 import { JSONPreviewModal } from './JSONPreviewModal';
 import { ResultsPerPageSelection } from './resultsPerPageSelection';
 import { NumberedPagination } from './numberedPagination';
 import { BenchmarkSelection } from './benchmarkSelection';
 import { CardAccordionToggle } from './cardAccordionToggle';
+import { Result } from '../../api';
+import { getHelper } from '../../api-helpers';
 
 const qs = require('qs');
 
@@ -39,15 +40,7 @@ function ResultSearch(props: ResultSearchProps) {
     let { status, isLoading, isError, data, isSuccess } = useQuery(
         'benchmarkSearch',
         () => {
-            const endpoint = 'https://localhost/api/results';
-            if (token !== undefined) {
-                return axios.get<Result[]>(endpoint, {
-                    headers: {
-                        Authorization: 'Bearer ' + token,
-                    },
-                });
-            }
-            return axios.get<Result[]>(endpoint);
+            return getHelper<Result[]>('/api/results', props.token);
         },
         {
             enabled: !!token,

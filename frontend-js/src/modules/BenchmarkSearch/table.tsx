@@ -1,8 +1,8 @@
-import { Result } from './types';
 import React from 'react';
+import { Benchmark } from '../../api';
 
 type TableProps = {
-    results: Result[];
+    results: Benchmark[];
 };
 
 export function Table(props: TableProps) {
@@ -15,12 +15,12 @@ export function Table(props: TableProps) {
             </thead>
             <tbody>
                 {props.results.length > 0 ? (
-                    props.results.map((result: Result) => (
+                    props.results.map((result: Benchmark) => (
                         <tr>
                             <td>
                                 {/* TODO: link to result search module with query strings */}
-                                {result.dockerImage + ':' + result.dockerTag}
-                                <div> {result.description} </div>
+                                {result.docker_image + ':' + result.docker_tag}
+                                <div> {/*result.description*/} </div>
                             </td>
                         </tr>
                     ))

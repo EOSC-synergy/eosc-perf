@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Button, Card, CardColumns, Container, Form, InputGroup, ListGroup } from 'react-bootstrap';
 import { useQuery } from 'react-query';
 import axios, { AxiosResponse } from 'axios';
-import { Result as BenchmarkResult } from '../BenchmarkSearch/types';
+import { Benchmark, Site } from '../../api';
+import { getHelper } from '../../api-helpers';
 
 function FileSelection() {
     return (
@@ -21,15 +22,7 @@ function BenchmarkSelection(props: { token: string }) {
     let { status, isLoading, isError, data, isSuccess } = useQuery(
         'benchmarkSelect',
         () => {
-            const endpoint = 'https://localhost/api/benchmarks';
-            if (props.token !== undefined) {
-                return axios.get<BenchmarkResult[]>(endpoint, {
-                    headers: {
-                        Authorization: 'Bearer ' + props.token,
-                    },
-                });
-            }
-            return axios.get<BenchmarkResult[]>(endpoint);
+            return getHelper<Benchmark[]>('/api/benchmarks', props.token);
         },
         {
             enabled: !!props.token,
@@ -48,7 +41,7 @@ function BenchmarkSelection(props: { token: string }) {
                                 data &&
                                 data.data.map((benchmark) => (
                                     <option value={benchmark.id}>
-                                        {benchmark.dockerImage}:{benchmark.dockerTag}
+                                        {benchmark.docker_image}:{benchmark.docker_tag}
                                     </option>
                                 ))}
                         </Form.Control>
@@ -59,30 +52,11 @@ function BenchmarkSelection(props: { token: string }) {
     );
 }
 
-type SiteResult = {
-    description: string;
-    address: string;
-    name: string;
-    flavors: {
-        description: string;
-        name: string;
-    }[];
-    id: string;
-};
-
 function SiteSelection(props: { token: string }) {
     let { status, isLoading, isError, data, isSuccess } = useQuery(
         'siteSelect',
         () => {
-            const endpoint = 'https://localhost/api/sites';
-            if (props.token !== undefined) {
-                return axios.get<SiteResult[]>(endpoint, {
-                    headers: {
-                        Authorization: 'Bearer ' + props.token,
-                    },
-                });
-            }
-            return axios.get<SiteResult[]>(endpoint);
+            return getHelper<Site[]>('/api/sites', props.token);
         },
         {
             enabled: !!props.token,
@@ -118,8 +92,8 @@ function SiteSelection(props: { token: string }) {
                         {selectedSite &&
                             data &&
                             data.data
-                                .find((s) => s.id === selectedSite)!
-                                .flavors.map((flavor) => (
+                                .find((s) => s.id! === selectedSite)!
+                                .flavors!.map((flavor) => (
                                     <option value={flavor.name}>{flavor.name} </option>
                                 ))}
                     </Form.Control>
@@ -189,15 +163,7 @@ function TagSelection(props: { token: string }) {
     let { status, isLoading, isError, data, isSuccess } = useQuery(
         'tagSelect',
         () => {
-            const endpoint = 'https://localhost/api/tags';
-            if (props.token !== undefined) {
-                return axios.get<SiteResult[]>(endpoint, {
-                    headers: {
-                        Authorization: 'Bearer ' + props.token,
-                    },
-                });
-            }
-            return axios.get<SiteResult[]>(endpoint);
+            return getHelper<Site[]>('/api/tags', props.token);
         },
         {
             enabled: !!props.token,
@@ -235,12 +201,12 @@ function TagSelection(props: { token: string }) {
                                 data &&
                                 (data.data.length > 0 ? (
                                     data.data.map((t) =>
-                                        selectedTags.indexOf(t.id) > -1 ? (
-                                            <ListGroup.Item onClick={(e) => unselectTag(t.id)}>
+                                        selectedTags.indexOf(t.id!) > -1 ? (
+                                            <ListGroup.Item onClick={(e) => unselectTag(t.id!)}>
                                                 {t.name}
                                             </ListGroup.Item>
                                         ) : (
-                                            <ListGroup.Item onClick={(e) => selectTag(t.id)}>
+                                            <ListGroup.Item onClick={(e) => selectTag(t.id!)}>
                                                 {t.name}
                                             </ListGroup.Item>
                                         )

@@ -48,6 +48,7 @@
     ]
   },
   "devDependencies": {
+    "openapi-typescript-codegen": "^0.9.3",
     "prettier": "^2.3.1"
   }
 }

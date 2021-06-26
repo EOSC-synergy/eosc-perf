@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import axios from 'axios';
-import { Result } from './types';
 import { SearchForm } from './searchForm';
 import { Table } from './table';
 import { LoadingOverlay } from '../loadingOverlay';
+import { Benchmark } from '../../api';
+import { getHelper } from '../../api-helpers';
 
 type PageProps = {
     token: string;
@@ -24,22 +25,13 @@ function Page(props: PageProps) {
     let { status, isLoading, isError, data, isSuccess } = useQuery(
         'benchmarkSearch',
         () => {
-            const endpoint = 'https://localhost/api/benchmarks';
-            if (token !== undefined) {
-                return axios.get<Result[]>(endpoint, {
-                    headers: {
-                        Authorization: 'Bearer ' + token,
-                    },
-                });
-            }
-            return axios.get<Result[]>(endpoint);
+            return getHelper<Benchmark[]>('/api/benchmarks', props.token);
         },
         {
             enabled: !!token,
             refetchOnWindowFocus: false, // do not spam queries
         }
     );
-
     return (
         <div className="container">
             <h1>Benchmark Search</h1>
@@ -48,9 +40,7 @@ function Page(props: PageProps) {
                 {isLoading && <LoadingOverlay />}
                 <Table
                     results={
-                        data
-                            ? data.data.slice(page * resultsPerPage, page * (resultsPerPage + 1))
-                            : []
+                        /*data ? data.slice(page * resultsPerPage, page * (resultsPerPage + 1)) :*/ []
                     }
                 />
             </div>
