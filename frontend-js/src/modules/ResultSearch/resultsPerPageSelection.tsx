@@ -13,9 +13,10 @@ export function ResultsPerPageSelection(props: {
                 id="results_on_page"
                 className="custom-select"
                 onChange={(e) => props.onChange(parseInt(e.target.value))}
+                value={props.currentSelection}
             >
                 {options.map((n: number) => (
-                    <option value={n.toString()} {...(n === props.currentSelection && 'selected')}>
+                    <option value={n.toString()} key={n.toString()}>
                         {n.toString()}
                     </option>
                 ))}
