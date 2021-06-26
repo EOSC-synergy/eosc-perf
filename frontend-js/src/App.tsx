@@ -31,8 +31,12 @@ function App() {
     // state
     const [currentTab, setCurrentTab] = useState('BenchmarkSearch');
 
-    const { status, isLoading, isError, data, isSuccess } = useQuery('userInfo', () =>
-        axios.get<UserInfo>('https://localhost/auth/whoami')
+    const { status, isLoading, isError, data, isSuccess } = useQuery(
+        'userInfo',
+        () => axios.get<UserInfo>('https://localhost/auth/whoami'),
+        {
+            retry: false,
+        }
     );
 
     // const auth = useAuth();
