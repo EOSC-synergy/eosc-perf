@@ -90,10 +90,11 @@ function ResultSearch(props: ResultSearchProps) {
 
     return (
         <div className="container-fluid">
-            <Container>
+            {/* paddingBottom: 0 to avoid odd gap before results */}
+            <Container style={{ paddingBottom: 0 }}>
                 <h1>Result Search</h1>
                 <Accordion defaultActiveKey="filters">
-                    <Card>
+                    <Card className="m-2">
                         <Card.Header>
                             <CardAccordionToggle eventKey="filters">Filters</CardAccordionToggle>
                         </Card.Header>
@@ -114,7 +115,7 @@ function ResultSearch(props: ResultSearchProps) {
                     </Card>
                 </Accordion>
                 <Accordion defaultActiveKey="diagram">
-                    <Card>
+                    <Card className="m-2">
                         <Card.Header>
                             <CardAccordionToggle eventKey="diagram">
                                 Comparison diagram
@@ -185,29 +186,10 @@ function ResultSearch(props: ResultSearchProps) {
             <Container fluid>
                 <Card>
                     <div style={{ display: 'relative' }}>
-                        <table
-                            id="result_table"
-                            className="table result-table"
-                            style={{ overflowX: 'auto', display: 'inline-block' }}
-                        />
-                        <LoadingOverlay />
+                        <ResultTable results={data ? data.data : []} columns={columns} />
+                        {isLoading && <LoadingOverlay />}
                     </div>
-
-                    <nav aria-label="Page navigation">
-                        {data && (
-                            <NumberedPagination
-                                pageCount={/*Math.ceil(data?.data.length / resultsPerPage)*/ 5}
-                                currentPage={page}
-                                onChange={setResultsPerPage}
-                            />
-                        )}
-                    </nav>
-                    <ResultsPerPageSelection
-                        onChange={setResultsPerPage}
-                        currentSelection={resultsPerPage}
-                    />
-
-                    <div>
+                    <div className="m-2 text-center">
                         <Button
                             variant="primary"
                             onClick={() => {} /*search_page.make_column_select_prompt()*/}
@@ -228,6 +210,22 @@ function ResultSearch(props: ResultSearchProps) {
                         </Button>
                     </div>
                 </Card>
+
+                <div className="d-flex justify-content-between flex-row-reverse">
+                    <ResultsPerPageSelection
+                        onChange={setResultsPerPage}
+                        currentSelection={resultsPerPage}
+                        className="m-2 align-self-center"
+                    />
+                    {data && (
+                        <NumberedPagination
+                            pageCount={/*Math.ceil(data?.data.length / resultsPerPage)*/ 5}
+                            currentPage={page}
+                            onChange={setResultsPerPage}
+                            className="m-2 align-self-center"
+                        />
+                    )}
+                </div>
             </Container>
             <JSONPreviewModal show={showJSONPreview} closeModal={() => setShowJSONPreview(false)} />
             <ColumnSelectModal
