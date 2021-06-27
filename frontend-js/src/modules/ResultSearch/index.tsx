@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { Accordion, Button, Card, Container } from 'react-bootstrap';
+import { Accordion, Button, Card, Container, Table } from 'react-bootstrap';
 import { LoadingOverlay } from '../loadingOverlay';
 import { useQuery } from 'react-query';
-import axios from 'axios';
 import { ColumnSelectModal } from './columnSelectModal';
 import { JSONPreviewModal } from './JSONPreviewModal';
 import { ResultsPerPageSelection } from './resultsPerPageSelection';
 import { NumberedPagination } from './numberedPagination';
 import { BenchmarkSelection } from './benchmarkSelection';
 import { CardAccordionToggle } from './cardAccordionToggle';
-import { Result } from '../../api';
 import { getHelper } from '../../api-helpers';
+import { SelectableResult } from './selectableResult';
+import { ResultTable } from './resultTable';
+import {
+    ActionColumn,
+    BenchmarkColumn,
+    CheckboxColumn,
+    SiteColumn,
+    SiteFlavorColumn,
+    TagsColumn,
+} from './column';
 
 const qs = require('qs');
 
@@ -18,6 +26,7 @@ type ResultSearchProps = {
     initialBenchmark: string;
     location: { search: string };
     token: string;
+    admin: boolean;
 };
 
 function ResultSearch(props: ResultSearchProps) {
@@ -30,6 +39,19 @@ function ResultSearch(props: ResultSearchProps) {
     // column selection modal
     const [showColumnSelection, setShowColumnSelection] = useState(false);
 
+    function displayJSON(result: SelectableResult) {
+        // TODO
+    }
+
+    const [columns, setColumns] = useState([
+        new CheckboxColumn(),
+        new BenchmarkColumn(),
+        new SiteColumn(),
+        new SiteFlavorColumn(),
+        new TagsColumn(),
+        new ActionColumn(displayJSON, props.admin),
+    ]);
+
     // put token in state
     const [token, setToken] = useState(props.token);
     // propagate props to state for token update
@@ -40,11 +62,19 @@ function ResultSearch(props: ResultSearchProps) {
     let { status, isLoading, isError, data, isSuccess } = useQuery(
         'benchmarkSearch',
         () => {
-            return getHelper<Result[]>('/api/results', props.token);
+            return getHelper<SelectableResult[]>('/api/results', props.token);
         },
         {
             enabled: !!token,
             refetchOnWindowFocus: false, // do not spam queries
+            // add "selected" field to results
+            // TODO: other way than a 'selected' flag to select results?
+            select: (data) => {
+                data.data.map((result) => {
+                    return { ...result, selected: false };
+                });
+                return data;
+            },
         }
     );
 

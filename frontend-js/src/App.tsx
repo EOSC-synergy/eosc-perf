@@ -119,7 +119,13 @@ function App() {
                                 path={module.path}
                                 render={(props) => (
                                     // @ts-ignore
-                                    <module.element {...props} {...{ token: data?.data.token }} />
+                                    <module.element
+                                        {...props}
+                                        {...{
+                                            token: data?.data.token,
+                                            admin: data?.data.admin,
+                                        }}
+                                    />
                                 )}
                                 key={module.name}
                             />
