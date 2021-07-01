@@ -64,14 +64,24 @@ CACHE_TYPE = "simple"  # Can be "memcached", "redis", etc.
 # Authorization configuration.
 if ENV == 'production':
     EGI_CLIENT_ID = env.str("OIDC_CLIENT_ID")
-    EGI_CLIENT_SECRET = env.str("OIDC_CLIENT_SECRET")
+    DISABLE_AUTHENTICATION = False
+    DISABLE_ADMIN_PROTECTION = False
+    ADMIN_ENTITLEMENTS = env.str("ADMIN_ENTITLEMENTS")
+    try:
+        EGI_CLIENT_SECRET = env.str("OIDC_CLIENT_SECRET")
+    except EnvError:
+        EGI_CLIENT_SECRET_FILE = env.str("OIDC_CLIENT_SECRET_FILE")
+        EGI_CLIENT_SECRET = open(EGI_CLIENT_SECRET_FILE).read().rstrip('\n')
 else:
     EGI_CLIENT_ID = env.str("OIDC_CLIENT_ID", default="not-defined")
-    EGI_CLIENT_SECRET = env.str("OIDC_CLIENT_SECRET", default="not-defined")
-
-ADMIN_ASSURANCE = env.str(
-    "ADMIN_ASSURANCE",
-    default="https://refeds.org/assurance/IAP/low")
+    DISABLE_AUTHENTICATION = env.bool("DISABLE_AUTHENTICATION", default=True)
+    DISABLE_ADMIN_PROTECTION = env.bool("DISABLE_ADMIN_PROTECTION", default=True)
+    ADMIN_ENTITLEMENTS = env.str("ADMIN_ENTITLEMENTS", default=[])
+    EGI_CLIENT_SECRET_FILE = env.str("SECRET_KEY_FILE", "")
+    if EGI_CLIENT_SECRET_FILE == "":
+        EGI_CLIENT_SECRET = env.str("EGI_CLIENT_SECRET", default="")
+    else:
+        EGI_CLIENT_SECRET = open(EGI_CLIENT_SECRET_FILE).read().rstrip('\n')
 
 
 # API specs configuration

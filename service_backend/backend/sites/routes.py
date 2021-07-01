@@ -1,9 +1,9 @@
 """Site routes."""
+from backend.extensions import auth
 from flask.views import MethodView
 from flask_smorest import Blueprint
 
 from . import models, schemas
-from backend.authorization import login_required, admin_required
 
 blp = Blueprint(
     'sites', __name__, description='Operations on sites'
@@ -13,14 +13,14 @@ blp = Blueprint(
 @blp.route('')
 class Root(MethodView):
 
-    @login_required()  # Mitigate DoS attack
+    @auth.login_required()  # Mitigate DoS attack
     @blp.arguments(schemas.SiteQueryArgs, location='query')
     @blp.response(200, schemas.Site(many=True))
     def get(self, args):
         """Filters and list sites."""
         return models.Site.filter_by(**args)
 
-    @login_required()
+    @auth.login_required()
     @blp.arguments(schemas.Site, as_kwargs=True)
     @blp.response(201, schemas.Site)
     def post(self, flavors=[], **kwargs):
@@ -38,7 +38,7 @@ class Site(MethodView):
         """Retrieves site details."""
         return models.Site.get_by_id(site_id)
 
-    @admin_required()
+    @auth.admin_required()
     @blp.arguments(schemas.EditSite, as_kwargs=True)
     @blp.response(204)
     def put(self, site_id, flavors=None, **kwargs):
@@ -49,7 +49,7 @@ class Site(MethodView):
             site.update(commit=False, flavors=flavors)
         site.save()
 
-    @admin_required()
+    @auth.admin_required()
     @blp.response(204)
     def delete(self, site_id):
         """Deletes an existing site."""
@@ -59,7 +59,7 @@ class Site(MethodView):
 @blp.route('/<uuid:site_id>/flavors')
 class Flavors(MethodView):
 
-    @login_required()  # Mitigate DoS attack
+    @auth.login_required()  # Mitigate DoS attack
     @blp.arguments(schemas.FlavorQueryArgs, location='query')
     @blp.response(200, schemas.Flavor(many=True))
     def get(self, args, site_id):
@@ -68,7 +68,7 @@ class Flavors(MethodView):
         filter = lambda x, **kw: all(getattr(x, k) == v for k, v in kw.items())
         return [x for x in site_flavors if filter(x, **args)]
 
-    @login_required()
+    @auth.login_required()
     @blp.arguments(schemas.Flavor, as_kwargs=True)
     @blp.response(201, schemas.Flavor)
     def post(self, site_id, **kwargs):
@@ -89,7 +89,7 @@ class Flavor(MethodView):
         flavors = models.Flavor.filter_by(site_id=site_id, name=flavor_name)
         return flavors.first_or_404()
 
-    @admin_required()
+    @auth.admin_required()
     @blp.arguments(schemas.EditFlavor, as_kwargs=True)
     @blp.response(204)
     def put(self, site_id, flavor_name, **kwargs):
@@ -98,7 +98,7 @@ class Flavor(MethodView):
         flavor = flavors.first_or_404()
         flavor.update(**kwargs)
 
-    @admin_required()
+    @auth.admin_required()
     @blp.response(204)
     def delete(self, site_id, flavor_name):
         """Deletes an existing site."""

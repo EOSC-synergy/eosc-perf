@@ -1,6 +1,5 @@
 """Benchmark routes."""
-import marshmallow as ma
-from backend.authorization import admin_required, login_required
+from backend.extensions import auth
 from flask.views import MethodView
 from flask_smorest import Blueprint
 
@@ -15,14 +14,14 @@ blp = Blueprint(
 @blp.route('')
 class Root(MethodView):
 
-    @login_required()  # Mitigate DoS attack
+    @auth.login_required()  # Mitigate DoS attack
     @blp.arguments(schemas.BenchmarkQueryArgs, location='query')
     @blp.response(200, schemas.Benchmark(many=True))
     def get(self, args):
         """Filters and list benchmarks."""
         return models.Benchmark.filter_by(**args)
 
-    @login_required()
+    @auth.login_required()
     @blp.arguments(schemas.Benchmark, as_kwargs=True)
     @blp.response(201, schemas.Benchmark)
     def post(self, **kwargs):
@@ -38,14 +37,14 @@ class Benchmark(MethodView):
         """Retrieves benchmark details."""
         return models.Benchmark.get_by_id(benchmark_id)
 
-    @admin_required()
+    @auth.admin_required()
     @blp.arguments(schemas.EditBenchmark, as_kwargs=True)
     @blp.response(204)
     def put(self, benchmark_id, **kwargs):
         """Updates an existing benchmark."""
         models.Benchmark.get_by_id(benchmark_id).update(**kwargs)
 
-    @admin_required()
+    @auth.admin_required()
     @blp.response(204)
     def delete(self, benchmark_id):
         """Deletes an existing benchmark."""

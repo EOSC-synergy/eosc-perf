@@ -1,5 +1,5 @@
 """Result routes."""
-from backend.authorization import admin_required, login_required
+from backend.extensions import auth
 from flaat import tokentools
 from flask import request
 from flask.views import MethodView
@@ -16,7 +16,7 @@ blp = Blueprint(
 @blp.route('')
 class Root(MethodView):
 
-    @login_required()  # Mitigate DoS attack
+    @auth.login_required()  # Mitigate DoS attack
     @blp.arguments(schemas.FilterQueryArgs, location='query', as_kwargs=True)
     @blp.response(200, schemas.Result(many=True))
     def get(self, tag_names=None, **kwargs):
@@ -26,7 +26,7 @@ class Root(MethodView):
             query = query.filter(models.Result.tag_names.in_(tag_names))
         return query.all()
 
-    @login_required()
+    @auth.login_required()
     @blp.arguments(schemas.CreateQueryArgs, location='query')
     @blp.arguments(schemas.Json)
     @blp.response(201, schemas.Result)
@@ -54,7 +54,7 @@ class Result(MethodView):
         """Retrieves result details."""
         return models.Result.get_by_id(result_id)
 
-    @admin_required()
+    @auth.admin_required()
     @blp.arguments(schemas.EditResult, as_kwargs=True)
     @blp.response(204)
     def put(self, result_id, **kwargs):
@@ -67,7 +67,7 @@ class Result(MethodView):
         except models.db.exc.MultipleResultsFound:
             abort(422, "Provided relation returns multiple results")
 
-    @admin_required()
+    @auth.admin_required()
     @blp.response(204)
     def delete(self, result_id):
         """Deletes an existing result."""

@@ -1,5 +1,5 @@
 """Report routes."""
-from backend.authorization import admin_required, login_required
+from backend.extensions import auth
 from flaat import tokentools
 from flask import request
 from flask.views import MethodView
@@ -21,7 +21,7 @@ class Benchmarks(MethodView):
         """Filters and list benchmark reports."""
         return models.BenchmarkReport.filter_by(**args)
 
-    @login_required()
+    @auth.login_required()
     @blp.arguments(schemas.BenchmarkQueryArgs, location='query')
     @blp.arguments(schemas.ReportForBenchmark)
     @blp.response(201, schemas.ReportForBenchmark)
@@ -49,14 +49,14 @@ class BenchmarkId(MethodView):
         """Retrieves benchmark report details."""
         return models.BenchmarkReport.get_by_id(report_id)
 
-    @admin_required()
+    @auth.admin_required()
     @blp.arguments(schemas.EditReport, as_kwargs=True)
     @blp.response(204)
     def put(self, report_id, **kwargs):
         """Updates an existing benchmark report."""
         models.BenchmarkReport.get_by_id(report_id).update(**kwargs)
 
-    @admin_required()
+    @auth.admin_required()
     @blp.response(204)
     def delete(self, report_id):
         """Deletes an existing benchmark report."""
@@ -72,7 +72,7 @@ class Results(MethodView):
         """Filters and list result reports."""
         return models.ResultReport.filter_by(**args)
 
-    @login_required()
+    @auth.login_required()
     @blp.arguments(schemas.ResultQueryArgs, location='query')
     @blp.arguments(schemas.ReportForResult)
     @blp.response(201, schemas.ReportForResult)
@@ -100,14 +100,14 @@ class ResultId(MethodView):
         """Retrieves result report details."""
         return models.ResultReport.get_by_id(report_id)
 
-    @admin_required()
+    @auth.admin_required()
     @blp.arguments(schemas.EditReport, as_kwargs=True)
     @blp.response(204)
     def put(self, report_id, **kwargs):
         """Updates an existing result report."""
         models.ResultReport.get_by_id(report_id).update(**kwargs)
 
-    @admin_required()
+    @auth.admin_required()
     @blp.response(204)
     def delete(self, report_id):
         """Deletes an existing result report."""
@@ -123,7 +123,7 @@ class Sites(MethodView):
         """Filters and list site reports."""
         return models.SiteReport.filter_by(**args)
 
-    @login_required()
+    @auth.login_required()
     @blp.arguments(schemas.SiteQueryArgs, location='query')
     @blp.arguments(schemas.ReportForSite)
     @blp.response(201, schemas.ReportForSite)
@@ -151,14 +151,14 @@ class SiteId(MethodView):
         """Retrieves site report details."""
         return models.SiteReport.get_by_id(report_id)
 
-    @admin_required()
+    @auth.admin_required()
     @blp.arguments(schemas.EditReport, as_kwargs=True)
     @blp.response(204)
     def put(self, report_id, **kwargs):
         """Updates an existing site report."""
         models.SiteReport.get_by_id(report_id).update(**kwargs)
 
-    @admin_required()
+    @auth.admin_required()
     @blp.response(204)
     def delete(self, report_id):
         """Deletes an existing site report."""
@@ -174,7 +174,7 @@ class Flavors(MethodView):
         """Filters and list site reports."""
         return models.FlavorReport.filter_by(**args)
 
-    @login_required()
+    @auth.login_required()
     @blp.arguments(schemas.FlavorQueryArgs, location='query')
     @blp.arguments(schemas.ReportForFlavor)
     @blp.response(201, schemas.ReportForFlavor)
@@ -202,14 +202,14 @@ class FlavorId(MethodView):
         """Retrieves flavor report details."""
         return models.FlavorReport.get_by_id(report_id)
 
-    @admin_required()
+    @auth.admin_required()
     @blp.arguments(schemas.EditReport, as_kwargs=True)
     @blp.response(204)
     def put(self, report_id, **kwargs):
         """Updates an existing flavor report."""
         models.FlavorReport.get_by_id(report_id).update(**kwargs)
 
-    @admin_required()
+    @auth.admin_required()
     @blp.response(204)
     def delete(self, report_id):
         """Deletes an existing flavor report."""
