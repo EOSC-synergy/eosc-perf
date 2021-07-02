@@ -15,3 +15,4 @@ class EditBenchmark(Schema):
 
 class BenchmarkQueryArgs(Schema):
     docker_image = fields.String()
+    docker_tag  = fields.String()

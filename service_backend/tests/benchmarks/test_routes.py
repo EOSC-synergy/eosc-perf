@@ -19,7 +19,9 @@ class TestRoot:
     """Tests for 'Root' route in blueprint."""
 
     @mark.parametrize('query', indirect=True,  argvalues=[
+        {'docker_image': "b1", 'docker_tag': "t1"},
         {'docker_image': "b1"},  # Query with 1 field
+        {'docker_tag': "t1"},    # Query with 1 field
         {}  # All results
     ])
     def test_GET_200(self, response_GET, url):
