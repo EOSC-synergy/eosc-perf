@@ -149,6 +149,11 @@ class TestId:
         """DELETE method fails 401 if not authorized."""
         assert response_DELETE.status_code == 401
 
+    @mark.usefixtures('grant_logged')
+    def test_DELETE_403(self, response_PUT):
+        """DELETE method fails 403 if method forbidden."""
+        assert response_PUT.status_code == 403
+
     @mark.usefixtures('grant_admin')
     @mark.parametrize('benchmark__id', [uuid4()])
     def test_DELETE_404(self, response_DELETE):

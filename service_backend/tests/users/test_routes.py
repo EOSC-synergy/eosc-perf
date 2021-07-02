@@ -63,10 +63,14 @@ class TestId:
         asserts.correct_user(response_GET.json)
         asserts.match_user(response_GET.json, user)
 
-    @mark.usefixtures('grant_logged')
     def test_GET_401(self, response_GET):
         """GET method fails 401 if not authorized."""
         assert response_GET.status_code == 401
+
+    @mark.usefixtures('grant_logged')
+    def test_GET_403(self, response_GET):
+        """GET method fails 403 if forbidden."""
+        assert response_GET.status_code == 403
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('user__sub', ["sub_2"])
@@ -101,10 +105,14 @@ class TestAdmin:
         """GET method succeeded 204."""
         assert response_GET.status_code == 204
 
-    @mark.usefixtures('grant_logged')
     def test_GET_401(self, response_GET):
         """GET method fails 401 if not authorized."""
         assert response_GET.status_code == 401
+
+    @mark.usefixtures('grant_logged')
+    def test_GET_403(self, response_GET):
+        """GET method fails 403 if forbidden."""
+        assert response_GET.status_code == 403
 
 
 @mark.usefixtures('session', 'db_users')

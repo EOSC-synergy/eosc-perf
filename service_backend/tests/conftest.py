@@ -5,7 +5,7 @@ import logging
 import os
 
 from backend import create_app, database
-from backend.extensions import flaat
+from backend.extensions import auth
 from flaat import tokentools
 from pytest import fixture
 from pytest_postgresql.factories import DatabaseJanitor
@@ -41,6 +41,7 @@ def session_environment(sql_database):
     # OIDC environments
     os.environ['OIDC_CLIENT_ID'] = "eosc-perf"
     os.environ['OIDC_CLIENT_SECRET'] = "not-so-secret-for-testing"
+    os.environ['ADMIN_ENTITLEMENTS'] = "admins"
 
 
 @fixture(scope="session")
@@ -70,24 +71,6 @@ def session(db):
     yield session
     session.rollback()  # Discard test changes
     Session.remove()  # Next test gets a new Session()
-
-
-@fixture(scope='function')
-def grant_logged(monkeypatch):
-    """Patch fixture to test function as logged user."""
-    monkeypatch.setenv(
-        "DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER",
-        "YES"
-    )
-
-
-@fixture(scope='function')
-def grant_admin(monkeypatch, grant_logged):
-    """Patch fixture to test function as admin user."""
-    monkeypatch.setenv(
-        "DISABLE_AUTHENTICATION_AND_ASSUME_VALID_GROUPS",
-        "YES"
-    )
 
 
 @fixture(scope='function')
@@ -122,9 +105,40 @@ def introspection_email(request):
 def mock_introspection_info(monkeypatch, introspection_email):
     """Patch fixture to test function with valid oidc token."""
     monkeypatch.setattr(
-        flaat,
+        auth,
         "get_info_from_introspection_endpoints",
         lambda _: {'email': introspection_email}
+    )
+
+
+@fixture(scope='function')
+def grant_logged(monkeypatch, mock_token_info, mock_introspection_info):
+    """Patch fixture to test function as logged user."""
+    monkeypatch.setattr(
+        auth,
+        "get_info_from_userinfo_endpoints",
+        lambda _: {}
+    )
+    monkeypatch.setattr(
+        tokentools,
+        "get_timeleft",
+        lambda _: 1000
+    )
+    monkeypatch.setattr(
+        tokentools,
+        "get_access_token_from_request",
+        lambda _: "mocktoken"
+    )
+
+
+@fixture(scope='function')
+def grant_admin(monkeypatch, grant_logged):
+    """Patch fixture to test function as admin user."""
+    # monkeypatch.setattr(auth, "valid_admin", lambda: True)
+    monkeypatch.setattr(
+        auth,
+        "get_info_from_userinfo_endpoints",
+        lambda _: {'eduperson_assurance': ["admins"]}
     )
 
 

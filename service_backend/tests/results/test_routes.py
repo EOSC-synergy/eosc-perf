@@ -192,7 +192,6 @@ class TestResult:
         asserts.correct_result(response_GET.json)
         asserts.match_body(response_GET.json, body)
 
-    @mark.usefixtures('grant_logged')
     @mark.parametrize('body', indirect=True, argvalues=[
         {'benchmark_image': "b2"},
         {}  # Empty body which would fail
@@ -200,6 +199,15 @@ class TestResult:
     def test_PUT_401(self, response_PUT):
         """PUT method fails 401 if not authorized."""
         assert response_PUT.status_code == 401
+
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'benchmark_image': "b2"},
+        {}  # Empty body which would fail
+    ])
+    def test_PUT_403(self, response_PUT):
+        """PUT method fails 403 if forbidden."""
+        assert response_PUT.status_code == 403
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('result__id', [uuid4()])
