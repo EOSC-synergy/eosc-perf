@@ -85,6 +85,7 @@ else:
 
 
 # API specs configuration
+BACKEND_URL = env.str("BACKEND_URL", default="/")
 API_TITLE = 'EOSC Performance API'
 API_VERSION = 'v1'
 OPENAPI_VERSION = "3.0.2"
@@ -92,15 +93,16 @@ OPENAPI_JSON_PATH = "api-spec.json"
 OPENAPI_URL_PREFIX = "/"
 OPENAPI_SWAGGER_UI_PATH = "/"
 OPENAPI_SWAGGER_UI_URL = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
-API_SPEC_OPTIONS = {
-    'security': [{"bearerAuth": []}],
-    'components': {
-        "securitySchemes": {
-            "bearerAuth": {
-                "type": "http",
-                "scheme": "bearer",
-                "bearerFormat": "JWT"
-            }
+
+API_SPEC_OPTIONS = {}
+API_SPEC_OPTIONS['security'] = [{"bearerAuth": []}]
+API_SPEC_OPTIONS['servers'] = [{"url": BACKEND_URL}]
+API_SPEC_OPTIONS['components'] = {
+    "securitySchemes": {
+        "bearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT"
         }
     }
 }
