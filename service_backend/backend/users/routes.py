@@ -82,7 +82,7 @@ class Register(MethodView):
         """Updates the logged in user info."""
         access_token = tokentools.get_access_token_from_request(request)
         token_info = tokentools.get_accesstoken_info(access_token)
-        user_info = flaat.get_info_from_introspection_endpoints(access_token)
+        user_info = auth.get_info_from_introspection_endpoints(access_token)
         user = models.User.get_by_subiss(
             sub=token_info['body']['sub'],
             iss=token_info['body']['iss']
