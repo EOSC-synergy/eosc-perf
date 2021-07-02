@@ -11,5 +11,6 @@ RUN curl -s https://raw.githubusercontent.com/nginxinc/docker-nginx/master/mainl
 &&  chmod +x /nginx-entrypoint.sh
 COPY docker-entrypoint.sh /
 ENTRYPOINT ["/bin/bash", "/docker-entrypoint.sh"]
+RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx.conf.template /etc/nginx/templates/app.conf.template
 CMD ["nginx", "-g", "daemon off;"]
