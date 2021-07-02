@@ -7,6 +7,7 @@ flask==1.1.2
 flask-SQLAlchemy==2.5.1
 sqlalchemy-utils>=0.37.0
 SQLAlchemy==1.4.1
+psycopg2-binary~=2.8.6
 
 # Migrations
 flask-migrate==2.7.0
