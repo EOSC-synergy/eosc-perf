@@ -24,8 +24,7 @@ USER sid
 
 ENV FLASK_ENV="production"
 EXPOSE 5000
-ENTRYPOINT ["supervisord"]
-CMD ["-c", "/etc/supervisor/supervisord.conf"]
+CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 
 # ================================= DEVELOPMENT ================================
 FROM backend AS development
@@ -35,8 +34,7 @@ RUN pip install --no-cache -r requirements/dev.txt
 
 ENV FLASK_ENV="development"
 EXPOSE 5000
-ENTRYPOINT ["flask"]
-CMD ["run", "--host=0.0.0.0"]
+CMD ["flask", "run", "--host=0.0.0.0"]
 
 # ================================= TESTING ====================================
 FROM backend AS testing
@@ -54,4 +52,4 @@ RUN chown -R sid:sid /app
 USER sid
 
 ENV FLASK_ENV="production"
-ENTRYPOINT ["tox"]
+CMD ["tox"]

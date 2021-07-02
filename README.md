@@ -58,9 +58,8 @@ To set up a development environment:
 To build the backend:
 
 ```bash
-docker-compose up database  # Brings up the database service
-flask db migrate  # Creates a migration for the db from code
-flask db upgrade  # Upgrades/Creates tables on the db (using port)
-docker-compose build backend  # Build backend on desired target env
-docker-compose up backend  # Brings up the backend service
+docker-compose build  # Build services (including backend)
+docker-compose up  # Brings up the services (including backend)
+docker-compose run flask db migrate  # Creates a migration for the db from code
+docker-compose run flask db upgrade  # Upgrades/Creates tables on the db (using port)
 ```
