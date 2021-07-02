@@ -13,7 +13,6 @@ blp = Blueprint(
 @blp.route('')
 class Root(MethodView):
 
-    @auth.login_required()  # Mitigate DoS attack
     @blp.arguments(schemas.TagsQueryArgs, location='query')
     @blp.response(200, schemas.Tag(many=True))
     def get(self, args):

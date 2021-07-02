@@ -18,7 +18,6 @@ benchmark_3 = {'docker_image': "b2", 'docker_tag': "t1"}
 class TestRoot:
     """Tests for 'Root' route in blueprint."""
 
-    @mark.usefixtures('grant_logged')
     @mark.parametrize('query', indirect=True,  argvalues=[
         {'docker_image': "b1"},  # Query with 1 field
         {}  # All results
@@ -29,13 +28,6 @@ class TestRoot:
         for element in response_GET.json:
             asserts.correct_benchmark(element)
             asserts.match_query(element, url)
-
-    @mark.parametrize('query', indirect=True, argvalues=[
-        {'docker_image': "b1"}
-    ])
-    def test_GET_401(self, response_GET):
-        """GET method fails 401 if not logged in."""
-        assert response_GET.status_code == 401
 
     @mark.usefixtures('grant_logged')
     @mark.parametrize('query', [

@@ -15,6 +15,7 @@ blp = Blueprint(
 @blp.route('/benchmarks')
 class Benchmarks(MethodView):
 
+    @auth.admin_required()
     @blp.arguments(schemas.BReportQueryArgs, location='query')
     @blp.response(200, schemas.ReportForBenchmark(many=True))
     def get(self, args):
@@ -44,6 +45,7 @@ class Benchmarks(MethodView):
 @blp.route('/benchmarks/<uuid:report_id>')
 class BenchmarkId(MethodView):
 
+    @auth.admin_required()
     @blp.response(200, schemas.ReportForBenchmark)
     def get(self, report_id):
         """Retrieves benchmark report details."""
@@ -66,6 +68,7 @@ class BenchmarkId(MethodView):
 @blp.route('/results')
 class Results(MethodView):
 
+    @auth.admin_required()
     @blp.arguments(schemas.RReportQueryArgs, location='query')
     @blp.response(200, schemas.ReportForResult(many=True))
     def get(self, args):
@@ -95,6 +98,7 @@ class Results(MethodView):
 @blp.route('/results/<uuid:report_id>')
 class ResultId(MethodView):
 
+    @auth.admin_required()
     @blp.response(200, schemas.ReportForResult)
     def get(self, report_id):
         """Retrieves result report details."""
@@ -117,6 +121,7 @@ class ResultId(MethodView):
 @blp.route('/sites')
 class Sites(MethodView):
 
+    @auth.admin_required()
     @blp.arguments(schemas.SReportQueryArgs, location='query')
     @blp.response(200, schemas.ReportForSite(many=True))
     def get(self, args):
@@ -146,6 +151,7 @@ class Sites(MethodView):
 @blp.route('/sites/<uuid:report_id>')
 class SiteId(MethodView):
 
+    @auth.admin_required()
     @blp.response(200, schemas.ReportForSite)
     def get(self, report_id):
         """Retrieves site report details."""
@@ -168,6 +174,7 @@ class SiteId(MethodView):
 @blp.route('/flavors')
 class Flavors(MethodView):
 
+    @auth.admin_required()
     @blp.arguments(schemas.FReportQueryArgs, location='query')
     @blp.response(200, schemas.ReportForFlavor(many=True))
     def get(self, args):
@@ -197,6 +204,7 @@ class Flavors(MethodView):
 @blp.route('/flavors/<uuid:report_id>')
 class FlavorId(MethodView):
 
+    @auth.admin_required()
     @blp.response(200, schemas.ReportForFlavor)
     def get(self, report_id):
         """Retrieves flavor report details."""

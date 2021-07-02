@@ -13,7 +13,6 @@ blp = Blueprint(
 @blp.route('')
 class Root(MethodView):
 
-    @auth.login_required()  # Mitigate DoS attack
     @blp.arguments(schemas.SiteQueryArgs, location='query')
     @blp.response(200, schemas.Site(many=True))
     def get(self, args):
@@ -59,7 +58,6 @@ class Site(MethodView):
 @blp.route('/<uuid:site_id>/flavors')
 class Flavors(MethodView):
 
-    @auth.login_required()  # Mitigate DoS attack
     @blp.arguments(schemas.FlavorQueryArgs, location='query')
     @blp.response(200, schemas.Flavor(many=True))
     def get(self, args, site_id):

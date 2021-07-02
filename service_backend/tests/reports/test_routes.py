@@ -49,6 +49,7 @@ report_2['uploader__iss'] = user_1['iss']
 class TestBenchmarkReports:
     """Tests for 'Benchmarks' route in blueprint."""
 
+    @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[
         {'date': report_1['date']},
         {'verified': True},
@@ -64,7 +65,22 @@ class TestBenchmarkReports:
             asserts.correct_benchmark_report(element)
             asserts.match_query(element, url)
 
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {}  # Multiple reports
+    ])
+    def test_GET_401(self, response_GET):
+        """GET method fails 401 if not authorized."""
+        assert response_GET.status_code == 401
+
     @mark.usefixtures('grant_logged')
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {}  # Multiple reports
+    ])
+    def test_GET_403(self, response_GET):
+        """GET method fails 403 if forbidden."""
+        assert response_GET.status_code == 403
+
+    @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[
         {'bad_key': "This is a non expected query key"}
     ])
@@ -108,7 +124,7 @@ class TestBenchmarkReports:
     @mark.parametrize('query', indirect=True, argvalues=[
         {'benchmark_image': "-", 'benchmark_tag': benchmark_1["docker_tag"]},
         {'benchmark_tag': "-", 'benchmark_image': benchmark_1["docker_image"]},
-        
+
     ])
     @mark.parametrize('body', indirect=True, argvalues=[
         {'verified': True, 'verdict': True, 'message': "New report"}
@@ -139,11 +155,21 @@ class TestBenchmarkReports:
 class TestBenchmarkReport:
     """Tests for 'Report' route in blueprint."""
 
+    @mark.usefixtures('grant_admin')
     def test_GET_200(self, benchmark_report, response_GET):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
         asserts.correct_benchmark_report(response_GET.json)
         asserts.match_report(response_GET.json, benchmark_report)
+
+    def test_GET_401(self, response_GET):
+        """GET method fails 401 if not authorized."""
+        assert response_GET.status_code == 401
+
+    @mark.usefixtures('grant_logged')
+    def test_GET_403(self, response_GET):
+        """GET method fails 403 if forbidden."""
+        assert response_GET.status_code == 403
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('body', indirect=True, argvalues=[
@@ -228,6 +254,7 @@ report_2['uploader__iss'] = user_1['iss']
 class TestResultReports:
     """Tests for 'Results' route in blueprint."""
 
+    @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[
         {'date': report_1['date']},
         {'verified': True},
@@ -245,7 +272,22 @@ class TestResultReports:
             asserts.correct_result_report(element)
             asserts.match_query(element, url)
 
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {}  # Multiple reports
+    ])
+    def test_GET_401(self, response_GET):
+        """GET method fails 401 if not authorized."""
+        assert response_GET.status_code == 401
+
     @mark.usefixtures('grant_logged')
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {}  # Multiple reports
+    ])
+    def test_GET_403(self, response_GET):
+        """GET method fails 403 if forbidden."""
+        assert response_GET.status_code == 403
+
+    @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[
         {'bad_key': "This is a non expected query key"}
     ])
@@ -326,11 +368,21 @@ class TestResultReports:
 class TestResultReport:
     """Tests for 'Report' route in blueprint."""
 
+    @mark.usefixtures('grant_admin')
     def test_GET_200(self, result_report, response_GET):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
         asserts.correct_result_report(response_GET.json)
         asserts.match_report(response_GET.json, result_report)
+
+    def test_GET_401(self, response_GET):
+        """GET method fails 401 if not authorized."""
+        assert response_GET.status_code == 401
+
+    @mark.usefixtures('grant_logged')
+    def test_GET_403(self, response_GET):
+        """GET method fails 403 if forbidden."""
+        assert response_GET.status_code == 403
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('body', indirect=True, argvalues=[
@@ -412,6 +464,7 @@ report_2['uploader__iss'] = user_1['iss']
 class TestSiteReports:
     """Tests for 'Sites' route in blueprint."""
 
+    @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[
         {'date': report_1['date']},
         {'verified': True},
@@ -426,7 +479,22 @@ class TestSiteReports:
             asserts.correct_site_report(element)
             asserts.match_query(element, url)
 
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {}  # Multiple reports
+    ])
+    def test_GET_401(self, response_GET):
+        """GET method fails 401 if not authorized."""
+        assert response_GET.status_code == 401
+
     @mark.usefixtures('grant_logged')
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {}  # Multiple reports
+    ])
+    def test_GET_403(self, response_GET):
+        """GET method fails 403 if forbidden."""
+        assert response_GET.status_code == 403
+
+    @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[
         {'bad_key': "This is a non expected query key"}
     ])
@@ -496,11 +564,21 @@ class TestSiteReports:
 class TestSiteReport:
     """Tests for 'Report' route in blueprint."""
 
+    @mark.usefixtures('grant_admin')
     def test_GET_200(self, site_report, response_GET):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
         asserts.correct_site_report(response_GET.json)
         asserts.match_report(response_GET.json, site_report)
+
+    def test_GET_401(self, response_GET):
+        """GET method fails 401 if not authorized."""
+        assert response_GET.status_code == 401
+
+    @mark.usefixtures('grant_logged')
+    def test_GET_403(self, response_GET):
+        """GET method fails 403 if forbidden."""
+        assert response_GET.status_code == 403
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('body', indirect=True, argvalues=[
@@ -582,6 +660,7 @@ report_2['uploader__iss'] = user_1['iss']
 class TestFlavorReports:
     """Tests for 'Flavors' route in blueprint."""
 
+    @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[
         {'date': report_1['date']},
         {'verified': True},
@@ -597,7 +676,22 @@ class TestFlavorReports:
             asserts.correct_flavor_report(element)
             asserts.match_query(element, url)
 
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {}  # Multiple reports
+    ])
+    def test_GET_401(self, response_GET):
+        """GET method fails 401 if not authorized."""
+        assert response_GET.status_code == 401
+
     @mark.usefixtures('grant_logged')
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {}  # Multiple reports
+    ])
+    def test_GET_403(self, response_GET):
+        """GET method fails 403 if forbidden."""
+        assert response_GET.status_code == 403
+
+    @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[
         {'bad_key': "This is a non expected query key"}
     ])
@@ -671,11 +765,21 @@ class TestFlavorReports:
 class TestFlavorReport:
     """Tests for 'Report' route in blueprint."""
 
+    @mark.usefixtures('grant_admin')
     def test_GET_200(self, flavor_report, response_GET):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
         asserts.correct_flavor_report(response_GET.json)
         asserts.match_report(response_GET.json, flavor_report)
+
+    def test_GET_401(self, response_GET):
+        """GET method fails 401 if not authorized."""
+        assert response_GET.status_code == 401
+
+    @mark.usefixtures('grant_logged')
+    def test_GET_403(self, response_GET):
+        """GET method fails 403 if forbidden."""
+        assert response_GET.status_code == 403
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('body', indirect=True, argvalues=[

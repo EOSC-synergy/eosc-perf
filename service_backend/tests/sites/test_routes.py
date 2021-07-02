@@ -40,13 +40,6 @@ class TestRoot:
             asserts.correct_site(element)
             asserts.match_query(element, url)
 
-    @mark.parametrize('query', indirect=True, argvalues=[
-        {'name': 's1'}
-    ])
-    def test_GET_401(self, response_GET):
-        """GET method fails 401 if not logged in."""
-        assert response_GET.status_code == 401
-
     @mark.usefixtures('grant_logged')
     @mark.parametrize('query', indirect=True, argvalues=[
         {'bad_key': "This is a non expected query key"}
@@ -190,13 +183,6 @@ class TestFlavors:
         for element in response_GET.json:
             asserts.correct_flavor(element)
             asserts.match_query(element, url)
-
-    @mark.parametrize('query', indirect=True, argvalues=[
-        {'name': 'f1'}
-    ])
-    def test_GET_401(self, response_GET):
-        """GET method fails 401 if not logged in."""
-        assert response_GET.status_code == 401
 
     @mark.usefixtures('grant_logged')
     @mark.parametrize('query', indirect=True, argvalues=[
