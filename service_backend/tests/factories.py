@@ -34,6 +34,8 @@ class BenchmarkFactory(SQLAlchemyModelFactory):
     id = LazyFunction(uuid.uuid4)
     docker_image = Sequence(lambda n: f"b{n}")
     docker_tag = "latest"
+    description = ""
+    json_template = {}
 
 
 class TagFactory(SQLAlchemyModelFactory):

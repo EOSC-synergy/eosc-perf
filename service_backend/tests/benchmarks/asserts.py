@@ -7,6 +7,8 @@ def correct_benchmark(json):
     assert 'id' in json and type(json['id']) is str
     assert 'docker_image' in json and type(json['docker_image']) is str
     assert 'docker_tag' in json and type(json['docker_tag']) is str
+    assert 'description' in json and type(json['description']) is str
+    assert 'json_template' in json and type(json['json_template']) is dict
 
 
 def match_benchmark(json, benchmark):
@@ -14,6 +16,8 @@ def match_benchmark(json, benchmark):
     assert json['id'] == str(benchmark.id)
     assert json['docker_image'] == benchmark.docker_image
     assert json['docker_tag'] == benchmark.docker_tag
+    assert json['description'] == benchmark.description
+    assert json['json_template'] == benchmark.json_template
 
 
 def match_query(json, url):

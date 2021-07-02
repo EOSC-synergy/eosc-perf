@@ -42,7 +42,9 @@ class TestRoot:
     @mark.usefixtures('grant_logged')
     @mark.parametrize('body', [
         {'docker_image': "b1", 'docker_tag': "t3"},
-        {'docker_image': "b3", 'docker_tag': "t1"}
+        {'docker_image': "b3", 'docker_tag': "t1"},
+        {'docker_image': "b3", 'docker_tag': "t1", 'description': "test"},
+        {'docker_image': "b3", 'docker_tag': "t1", 'json_template': {'x': 1}}
     ])
     def test_POST_201(self, response_POST, url, body):
         """POST method succeeded 201."""
@@ -100,7 +102,9 @@ class TestId:
     @mark.parametrize('body', [
         {'docker_image': "new_name", 'docker_tag': "v1.0"},
         {'docker_image': "new_name"},
-        {'docker_tag': "new_tag"}
+        {'docker_tag': "new_tag"},
+        {'description': "new_description"},
+        {'json_template': {"x": 2}}
     ])
     def test_PUT_204(self, response_PUT, response_GET, body):
         """PUT method succeeded 204."""

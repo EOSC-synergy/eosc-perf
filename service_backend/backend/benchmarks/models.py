@@ -12,6 +12,8 @@ class Benchmark(PkModel):
 
     docker_image = db.Column(db.Text(), nullable=False)
     docker_tag = db.Column(db.Text(), nullable=False)
+    description = db.Column(db.Text(), default="")
+    json_template = db.Column(db.Json, default={})
 
     __table_args__ = (
         db.UniqueConstraint('docker_image', 'docker_tag'),
