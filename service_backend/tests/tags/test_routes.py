@@ -17,7 +17,6 @@ tag_2 = {'name': "tag2", 'description': "desc_2"}
 class TestRoot:
     """Tests for 'Root' route in blueprint."""
 
-    @mark.usefixtures('grant_logged')
     @mark.parametrize('query', indirect=True,  argvalues=[
         {'name': "tag1"},  # Query with 1 field
         {}  # All results
@@ -29,7 +28,6 @@ class TestRoot:
             asserts.correct_tag(element)
             asserts.match_query(element, url)
 
-    @mark.usefixtures('grant_logged')
     @mark.parametrize('query', [
         {'bad_key': "This is a non expected query key"}
     ])

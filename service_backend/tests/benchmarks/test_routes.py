@@ -31,7 +31,6 @@ class TestRoot:
             asserts.correct_benchmark(element)
             asserts.match_query(element, url)
 
-    @mark.usefixtures('grant_logged')
     @mark.parametrize('query', [
         {'bad_key': "This is a non expected query key"}
     ])

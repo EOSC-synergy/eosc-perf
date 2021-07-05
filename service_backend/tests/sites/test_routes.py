@@ -27,7 +27,6 @@ site_2['flavors__description'] = ["site2 flavor"]
 class TestRoot:
     """Tests for 'Root' route in blueprint."""
 
-    @mark.usefixtures('grant_logged')
     @mark.parametrize('query', indirect=True, argvalues=[
         {'name': 's1', 'address': "addr1"},
         {'address': "addr1"},  # Query with 1 field
@@ -40,7 +39,6 @@ class TestRoot:
             asserts.correct_site(element)
             asserts.match_query(element, url)
 
-    @mark.usefixtures('grant_logged')
     @mark.parametrize('query', indirect=True, argvalues=[
         {'bad_key': "This is a non expected query key"}
     ])
@@ -171,7 +169,6 @@ class TestSite:
 class TestFlavors:
     """Tests for 'Flavors' route in blueprint."""
 
-    @mark.usefixtures('grant_logged')
     @mark.parametrize('query', indirect=True, argvalues=[
         {'name': 'f1'},
         {'name': 'f2'},
@@ -184,7 +181,6 @@ class TestFlavors:
             asserts.correct_flavor(element)
             asserts.match_query(element, url)
 
-    @mark.usefixtures('grant_logged')
     @mark.parametrize('query', indirect=True, argvalues=[
         {'bad_key': "This is a non expected query key"}
     ])

@@ -57,7 +57,6 @@ post_query = {
 class TestRoot:
     """Tests for 'Root' route in blueprint."""
 
-    @mark.usefixtures('grant_logged')
     @mark.parametrize('query', indirect=True, argvalues=[
         {'benchmark_image': "b1"},
         {'site_name': "s1"},
@@ -72,7 +71,6 @@ class TestRoot:
             asserts.correct_result(element)
             asserts.match_query(element, url)
 
-    @mark.usefixtures('grant_logged')
     @mark.parametrize('query', indirect=True, argvalues=[
         {'bad_key': "This is a non expected query key"},
         {'uploader_email': "sub_1@email.com"}  # GDPR protected
