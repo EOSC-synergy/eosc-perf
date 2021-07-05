@@ -154,6 +154,7 @@ class TestRoot:
 @mark.parametrize('benchmark__docker_image', [benchmark_1['docker_image']])
 @mark.parametrize('site__name', [site_1['name']])
 @mark.parametrize('flavor__name', [site_1['flavors'][0]])
+@mark.parametrize('result__tags', [[tag_1, tag_2]])
 class TestResult:
     """Tests for 'Result' route in blueprint."""
 

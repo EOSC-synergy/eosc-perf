@@ -25,7 +25,7 @@ def match_result(json, result):
     assert json['benchmark_tag'] == result.benchmark.docker_tag
     assert json['site_name'] == result.site.name
     assert json['flavor_name'] == result.flavor.name
-    # TODO: tag_names
+    assert json['tag_names'] == result.tag_names
 
 
 def match_query(json, url):
