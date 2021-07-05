@@ -24,7 +24,22 @@ def match_query(json, url):
     """Checks the json elements matches the url query."""
     presult = parse.urlparse(url)
     for k, lv in parse.parse_qs(presult.query).items():
-        assert lv[0] == json[k]
+        item = [json[k]] if type(json[k]) is not list else json[k]
+        assert lv == item
+
+
+def match_search(json, url):
+    """Checks the json elements matches the url search."""
+    presult = parse.urlparse(url)
+    dict_terms = dict(parse.parse_qs(presult.query).items())
+    if dict_terms == {}:
+        return True
+    for term in dict_terms['terms']:
+        assert any([
+            json['docker_image'].__contains__(term),
+            json['docker_tag'].__contains__(term),
+            json['description'].__contains__(term)
+        ])
 
 
 def match_body(json, body):

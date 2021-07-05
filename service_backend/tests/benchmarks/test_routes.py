@@ -81,6 +81,34 @@ class TestRoot:
         assert response_POST.status_code == 422
 
 
+@mark.usefixtures('session', 'db_benchmarks')
+@mark.parametrize('endpoint', ['benchmarks.Search'], indirect=True)
+@mark.parametrize('db_benchmarks', indirect=True,  argvalues=[
+    [benchmark_1, benchmark_2, benchmark_3]
+])
+class TestSearch:
+    """Tests for 'Search' route in blueprint."""
+
+    @mark.parametrize('query', indirect=True,  argvalues=[
+        {'terms': ["b1"]},
+        {'terms': ["b1", "t1"]},
+        {'terms': []}
+    ])
+    def test_GET_200(self, response_GET, url):
+        """GET method succeeded 200."""
+        assert response_GET.status_code == 200
+        for element in response_GET.json:
+            asserts.correct_benchmark(element)
+            asserts.match_search(element, url)
+
+    @mark.parametrize('query', [
+        {'bad_key': "This is a non expected query key"}
+    ])
+    def test_GET_422(self, response_GET):
+        """GET method fails 422 if bad request body."""
+        assert response_GET.status_code == 422
+
+
 @mark.usefixtures('session', 'benchmark')
 @mark.parametrize('endpoint', ['benchmarks.Benchmark'], indirect=True)
 @mark.parametrize('benchmark_id', [uuid4()], indirect=True)

@@ -1,7 +1,7 @@
 """Benchmark routes."""
 from backend.extensions import auth
 from flask.views import MethodView
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
 
 from . import models, schemas
 
@@ -26,6 +26,16 @@ class Root(MethodView):
     def post(self, **kwargs):
         """Creates a new benchmark."""
         return models.Benchmark.create(**kwargs)
+
+
+@blp.route('/search')
+class Search(MethodView):
+
+    @blp.arguments(schemas.SearchQueryArgs, location='query', as_kwargs=True)
+    @blp.response(200, schemas.Benchmark(many=True))
+    def get(self, terms=[]):
+        """Filters and list benchmarks."""
+        return models.Benchmark.query_with(terms)
 
 
 @blp.route('/<uuid:benchmark_id>')

@@ -1,5 +1,6 @@
 """Benchmark models."""
 from backend.database import PkModel, db
+from sqlalchemy import or_
 
 
 class Benchmark(PkModel):
@@ -30,3 +31,25 @@ class Benchmark(PkModel):
             self.docker_image,
             self.docker_tag
         )
+
+    @classmethod
+    def query_with(cls, terms):
+        """Query all benchmarks containing all keywords in the name.
+
+        Args:
+            terms (List[str]): A list of all keywords that need to be in the
+            benchmark's docker name.
+        Returns:
+            List[Benchmark]: A list containing all matching benchmarks in the
+            database.
+        """
+        results = cls.query
+        for keyword in terms:
+            results = results.filter(
+                or_(
+                    Benchmark.docker_image.contains(keyword),
+                    Benchmark.docker_tag.contains(keyword),
+                    Benchmark.description.contains(keyword)
+                ))
+
+        return results
