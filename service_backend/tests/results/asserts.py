@@ -1,5 +1,4 @@
 """Function asserts for tests"""
-from tests.sites import asserts
 from urllib import parse
 
 from backend.results import models
