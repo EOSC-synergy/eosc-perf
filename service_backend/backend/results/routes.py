@@ -45,6 +45,16 @@ class Root(MethodView):
         )
 
 
+@blp.route('/search')
+class Search(MethodView):
+
+    @blp.arguments(schemas.SearchQueryArgs, location='query', as_kwargs=True)
+    @blp.response(200, schemas.Result(many=True))
+    def get(self, terms=[]):
+        """Filters and list results."""
+        return models.Result.query_with(terms)
+
+
 @blp.route('/<uuid:result_id>')
 class Result(MethodView):
 

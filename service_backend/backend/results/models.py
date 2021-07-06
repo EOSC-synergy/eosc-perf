@@ -4,6 +4,7 @@ from backend.database import PkModel, db
 from backend.sites.models import Flavor, Site
 from backend.tags.models import Tag
 from backend.users.models import User
+from sqlalchemy import or_
 
 tag_association = db.Table(
     'result_tags',
@@ -19,7 +20,7 @@ class Result(PkModel):
     They carry the JSON data output by the ran benchmarks.
     """
 
-    json = db.Column(db.Json, nullable=False)
+    json = db.Column(db.Jsonb, nullable=False)
     tags = db.relationship(Tag, secondary=tag_association)
     tag_names = db.association_proxy('tags', 'name')
 
@@ -50,3 +51,27 @@ class Result(PkModel):
             str: A human-readable representation string of the result.
         """
         return '<{} {}>'.format(self.__class__.__name__, self.id)
+
+    @classmethod
+    def query_with(cls, terms):
+        """Query all results containing all keywords in the columns.
+
+        Args:
+            terms (List[str]): A list of all keywords that need to be matched.
+        Returns:
+            List[Result]: A list containing all matching query results in the
+            database.
+        """
+        results = cls.query
+        for keyword in terms:
+            results = results.filter(
+                or_(
+                    # TODO: Result.json.contains(keyword),
+                    Result.docker_image.contains(keyword),
+                    Result.docker_tag.contains(keyword),
+                    Result.site_name.contains(keyword),
+                    Result.flavor_name.contains(keyword),
+                    Result.tag_names == keyword
+                ))
+
+        return results

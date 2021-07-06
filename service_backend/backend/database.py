@@ -11,6 +11,7 @@ from backend.extensions import db
 # Extend db types
 db.UUID = sqlalchemy_utils.UUIDType
 db.Json = sqlalchemy.dialects.postgresql.JSON
+db.Jsonb = sqlalchemy.dialects.postgresql.JSONB
 db.exc = sqlalchemy.exc
 db.association_proxy = associationproxy.association_proxy
 

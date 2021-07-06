@@ -41,3 +41,7 @@ class CreateQueryArgs(Schema):
     site_id = fields.UUID(required=True)
     flavor_id = fields.UUID(required=True)
     tags_ids = fields.List(fields.UUID, missing=[])
+
+
+class SearchQueryArgs(Schema):
+    terms = fields.List(fields.String(), missing=[])

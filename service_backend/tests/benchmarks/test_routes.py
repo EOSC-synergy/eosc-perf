@@ -24,6 +24,7 @@ class TestRoot:
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
+        assert response_GET.json != []
         for element in response_GET.json:
             asserts.correct_benchmark(element)
             asserts.match_query(element, url)
@@ -93,6 +94,7 @@ class TestSearch:
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
+        assert response_GET.json != []
         for element in response_GET.json:
             asserts.correct_benchmark(element)
             asserts.match_search(element, url)

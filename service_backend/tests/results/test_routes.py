@@ -26,16 +26,18 @@ class TestRoot:
     """Tests for 'Root' route in blueprint."""
 
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'docker_image': "b1"},
-        {'docker_tag': "latest"},
-        {'site_name': "site1"},
-        {'flavor_name': "flavor1"},
-        {'tag_names': ["tag1", "tag2"]},
+        # TODO: Json field instance
+        {'docker_image': result_1["benchmark__docker_image"]},
+        {'docker_tag': result_1["benchmark__docker_tag"]},
+        {'site_name': result_1["site__name"]},
+        {'flavor_name': result_1["flavor__name"]},
+        {'tag_names': [tag['name'] for tag in result_1["tags"]]},
         {}  # Multiple results
     ])
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
+        assert response_GET.json != []
         for element in response_GET.json:
             asserts.correct_result(element)
             asserts.match_query(element, url)
@@ -104,6 +106,38 @@ class TestRoot:
     def test_POST_422(self, response_POST):
         """POST method fails 422 if missing required."""
         assert response_POST.status_code == 422
+
+
+@mark.usefixtures('session', 'db_results')
+@mark.parametrize('endpoint', ['results.Search'], indirect=True)
+@mark.parametrize('db_results', indirect=True, argvalues=[
+    [result_1, result_2]
+])
+class TestSearch:
+    """Tests for 'Search' route in blueprint."""
+
+    @mark.parametrize('query', indirect=True,  argvalues=[
+        # TODO: {'terms': ["time"]},
+        {'terms': [result_1["benchmark__docker_image"]]},
+        {'terms': [result_1["benchmark__docker_tag"]]},
+        {'terms': [result_1["site__name"], result_1["flavor__name"]]},
+        {'terms': [tag['name'] for tag in result_1["tags"]]},
+        {'terms': []}   # Empty terms
+    ])
+    def test_GET_200(self, response_GET, url):
+        """GET method succeeded 200."""
+        assert response_GET.status_code == 200
+        assert response_GET.json != []
+        for element in response_GET.json:
+            asserts.correct_result(element)
+            asserts.match_search(element, url)
+
+    @mark.parametrize('query', [
+        {'bad_key': "This is a non expected query key"}
+    ])
+    def test_GET_422(self, response_GET):
+        """GET method fails 422 if bad request body."""
+        assert response_GET.status_code == 422
 
 
 @mark.usefixtures('session', 'result')

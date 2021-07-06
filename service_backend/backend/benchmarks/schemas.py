@@ -29,4 +29,4 @@ class BenchmarkQueryArgs(Schema):
 
 
 class SearchQueryArgs(Schema):
-    terms = fields.List(fields.String())
+    terms = fields.List(fields.String(), missing=[])

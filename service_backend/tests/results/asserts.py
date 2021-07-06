@@ -91,6 +91,23 @@ def match_query(json, url):
     assert tag_names.issubset(set(x['name'] for x in json['tags']))
 
 
+def match_search(json, url):
+    """Checks the json elements matches the url search."""
+    presult = parse.urlparse(url)
+    dict_terms = dict(parse.parse_qs(presult.query).items())
+    if dict_terms == {}:
+        return True
+    for term in dict_terms['terms']:
+        assert any([
+            # TODO: json check:  json['json']
+            json['benchmark']['docker_image'].__contains__(term),
+            json['benchmark']['docker_tag'].__contains__(term),
+            json['site']['name'].__contains__(term),
+            json['flavor']['name'].__contains__(term),
+            any(tag['name'] == term for tag in json['tags'])
+        ])
+
+
 def match_body(json, body):
     """Checks the json elements matches the body dict."""
     if type(body) is list:

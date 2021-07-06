@@ -33,7 +33,7 @@ class Search(MethodView):
 
     @blp.arguments(schemas.SearchQueryArgs, location='query', as_kwargs=True)
     @blp.response(200, schemas.Benchmark(many=True))
-    def get(self, terms=[]):
+    def get(self, terms):
         """Filters and list benchmarks."""
         return models.Benchmark.query_with(terms)
 
