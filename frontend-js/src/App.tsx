@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './main.css';
 
 // app-switching
+import { Redirect } from 'react-router';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import modules from './modules'; // All the parent knows is that it has modules ...
 import { ModuleBase } from './modules/module-base';
@@ -114,6 +115,9 @@ function App() {
             <div className="App">
                 <div className="App-content">
                     <Switch>
+                        <Route exact path="/">
+                            <Redirect to={modules.BenchmarkSearch.path} />
+                        </Route>
                         {modules.all.map((module) => (
                             <Route
                                 path={module.path}
