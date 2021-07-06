@@ -3,26 +3,10 @@ from datetime import date
 from uuid import uuid4
 
 from pytest import mark
+from tests.elements import (benchmark_1, benchmark_2, flavor_1, flavor_2,
+                            site_1, site_2, user_1)
 
 from . import asserts
-
-
-benchmark_1 = {'docker_image': "b1", 'docker_tag': "v1.0"}
-benchmark_2 = {'docker_image': "b1", 'docker_tag': "v2.0"}
-
-site_1 = {'name': "site1", 'address': "address1"}
-site_1['description'] = "Text"
-site_1['flavors'] = ["flavor1", "flavor2", "flavor3"]
-site_1['flavors__description'] = "site1 flavor"
-
-site_2 = {'name': "site2", 'address': "address2"}
-site_2['description'] = "Text"
-site_2['flavors'] = ["flavor1", "flavor2", "flavor3"]
-site_2['flavors__description'] = "site2 flavor"
-
-user_1 = {'sub': "sub_1", 'iss': "egi.com"}
-user_1['email'] = "sub_1@email.com"
-
 
 report_1 = {'verified': True, 'verdict': True}
 report_1['message'] = "Benchmark report 1"
@@ -231,7 +215,8 @@ report_1['date'] = date(2020, 1, 1,)
 report_1['result__benchmark__docker_image'] = benchmark_1['docker_image']
 report_1['result__benchmark__docker_tag'] = benchmark_1['docker_tag']
 report_1['result__site__name'] = site_1['name']
-report_1['result__flavor__name'] = site_1['flavors'][0]
+report_1['result__flavor__name'] = flavor_1['name']
+report_1['result__flavor__site_id'] = flavor_1['site_id']
 report_1['uploader__sub'] = user_1['sub']
 report_1['uploader__iss'] = user_1['iss']
 
@@ -240,7 +225,8 @@ report_2['message'] = "Result report 2"
 report_2['result__benchmark__docker_image'] = benchmark_2['docker_image']
 report_2['result__benchmark__docker_tag'] = benchmark_2['docker_tag']
 report_2['result__site__name'] = site_1['name']
-report_2['result__flavor__name'] = site_1['flavors'][0]
+report_2['result__flavor__name'] = flavor_1['name']
+report_2['result__flavor__site_id'] = flavor_1['site_id']
 report_2['uploader__sub'] = user_1['sub']
 report_2['uploader__iss'] = user_1['iss']
 
@@ -302,7 +288,7 @@ class TestResultReports:
         {'docker_image': benchmark_1['docker_image'],
          'docker_tag': benchmark_1['docker_tag'],
          'site_name': site_1['name'],
-         'flavor_name': site_1['flavors'][0]}
+         'flavor_name': flavor_1['name']}
     ])
     @mark.parametrize('body', indirect=True, argvalues=[
         {'verified': True, 'verdict': True, 'message': "New report"}
@@ -318,7 +304,7 @@ class TestResultReports:
         {'docker_image': benchmark_1['docker_image'],
          'docker_tag': benchmark_1['docker_tag'],
          'site_name': site_1['name'],
-         'flavor_name': site_1['flavors'][0]}
+         'flavor_name': flavor_1['name']}
     ])
     @mark.parametrize('body', indirect=True, argvalues=[
         {'verified': True, 'verdict': True, 'message': "New report"},
@@ -336,7 +322,7 @@ class TestResultReports:
         {'docker_image': benchmark_1['docker_image'],
          'docker_tag': benchmark_1['docker_tag'],
          'site_name': "non-existing-site",  # Fail by site
-         'flavor_name': site_1['flavors'][0]}
+         'flavor_name': flavor_1['name']}
     ])
     @mark.parametrize('body', indirect=True, argvalues=[
         {'verified': True, 'verdict': True, 'message': "New report"}
@@ -351,7 +337,7 @@ class TestResultReports:
     @mark.parametrize('query', indirect=True, argvalues=[
         {'docker_image': benchmark_1['docker_image'],
          'docker_tag': benchmark_1['docker_tag'],
-         'flavor_name': site_1['flavors'][0]}  # Missing site
+         'flavor_name': flavor_1['name']}  # Missing site
     ])
     @mark.parametrize('body', indirect=True, argvalues=[
         {'bad_field': "", 'message': "New report"},
@@ -442,7 +428,7 @@ report_1 = {'verified': True, 'verdict': True}
 report_1['message'] = "Site report 1"
 report_1['date'] = date(2020, 1, 1,)
 report_1['site__name'] = site_1['name']
-report_1['site__flavors'] = site_1['flavors']
+# report_1['site__flavors'] = site_1['flavors']
 report_1['uploader__sub'] = user_1['sub']
 report_1['uploader__iss'] = user_1['iss']
 
@@ -450,7 +436,7 @@ report_2 = {'verified': True, 'verdict': True}
 report_2['message'] = "Site report 2"
 report_2['date'] = date(2020, 1, 1,)
 report_2['site__name'] = site_2['name']
-report_2['site__flavors'] = site_2['flavors']
+# report_2['site__flavors'] = site_2['flavors']
 report_2['uploader__sub'] = user_1['sub']
 report_2['uploader__iss'] = user_1['iss']
 
@@ -638,7 +624,7 @@ report_1 = {'verified': True, 'verdict': True}
 report_1['message'] = "Flavor report 1"
 report_1['date'] = date(2020, 1, 1,)
 report_1['site__name'] = site_1['name']
-report_1['flavor__name'] = site_1['flavors'][0]
+report_1['flavor__name'] = flavor_1['name']
 report_1['uploader__sub'] = user_1['sub']
 report_1['uploader__iss'] = user_1['iss']
 
@@ -646,7 +632,7 @@ report_2 = {'verified': True, 'verdict': True}
 report_2['message'] = "Flavor report 2"
 report_2['date'] = date(2020, 1, 1,)
 report_2['site__name'] = site_1['name']
-report_2['flavor__name'] = site_1['flavors'][1]
+report_2['flavor__name'] = flavor_2['name']
 report_2['uploader__sub'] = user_1['sub']
 report_2['uploader__iss'] = user_1['iss']
 
@@ -703,8 +689,8 @@ class TestFlavorReports:
     @mark.parametrize('token_sub', [user_1['sub']], indirect=True)
     @mark.parametrize('token_iss', [user_1['iss']], indirect=True)
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'site_name': site_1['name'], 'flavor_name': site_1['flavors'][0]},
-        {'site_name': site_1['name'], 'flavor_name': site_1['flavors'][1]}
+        {'site_name': site_1['name'], 'flavor_name': flavor_1['name']},
+        {'site_name': site_1['name'], 'flavor_name': flavor_2['name']}
     ])
     @mark.parametrize('body', indirect=True, argvalues=[
         {'verified': True, 'verdict': True, 'message': "New report"}
@@ -717,7 +703,7 @@ class TestFlavorReports:
         asserts.match_body(response_POST.json, body)
 
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'site_name': site_1['name'], 'flavor_name': site_1['flavors'][0]}
+        {'site_name': site_1['name'], 'flavor_name': flavor_1['name']}
     ])
     @mark.parametrize('body', indirect=True, argvalues=[
         {'verified': True, 'verdict': True, 'message': "New report"},
@@ -732,7 +718,7 @@ class TestFlavorReports:
     @mark.parametrize('token_sub', [user_1['sub']], indirect=True)
     @mark.parametrize('token_iss', [user_1['iss']], indirect=True)
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'site_name': "non-existing", 'flavor_name': site_1['flavors'][0]},
+        {'site_name': "non-existing", 'flavor_name': flavor_1['name']},
         {'flavor_name': "non-existing", 'site_name': site_1['name']},
     ])
     @mark.parametrize('body', indirect=True, argvalues=[
@@ -746,7 +732,7 @@ class TestFlavorReports:
     @mark.parametrize('token_sub', [user_1['sub']], indirect=True)
     @mark.parametrize('token_iss', [user_1['iss']], indirect=True)
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'flavor_name': site_1['flavors'][0]},  # Missing site_name
+        {'flavor_name': flavor_1['name']},  # Missing site_name
         {'site_name': site_1['name']},  # Missing flavor_name
         {}
     ])

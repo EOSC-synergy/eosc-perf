@@ -2,12 +2,9 @@
 from uuid import uuid4
 
 from pytest import mark
+from tests.elements import benchmark_1, benchmark_2, benchmark_3
+
 from . import asserts
-
-
-benchmark_1 = {'docker_image': "b1", 'docker_tag': "t1"}
-benchmark_2 = {'docker_image': "b1", 'docker_tag': "t2"}
-benchmark_3 = {'docker_image': "b2", 'docker_tag': "t1"}
 
 
 @mark.usefixtures('session', 'db_benchmarks')
@@ -62,8 +59,8 @@ class TestRoot:
 
     @mark.usefixtures('grant_logged')
     @mark.parametrize('body', [
-        {'docker_image': "b1", 'docker_tag': "t1"},
-        {'docker_image': "b1", 'docker_tag': "t2"}
+        {'docker_image': "b1", 'docker_tag': "v1.0"},
+        {'docker_image': "b1", 'docker_tag': "v2.0"}
     ])
     def test_POST_409(self, response_POST):
         """POST method fails 409 if resource already exists."""

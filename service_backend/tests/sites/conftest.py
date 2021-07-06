@@ -50,7 +50,5 @@ def flavor(flavor_factory, flavor__name, site):
 
 
 @fixture(scope='function')
-def db_flavors(request, flavor_factory, site):
-    flavors = [flavor_factory(site_id=site.id, **kwargs)
-               for kwargs in request.param]
-    return flavors
+def db_flavors(request, flavor_factory):
+    return [flavor_factory(**kwargs) for kwargs in request.param]

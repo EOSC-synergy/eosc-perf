@@ -2,13 +2,9 @@
 from uuid import uuid4
 
 from pytest import mark
+from tests.elements import user_1, user_2
+
 from . import asserts
-
-user_1 = {'sub': "sub_1", 'iss': "egi.com"}
-user_1['email'] = "sub_1@email.com"
-
-user_2 = {'sub': "sub_2", 'iss': "egi.com"}
-user_2['email'] = "sub_2@email.com"
 
 
 @mark.usefixtures('session', 'db_users')

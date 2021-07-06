@@ -2,11 +2,9 @@
 from uuid import uuid4
 
 from pytest import mark
+from tests.elements import tag_1, tag_2, tag_3, tag_4
+
 from . import asserts
-
-
-tag_1 = {'name': "tag1", 'description': "desc_1"}
-tag_2 = {'name': "tag2", 'description': "desc_2"}
 
 
 @mark.usefixtures('session', 'db_tags')

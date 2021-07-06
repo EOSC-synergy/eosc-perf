@@ -11,7 +11,7 @@ class Site(PkModel):
 
     name = db.Column(db.Text(), unique=True, nullable=False)
     address = db.Column(db.Text(), nullable=False)
-    description = db.Column(db.Text(), nullable=True)
+    description = db.Column(db.Text(), nullable=True, default="")
     flavors = db.relationship(
         "Flavor",
         cascade="all, save-update, delete-orphan")
@@ -34,7 +34,7 @@ class Flavor(PkModel):
     """
 
     name = db.Column(db.Text(), nullable=False)
-    description = db.Column(db.Text(), nullable=True, default=None)
+    description = db.Column(db.Text(), nullable=True, default="")
     site_id = db.Column(db.UUID, db.ForeignKey('site.id'))
 
     __table_args__ = (

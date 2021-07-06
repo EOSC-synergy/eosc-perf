@@ -2,39 +2,31 @@
 from uuid import uuid4
 
 from pytest import mark
+from tests.elements import flavor_1, flavor_2, flavor_3, site_1, site_2
+
 from . import asserts
 
-flavor_1 = {'name': 'f1', 'description': "text"}
-flavor_2 = {'name': 'f2', 'description': "text"}
-flavor_3 = {'name': 'f3', 'description': "text"}
 
-site_1 = {'name': "s1", 'address': "addr1"}
-site_1['description'] = "text"
-site_1['flavors'] = []
-site_1['flavors__description'] = ["site1 flavor"]
-
-site_2 = {'name': "s2", 'address': "addr1"}
-site_2['description'] = "text"
-site_2['flavors'] = ["f1"]
-site_2['flavors__description'] = ["site2 flavor"]
-
-
-@mark.usefixtures('session', 'db_sites')
-@mark.parametrize('endpoint', ['sites.Root'], indirect=True)
+@mark.usefixtures('session', 'db_sites', 'db_flavors')
 @mark.parametrize('db_sites', indirect=True, argvalues=[
     [site_1, site_2]
 ])
+@mark.parametrize('db_flavors', indirect=True, argvalues=[
+    [flavor_1, flavor_2, flavor_3]
+])
+@mark.parametrize('endpoint', ['sites.Root'], indirect=True)
 class TestRoot:
     """Tests for 'Root' route in blueprint."""
 
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'name': 's1', 'address': "addr1"},
-        {'address': "addr1"},  # Query with 1 field
+        {'name': 'site1', 'address': "address1"},
+        {'address': "address1"},  # Query with 1 field
         {}  # Multiple results
     ])
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
+        assert response_GET.json != []
         for element in response_GET.json:
             asserts.correct_site(element)
             asserts.match_query(element, url)
@@ -71,8 +63,8 @@ class TestRoot:
 
     @mark.usefixtures('grant_logged')
     @mark.parametrize('body', indirect=True, argvalues=[
-        {'name': "s1", 'address': "addrX"},
-        {'name': "s2", 'address': "addrX"}
+        {'name': "site1", 'address': "address1"},
+        {'name': "site2", 'address': "address2"}
     ])
     def test_POST_409(self, response_POST):
         """POST method fails 409 if resource already exists."""
@@ -160,23 +152,27 @@ class TestSite:
         assert response_DELETE.status_code == 404
 
 
-@mark.usefixtures('session', 'site', 'db_flavors')
-@mark.parametrize('endpoint', ['sites.Flavors'], indirect=True)
-@mark.parametrize('site_id', [uuid4()], indirect=True)
-@mark.parametrize('db_flavors', indirect=True, argvalues=[
-    [flavor_1, flavor_2]
+@mark.usefixtures('session', 'db_sites', 'db_flavors')
+@mark.parametrize('db_sites', indirect=True, argvalues=[
+    [site_1, site_2]
 ])
+@mark.parametrize('db_flavors', indirect=True, argvalues=[
+    [flavor_1, flavor_2, flavor_3]
+])
+@mark.parametrize('endpoint', ['sites.Flavors'], indirect=True)
+@mark.parametrize('site_id', [site_1['id']], indirect=True)
 class TestFlavors:
     """Tests for 'Flavors' route in blueprint."""
 
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'name': 'f1'},
-        {'name': 'f2'},
+        {'name': 'flavor1'},
+        {'name': 'flavor2'},
         {}  # Multiple results
     ])
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
+        assert response_GET.json != []
         for element in response_GET.json:
             asserts.correct_flavor(element)
             asserts.match_query(element, url)
@@ -190,7 +186,8 @@ class TestFlavors:
 
     @mark.usefixtures('grant_logged')
     @mark.parametrize('body', indirect=True, argvalues=[
-        flavor_3
+        {'name': "flavor3", 'description': "Flavor3 site1"},
+        {'name': "flavor3"}
     ])
     def test_POST_201(self, response_POST, url, body):
         """POST method succeeded 201."""
@@ -210,8 +207,8 @@ class TestFlavors:
 
     @mark.usefixtures('grant_logged')
     @mark.parametrize('body', indirect=True, argvalues=[
-        flavor_1,
-        flavor_2
+        {'name': "flavor1"},
+        {'name': "flavor2"}
     ])
     def test_POST_409(self, response_POST):
         """POST method fails 409 if resource already exists."""
