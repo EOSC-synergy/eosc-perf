@@ -6,7 +6,7 @@ COPY ["package.json", "package-lock.json*", "./"]
 RUN npm install --development
 
 # MOUNT FOLDER!!!
-#COPY ["src", "public", ".prettierrc", "tsconfig.json", "./"]
+COPY ["src", "public", ".prettierrc", "tsconfig.json", "./"]
 #
 
 CMD [ "npm", "start" ]
