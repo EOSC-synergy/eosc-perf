@@ -8,6 +8,11 @@ class Tag(Schema):
     description = fields.String(required=True)
 
 
+class Tag_simple(Schema):
+    id = fields.UUID(dump_only=True)
+    name = fields.String()
+
+
 class TagsQueryArgs(Schema):
     name = fields.String()
 

@@ -10,6 +10,12 @@ class Benchmark(Schema):
     json_template = fields.Dict()
 
 
+class Benchmark_simple(Schema):
+    id = fields.UUID(dump_only=True)
+    docker_image = fields.String()
+    docker_tag = fields.String()
+
+
 class EditBenchmark(Schema):
     docker_image = fields.String()
     docker_tag = fields.String()

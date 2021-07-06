@@ -101,9 +101,9 @@ def match_query(json, url):
    # If result report checks
     if presult.path.split('/')[2] == "results":
         if 'docker_image' in query_items:
-            assert json['result']['benchmark_image'] in query_items['docker_image']
+            assert json['result']['docker_image'] in query_items['docker_image']
         if 'docker_tag' in query_items:
-            assert json['result']['benchmark_tag'] in query_items['docker_tag']
+            assert json['result']['docker_tag'] in query_items['docker_tag']
         if 'site_name' in query_items:
             assert json['result']['site_name'] in query_items['site_name']
         if 'flavor_name' in query_items:

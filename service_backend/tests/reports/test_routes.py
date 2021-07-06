@@ -54,8 +54,8 @@ class TestBenchmarkReports:
         {'date': report_1['date']},
         {'verified': True},
         {'verdict': True},
-        {'benchmark_image': report_1['benchmark__docker_image']},
-        {'benchmark_tag': report_1['benchmark__docker_tag']},
+        {'docker_image': report_1['benchmark__docker_image']},
+        {'docker_tag': report_1['benchmark__docker_tag']},
         {}  # Multiple reports
     ])
     def test_GET_200(self, response_GET, url):
@@ -92,8 +92,8 @@ class TestBenchmarkReports:
     @mark.parametrize('token_sub', [user_1['sub']], indirect=True)
     @mark.parametrize('token_iss', [user_1['iss']], indirect=True)
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'benchmark_image': benchmark_1["docker_image"],
-         'benchmark_tag': benchmark_1["docker_tag"]}
+        {'docker_image': benchmark_1["docker_image"],
+         'docker_tag': benchmark_1["docker_tag"]}
     ])
     @mark.parametrize('body', indirect=True, argvalues=[
         {'verified': True, 'verdict': True, 'message': "New report"}
@@ -106,8 +106,8 @@ class TestBenchmarkReports:
         asserts.match_body(response_POST.json, body)
 
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'benchmark_image': benchmark_1["docker_image"],
-         'benchmark_tag': benchmark_1["docker_tag"]}
+        {'docker_image': benchmark_1["docker_image"],
+         'docker_tag': benchmark_1["docker_tag"]}
     ])
     @mark.parametrize('body', indirect=True, argvalues=[
         {'verified': True, 'verdict': True, 'message': "New report"},
@@ -122,8 +122,8 @@ class TestBenchmarkReports:
     @mark.parametrize('token_sub', [user_1['sub']], indirect=True)
     @mark.parametrize('token_iss', [user_1['iss']], indirect=True)
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'benchmark_image': "-", 'benchmark_tag': benchmark_1["docker_tag"]},
-        {'benchmark_tag': "-", 'benchmark_image': benchmark_1["docker_image"]},
+        {'docker_image': "-", 'docker_tag': benchmark_1["docker_tag"]},
+        {'docker_tag': "-", 'docker_image': benchmark_1["docker_image"]},
 
     ])
     @mark.parametrize('body', indirect=True, argvalues=[
@@ -137,8 +137,8 @@ class TestBenchmarkReports:
     @mark.parametrize('token_sub', [user_1['sub']], indirect=True)
     @mark.parametrize('token_iss', [user_1['iss']], indirect=True)
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'benchmark_image': benchmark_1["docker_image"],
-         'benchmark_tag': benchmark_1["docker_tag"]}
+        {'docker_image': benchmark_1["docker_image"],
+         'docker_tag': benchmark_1["docker_tag"]}
     ])
     @mark.parametrize('body', indirect=True, argvalues=[
         {'bad_field': "", 'message': "New report"},
@@ -259,8 +259,8 @@ class TestResultReports:
         {'date': report_1['date']},
         {'verified': True},
         {'verdict': True},
-        {'benchmark_image': report_1['result__benchmark__docker_image']},
-        {'benchmark_tag': report_1['result__benchmark__docker_tag']},
+        {'docker_image': report_1['result__benchmark__docker_image']},
+        {'docker_tag': report_1['result__benchmark__docker_tag']},
         {'site_name': report_1['result__site__name']},
         {'flavor_name': report_1['result__flavor__name']},
         {}  # Multiple reports
@@ -299,8 +299,8 @@ class TestResultReports:
     @mark.parametrize('token_sub', [user_1['sub']], indirect=True)
     @mark.parametrize('token_iss', [user_1['iss']], indirect=True)
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'benchmark_image': benchmark_1['docker_image'],
-         'benchmark_tag': benchmark_1['docker_tag'],
+        {'docker_image': benchmark_1['docker_image'],
+         'docker_tag': benchmark_1['docker_tag'],
          'site_name': site_1['name'],
          'flavor_name': site_1['flavors'][0]}
     ])
@@ -315,8 +315,8 @@ class TestResultReports:
         asserts.match_body(response_POST.json, body)
 
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'benchmark_image': benchmark_1['docker_image'],
-         'benchmark_tag': benchmark_1['docker_tag'],
+        {'docker_image': benchmark_1['docker_image'],
+         'docker_tag': benchmark_1['docker_tag'],
          'site_name': site_1['name'],
          'flavor_name': site_1['flavors'][0]}
     ])
@@ -333,8 +333,8 @@ class TestResultReports:
     @mark.parametrize('token_sub', [user_1['sub']], indirect=True)
     @mark.parametrize('token_iss', [user_1['iss']], indirect=True)
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'benchmark_image': benchmark_1['docker_image'],
-         'benchmark_tag': benchmark_1['docker_tag'],
+        {'docker_image': benchmark_1['docker_image'],
+         'docker_tag': benchmark_1['docker_tag'],
          'site_name': "non-existing-site",  # Fail by site
          'flavor_name': site_1['flavors'][0]}
     ])
@@ -349,8 +349,8 @@ class TestResultReports:
     @mark.parametrize('token_sub', [user_1['sub']], indirect=True)
     @mark.parametrize('token_iss', [user_1['iss']], indirect=True)
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'benchmark_image': benchmark_1['docker_image'],
-         'benchmark_tag': benchmark_1['docker_tag'],
+        {'docker_image': benchmark_1['docker_image'],
+         'docker_tag': benchmark_1['docker_tag'],
          'flavor_name': site_1['flavors'][0]}  # Missing site
     ])
     @mark.parametrize('body', indirect=True, argvalues=[

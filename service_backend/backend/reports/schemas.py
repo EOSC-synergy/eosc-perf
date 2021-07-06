@@ -31,13 +31,13 @@ class ReportForBenchmark(Report):
 
 
 class BReportQueryArgs(ReportQueryArgs):
-    benchmark_image = fields.String()
-    benchmark_tag = fields.String()
+    docker_image = fields.String()
+    docker_tag = fields.String()
 
 
 class BenchmarkQueryArgs(Schema):
-    benchmark_image = fields.String()
-    benchmark_tag = fields.String()
+    docker_image = fields.String()
+    docker_tag = fields.String()
 
 
 # Result report schemas --------------
@@ -47,15 +47,15 @@ class ReportForResult(Report):
 
 
 class RReportQueryArgs(ReportQueryArgs):
-    benchmark_image = fields.String()
-    benchmark_tag = fields.String()
+    docker_image = fields.String()
+    docker_tag = fields.String()
     site_name = fields.String()
     flavor_name = fields.String()
 
 
 class ResultQueryArgs(Schema):
-    benchmark_image = fields.String()
-    benchmark_tag = fields.String()
+    docker_image = fields.String()
+    docker_tag = fields.String()
     site_name = fields.String()
     flavor_name = fields.String()
 

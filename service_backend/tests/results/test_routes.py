@@ -2,49 +2,17 @@
 from uuid import uuid4
 
 from pytest import mark
+from tests.elements import (benchmark_1, benchmark_2, benchmark_3, flavor_1,
+                            flavor_2, flavor_3, result_1, result_2, site_1,
+                            site_2, tag_1, tag_2, tag_3)
+
 from . import asserts
 
-
-benchmark_1 = {'docker_image': "b1", 'docker_tag': "latest"}
-benchmark_2 = {'docker_image': "b1", 'docker_tag': "v1.0"}
-benchmark_3 = {'docker_image': "b2", 'docker_tag': "latest"}
-
-site_1 = {'name': "site1", 'address': "address1"}
-site_1['description'] = "Text"
-site_1['flavors'] = ["flavor1", "flavor2", "flavor3"]
-site_1['flavors__description'] = "site1 flavor"
-
-site_2 = {'name': "site2", 'address': "address2"}
-site_2['description'] = "Text"
-site_2['flavors'] = ["flavor1", "flavor2", "flavor3"]
-site_2['flavors__description'] = "site2 flavor"
-
-tag_1 = {'name': "tag1", 'description': "Description"}
-tag_2 = {'name': "tag2", 'description': "Description"}
-
-result_1 = {'json': {'time': 10}}
-result_1['uploader__sub'] = "sub_1"
-result_1['uploader__iss'] = "egi.com"
-result_1['uploader__email'] = "sub_1@email.com"
-result_1['benchmark__docker_image'] = benchmark_1['docker_image']
-result_1['site__name'] = site_1['name']
-result_1['flavor__name'] = site_1['flavors'][0]
-result_1['tags'] = [tag_1, tag_2]
-
-result_2 = {'json': {'time': 12}}
-result_2['uploader__sub'] = "sub_1"
-result_2['benchmark__docker_image'] = benchmark_1['docker_image']
-result_2['site__name'] = site_2['name']
-result_2['flavor__name'] = site_2['flavors'][0]
-result_2['tags'] = [tag_1, tag_2]
-
-
 post_query = {
-    'benchmark_image': benchmark_1['docker_image'],
-    'benchmark_tag': benchmark_1['docker_tag'],
-    'site_name': site_1['name'],
-    'flavor_name': site_1['flavors'][0],
-    'tag_names': [tag['name'] for tag in result_1['tags']]
+    'benchmark_id': benchmark_1['id'],
+    'site_id': site_1['id'],
+    'flavor_id': flavor_1['id'],
+    'tags_ids': [tag['id'] for tag in [tag_1, tag_2]]
 }
 
 
@@ -58,9 +26,10 @@ class TestRoot:
     """Tests for 'Root' route in blueprint."""
 
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'benchmark_image': "b1"},
-        {'site_name': "s1"},
-        {'flavor_name': "f1"},
+        {'docker_image': "b1"},
+        {'docker_tag': "latest"},
+        {'site_name': "site1"},
+        {'flavor_name': "flavor1"},
         {'tag_names': ["tag1", "tag2"]},
         {}  # Multiple results
     ])
@@ -85,7 +54,7 @@ class TestRoot:
     @mark.parametrize('token_iss', [result_1['uploader__iss']], indirect=True)
     @mark.parametrize('query', indirect=True, argvalues=[
         post_query,  # Resource can have multiple results
-        {k: post_query[k] for k in post_query.keys() - {'tags'}}  # No tags
+        {k: post_query[k] for k in post_query.keys() - {'tags_ids'}}
     ])
     @mark.parametrize('body', indirect=True, argvalues=[
         {'json_field_1': "Content", 'time': 10}
@@ -109,10 +78,10 @@ class TestRoot:
     @mark.parametrize('token_sub', [result_1['uploader__sub']], indirect=True)
     @mark.parametrize('token_iss', [result_1['uploader__iss']], indirect=True)
     @mark.parametrize('query', indirect=True, argvalues=[
-        {**post_query, **{'benchmark_image': "not-existing"}},
-        {**post_query, **{'site_name': "not-existing"}},
-        {**post_query, **{'flavor_name': "not-existing"}},
-        {**post_query, **{'tag_names': ["tag1", "not-existing"]}}
+        {**post_query, **{'benchmark_id': uuid4()}},  # Not existing
+        {**post_query, **{'site_id': uuid4()}},     # Not existing
+        {**post_query, **{'flavor_id': uuid4()}},   # Not existing
+        {**post_query, **{'tags_ids': [uuid4(), uuid4()]}}  # Not existing
     ])
     @mark.parametrize('body', indirect=True, argvalues=[
         {'json_field_1': "Content", 'time': 10}
@@ -125,10 +94,9 @@ class TestRoot:
     @mark.parametrize('token_sub', [result_1['uploader__sub']], indirect=True)
     @mark.parametrize('token_iss', [result_1['uploader__iss']], indirect=True)
     @mark.parametrize('query', indirect=True, argvalues=[
-        {k: post_query[k] for k in post_query.keys() - {'benchmark_image'}},
-        {k: post_query[k] for k in post_query.keys() - {'benchmark_tag'}},
-        {k: post_query[k] for k in post_query.keys() - {'site_name'}},
-        {k: post_query[k] for k in post_query.keys() - {'flavor_name'}}
+        {k: post_query[k] for k in post_query.keys() - {'benchmark_id'}},
+        {k: post_query[k] for k in post_query.keys() - {'site_id'}},
+        {k: post_query[k] for k in post_query.keys() - {'flavor_id'}}
     ])
     @mark.parametrize('body', indirect=True, argvalues=[
         {'json_field_1': "Content", 'time': 10}
@@ -138,22 +106,27 @@ class TestRoot:
         assert response_POST.status_code == 422
 
 
-@mark.usefixtures('session')
-@mark.usefixtures('db_benchmarks', 'db_sites', 'db_tags', 'result')
+@mark.usefixtures('session', 'result')
+@mark.usefixtures('db_benchmarks', 'db_sites', 'db_flavors', 'db_tags')
 @mark.parametrize('db_benchmarks', indirect=True, argvalues=[
     [benchmark_1, benchmark_2, benchmark_3]
 ])
 @mark.parametrize('db_sites', indirect=True, argvalues=[
     [site_1, site_2]
 ])
+@mark.parametrize('db_flavors', indirect=True, argvalues=[
+    [flavor_1, flavor_2, flavor_3]
+])
 @mark.parametrize('db_tags', indirect=True, argvalues=[
-    [tag_1, tag_2]
+    [tag_1, tag_2, tag_3]
 ])
 @mark.parametrize('endpoint', ['results.Result'], indirect=True)
 @mark.parametrize('result_id', [uuid4()], indirect=True)
 @mark.parametrize('benchmark__docker_image', [benchmark_1['docker_image']])
+@mark.parametrize('benchmark__docker_tag', [benchmark_1['docker_tag']])
 @mark.parametrize('site__name', [site_1['name']])
-@mark.parametrize('flavor__name', [site_1['flavors'][0]])
+@mark.parametrize('flavor__name', [flavor_1['name']])
+@mark.parametrize('flavor__site_id', [flavor_1['site_id']])
 @mark.parametrize('result__tags', [[tag_1, tag_2]])
 class TestResult:
     """Tests for 'Result' route in blueprint."""
@@ -171,21 +144,23 @@ class TestResult:
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('body', indirect=True, argvalues=[
-        {'benchmark_image': "b2"},
-        {'benchmark_tag': "v1.0"},
-        {'site_name': "site2"},
-        {'flavor_name': "flavor3"},
-        {'tag_names': ["tag1"]}
+        {'benchmark_id': benchmark_2['id']},
+        {'site_id': site_2['id']},
+        {'flavor_id': flavor_2['id']},
+        {'tags_ids': [tag['id'] for tag in [tag_3, tag_2]]}
     ])
     def test_PUT_204(self, response_PUT, response_GET, body):
         """PUT method succeeded 204."""
         assert response_PUT.status_code == 204
         assert response_GET.status_code == 200
         asserts.correct_result(response_GET.json)
-        asserts.match_body(response_GET.json, body)
+        asserts.match_edit(response_GET.json, body)
 
     @mark.parametrize('body', indirect=True, argvalues=[
-        {'benchmark_image': "b2"},
+        {'benchmark_id': benchmark_2['id']},
+        {'site_id': site_2['id']},
+        {'flavor_id': flavor_2['id']},
+        {'tags_ids': [tag['id'] for tag in [tag_3, tag_2]]},
         {}  # Empty body which would fail
     ])
     def test_PUT_401(self, response_PUT):
@@ -194,7 +169,10 @@ class TestResult:
 
     @mark.usefixtures('grant_logged')
     @mark.parametrize('body', indirect=True, argvalues=[
-        {'benchmark_image': "b2"},
+        {'benchmark_id': benchmark_2['id']},
+        {'site_id': site_2['id']},
+        {'flavor_id': flavor_2['id']},
+        {'tags_ids': [tag['id'] for tag in [tag_3, tag_2]]},
         {}  # Empty body which would fail
     ])
     def test_PUT_403(self, response_PUT):
@@ -204,7 +182,10 @@ class TestResult:
     @mark.usefixtures('grant_admin')
     @mark.parametrize('result__id', [uuid4()])
     @mark.parametrize('body', indirect=True, argvalues=[
-        {'benchmark_image': "b2"},
+        {'benchmark_id': benchmark_2['id']},
+        {'site_id': site_2['id']},
+        {'flavor_id': flavor_2['id']},
+        {'tags_ids': [tag['id'] for tag in [tag_3, tag_2]]},
         {}  # Empty body which would fail
     ])
     def test_PUT_404(self, response_PUT):

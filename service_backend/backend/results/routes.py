@@ -1,4 +1,5 @@
 """Result routes."""
+from operator import mod
 from backend.extensions import auth
 from flaat import tokentools
 from flask import request
@@ -33,16 +34,15 @@ class Root(MethodView):
         """Creates a new result."""
         access_token = tokentools.get_access_token_from_request(request)
         token_info = tokentools.get_accesstoken_info(access_token)
-        try:
-            return models.Result.create(
-                uploader_sub=token_info['body']['sub'],
-                uploader_iss=token_info['body']['iss'],
-                json=json, **query_args
-            )
-        except models.db.exc.NoResultFound:
-            abort(404)
-        except models.db.exc.MultipleResultsFound:
-            abort(422, "Provided query returns multiple results")
+        return models.Result.create(
+            uploader_sub=token_info['body']['sub'],
+            uploader_iss=token_info['body']['iss'],
+            json=json,
+            benchmark=models.Benchmark.get_by_id(query_args['benchmark_id']),
+            site=models.Site.get_by_id(query_args['site_id']),
+            flavor=models.Flavor.get_by_id(query_args['flavor_id']),
+            tags=[models.Tag.get_by_id(id) for id in query_args['tags_ids']]
+        )
 
 
 @blp.route('/<uuid:result_id>')
@@ -58,13 +58,25 @@ class Result(MethodView):
     @blp.response(204)
     def put(self, result_id, **kwargs):
         """Updates an existing result."""
-        try:
-            result = models.Result.get_by_id(result_id)
-            result.update(**kwargs)
-        except models.db.exc.NoResultFound:
-            abort(404)
-        except models.db.exc.MultipleResultsFound:
-            abort(422, "Provided relation returns multiple results")
+        result = models.Result.get_by_id(result_id)
+
+        if 'benchmark_id' in kwargs:
+            benchmark_id = kwargs.pop('benchmark_id')
+            kwargs['benchmark'] = models.Benchmark.get_by_id(benchmark_id)
+
+        if 'site_id' in kwargs:
+            site_id = kwargs.pop('site_id')
+            kwargs['site'] = models.Site.get_by_id(site_id)
+
+        if 'flavor_id' in kwargs:
+            flavor_id = kwargs.pop('flavor_id')
+            kwargs['flavor'] = models.Flavor.get_by_id(flavor_id)
+
+        if 'tags_ids' in kwargs:
+            tags_ids = kwargs.pop('tags_ids')
+            kwargs['tags'] = [models.Tag.get_by_id(id) for id in tags_ids]
+
+        result.update(**kwargs)
 
     @auth.admin_required()
     @blp.response(204)

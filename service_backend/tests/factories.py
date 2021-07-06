@@ -83,6 +83,7 @@ class FlavorFactory(SQLAlchemyModelFactory):
         model = Flavor
         sqlalchemy_get_or_create = ('name', 'site_id')
 
+    id = LazyFunction(uuid.uuid4)
     name = Sequence(lambda n: f"flavor{n}")
     description = "Text"
     site_id = None

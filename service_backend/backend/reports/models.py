@@ -53,8 +53,8 @@ class BenchmarkReport(Report):
     id = db.Column(db.UUID, db.ForeignKey('report.id'), primary_key=True)
     benchmark = db.relationship('Benchmark')
     benchmark_id = db.Column(db.ForeignKey('benchmark.id'), nullable=False)
-    benchmark_image = db.association_proxy('benchmark', 'docker_image')
-    benchmark_tag = db.association_proxy('benchmark', 'docker_tag')
+    docker_image = db.association_proxy('benchmark', 'docker_image')
+    docker_tag = db.association_proxy('benchmark', 'docker_tag')
 
     __mapper_args__ = {
         'polymorphic_identity': 'benchmark_report',
@@ -63,8 +63,8 @@ class BenchmarkReport(Report):
     # TODO: See how to simplify using association_proxy
     @classmethod
     def create(
-        cls, uploader_sub, uploader_iss, benchmark_image=None,
-        benchmark_tag=None, **kwargs
+        cls, uploader_sub, uploader_iss, docker_image=None,
+        docker_tag=None, **kwargs
     ):
         """Extends model create adding most relationship important fields.
 
@@ -77,8 +77,8 @@ class BenchmarkReport(Report):
         )
 
         benchmark = Benchmark.filter_by(
-            docker_image=benchmark_image,
-            docker_tag=benchmark_tag
+            docker_image=docker_image,
+            docker_tag=docker_tag
         ).one()
 
         return super().create(
@@ -96,8 +96,8 @@ class ResultReport(Report):
     id = db.Column(db.UUID, db.ForeignKey('report.id'), primary_key=True)
     result = db.relationship('Result')
     result_id = db.Column(db.ForeignKey('result.id'), nullable=False)
-    benchmark_image = db.association_proxy('result', 'benchmark_image')
-    benchmark_tag = db.association_proxy('result', 'benchmark_tag')
+    docker_image = db.association_proxy('result', 'docker_image')
+    docker_tag = db.association_proxy('result', 'docker_tag')
     site_name = db.association_proxy('result', 'site_name')
     flavor_name = db.association_proxy('result', 'flavor_name')
 
@@ -108,8 +108,8 @@ class ResultReport(Report):
     # TODO: See how to simplify using association_proxy
     @classmethod
     def create(
-        cls, uploader_sub, uploader_iss, benchmark_image=None,
-        benchmark_tag=None, site_name=None, flavor_name=None, **kwargs
+        cls, uploader_sub, uploader_iss, docker_image=None,
+        docker_tag=None, site_name=None, flavor_name=None, **kwargs
     ):
         """Extends model create adding most relationship important fields.
 
@@ -122,8 +122,8 @@ class ResultReport(Report):
         )
 
         result = Result.filter_by(
-            benchmark_image=benchmark_image,
-            benchmark_tag=benchmark_tag,
+            docker_image=docker_image,
+            docker_tag=docker_tag,
             site_name=site_name,
             flavor_name=flavor_name
         ).one()

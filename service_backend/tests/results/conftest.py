@@ -46,6 +46,11 @@ def db_sites(request, site_factory):
 
 
 @fixture(scope='function')
+def db_flavors(request, flavor_factory):
+    return [flavor_factory(**kwargs) for kwargs in request.param]
+
+
+@fixture(scope='function')
 def db_tags(request, tag_factory):
     return [tag_factory(**kwargs) for kwargs in request.param]
 
