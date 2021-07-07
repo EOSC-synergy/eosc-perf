@@ -16,6 +16,7 @@ class Site_simple(Schema):
 
 
 class Flavor(Schema):
+    id = fields.UUID(dump_only=True)
     name = fields.String(required=True)
     description = fields.String()
 

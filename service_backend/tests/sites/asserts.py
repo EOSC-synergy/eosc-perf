@@ -25,12 +25,14 @@ def match_site(json, site):
 
 def correct_flavor(json):
     """Checks the json flavor contains the correct attributes."""
+    assert 'id' in json and type(json['id']) is str
     assert 'name' in json and type(json['name']) is str
     assert 'description' in json and type(json['description']) is str
 
 
 def match_flavor(json, flavor):
     """Checks the json elements matches the flavor object."""
+    assert json['id'] == str(flavor.id)
     assert json['name'] == flavor.name
     assert json['description'] == flavor.description
 
