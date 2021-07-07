@@ -1,7 +1,7 @@
 """Result schemas."""
-from backend.benchmarks.schemas import Benchmark_simple
-from backend.sites.schemas import Site_simple, Flavor_simple
-from backend.tags.schemas import Tag_simple
+from backend.benchmarks.schemas import Benchmark
+from backend.sites.schemas import Site, Flavor
+from backend.tags.schemas import Tag
 from marshmallow import Schema, fields, INCLUDE
 
 
@@ -14,10 +14,10 @@ class Result(Schema):
     id = fields.UUID(dump_only=True)
     upload_date = fields.Date(dump_only=True)
     json = fields.Dict(required=True)
-    benchmark = fields.Nested(Benchmark_simple)
-    site = fields.Nested(Site_simple)
-    flavor = fields.Nested(Flavor_simple)
-    tags = fields.Nested(Tag_simple, many=True)
+    benchmark = fields.Nested(Benchmark)
+    site = fields.Nested(Site)
+    flavor = fields.Nested(Flavor)
+    tags = fields.Nested(Tag, many=True)
 
 
 class EditResult(Schema):

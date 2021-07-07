@@ -9,6 +9,8 @@ def correct_user(json):
     assert 'email' in json and type(json['email']) is str
     assert 'created_at' in json and type(json['created_at']) is str
 
+    return True
+
 
 def match_user(json, user):
     """Checks the json elements matches the user object."""
@@ -17,12 +19,16 @@ def match_user(json, user):
     assert json['email'] == user.email
     assert json['created_at'] == str(user.created_at)
 
+    return True
+
 
 def match_query(json, url):
     """Checks the json elements matches the url query."""
     presult = parse.urlparse(url)
     for k, lv in parse.parse_qs(presult.query).items():
         assert lv[0] == json[k]
+
+    return True
 
 
 def match_body(json, body):
@@ -38,3 +44,5 @@ def match_body(json, body):
                 match_body(json[k][n], body[k][n])
         else:
             assert body[k] == json[k]
+
+    return True

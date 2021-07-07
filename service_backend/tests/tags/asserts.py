@@ -8,6 +8,8 @@ def correct_tag(json):
     assert 'name' in json and type(json['name']) is str
     assert 'description' in json and type(json['description']) is str
 
+    return True
+
 
 def match_tag(json, tag):
     """Checks the json elements matches the tag object."""
@@ -15,12 +17,16 @@ def match_tag(json, tag):
     assert json['name'] == tag.name
     assert json['description'] == tag.description
 
+    return True
+
 
 def match_query(json, url):
     """Checks the json elements matches the url query."""
     presult = parse.urlparse(url)
     for k, lv in parse.parse_qs(presult.query).items():
         assert lv[0] == json[k]
+
+    return True
 
 
 def match_body(json, body):
@@ -36,3 +42,5 @@ def match_body(json, body):
                 match_body(json[k][n], body[k][n])
         else:
             assert body[k] == json[k]
+
+    return True

@@ -13,6 +13,8 @@ def correct_site(json):
     for flavor_json in json['flavors']:
         correct_flavor(flavor_json)
 
+    return True
+
 
 def match_site(json, site):
     """Checks the json elements matches the site object."""
@@ -22,12 +24,16 @@ def match_site(json, site):
     for n in range(len(site.flavors)):
         match_flavor(json['flavors'][n], site.flavors[n])
 
+    return True
+
 
 def correct_flavor(json):
     """Checks the json flavor contains the correct attributes."""
     assert 'id' in json and type(json['id']) is str
     assert 'name' in json and type(json['name']) is str
     assert 'description' in json and type(json['description']) is str
+
+    return True
 
 
 def match_flavor(json, flavor):
@@ -36,12 +42,16 @@ def match_flavor(json, flavor):
     assert json['name'] == flavor.name
     assert json['description'] == flavor.description
 
+    return True
+
 
 def match_query(json, url):
     """Checks the json elements matches the url query."""
     presult = parse.urlparse(url)
     for k, lv in parse.parse_qs(presult.query).items():
         assert lv[0] == json[k]
+
+    return True
 
 
 def match_body(json, body):
@@ -58,6 +68,8 @@ def match_body(json, body):
         else:
             assert body[k] == json[k]
 
+    return True
+
 
 def site_has_flavor(json, url):
     """Checks the json elements matches the site object."""
@@ -66,3 +78,5 @@ def site_has_flavor(json, url):
     site = models.Site.get_by_id(site_id)
     flavors_names = [x.name for x in site.flavors]
     assert json['name'] in flavors_names
+
+    return True

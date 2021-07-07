@@ -10,20 +10,10 @@ class Site(Schema):
     flavors = fields.Nested("Flavor", many=True)
 
 
-class Site_simple(Schema):
-    id = fields.UUID(dump_only=True)
-    name = fields.String()
-
-
 class Flavor(Schema):
     id = fields.UUID(dump_only=True)
     name = fields.String(required=True)
     description = fields.String()
-
-
-class Flavor_simple(Schema):
-    id = fields.UUID(dump_only=True)
-    name = fields.String()
 
 
 class EditSite(Schema):

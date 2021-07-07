@@ -10,6 +10,8 @@ def correct_benchmark(json):
     assert 'description' in json and type(json['description']) is str
     assert 'json_template' in json and type(json['json_template']) is dict
 
+    return True
+
 
 def match_benchmark(json, benchmark):
     """Checks the json elements matches the benchmark object."""
@@ -19,6 +21,8 @@ def match_benchmark(json, benchmark):
     assert json['description'] == benchmark.description
     assert json['json_template'] == benchmark.json_template
 
+    return True
+
 
 def match_query(json, url):
     """Checks the json elements matches the url query."""
@@ -26,6 +30,8 @@ def match_query(json, url):
     for k, lv in parse.parse_qs(presult.query).items():
         item = [json[k]] if type(json[k]) is not list else json[k]
         assert lv == item
+
+    return True
 
 
 def match_search(json, url):
@@ -41,6 +47,8 @@ def match_search(json, url):
             json['description'].__contains__(term)
         ])
 
+    return True
+
 
 def match_body(json, body):
     """Checks the json elements matches the body dict."""
@@ -55,3 +63,5 @@ def match_body(json, body):
                 match_body(json[k][n], body[k][n])
         else:
             assert body[k] == json[k]
+
+    return True

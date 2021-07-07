@@ -1,5 +1,8 @@
 """Function asserts for tests"""
 from urllib import parse
+from tests.benchmarks.asserts import correct_benchmark
+from tests.sites.asserts import correct_site, correct_flavor
+from tests.tags.asserts import correct_tag
 
 
 def correct_result(json):
@@ -13,31 +16,7 @@ def correct_result(json):
     assert 'tags' in json and type(json['tags']) is list
     for tag in json['tags']:
         assert correct_tag(tag)
-    return True
 
-
-def correct_benchmark(json):
-    assert 'id' in json and type(json['id']) is str
-    assert 'docker_image' in json and type(json['docker_image']) is str
-    assert 'docker_tag' in json and type(json['docker_tag']) is str
-    return True
-
-
-def correct_site(json):
-    assert 'id' in json and type(json['id']) is str
-    assert 'name' in json and type(json['name']) is str
-    return True
-
-
-def correct_flavor(json):
-    assert 'id' in json and type(json['id']) is str
-    assert 'name' in json and type(json['name']) is str
-    return True
-
-
-def correct_tag(json):
-    assert 'id' in json and type(json['id']) is str
-    assert 'name' in json and type(json['name']) is str
     return True
 
 
@@ -64,6 +43,8 @@ def match_result(json, result):
     assert set(t['id'] for t in tags) == set(str(t.id) for t in result.tags)
     assert set(t['name'] for t in tags) == set(result.tag_names)
 
+    return True
+
 
 def match_query(json, url):
     """Checks the json elements matches the url query."""
@@ -89,6 +70,8 @@ def match_query(json, url):
     tag_names = set(items.get('tag_names', []))
     assert tag_names.issubset(set(x['name'] for x in json['tags']))
 
+    return True
+
 
 def match_search(json, url):
     """Checks the json elements matches the url search."""
@@ -106,6 +89,8 @@ def match_search(json, url):
             any(tag['name'] == term for tag in json['tags'])
         ])
 
+    return True
+
 
 def match_body(json, body):
     """Checks the json elements matches the body dict."""
@@ -118,6 +103,8 @@ def match_body(json, body):
             match_body(json[k], body[k])
     else:
         assert json == body
+
+    return True
 
 
 def match_edit(json, body):
@@ -138,3 +125,5 @@ def match_edit(json, body):
         json_tags = set(t['id'] for t in json['tags'])
         body_tags = set(str(id) for id in body['tags_ids'])
         assert json_tags == body_tags
+
+    return True
