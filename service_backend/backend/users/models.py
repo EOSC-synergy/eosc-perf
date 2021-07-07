@@ -1,19 +1,22 @@
 """User models."""
 from datetime import datetime as dt
 
-from backend.database import BaseModel, db
+from backend.database import BaseModel
+from marshmallow.fields import DateTime
+from sqlalchemy import Column, DateTime, Text, UniqueConstraint
+from sqlalchemy.sql.schema import UniqueConstraint
 
 
 class User(BaseModel):
     """A user of the app."""
 
-    sub = db.Column(db.Text(), primary_key=True, nullable=False)
-    iss = db.Column(db.Text(), primary_key=True, nullable=False)
-    email = db.Column(db.Text(), unique=True, nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False, default=dt.utcnow)
+    sub = Column(Text, primary_key=True, nullable=False)
+    iss = Column(Text, primary_key=True, nullable=False)
+    email = Column(Text, unique=True, nullable=False)
+    created_at = Column(DateTime, nullable=False, default=dt.utcnow)
 
     __table_args__ = (
-        db.UniqueConstraint('sub', 'iss'),
+        UniqueConstraint('sub', 'iss'),
     )
 
     @classmethod

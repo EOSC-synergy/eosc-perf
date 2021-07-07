@@ -1,16 +1,21 @@
 """Result models."""
 from backend.benchmarks.models import Benchmark
-from backend.database import PkModel, db
+from backend.database import PkModel, Table
 from backend.sites.models import Flavor, Site
 from backend.tags.models import Tag
 from backend.users.models import User
-from sqlalchemy import or_
+from sqlalchemy import (Column, ForeignKey, ForeignKeyConstraint,
+                        PrimaryKeyConstraint, Text, or_)
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.orm import relationship
+from sqlalchemy_utils import UUIDType as UUID
 
-tag_association = db.Table(
+tag_association = Table(
     'result_tags',
-    db.Column('result_id', db.UUID, db.ForeignKey('result.id')),
-    db.Column('tag_id', db.UUID, db.ForeignKey('tag.id')),
-    db.PrimaryKeyConstraint('result_id', 'tag_id')
+    Column('result_id', UUID, ForeignKey('result.id')),
+    Column('tag_id', UUID, ForeignKey('tag.id')),
+    PrimaryKeyConstraint('result_id', 'tag_id')
 )
 
 
@@ -20,28 +25,28 @@ class Result(PkModel):
     They carry the JSON data output by the ran benchmarks.
     """
 
-    json = db.Column(db.Jsonb, nullable=False)
-    tags = db.relationship(Tag, secondary=tag_association)
-    tag_names = db.association_proxy('tags', 'name')
+    json = Column(JSONB, nullable=False)
+    tags = relationship(Tag, secondary=tag_association)
+    tag_names = association_proxy('tags', 'name')
 
-    benchmark_id = db.Column(db.ForeignKey('benchmark.id'), nullable=False)
-    benchmark = db.relationship(Benchmark)
-    docker_image = db.association_proxy('benchmark', 'docker_image')
-    docker_tag = db.association_proxy('benchmark', 'docker_tag')
+    benchmark_id = Column(ForeignKey('benchmark.id'), nullable=False)
+    benchmark = relationship(Benchmark)
+    docker_image = association_proxy('benchmark', 'docker_image')
+    docker_tag = association_proxy('benchmark', 'docker_tag')
 
-    site_id = db.Column(db.ForeignKey('site.id'), nullable=False)
-    site = db.relationship(Site)
-    site_name = db.association_proxy('site', 'name')
+    site_id = Column(ForeignKey('site.id'), nullable=False)
+    site = relationship(Site)
+    site_name = association_proxy('site', 'name')
 
-    flavor_id = db.Column(db.ForeignKey('flavor.id'), nullable=False)
-    flavor = db.relationship(Flavor)
-    flavor_name = db.association_proxy('flavor', 'name')
+    flavor_id = Column(ForeignKey('flavor.id'), nullable=False)
+    flavor = relationship(Flavor)
+    flavor_name = association_proxy('flavor', 'name')
 
-    uploader_iss = db.Column(db.Text, nullable=False)
-    uploader_sub = db.Column(db.Text, nullable=False)
-    uploader = db.relationship(User)
-    __table_args__ = (db.ForeignKeyConstraint(['uploader_iss', 'uploader_sub'],
-                                              ['user.iss', 'user.sub']),
+    uploader_iss = Column(Text, nullable=False)
+    uploader_sub = Column(Text, nullable=False)
+    uploader = relationship(User)
+    __table_args__ = (ForeignKeyConstraint(['uploader_iss', 'uploader_sub'],
+                                           ['user.iss', 'user.sub']),
                       {})
 
     def __repr__(self) -> str:

@@ -2,18 +2,13 @@
 import uuid
 
 import flask
-import sqlalchemy
-import sqlalchemy_utils
-from sqlalchemy.ext import associationproxy
+from sqlalchemy import Column
+from sqlalchemy.exc import *
+from sqlalchemy_utils import UUIDType as UUID
 
 from backend.extensions import db
 
-# Extend db types
-db.UUID = sqlalchemy_utils.UUIDType
-db.Json = sqlalchemy.dialects.postgresql.JSON
-db.Jsonb = sqlalchemy.dialects.postgresql.JSONB
-db.exc = sqlalchemy.exc
-db.association_proxy = associationproxy.association_proxy
+Table = db.Table
 
 
 class CRUDMixin(object):
@@ -38,7 +33,7 @@ class CRUDMixin(object):
         if commit:
             try:
                 db.session.commit()
-            except db.exc.IntegrityError:
+            except IntegrityError:
                 flask.abort(409)
         return self
 
@@ -63,7 +58,7 @@ class PkModel(BaseModel):
     """Base model class that includes CRUD convenience methods, 
     plus adds a 'primary key' column named ``id``."""
     __abstract__ = True
-    id = db.Column(db.UUID(binary=False), primary_key=True)
+    id = Column(UUID(binary=False), primary_key=True)
 
     def __init__(self, id=None, **kwargs):
         super().__init__(**kwargs)

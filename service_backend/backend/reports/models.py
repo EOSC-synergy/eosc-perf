@@ -2,10 +2,15 @@
 from datetime import datetime
 
 from backend.benchmarks.models import Benchmark
-from backend.database import PkModel, db
+from backend.database import PkModel
 from backend.results.models import Result
-from backend.sites.models import Site, Flavor
+from backend.sites.models import Flavor, Site
 from backend.users.models import User
+from sqlalchemy import (Boolean, Column, DateTime, ForeignKey,
+                        ForeignKeyConstraint, String, Text)
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.orm import relationship
+from sqlalchemy_utils import UUIDType as UUID
 
 
 class Report(PkModel):
@@ -18,19 +23,19 @@ class Report(PkModel):
     Reports can also be manually generated if users choose to report a result
     from their search results if they suspect it may be falsified or incorrect.
     """
-    date = db.Column(db.DateTime(), nullable=False, default=datetime.now)
-    verified = db.Column(db.Boolean(), nullable=False, default=False)
-    verdict = db.Column(db.Boolean(), nullable=False, default=False)
-    message = db.Column(db.Text(), nullable=True)
-    uploader = db.relationship("User")
+    date = Column(DateTime, nullable=False, default=datetime.now)
+    verified = Column(Boolean, nullable=False, default=False)
+    verdict = Column(Boolean, nullable=False, default=False)
+    message = Column(Text, nullable=True)
+    uploader = relationship("User")
 
-    uploader_iss = db.Column(db.Text(), nullable=False)
-    uploader_sub = db.Column(db.Text(), nullable=False)
-    __table_args__ = (db.ForeignKeyConstraint(['uploader_iss', 'uploader_sub'],
-                                              ['user.iss', 'user.sub']),
+    uploader_iss = Column(Text, nullable=False)
+    uploader_sub = Column(Text, nullable=False)
+    __table_args__ = (ForeignKeyConstraint(['uploader_iss', 'uploader_sub'],
+                                           ['user.iss', 'user.sub']),
                       {})
 
-    type = db.Column(db.String(50))
+    type = Column(String(50))
     __mapper_args__ = {
         'polymorphic_identity': 'report',
         'polymorphic_on': type
@@ -50,11 +55,11 @@ class BenchmarkReport(Report):
 
     These are automatically generated when a benchmark is submitted.
     """
-    id = db.Column(db.UUID, db.ForeignKey('report.id'), primary_key=True)
-    benchmark = db.relationship('Benchmark')
-    benchmark_id = db.Column(db.ForeignKey('benchmark.id'), nullable=False)
-    docker_image = db.association_proxy('benchmark', 'docker_image')
-    docker_tag = db.association_proxy('benchmark', 'docker_tag')
+    id = Column(ForeignKey('report.id'), primary_key=True)
+    benchmark = relationship('Benchmark')
+    benchmark_id = Column(ForeignKey('benchmark.id'), nullable=False)
+    docker_image = association_proxy('benchmark', 'docker_image')
+    docker_tag = association_proxy('benchmark', 'docker_tag')
 
     __mapper_args__ = {
         'polymorphic_identity': 'benchmark_report',
@@ -93,13 +98,13 @@ class ResultReport(Report):
 
     These are normally manually generated.
     """
-    id = db.Column(db.UUID, db.ForeignKey('report.id'), primary_key=True)
-    result = db.relationship('Result')
-    result_id = db.Column(db.ForeignKey('result.id'), nullable=False)
-    docker_image = db.association_proxy('result', 'docker_image')
-    docker_tag = db.association_proxy('result', 'docker_tag')
-    site_name = db.association_proxy('result', 'site_name')
-    flavor_name = db.association_proxy('result', 'flavor_name')
+    id = Column(ForeignKey('report.id'), primary_key=True)
+    result = relationship('Result')
+    result_id = Column(ForeignKey('result.id'), nullable=False)
+    docker_image = association_proxy('result', 'docker_image')
+    docker_tag = association_proxy('result', 'docker_tag')
+    site_name = association_proxy('result', 'site_name')
+    flavor_name = association_proxy('result', 'flavor_name')
 
     __mapper_args__ = {
         'polymorphic_identity': 'result_report',
@@ -140,10 +145,10 @@ class SiteReport(Report):
 
     These are automatically generated when a site is submitted.
     """
-    id = db.Column(db.UUID, db.ForeignKey('report.id'), primary_key=True)
-    site = db.relationship('Site')
-    site_id = db.Column(db.ForeignKey('site.id'), nullable=False)
-    site_name = db.association_proxy('site', 'name')
+    id = Column(ForeignKey('report.id'), primary_key=True)
+    site = relationship('Site')
+    site_id = Column(ForeignKey('site.id'), nullable=False)
+    site_name = association_proxy('site', 'name')
 
     __mapper_args__ = {
         'polymorphic_identity': 'site_report',
@@ -180,13 +185,13 @@ class FlavorReport(Report):
 
     These are automatically generated when a flavor is submitted.
     """
-    id = db.Column(db.UUID, db.ForeignKey('report.id'), primary_key=True)
-    site = db.relationship('Site')
-    site_id = db.Column(db.ForeignKey('site.id'), nullable=False)
-    flavor = db.relationship('Flavor')
-    flavor_id = db.Column(db.ForeignKey('flavor.id'), nullable=False)
-    site_name = db.association_proxy('site', 'name')
-    flavor_name = db.association_proxy('flavor', 'name')
+    id = Column(ForeignKey('report.id'), primary_key=True)
+    site = relationship('Site')
+    site_id = Column(ForeignKey('site.id'), nullable=False)
+    flavor = relationship('Flavor')
+    flavor_id = Column(ForeignKey('flavor.id'), nullable=False)
+    site_name = association_proxy('site', 'name')
+    flavor_name = association_proxy('flavor', 'name')
 
     __mapper_args__ = {
         'polymorphic_identity': 'flavor_report',

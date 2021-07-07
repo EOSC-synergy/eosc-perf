@@ -1,6 +1,6 @@
 """Tag models."""
-from enum import unique
-from backend.database import PkModel, db
+from backend.database import PkModel
+from sqlalchemy import Column, Text
 
 
 class Tag(PkModel):
@@ -13,8 +13,8 @@ class Tag(PkModel):
     may be used to test both.
     """
 
-    name = db.Column(db.Text, unique=True, nullable=False)
-    description = db.Column(db.Text, nullable=False)
+    name = Column(Text, unique=True, nullable=False)
+    description = Column(Text, nullable=False)
 
     def __repr__(self) -> str:
         """Get a human-readable representation string of the tag.

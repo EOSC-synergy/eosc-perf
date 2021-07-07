@@ -1,6 +1,8 @@
 """Site models."""
-from enum import unique
-from backend.database import PkModel, db
+from backend.database import PkModel
+from sqlalchemy import Column, ForeignKey, Text, UniqueConstraint
+from sqlalchemy.orm import relationship
+from sqlalchemy_utils import UUIDType as UUID
 
 
 class Site(PkModel):
@@ -9,10 +11,10 @@ class Site(PkModel):
     This generally refers to the different virtual machine providers.
     """
 
-    name = db.Column(db.Text(), unique=True, nullable=False)
-    address = db.Column(db.Text(), nullable=False)
-    description = db.Column(db.Text(), nullable=True, default="")
-    flavors = db.relationship(
+    name = Column(Text, unique=True, nullable=False)
+    address = Column(Text, nullable=False)
+    description = Column(Text, nullable=True, default="")
+    flavors = relationship(
         "Flavor",
         cascade="all, save-update, delete-orphan")
 
@@ -33,12 +35,12 @@ class Flavor(PkModel):
     custom configuration by the user.
     """
 
-    name = db.Column(db.Text(), nullable=False)
-    description = db.Column(db.Text(), nullable=True, default="")
-    site_id = db.Column(db.UUID, db.ForeignKey('site.id'))
+    name = Column(Text, nullable=False)
+    description = Column(Text, nullable=True, default="")
+    site_id = Column(ForeignKey('site.id'))
 
     __table_args__ = (
-        db.UniqueConstraint('site_id', 'name'),
+        UniqueConstraint('site_id', 'name'),
     )
 
     def __repr__(self) -> str:

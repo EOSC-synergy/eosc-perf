@@ -4,6 +4,7 @@ from flaat import tokentools
 from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
+from backend.database import NoResultFound, MultipleResultsFound
 
 from . import models, schemas
 
@@ -36,9 +37,9 @@ class Benchmarks(MethodView):
                 uploader_iss=token_info['body']['iss'],
                 **{**query_args, **json}
             )
-        except models.db.exc.NoResultFound:
+        except NoResultFound:
             abort(404)
-        except models.db.exc.MultipleResultsFound:
+        except MultipleResultsFound:
             abort(422, "Benchmark not unique")
 
 
@@ -89,9 +90,9 @@ class Results(MethodView):
                 uploader_iss=token_info['body']['iss'],
                 **{**query_args, **json}
             )
-        except models.db.exc.NoResultFound:
+        except NoResultFound:
             abort(404)
-        except models.db.exc.MultipleResultsFound:
+        except MultipleResultsFound:
             abort(422, "Result not unique")
 
 
@@ -142,9 +143,9 @@ class Sites(MethodView):
                 uploader_iss=token_info['body']['iss'],
                 **{**query_args, **json}
             )
-        except models.db.exc.NoResultFound:
+        except NoResultFound:
             abort(404)
-        except models.db.exc.MultipleResultsFound:
+        except MultipleResultsFound:
             abort(422, "Site not unique")
 
 
@@ -195,9 +196,9 @@ class Flavors(MethodView):
                 uploader_iss=token_info['body']['iss'],
                 **{**query_args, **json}
             )
-        except models.db.exc.NoResultFound:
+        except NoResultFound:
             abort(404)
-        except models.db.exc.MultipleResultsFound:
+        except MultipleResultsFound:
             abort(422, "Flavor not unique")
 
 

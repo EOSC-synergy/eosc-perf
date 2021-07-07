@@ -1,6 +1,7 @@
 """Benchmark models."""
-from backend.database import PkModel, db
-from sqlalchemy import or_
+from backend.database import PkModel
+from sqlalchemy import Column, Text, UniqueConstraint, or_
+from sqlalchemy.dialects.postgresql import JSON
 
 
 class Benchmark(PkModel):
@@ -11,13 +12,13 @@ class Benchmark(PkModel):
     their metrics or scoring scale from version to version.
     """
 
-    docker_image = db.Column(db.Text(), nullable=False)
-    docker_tag = db.Column(db.Text(), nullable=False)
-    description = db.Column(db.Text(), default="")
-    json_template = db.Column(db.Json, default={})
+    docker_image = Column(Text, nullable=False)
+    docker_tag = Column(Text, nullable=False)
+    description = Column(Text, default="")
+    json_template = Column(JSON, default={})
 
     __table_args__ = (
-        db.UniqueConstraint('docker_image', 'docker_tag'),
+        UniqueConstraint('docker_image', 'docker_tag'),
     )
 
     def __repr__(self) -> str:
