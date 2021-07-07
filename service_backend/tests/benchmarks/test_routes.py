@@ -16,9 +16,9 @@ class TestRoot:
     """Tests for 'Root' route in blueprint."""
 
     @mark.parametrize('query', indirect=True,  argvalues=[
-        {'docker_image': "b1", 'docker_tag': "t1"},
+        {'docker_image': "b1", 'docker_tag': "v1.0"},
         {'docker_image': "b1"},  # Query with 1 field
-        {'docker_tag': "t1"},    # Query with 1 field
+        {'docker_tag': "v1.0"},    # Query with 1 field
         {}  # All results
     ])
     def test_GET_200(self, response_GET, url):
@@ -88,7 +88,7 @@ class TestSearch:
 
     @mark.parametrize('query', indirect=True,  argvalues=[
         {'terms': ["b1"]},
-        {'terms': ["b1", "t1"]},
+        {'terms': ["b1", "v1.0"]},
         {'terms': []}
     ])
     def test_GET_200(self, response_GET, url):
