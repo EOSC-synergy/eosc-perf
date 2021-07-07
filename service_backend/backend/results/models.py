@@ -1,10 +1,12 @@
 """Result models."""
+from datetime import datetime
+
 from backend.benchmarks.models import Benchmark
 from backend.database import PkModel, Table
 from backend.sites.models import Flavor, Site
 from backend.tags.models import Tag
 from backend.users.models import User
-from sqlalchemy import (Column, ForeignKey, ForeignKeyConstraint,
+from sqlalchemy import (Column, DateTime, ForeignKey, ForeignKeyConstraint,
                         PrimaryKeyConstraint, Text, or_)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -25,6 +27,7 @@ class Result(PkModel):
     They carry the JSON data output by the ran benchmarks.
     """
 
+    upload_date = Column(DateTime, nullable=False, default=datetime.now)
     json = Column(JSONB, nullable=False)
     tags = relationship(Tag, secondary=tag_association)
     tag_names = association_proxy('tags', 'name')

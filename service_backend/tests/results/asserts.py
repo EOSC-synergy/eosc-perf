@@ -1,13 +1,11 @@
 """Function asserts for tests"""
 from urllib import parse
-from backend import results
-
-from backend.results import models
 
 
 def correct_result(json):
     """Checks the json result contains the correct attributes."""
     assert 'id' in json and type(json['id']) is str
+    assert 'upload_date' in json and type(json['upload_date']) is str
     assert 'json' in json and type(json['json']) is dict
     assert 'benchmark' in json and correct_benchmark(json['benchmark'])
     assert 'site' in json and correct_site(json['site'])
@@ -46,6 +44,7 @@ def correct_tag(json):
 def match_result(json, result):
     """Checks the json elements matches the result object."""
     assert json['id'] == str(result.id)
+    assert json['upload_date'] == str(result.upload_date.date())
     assert json['json'] == result.json
 
     benchmark = json['benchmark']

@@ -12,6 +12,7 @@ class Json(Schema):
 
 class Result(Schema):
     id = fields.UUID(dump_only=True)
+    upload_date = fields.Date(dump_only=True)
     json = fields.Dict(required=True)
     benchmark = fields.Nested(Benchmark_simple)
     site = fields.Nested(Site_simple)
