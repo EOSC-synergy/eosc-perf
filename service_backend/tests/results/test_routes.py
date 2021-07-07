@@ -2,9 +2,8 @@
 from uuid import uuid4
 
 from pytest import mark
-from tests.elements import (benchmark_1, benchmark_2, benchmark_3, flavor_1,
-                            flavor_2, flavor_3, result_1, result_2, site_1,
-                            site_2, tag_1, tag_2, tag_3)
+from tests.elements import (benchmark_1, flavor_1, result_1, result_2, site_1,
+                            tag_1, tag_2, tag_3, user_1)
 
 from . import asserts
 
@@ -142,17 +141,8 @@ class TestSearch:
         assert response_GET.status_code == 422
 
 
-@mark.usefixtures('session', 'result')
-@mark.usefixtures('db_benchmarks', 'db_sites', 'db_flavors', 'db_tags')
-@mark.parametrize('db_benchmarks', indirect=True, argvalues=[
-    [benchmark_1, benchmark_2, benchmark_3]
-])
-@mark.parametrize('db_sites', indirect=True, argvalues=[
-    [site_1, site_2]
-])
-@mark.parametrize('db_flavors', indirect=True, argvalues=[
-    [flavor_1, flavor_2, flavor_3]
-])
+@mark.usefixtures('session')
+@mark.usefixtures('db_tags', 'result')
 @mark.parametrize('db_tags', indirect=True, argvalues=[
     [tag_1, tag_2, tag_3]
 ])
@@ -161,8 +151,11 @@ class TestSearch:
 @mark.parametrize('benchmark__docker_image', [benchmark_1['docker_image']])
 @mark.parametrize('benchmark__docker_tag', [benchmark_1['docker_tag']])
 @mark.parametrize('site__name', [site_1['name']])
+@mark.parametrize('site__id', [site_1['id']])
 @mark.parametrize('flavor__name', [flavor_1['name']])
-@mark.parametrize('flavor__site_id', [flavor_1['site_id']])
+@mark.parametrize('flavor__site_id', [site_1['id']])
+@mark.parametrize('user__sub', [user_1['sub']])
+@mark.parametrize('user__iss', [user_1['iss']])
 @mark.parametrize('result__tags', [[tag_1, tag_2]])
 class TestResult:
     """Tests for 'Result' route in blueprint."""
@@ -178,14 +171,26 @@ class TestResult:
         """GET method fails 404 if no id found."""
         assert response_GET.status_code == 404
 
+    @mark.usefixtures('grant_logged', 'mock_token_info')
+    @mark.parametrize('token_sub', [user_1['sub']], indirect=True)
+    @mark.parametrize('token_iss', [user_1['iss']], indirect=True)
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'tags_ids': [tag['id'] for tag in [tag_3, tag_2]]},
+        {'tags_ids': []}    # Delete tags
+    ])
+    def test_PUT_204_as_user(self, response_PUT, response_GET, body):
+        """PUT method succeeded 204."""
+        assert response_PUT.status_code == 204
+        assert response_GET.status_code == 200
+        asserts.correct_result(response_GET.json)
+        asserts.match_edit(response_GET.json, body)
+
     @mark.usefixtures('grant_admin')
     @mark.parametrize('body', indirect=True, argvalues=[
-        {'benchmark_id': benchmark_2['id']},
-        {'site_id': site_2['id']},
-        {'flavor_id': flavor_2['id']},
-        {'tags_ids': [tag['id'] for tag in [tag_3, tag_2]]}
+        {'tags_ids': [tag['id'] for tag in [tag_3, tag_2]]},
+        {'tags_ids': []}    # Delete tags
     ])
-    def test_PUT_204(self, response_PUT, response_GET, body):
+    def test_PUT_204_as_admin(self, response_PUT, response_GET, body):
         """PUT method succeeded 204."""
         assert response_PUT.status_code == 204
         assert response_GET.status_code == 200
@@ -193,9 +198,6 @@ class TestResult:
         asserts.match_edit(response_GET.json, body)
 
     @mark.parametrize('body', indirect=True, argvalues=[
-        {'benchmark_id': benchmark_2['id']},
-        {'site_id': site_2['id']},
-        {'flavor_id': flavor_2['id']},
         {'tags_ids': [tag['id'] for tag in [tag_3, tag_2]]},
         {}  # Empty body which would fail
     ])
@@ -205,9 +207,6 @@ class TestResult:
 
     @mark.usefixtures('grant_logged')
     @mark.parametrize('body', indirect=True, argvalues=[
-        {'benchmark_id': benchmark_2['id']},
-        {'site_id': site_2['id']},
-        {'flavor_id': flavor_2['id']},
         {'tags_ids': [tag['id'] for tag in [tag_3, tag_2]]},
         {}  # Empty body which would fail
     ])
@@ -218,9 +217,6 @@ class TestResult:
     @mark.usefixtures('grant_admin')
     @mark.parametrize('result__id', [uuid4()])
     @mark.parametrize('body', indirect=True, argvalues=[
-        {'benchmark_id': benchmark_2['id']},
-        {'site_id': site_2['id']},
-        {'flavor_id': flavor_2['id']},
         {'tags_ids': [tag['id'] for tag in [tag_3, tag_2]]},
         {}  # Empty body which would fail
     ])

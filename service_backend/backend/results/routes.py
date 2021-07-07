@@ -71,30 +71,24 @@ class Result(MethodView):
         """Retrieves result details."""
         return models.Result.get_by_id(result_id)
 
-    @auth.admin_required()
-    @blp.arguments(schemas.EditResult, as_kwargs=True)
+    @auth.login_required()
+    @blp.arguments(schemas.TagsIds, as_kwargs=True)
     @blp.response(204)
-    def put(self, result_id, **kwargs):
-        """Updates an existing result."""
+    def put(self, result_id, tags_ids=None):
+        """Updates an existing result tags."""
+        access_token = tokentools.get_access_token_from_request(request)
+        token_info = tokentools.get_accesstoken_info(access_token)
         result = models.Result.get_by_id(result_id)
-
-        if 'benchmark_id' in kwargs:
-            benchmark_id = kwargs.pop('benchmark_id')
-            kwargs['benchmark'] = models.Benchmark.get_by_id(benchmark_id)
-
-        if 'site_id' in kwargs:
-            site_id = kwargs.pop('site_id')
-            kwargs['site'] = models.Site.get_by_id(site_id)
-
-        if 'flavor_id' in kwargs:
-            flavor_id = kwargs.pop('flavor_id')
-            kwargs['flavor'] = models.Flavor.get_by_id(flavor_id)
-
-        if 'tags_ids' in kwargs:
-            tags_ids = kwargs.pop('tags_ids')
-            kwargs['tags'] = [models.Tag.get_by_id(id) for id in tags_ids]
-
-        result.update(**kwargs)
+        valid_uploader = all([
+            result.uploader_iss == token_info['body']['iss'],
+            result.uploader_sub == token_info['body']['sub']
+        ])
+        if auth.valid_admin() or valid_uploader:
+            if tags_ids != None:  # Empty list should pass
+                tags = [models.Tag.get_by_id(id) for id in tags_ids]
+                result.update(tags=tags)
+        else:
+            abort(403)
 
     @auth.admin_required()
     @blp.response(204)

@@ -1,7 +1,7 @@
 """Result schemas."""
 from backend.benchmarks.schemas import Benchmark
 from backend.sites.schemas import Site, Flavor
-from backend.tags.schemas import Tag
+from backend.tags.schemas import Tag, TagsIds
 from marshmallow import Schema, fields, INCLUDE
 
 
@@ -18,14 +18,6 @@ class Result(Schema):
     site = fields.Nested(Site)
     flavor = fields.Nested(Flavor)
     tags = fields.Nested(Tag, many=True)
-
-
-class EditResult(Schema):
-    json = fields.Dict()
-    benchmark_id = fields.UUID(load_only=True)
-    site_id = fields.UUID(load_only=True)
-    flavor_id = fields.UUID(load_only=True)
-    tags_ids = fields.List(fields.UUID, load_only=True)
 
 
 class FilterQueryArgs(Schema):
