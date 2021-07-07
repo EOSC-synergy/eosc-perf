@@ -23,7 +23,7 @@ def correct_result(json):
 def match_result(json, result):
     """Checks the json elements matches the result object."""
     assert json['id'] == str(result.id)
-    assert json['upload_date'] == str(result.upload_date.date())
+    assert json['upload_date'] == str(result.upload_date).replace(" ","T")
     assert json['json'] == result.json
 
     benchmark = json['benchmark']
