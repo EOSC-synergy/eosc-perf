@@ -32,6 +32,8 @@ class TestRoot:
         {'site_name': result_1["site__name"]},
         {'flavor_name': result_1["flavor__name"]},
         {'tag_names': [tag['name'] for tag in result_1["tags"]]},
+        {'upload_before': "3000-01-01"},
+        {'upload_after': "2000-01-01"},
         {}  # Multiple results
     ])
     def test_GET_200(self, response_GET, url):

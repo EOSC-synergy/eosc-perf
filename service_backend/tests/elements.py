@@ -1,5 +1,6 @@
 """Module with db elements specifications for factories"""
 from uuid import uuid4
+from datetime import date, datetime
 
 
 # Tags specifications
@@ -89,6 +90,7 @@ def sub_user(user, element):
 
 # Result specifications
 result_1 = {'id': uuid4(), 'json': {'time': 10}}
+result_1['upload_date'] = datetime(2000,1,1)
 result_1['tags'] = [tag_1, tag_2]
 sub_benchmark(benchmark_1, result_1)
 sub_site(site_1, result_1)
@@ -96,6 +98,7 @@ sub_flavor(flavor_1, result_1)
 sub_user(user_1, result_1)
 
 result_2 = {'id': uuid4(), 'json': {'time': 12}}
+result_2['upload_date'] = datetime(2010,1,1)
 result_2['tags'] = [tag_1, tag_2]
 sub_benchmark(benchmark_1, result_2)
 sub_site(site_2, result_2)

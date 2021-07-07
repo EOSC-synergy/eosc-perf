@@ -35,6 +35,8 @@ class FilterQueryArgs(Schema):
     site_name = fields.String()
     flavor_name = fields.String()
     tag_names = fields.List(fields.String())
+    upload_before = fields.Date(attribute="before")
+    upload_after = fields.Date(attribute="after")
 
 
 class CreateQueryArgs(Schema):

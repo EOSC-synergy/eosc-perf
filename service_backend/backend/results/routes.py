@@ -19,11 +19,19 @@ class Root(MethodView):
 
     @blp.arguments(schemas.FilterQueryArgs, location='query', as_kwargs=True)
     @blp.response(200, schemas.Result(many=True))
-    def get(self, tag_names=None, **kwargs):
+    def get(self, tag_names=None, before=None, after=None, **kwargs):
         """Filters and list results."""
         query = models.Result.query.filter_by(**kwargs)
+
         if type(tag_names) == list:
             query = query.filter(models.Result.tag_names.in_(tag_names))
+
+        if before:
+            query = query.filter(models.Result.upload_date < before)
+
+        if after:
+            query = query.filter(models.Result.upload_date > after)
+
         return query.all()
 
     @auth.login_required()
