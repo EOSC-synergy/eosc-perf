@@ -3,6 +3,7 @@ from uuid import uuid4
 
 from pytest import mark
 from tests.elements import flavor_1, flavor_2, flavor_3, site_1, site_2
+from backend.sites import models
 
 from . import asserts
 
@@ -81,6 +82,7 @@ class TestRoot:
 @mark.usefixtures('session', 'site')
 @mark.parametrize('endpoint', ['sites.Site'], indirect=True)
 @mark.parametrize('site_id', [uuid4()], indirect=True)
+@mark.parametrize('site__flavors', [["f1", "f2"]])
 class TestSite:
     """Tests for 'Site' route in blueprint."""
 
@@ -133,20 +135,28 @@ class TestSite:
         assert response_PUT.status_code == 422
 
     @mark.usefixtures('grant_admin')
-    def test_DELETE_204(self, response_DELETE, response_GET):
+    def test_DELETE_204(self, site, response_DELETE):
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
-        assert response_GET.status_code == 404
+        assert models.Site.query.get(site.id) == None
+        for flavor in site.flavors:  # Flavors are removed
+            assert models.Flavor.query.get(flavor.id) == None
 
-    def test_DELETE_401(self, response_DELETE):
+    def test_DELETE_401(self, site, response_DELETE):
         """DELETE method fails 401 if not authorized."""
         assert response_DELETE.status_code == 401
+        assert models.Site.query.get(site.id) != None
+        for flavor in site.flavors:  # Flavors exist
+            assert models.Flavor.query.get(flavor.id) != None
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('site__id', [uuid4()])
-    def test_DELETE_404(self, response_DELETE):
+    def test_DELETE_404(self, site, response_DELETE):
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404
+        assert models.Site.query.get(site.id) != None
+        for flavor in site.flavors:  # Flavors exist
+            assert models.Flavor.query.get(flavor.id) != None
 
 
 @mark.usefixtures('session', 'db_sites', 'db_flavors')
