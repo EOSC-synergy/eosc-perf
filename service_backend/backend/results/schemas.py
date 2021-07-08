@@ -2,6 +2,7 @@
 from backend.benchmarks.schemas import Benchmark
 from backend.sites.schemas import Site, Flavor
 from backend.tags.schemas import Tag, TagsIds
+from backend.users.schemas import User
 from marshmallow import Schema, fields, INCLUDE
 
 

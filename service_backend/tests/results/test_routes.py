@@ -247,3 +247,35 @@ class TestResult:
     def test_DELETE_404(self, response_DELETE):
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404
+
+
+@mark.usefixtures('session', 'result', 'user')
+@mark.parametrize('endpoint', ['results.Uploader'], indirect=True)
+@mark.parametrize('result_id', [uuid4()], indirect=True)
+@mark.parametrize('user__sub', [user_1['sub']])
+@mark.parametrize('user__iss', [user_1['iss']])
+@mark.parametrize('user__email', [user_1['email']])
+class TestUploader:
+    """Tests for 'Uploader' route in blueprint."""
+
+    @mark.usefixtures('grant_admin')
+    def test_GET_200(self, user, response_GET):
+        """GET method succeeded 200."""
+        assert response_GET.status_code == 200
+        asserts.correct_user(response_GET.json)
+        asserts.match_user(response_GET.json, user)
+
+    def test_GET_401(self, response_GET):
+        """GET method fails 401 if not authorized."""
+        assert response_GET.status_code == 401
+
+    @mark.usefixtures('grant_logged')
+    def test_GET_403(self, response_GET):
+        """GET method fails 403 if forbidden."""
+        assert response_GET.status_code == 403
+
+    @mark.usefixtures('grant_admin')
+    @mark.parametrize('result__id', [uuid4()])
+    def test_GET_404(self, response_GET):
+        """GET method fails 404 if no id found."""
+        assert response_GET.status_code == 404

@@ -95,3 +95,13 @@ class Result(MethodView):
     def delete(self, result_id):
         """Deletes an existing result."""
         models.Result.get_by_id(result_id).delete()
+
+
+@blp.route('/<uuid:result_id>/uploader')
+class Uploader(MethodView):
+
+    @auth.admin_required()
+    @blp.response(200, schemas.User)
+    def get(self, result_id):
+        """Retrieves result uploader."""
+        return models.Result.get_by_id(result_id).uploader

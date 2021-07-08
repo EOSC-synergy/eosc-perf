@@ -3,6 +3,7 @@ from urllib import parse
 from tests.benchmarks.asserts import correct_benchmark
 from tests.sites.asserts import correct_site, correct_flavor
 from tests.tags.asserts import correct_tag
+from tests.users.asserts import correct_user, match_user
 
 
 def correct_result(json):
@@ -23,7 +24,7 @@ def correct_result(json):
 def match_result(json, result):
     """Checks the json elements matches the result object."""
     assert json['id'] == str(result.id)
-    assert json['upload_date'] == str(result.upload_date).replace(" ","T")
+    assert json['upload_date'] == str(result.upload_date).replace(" ", "T")
     assert json['json'] == result.json
 
     benchmark = json['benchmark']
