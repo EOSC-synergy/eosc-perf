@@ -9,9 +9,7 @@ def correct_site(json):
     assert 'id' in json and type(json['id']) is str
     assert 'name' in json and type(json['name']) is str
     assert 'address' in json and type(json['address']) is str
-    assert 'flavors' in json
-    for flavor_json in json['flavors']:
-        correct_flavor(flavor_json)
+    assert 'description' in json and type(json['description']) is str
 
     return True
 
@@ -21,8 +19,7 @@ def match_site(json, site):
     assert json['id'] == str(site.id)
     assert json['name'] == site.name
     assert json['address'] == site.address
-    for n in range(len(site.flavors)):
-        match_flavor(json['flavors'][n], site.flavors[n])
+    assert json['description'] == site.description
 
     return True
 

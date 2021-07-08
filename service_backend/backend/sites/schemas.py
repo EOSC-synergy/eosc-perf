@@ -7,7 +7,6 @@ class Site(Schema):
     name = fields.String(required=True)
     address = fields.String(required=True)
     description = fields.String()
-    flavors = fields.Nested("Flavor", many=True)
 
 
 class Flavor(Schema):
@@ -19,6 +18,7 @@ class Flavor(Schema):
 class EditSite(Schema):
     name = fields.String()
     address = fields.String()
+    description = fields.String()
 
 
 class EditFlavor(Schema):

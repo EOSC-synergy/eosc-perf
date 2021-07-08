@@ -41,10 +41,7 @@ class TestRoot:
     @mark.usefixtures('grant_logged')
     @mark.parametrize('body', indirect=True, argvalues=[
         {'name': "s3", 'address': "addr2", 'description': "Text"},
-        {'name': "s3", 'address': "addr2", 'flavors': [
-            {'name': 'f1', 'description': "text"},
-            {'name': 'f2', 'description': "text"}
-        ]}
+        {'name': "s3", 'address': "addr2"}
     ])
     def test_POST_201(self, response_POST, url, body):
         """POST method succeeded 201."""
