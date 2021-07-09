@@ -235,8 +235,7 @@ class TestFlavors:
 
 @mark.usefixtures('session', 'site', 'flavor')
 @mark.parametrize('endpoint', ['sites.Flavor'], indirect=True)
-@mark.parametrize('site_id', [uuid4()], indirect=True)
-@mark.parametrize('flavor_name', ["f1"], indirect=True)
+@mark.parametrize('flavor_id', [uuid4()], indirect=True)
 class TestFlavor:
     """Tests for 'Flavor' route in blueprint."""
 
@@ -246,15 +245,17 @@ class TestFlavor:
         asserts.correct_flavor(response_GET.json)
         asserts.match_flavor(response_GET.json, flavor)
 
-    @mark.parametrize('flavor__name', ["f2"])
+    @mark.parametrize('flavor__id', [uuid4()])
     def test_GET_404(self, response_GET):
         """GET method fails 404 if no id found."""
         assert response_GET.status_code == 404
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('body', indirect=True, argvalues=[
+        {'name': "new_name", 'description': "new_text"},
+        {'name': "new_name"},
         {'description': "new_text"},
-        {}  # Note, edit name changes url for response_GET
+        {}
     ])
     def test_PUT_204(self, response_PUT, response_GET, body):
         """PUT method succeeded 204."""
@@ -270,7 +271,7 @@ class TestFlavor:
         assert response_PUT.status_code == 401
 
     @mark.usefixtures('grant_admin')
-    @mark.parametrize('flavor__name', ["f2"])
+    @mark.parametrize('flavor__id', [uuid4()])
     @mark.parametrize('body', indirect=True, argvalues=[
         {'description': "new_text"}
     ])
@@ -298,7 +299,7 @@ class TestFlavor:
         assert models.Flavor.query.get(flavor.id) != None
 
     @mark.usefixtures('grant_admin')
-    @mark.parametrize('flavor__name', ["f2"])
+    @mark.parametrize('flavor__id', [uuid4()])
     def test_DELETE_404(self, flavor, response_DELETE):
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404

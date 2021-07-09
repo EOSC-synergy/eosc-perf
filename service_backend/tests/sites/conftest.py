@@ -21,32 +21,26 @@ def site__id(site_id):
 
 
 @fixture(scope='function')
-def flavor_name(request):
-    """Override flavor name as a separate fixture."""
+def flavor_id(request):
+    """Override flavor id as a separate fixture."""
     return request.param if hasattr(request, 'param') else None
 
 
 @fixture(scope='function')
-def flavor__name(flavor_name):
-    """Use, if defined, the name for the flavor factory."""
-    return flavor_name
+def flavor__id(flavor_id):
+    """Use, if defined, the id for the flavor factory."""
+    return flavor_id
 
 
 @fixture(scope='function')
-def url(endpoint, site_id, flavor_name, query):
+def url(endpoint, site_id, flavor_id, query):
     """Fixture that return the url for the request."""
-    return url_for(endpoint, site_id=site_id, flavor_name=flavor_name, **query)
+    return url_for(endpoint, site_id=site_id, flavor_id=flavor_id, **query)
 
 
 @fixture(scope='function')
 def db_sites(request, site_factory):
     return [site_factory(**kwargs) for kwargs in request.param]
-
-
-@fixture(scope='function')
-def flavor(flavor_factory, flavor__name, site):
-    flavor = flavor_factory(site_id=site.id, name=flavor__name)
-    return flavor
 
 
 @fixture(scope='function')

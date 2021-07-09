@@ -78,28 +78,23 @@ class Flavors(MethodView):
         return flavor
 
 
-@blp.route('/<uuid:site_id>/flavors/<string:flavor_name>')
+@blp.route('/flavors/<uuid:flavor_id>')
 class Flavor(MethodView):
 
     @blp.response(200, schemas.Flavor)
-    def get(self, site_id, flavor_name):
+    def get(self, flavor_id):
         """Retrieves flavor details."""
-        flavors = models.Flavor.filter_by(site_id=site_id, name=flavor_name)
-        return flavors.first_or_404()
+        return models.Flavor.get_by_id(id=flavor_id)
 
     @auth.admin_required()
     @blp.arguments(schemas.EditFlavor, as_kwargs=True)
     @blp.response(204)
-    def put(self, site_id, flavor_name, **kwargs):
+    def put(self, flavor_id, **kwargs):
         """Updates an existing site."""
-        flavors = models.Flavor.filter_by(site_id=site_id, name=flavor_name)
-        flavor = flavors.first_or_404()
-        flavor.update(**kwargs)
+        models.Flavor.get_by_id(id=flavor_id).update(**kwargs)
 
     @auth.admin_required()
     @blp.response(204)
-    def delete(self, site_id, flavor_name):
+    def delete(self, flavor_id):
         """Deletes an existing site."""
-        flavors = models.Flavor.filter_by(site_id=site_id, name=flavor_name)
-        flavor = flavors.first_or_404()
-        flavor.delete()
+        models.Flavor.get_by_id(id=flavor_id).delete()
