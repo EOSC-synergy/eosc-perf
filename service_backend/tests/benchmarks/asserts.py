@@ -1,5 +1,7 @@
 """Function asserts for tests"""
 from urllib import parse
+from backend import benchmarks
+from backend.benchmarks import models
 
 
 def correct_benchmark(json):
@@ -13,13 +15,20 @@ def correct_benchmark(json):
     return True
 
 
-def match_benchmark(json, benchmark):
+def match_benchmark(json, benchmark=None):
     """Checks the json elements matches the benchmark object."""
     assert json['id'] == str(benchmark.id)
     assert json['docker_image'] == benchmark.docker_image
     assert json['docker_tag'] == benchmark.docker_tag
     assert json['description'] == benchmark.description
     assert json['json_template'] == benchmark.json_template
+
+    return True
+
+
+def match_benchmark_in_db(json):
+    db_benchmark = models.Benchmark.query.get(json['id'])
+    assert match_benchmark(json, db_benchmark)
 
     return True
 

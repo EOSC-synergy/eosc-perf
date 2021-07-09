@@ -1,7 +1,9 @@
 """Function asserts for tests"""
 from urllib import parse
+
+from backend.results import models
 from tests.benchmarks.asserts import correct_benchmark
-from tests.sites.asserts import correct_site, correct_flavor
+from tests.sites.asserts import correct_flavor, correct_site
 from tests.tags.asserts import correct_tag
 from tests.users.asserts import correct_user, match_user
 
@@ -43,6 +45,13 @@ def match_result(json, result):
     tags = json['tags']
     assert set(t['id'] for t in tags) == set(str(t.id) for t in result.tags)
     assert set(t['name'] for t in tags) == set(result.tag_names)
+
+    return True
+
+
+def match_result_in_db(json):
+    db_result = models.Result.query.get(json['id'])
+    assert match_result(json, db_result)
 
     return True
 

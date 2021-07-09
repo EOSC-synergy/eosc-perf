@@ -1,6 +1,7 @@
 """Function asserts for tests"""
 from urllib import parse
 
+from backend.reports import models
 from tests.benchmarks.asserts import correct_benchmark, match_benchmark
 from tests.results.asserts import correct_result, match_result
 from tests.sites.asserts import (correct_flavor, correct_site, match_flavor,
@@ -62,10 +63,24 @@ def match_benchmark_report(json, report):
     return True
 
 
+def match_benchmark_report_in_db(json):
+    db_benchmark_report = models.BenchmarkReport.query.get(json['id'])
+    assert match_benchmark_report(json, db_benchmark_report)
+
+    return True
+
+
 def match_result_report(json, report):
     """Checks the json elements matches the report object."""
     match_report(json, report)
     match_result(json['result'], report.result)
+
+    return True
+
+
+def match_result_report_in_db(json):
+    db_result_report = models.ResultReport.query.get(json['id'])
+    assert match_result_report(json, db_result_report)
 
     return True
 
@@ -78,11 +93,25 @@ def match_site_report(json, report):
     return True
 
 
+def match_site_report_in_db(json):
+    db_site_report = models.SiteReport.query.get(json['id'])
+    assert match_site_report(json, db_site_report)
+
+    return True
+
+
 def match_flavor_report(json, report):
     """Checks the json elements matches the report object."""
     match_report(json, report)
     match_site(json['site'], report.site)
     match_flavor(json['flavor'], report.flavor)
+
+    return True
+
+
+def match_flavor_report_in_db(json):
+    db_flavor_report = models.FlavorReport.query.get(json['id'])
+    assert match_flavor_report(json, db_flavor_report)
 
     return True
 

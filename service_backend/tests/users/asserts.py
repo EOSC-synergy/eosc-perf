@@ -1,5 +1,6 @@
 """Function asserts for tests"""
 from urllib import parse
+from backend.users import models
 
 
 def correct_user(json):
@@ -18,6 +19,14 @@ def match_user(json, user):
     assert json['iss'] == user.iss
     assert json['email'] == user.email
     assert json['created_at'] == str(user.created_at)
+
+    return True
+
+
+def match_user_in_db(json):
+    user_key = (json['sub'], json['iss'])
+    db_user = models.User.query.get(user_key)
+    assert match_user(json, db_user)
 
     return True
 

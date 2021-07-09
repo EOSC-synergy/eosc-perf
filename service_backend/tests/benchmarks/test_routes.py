@@ -1,6 +1,7 @@
 """Functional tests using pytest-flask."""
 from uuid import uuid4
 
+from backend.benchmarks import models
 from pytest import mark
 from tests.elements import benchmark_1, benchmark_2, benchmark_3
 
@@ -49,6 +50,7 @@ class TestRoot:
         asserts.correct_benchmark(response_POST.json)
         asserts.match_query(response_POST.json, url)
         asserts.match_body(response_POST.json, body)
+        asserts.match_benchmark_in_db(response_POST.json)
 
     @mark.parametrize('body', [
         {'docker_image': "b1", 'docker_tag': "t3"},
@@ -164,22 +166,25 @@ class TestId:
         assert response_PUT.status_code == 422
 
     @mark.usefixtures('grant_admin')
-    def test_DELETE_204(self, response_DELETE, response_GET):
+    def test_DELETE_204(self, benchmark, response_DELETE):
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
-        assert response_GET.status_code == 404
+        assert models.Benchmark.query.get(benchmark.id) == None
 
-    def test_DELETE_401(self, response_DELETE):
+    def test_DELETE_401(self, benchmark, response_DELETE):
         """DELETE method fails 401 if not authorized."""
         assert response_DELETE.status_code == 401
+        assert models.Benchmark.query.get(benchmark.id) != None
 
     @mark.usefixtures('grant_logged')
-    def test_DELETE_403(self, response_PUT):
+    def test_DELETE_403(self, benchmark, response_PUT):
         """DELETE method fails 403 if method forbidden."""
         assert response_PUT.status_code == 403
+        assert models.Benchmark.query.get(benchmark.id) != None
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('benchmark__id', [uuid4()])
-    def test_DELETE_404(self, response_DELETE):
+    def test_DELETE_404(self, benchmark, response_DELETE):
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404
+        assert models.Benchmark.query.get(benchmark.id) != None

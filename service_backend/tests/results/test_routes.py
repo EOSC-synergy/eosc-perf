@@ -1,6 +1,8 @@
 """Functional tests using pytest-flask."""
 from uuid import uuid4
+from backend import results
 
+from backend.results import models
 from pytest import mark
 from tests.elements import (benchmark_1, flavor_1, result_1, result_2, site_1,
                             tag_1, tag_2, tag_3, user_1)
@@ -68,6 +70,7 @@ class TestRoot:
         asserts.correct_result(response_POST.json)
         asserts.match_query(response_POST.json, url)
         asserts.match_body(response_POST.json['json'], body)
+        asserts.match_result_in_db(response_POST.json)
 
     @mark.parametrize('body', indirect=True, argvalues=[
         {'json_field_1': "Content", 'time': 10},
@@ -233,20 +236,22 @@ class TestResult:
         assert response_PUT.status_code == 422
 
     @mark.usefixtures('grant_admin')
-    def test_DELETE_204(self, response_DELETE, response_GET):
+    def test_DELETE_204(self, result, response_DELETE):
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
-        assert response_GET.status_code == 404
+        assert models.Result.query.get(result.id) == None
 
-    def test_DELETE_401(self, response_DELETE):
+    def test_DELETE_401(self, result, response_DELETE):
         """DELETE method fails 401 if not authorized."""
         assert response_DELETE.status_code == 401
+        assert models.Result.query.get(result.id) != None
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('result__id', [uuid4()])
-    def test_DELETE_404(self, response_DELETE):
+    def test_DELETE_404(self, result, response_DELETE):
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404
+        assert models.Result.query.get(result.id) != None
 
 
 @mark.usefixtures('session', 'result', 'user')

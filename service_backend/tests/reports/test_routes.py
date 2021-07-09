@@ -1,7 +1,10 @@
 """Functional tests using pytest-flask."""
 from datetime import date
+from operator import mod
 from uuid import uuid4
+from backend import reports
 
+from backend.reports import models
 from pytest import mark
 from tests.elements import (benchmark_1, benchmark_2, flavor_1, flavor_2,
                             site_1, site_2, user_1)
@@ -45,6 +48,7 @@ class TestBenchmarkReports:
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
+        assert response_GET.json != []
         for element in response_GET.json:
             asserts.correct_benchmark_report(element)
             asserts.match_query(element, url)
@@ -88,6 +92,7 @@ class TestBenchmarkReports:
         asserts.correct_benchmark_report(response_POST.json)
         asserts.match_query(response_POST.json, url)
         asserts.match_body(response_POST.json, body)
+        asserts.match_benchmark_report_in_db(response_POST.json)
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'docker_image': benchmark_1["docker_image"],
@@ -193,20 +198,22 @@ class TestBenchmarkReport:
         assert response_PUT.status_code == 422
 
     @mark.usefixtures('grant_admin')
-    def test_DELETE_204(self, response_DELETE, response_GET):
+    def test_DELETE_204(self, benchmark_report, response_DELETE):
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
-        assert response_GET.status_code == 404
+        assert models.BenchmarkReport.query.get(benchmark_report.id) == None
 
-    def test_DELETE_401(self, response_DELETE):
+    def test_DELETE_401(self, benchmark_report, response_DELETE):
         """DELETE method fails 401 if not authorized."""
         assert response_DELETE.status_code == 401
+        assert models.BenchmarkReport.query.get(benchmark_report.id) != None
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('benchmark_report__id', [uuid4()])
-    def test_DELETE_404(self, response_DELETE):
+    def test_DELETE_404(self, benchmark_report, response_DELETE):
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404
+        assert models.BenchmarkReport.query.get(benchmark_report.id) != None
 
 
 report_1 = {'verified': True, 'verdict': True}
@@ -254,6 +261,7 @@ class TestResultReports:
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
+        assert response_GET.json != []
         for element in response_GET.json:
             asserts.correct_result_report(element)
             asserts.match_query(element, url)
@@ -299,6 +307,7 @@ class TestResultReports:
         asserts.correct_result_report(response_POST.json)
         asserts.match_query(response_POST.json, url)
         asserts.match_body(response_POST.json, body)
+        asserts.match_result_report_in_db(response_POST.json)
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'docker_image': benchmark_1['docker_image'],
@@ -408,20 +417,22 @@ class TestResultReport:
         assert response_PUT.status_code == 422
 
     @mark.usefixtures('grant_admin')
-    def test_DELETE_204(self, response_DELETE, response_GET):
+    def test_DELETE_204(self, result_report, response_DELETE):
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
-        assert response_GET.status_code == 404
+        assert models.ResultReport.query.get(result_report.id) == None
 
-    def test_DELETE_401(self, response_DELETE):
+    def test_DELETE_401(self, result_report, response_DELETE):
         """DELETE method fails 401 if not authorized."""
         assert response_DELETE.status_code == 401
+        assert models.ResultReport.query.get(result_report.id) != None
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('result_report__id', [uuid4()])
-    def test_DELETE_404(self, response_DELETE):
+    def test_DELETE_404(self, result_report, response_DELETE):
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404
+        assert models.ResultReport.query.get(result_report.id) != None
 
 
 report_1 = {'verified': True, 'verdict': True}
@@ -461,6 +472,7 @@ class TestSiteReports:
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
+        assert response_GET.json != []
         for element in response_GET.json:
             asserts.correct_site_report(element)
             asserts.match_query(element, url)
@@ -503,6 +515,7 @@ class TestSiteReports:
         asserts.correct_site_report(response_POST.json)
         asserts.match_query(response_POST.json, url)
         asserts.match_body(response_POST.json, body)
+        asserts.match_site_report_in_db(response_POST.json)
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'site_name': site_1['name']}
@@ -604,20 +617,22 @@ class TestSiteReport:
         assert response_PUT.status_code == 422
 
     @mark.usefixtures('grant_admin')
-    def test_DELETE_204(self, response_DELETE, response_GET):
+    def test_DELETE_204(self, site_report, response_DELETE):
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
-        assert response_GET.status_code == 404
+        assert models.SiteReport.query.get(site_report.id) == None
 
-    def test_DELETE_401(self, response_DELETE):
+    def test_DELETE_401(self, site_report, response_DELETE):
         """DELETE method fails 401 if not authorized."""
         assert response_DELETE.status_code == 401
+        assert models.SiteReport.query.get(site_report.id) != None
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('site_report__id', [uuid4()])
-    def test_DELETE_404(self, response_DELETE):
+    def test_DELETE_404(self, site_report, response_DELETE):
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404
+        assert models.SiteReport.query.get(site_report.id) != None
 
 
 report_1 = {'verified': True, 'verdict': True}
@@ -658,6 +673,7 @@ class TestFlavorReports:
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
+        assert response_GET.json != []
         for element in response_GET.json:
             asserts.correct_flavor_report(element)
             asserts.match_query(element, url)
@@ -701,6 +717,7 @@ class TestFlavorReports:
         asserts.correct_flavor_report(response_POST.json)
         asserts.match_query(response_POST.json, url)
         asserts.match_body(response_POST.json, body)
+        asserts.match_flavor_report_in_db(response_POST.json)
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'site_name': site_1['name'], 'flavor_name': flavor_1['name']}
@@ -805,17 +822,19 @@ class TestFlavorReport:
         assert response_PUT.status_code == 422
 
     @mark.usefixtures('grant_admin')
-    def test_DELETE_204(self, response_DELETE, response_GET):
+    def test_DELETE_204(self, flavor_report, response_DELETE):
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
-        assert response_GET.status_code == 404
+        assert models.FlavorReport.query.get(flavor_report.id) == None
 
-    def test_DELETE_401(self, response_DELETE):
+    def test_DELETE_401(self, flavor_report, response_DELETE):
         """DELETE method fails 401 if not authorized."""
         assert response_DELETE.status_code == 401
+        assert models.FlavorReport.query.get(flavor_report.id) != None
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('flavor_report__id', [uuid4()])
-    def test_DELETE_404(self, response_DELETE):
+    def test_DELETE_404(self, flavor_report, response_DELETE):
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404
+        assert models.FlavorReport.query.get(flavor_report.id) != None

@@ -50,6 +50,7 @@ class TestRoot:
         asserts.correct_site(response_POST.json)
         asserts.match_query(response_POST.json, url)
         asserts.match_body(response_POST.json, body)
+        asserts.match_site_in_db(response_POST.json)
 
     @mark.parametrize('body', indirect=True, argvalues=[
         {'name': "s3", 'address': "addr2", 'description': "Text"},
@@ -203,6 +204,7 @@ class TestFlavors:
         asserts.match_query(response_POST.json, url)
         asserts.match_body(response_POST.json, body)
         asserts.site_has_flavor(response_POST.json, url)
+        asserts.match_flavor_in_db(response_POST.json)
 
     @mark.parametrize('body', indirect=True, argvalues=[
         flavor_3,
@@ -285,17 +287,19 @@ class TestFlavor:
         assert response_PUT.status_code == 422
 
     @mark.usefixtures('grant_admin')
-    def test_DELETE_204(self, response_DELETE, response_GET):
+    def test_DELETE_204(self, flavor, response_DELETE):
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
-        assert response_GET.status_code == 404
+        assert models.Flavor.query.get(flavor.id) == None
 
-    def test_DELETE_401(self, response_DELETE):
+    def test_DELETE_401(self, flavor, response_DELETE):
         """DELETE method fails 401 if not authorized."""
         assert response_DELETE.status_code == 401
+        assert models.Flavor.query.get(flavor.id) != None
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('flavor__name', ["f2"])
-    def test_DELETE_404(self, response_DELETE):
+    def test_DELETE_404(self, flavor, response_DELETE):
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404
+        assert models.Flavor.query.get(flavor.id) != None

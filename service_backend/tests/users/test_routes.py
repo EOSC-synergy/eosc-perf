@@ -1,6 +1,7 @@
 """Functional tests using pytest-flask."""
 from uuid import uuid4
 
+from backend.users import models
 from pytest import mark
 from tests.elements import user_1, user_2
 
@@ -25,6 +26,7 @@ class TestRoot:
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
+        assert response_GET.json != []
         for element in response_GET.json:
             asserts.correct_user(element)
             asserts.match_query(element, url)
@@ -75,20 +77,22 @@ class TestId:
         assert response_GET.status_code == 404
 
     @mark.usefixtures('grant_admin')
-    def test_DELETE_204(self, response_DELETE, response_GET):
+    def test_DELETE_204(self, user, response_DELETE):
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
-        assert response_GET.status_code == 404
+        assert models.User.query.get((user.sub, user.iss)) == None
 
-    def test_DELETE_401(self, response_DELETE):
+    def test_DELETE_401(self, user, response_DELETE):
         """DELETE method fails 401 if not authorized."""
         assert response_DELETE.status_code == 401
+        assert models.User.query.get((user.sub, user.iss)) != None
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('user__sub', ["sub_2"])
-    def test_DELETE_404(self, response_DELETE):
+    def test_DELETE_404(self, user, response_DELETE):
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404
+        assert models.User.query.get((user.sub, user.iss)) != None
 
 
 @mark.usefixtures('session')
@@ -150,6 +154,7 @@ class TestSelf:
         assert response_POST.status_code == 201
         asserts.correct_user(response_POST.json)
         asserts.match_query(response_POST.json, url)
+        asserts.match_user_in_db(response_POST.json)
 
     @mark.parametrize('token_sub', ["sub_3"], indirect=True)
     @mark.parametrize('token_iss', ["egi.com"], indirect=True)

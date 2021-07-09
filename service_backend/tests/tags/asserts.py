@@ -1,5 +1,6 @@
 """Function asserts for tests"""
 from urllib import parse
+from backend.tags import models
 
 
 def correct_tag(json):
@@ -16,6 +17,13 @@ def match_tag(json, tag):
     assert json['id'] == str(tag.id)
     assert json['name'] == tag.name
     assert json['description'] == tag.description
+
+    return True
+
+
+def match_tag_in_db(json):
+    db_tag = models.Tag.query.get(json['id'])
+    assert match_tag(json, db_tag)
 
     return True
 

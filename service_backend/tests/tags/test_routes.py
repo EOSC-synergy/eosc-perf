@@ -1,6 +1,7 @@
 """Functional tests using pytest-flask."""
 from uuid import uuid4
 
+from backend.tags import models
 from pytest import mark
 from tests.elements import tag_1, tag_2, tag_3, tag_4
 
@@ -22,6 +23,7 @@ class TestRoot:
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
+        assert response_GET.json != []
         for element in response_GET.json:
             asserts.correct_tag(element)
             asserts.match_query(element, url)
@@ -44,6 +46,7 @@ class TestRoot:
         asserts.correct_tag(response_POST.json)
         asserts.match_query(response_POST.json, url)
         asserts.match_body(response_POST.json, body)
+        asserts.match_tag_in_db(response_POST.json)
 
     @mark.parametrize('body', [
         {'name': "tag3", 'description': "desc_1"},
@@ -128,17 +131,19 @@ class TestId:
         assert response_PUT.status_code == 422
 
     @mark.usefixtures('grant_admin')
-    def test_DELETE_204(self, response_DELETE, response_GET):
+    def test_DELETE_204(self, tag, response_DELETE):
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
-        assert response_GET.status_code == 404
+        assert models.Tag.query.get(tag.id) == None
 
-    def test_DELETE_401(self, response_DELETE):
+    def test_DELETE_401(self, tag, response_DELETE):
         """DELETE method fails 401 if not authorized."""
         assert response_DELETE.status_code == 401
+        assert models.Tag.query.get(tag.id) != None
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('tag__id', [uuid4()])
-    def test_DELETE_404(self, response_DELETE):
+    def test_DELETE_404(self, tag, response_DELETE):
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404
+        assert models.Tag.query.get(tag.id) != None

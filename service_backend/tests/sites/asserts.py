@@ -24,6 +24,13 @@ def match_site(json, site):
     return True
 
 
+def match_site_in_db(json):
+    db_site = models.Site.query.get(json['id'])
+    assert match_site(json, db_site)
+
+    return True
+
+
 def correct_flavor(json):
     """Checks the json flavor contains the correct attributes."""
     assert 'id' in json and type(json['id']) is str
@@ -38,6 +45,13 @@ def match_flavor(json, flavor):
     assert json['id'] == str(flavor.id)
     assert json['name'] == flavor.name
     assert json['description'] == flavor.description
+
+    return True
+
+
+def match_flavor_in_db(json):
+    db_flavor = models.Flavor.query.get(json['id'])
+    assert match_flavor(json, db_flavor)
 
     return True
 
