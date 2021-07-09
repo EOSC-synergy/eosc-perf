@@ -5,7 +5,7 @@ from marshmallow import Schema, fields
 class Tag(Schema):
     id = fields.UUID(dump_only=True)
     name = fields.String(required=True)
-    description = fields.String(required=True)
+    description = fields.String()
 
 
 class TagsIds(Schema):

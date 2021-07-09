@@ -14,7 +14,7 @@ class Tag(PkModel):
     """
 
     name = Column(Text, unique=True, nullable=False)
-    description = Column(Text, nullable=False)
+    description = Column(Text, nullable=False, default="")
 
     def __repr__(self) -> str:
         """Get a human-readable representation string of the tag.

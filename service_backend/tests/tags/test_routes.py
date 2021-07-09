@@ -38,7 +38,7 @@ class TestRoot:
     @mark.usefixtures('grant_logged')
     @mark.parametrize('body', [
         {'name': "tag3", 'description': "desc_1"},
-        {'name': "tag4", 'description': "desc_4"}
+        {'name': "tag4"}
     ])
     def test_POST_201(self, response_POST, url, body):
         """POST method succeeded 201."""
@@ -50,7 +50,7 @@ class TestRoot:
 
     @mark.parametrize('body', [
         {'name': "tag3", 'description': "desc_1"},
-        {}  # Empty body
+        {}  # Empty body which would fail
     ])
     def test_POST_401(self, response_POST):
         """POST method fails 401 if not authorized."""
@@ -59,7 +59,7 @@ class TestRoot:
     @mark.usefixtures('grant_logged')
     @mark.parametrize('body', [
         {'name': "tag1", 'description': "desc_1"},
-        {'name': "tag1", 'description': "desc_3"}
+        {'name': "tag1"}
     ])
     def test_POST_409(self, response_POST):
         """POST method fails 409 if resource already exists."""
@@ -67,7 +67,6 @@ class TestRoot:
 
     @mark.usefixtures('grant_logged')
     @mark.parametrize('body', [
-        {'name': "tag1"},  # Missing description
         {'description': "desc_1"},  # Missing name
         {}  # Empty body
     ])
