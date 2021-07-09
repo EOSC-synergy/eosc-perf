@@ -1,6 +1,6 @@
 """Tag models."""
 from backend.database import PkModel
-from sqlalchemy import Column, Text
+from sqlalchemy import Column, Text, or_
 
 
 class Tag(PkModel):
@@ -23,3 +23,22 @@ class Tag(PkModel):
             str: A human-readable representation string of the tag.
         """
         return '<{} {}>'.format(self.__class__.__name__, self.name)
+
+    @classmethod
+    def query_with(cls, terms):
+        """Query all tags containing all keywords.
+
+        Args:
+            terms (List[str]): A list of all keywords to match on the search.
+        Returns:
+            List[Tag]: A list containing all matching tags in the database.
+        """
+        results = cls.query
+        for keyword in terms:
+            results = results.filter(
+                or_(
+                    Tag.name.contains(keyword),
+                    Tag.description.contains(keyword)
+                ))
+
+        return results

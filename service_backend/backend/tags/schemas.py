@@ -19,3 +19,7 @@ class TagsQueryArgs(Schema):
 class EditTag(Schema):
     name = fields.String()
     description = fields.String()
+
+
+class SearchQueryArgs(Schema):
+    terms = fields.List(fields.String(), missing=[])

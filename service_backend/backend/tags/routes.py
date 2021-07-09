@@ -27,6 +27,16 @@ class Root(MethodView):
         return models.Tag.create(**kwargs)
 
 
+@blp.route('/search')
+class Search(MethodView):
+
+    @blp.arguments(schemas.SearchQueryArgs, location='query', as_kwargs=True)
+    @blp.response(200, schemas.Tag(many=True))
+    def get(self, terms):
+        """Filters and list tags."""
+        return models.Tag.query_with(terms)
+
+
 @blp.route('/<uuid:tag_id>')
 class Tag(MethodView):
 
