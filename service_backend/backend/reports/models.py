@@ -56,8 +56,7 @@ class BenchmarkReport(Report):
     These are automatically generated when a benchmark is submitted.
     """
     id = Column(ForeignKey('report.id'), primary_key=True)
-    benchmark = relationship('Benchmark')
-    benchmark_id = Column(ForeignKey('benchmark.id'), nullable=False)
+    benchmark = relationship('Benchmark', back_populates="report")
     docker_image = association_proxy('benchmark', 'docker_image')
     docker_tag = association_proxy('benchmark', 'docker_tag')
 
@@ -99,8 +98,7 @@ class ResultReport(Report):
     These are normally manually generated.
     """
     id = Column(ForeignKey('report.id'), primary_key=True)
-    result = relationship('Result')
-    result_id = Column(ForeignKey('result.id'), nullable=False)
+    result = relationship('Result', back_populates="report")
     docker_image = association_proxy('result', 'docker_image')
     docker_tag = association_proxy('result', 'docker_tag')
     site_name = association_proxy('result', 'site_name')
@@ -146,8 +144,7 @@ class SiteReport(Report):
     These are automatically generated when a site is submitted.
     """
     id = Column(ForeignKey('report.id'), primary_key=True)
-    site = relationship('Site')
-    site_id = Column(ForeignKey('site.id'), nullable=False)
+    site = relationship('Site', back_populates="report")
     site_name = association_proxy('site', 'name')
 
     __mapper_args__ = {
@@ -186,10 +183,7 @@ class FlavorReport(Report):
     These are automatically generated when a flavor is submitted.
     """
     id = Column(ForeignKey('report.id'), primary_key=True)
-    site = relationship('Site')
-    site_id = Column(ForeignKey('site.id'), nullable=False)
-    flavor = relationship('Flavor')
-    flavor_id = Column(ForeignKey('flavor.id'), nullable=False)
+    flavor = relationship('Flavor', back_populates="report")
     site_name = association_proxy('site', 'name')
     flavor_name = association_proxy('flavor', 'name')
 

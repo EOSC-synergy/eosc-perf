@@ -10,6 +10,7 @@ from sqlalchemy import (Column, DateTime, ForeignKey, ForeignKeyConstraint,
                         PrimaryKeyConstraint, Text, or_)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType as UUID
 
@@ -48,6 +49,15 @@ class Result(PkModel):
     uploader_iss = Column(Text, nullable=False)
     uploader_sub = Column(Text, nullable=False)
     uploader = relationship(User)
+
+    report_id = Column(ForeignKey('result_report.id'))
+    report = relationship("ResultReport", back_populates="result")
+    verdict = association_proxy('report', 'verdict')
+
+    @hybrid_property
+    def hidden(self):
+        return not self.verdict
+
     __table_args__ = (ForeignKeyConstraint(['uploader_iss', 'uploader_sub'],
                                            ['user.iss', 'user.sub']),
                       {})

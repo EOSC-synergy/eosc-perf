@@ -1,7 +1,11 @@
 """Benchmark models."""
+from sqlalchemy.sql.expression import update
 from backend.database import PkModel
-from sqlalchemy import Column, Text, UniqueConstraint, or_
+from sqlalchemy import Column, ForeignKey, Text, UniqueConstraint, or_
 from sqlalchemy.dialects.postgresql import JSON
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import relationship
 
 
 class Benchmark(PkModel):
@@ -11,11 +15,17 @@ class Benchmark(PkModel):
     confusion and misleading comparisons in case the benchmark images change
     their metrics or scoring scale from version to version.
     """
-
     docker_image = Column(Text, nullable=False)
     docker_tag = Column(Text, nullable=False)
     description = Column(Text, default="")
     json_template = Column(JSON, default={})
+    report_id = Column(ForeignKey('benchmark_report.id'))
+    report = relationship("BenchmarkReport", back_populates="benchmark")
+    verdict = association_proxy('report', 'verdict')
+
+    @hybrid_property
+    def hidden(self):
+        return not self.verdict
 
     __table_args__ = (
         UniqueConstraint('docker_image', 'docker_tag'),

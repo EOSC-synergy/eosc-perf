@@ -1,6 +1,8 @@
 """Site models."""
 from backend.database import PkModel
 from sqlalchemy import Column, ForeignKey, Text, UniqueConstraint, or_
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 
@@ -16,6 +18,14 @@ class Site(PkModel):
     flavors = relationship(
         "Flavor",
         cascade="all, save-update, delete-orphan")
+
+    report_id = Column(ForeignKey('site_report.id'))
+    report = relationship("SiteReport", back_populates="site")
+    verdict = association_proxy('report', 'verdict')
+
+    @hybrid_property
+    def hidden(self):
+        return not self.verdict
 
     def __repr__(self) -> str:
         """Get a human-readable representation string of the site.
@@ -58,6 +68,14 @@ class Flavor(PkModel):
     name = Column(Text, nullable=False)
     description = Column(Text, nullable=True, default="")
     site_id = Column(ForeignKey('site.id'))
+
+    report_id = Column(ForeignKey('flavor_report.id'))
+    report = relationship("FlavorReport", back_populates="flavor")
+    verdict = association_proxy('report', 'verdict')
+
+    @hybrid_property
+    def hidden(self):
+        return not self.verdict
 
     __table_args__ = (
         UniqueConstraint('site_id', 'name'),
