@@ -36,6 +36,14 @@ class TestRoot:
         """GET method fails 401 if not logged in."""
         assert response_GET.status_code == 401
 
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {'iss': "egi.com"}
+    ])
+    def test_GET_403(self, response_GET):
+        """GET method fails 403 if forbidden."""
+        assert response_GET.status_code == 403
+
     @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[
         {'bad_key': "This is a non expected query key"}
