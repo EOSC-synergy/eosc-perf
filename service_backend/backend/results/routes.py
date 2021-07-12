@@ -1,5 +1,4 @@
 """Result routes."""
-from operator import mod
 from backend.extensions import auth
 from flaat import tokentools
 from flask import request
@@ -41,10 +40,8 @@ class Root(MethodView):
     def post(self, query_args, json):
         """Creates a new result."""
         access_token = tokentools.get_access_token_from_request(request)
-        token_info = tokentools.get_accesstoken_info(access_token)
         return models.Result.create(
-            uploader_sub=token_info['body']['sub'],
-            uploader_iss=token_info['body']['iss'],
+            uploader=models.User.get(token=access_token),
             json=json,
             benchmark=models.Benchmark.get_by_id(query_args['benchmark_id']),
             site=models.Site.get_by_id(query_args['site_id']),

@@ -30,13 +30,14 @@ class User(MethodView):
     @blp.response(200, schemas.User)
     def get(self, user_iss, user_sub):
         """Retrieves user details."""
-        return models.User.get_by_subiss(user_sub, user_iss)
+        return models.User.get(sub=user_sub, iss=user_iss)
 
     @auth.admin_required()
     @blp.response(204)
     def delete(self, user_iss, user_sub):
         """Deletes an existing user."""
-        models.User.get_by_subiss(user_sub, user_iss).delete()
+        user = models.User.get(sub=user_sub, iss=user_iss)
+        user.delete()
 
 
 @blp.route('/admin')
@@ -57,34 +58,19 @@ class Register(MethodView):
     def get(self):
         """Retrieves the logged in user info."""
         access_token = tokentools.get_access_token_from_request(request)
-        token_info = tokentools.get_accesstoken_info(access_token)
-        return models.User.get_by_subiss(
-            sub=token_info['body']['sub'],
-            iss=token_info['body']['iss']
-        )
+        return models.User.get(token=access_token)
 
     @auth.login_required()
     @blp.response(201, schemas.User)
     def post(self):
         """Registers the logged in user."""
         access_token = tokentools.get_access_token_from_request(request)
-        token_info = tokentools.get_accesstoken_info(access_token)
-        user_info = auth.get_info_from_introspection_endpoints(access_token)
-        return models.User.create(
-            sub=token_info['body']['sub'],
-            iss=token_info['body']['iss'],
-            email=user_info['email']
-        )
+        return models.User.create(token=access_token)
 
     @auth.login_required()
     @blp.response(204)
     def put(self):
         """Updates the logged in user info."""
         access_token = tokentools.get_access_token_from_request(request)
-        token_info = tokentools.get_accesstoken_info(access_token)
-        user_info = auth.get_info_from_introspection_endpoints(access_token)
-        user = models.User.get_by_subiss(
-            sub=token_info['body']['sub'],
-            iss=token_info['body']['iss']
-        )
-        user.update(email=user_info['email'])
+        user = models.User.get(token=access_token)
+        user.update_info(token=access_token)
