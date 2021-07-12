@@ -23,6 +23,17 @@ class Root(MethodView):
         return models.User.filter_by(**args)
 
 
+@blp.route('email_search')
+class Search(MethodView):
+
+    @auth.admin_required()
+    @blp.arguments(schemas.SearchQueryArgs, location='query')
+    @blp.response(200, schemas.User(many=True))
+    def get(self, args):
+        """Filters and list users."""
+        return models.User.query_emails_with(args['terms'])
+
+
 @blp.route('/<string:user_iss>/<string:user_sub>')
 class User(MethodView):
 

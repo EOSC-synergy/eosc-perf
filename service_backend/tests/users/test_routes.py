@@ -1,6 +1,4 @@
 """Functional tests using pytest-flask."""
-from uuid import uuid4
-
 from backend.users import models
 from pytest import mark
 from tests.elements import user_1, user_2
@@ -40,6 +38,52 @@ class TestRoot:
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[
+        {'bad_key': "This is a non expected query key"}
+    ])
+    def test_GET_422(self, response_GET):
+        """GET method fails 422 if bad request body."""
+        assert response_GET.status_code == 422
+
+
+@mark.usefixtures('session', 'db_users')
+@mark.parametrize('endpoint', ['users.Search'], indirect=True)
+@mark.parametrize('db_users', indirect=True,  argvalues=[
+    [user_1, user_2]
+])
+class TestSearch:
+    """Tests for 'Search' route in blueprint."""
+
+    @mark.usefixtures('grant_admin')
+    @mark.parametrize('query', indirect=True,  argvalues=[
+        {'terms': ["sub_1@email.com"]},
+        {'terms': ["sub", "email.com"]},
+        {'terms': []}
+    ])
+    def test_GET_200(self, response_GET, url):
+        """GET method succeeded 200."""
+        assert response_GET.status_code == 200
+        assert response_GET.json != []
+        for element in response_GET.json:
+            asserts.correct_user(element)
+            asserts.match_search(element, url)
+
+    @mark.parametrize('query', indirect=True,  argvalues=[
+        {'terms': ["sub_1@email.com"]}
+    ])
+    def test_GET_401(self, response_GET):
+        """GET method fails 401 if not logged in."""
+        assert response_GET.status_code == 401
+
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {'terms': ["sub_1@email.com"]}
+    ])
+    def test_GET_403(self, response_GET):
+        """GET method fails 403 if forbidden."""
+        assert response_GET.status_code == 403
+
+    @mark.usefixtures('grant_admin')
+    @mark.parametrize('query', [
         {'bad_key': "This is a non expected query key"}
     ])
     def test_GET_422(self, response_GET):

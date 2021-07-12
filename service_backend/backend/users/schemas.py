@@ -17,3 +17,7 @@ class UserEdit(User):
 class UserQuery(User):
     iss = fields.String()
     email = fields.String()
+
+
+class SearchQueryArgs(Schema):
+    terms = fields.List(fields.String(), missing=[])

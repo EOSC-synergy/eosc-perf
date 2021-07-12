@@ -64,6 +64,15 @@ class User(BaseModel):
         else:
             abort(404, messages={'user': "Not registered"})
 
+    @classmethod
+    def query_emails_with(cls, terms):
+        results = cls.query
+        for keyword in terms:
+            results = results.filter(
+                User.email.contains(keyword)
+            )
+        return results
+
     def update_info(self, token):
         user_info = auth.get_info_from_introspection_endpoints(token)
         return super().update(

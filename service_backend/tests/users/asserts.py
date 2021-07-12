@@ -40,6 +40,18 @@ def match_query(json, url):
     return True
 
 
+def match_search(json, url):
+    """Checks the json elements matches the url search."""
+    presult = parse.urlparse(url)
+    dict_terms = dict(parse.parse_qs(presult.query).items())
+    if dict_terms == {}:
+        return True
+    for term in dict_terms['terms']:
+        assert json['email'].__contains__(term)
+
+    return True
+
+
 def match_body(json, body):
     """Checks the json elements matches the body dict."""
     for k in body:
