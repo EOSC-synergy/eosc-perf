@@ -1,7 +1,7 @@
 # Everything needed in production
 
 # Flask
-flask~=1.1.2
+flask~=2.0
 
 # Database
 flask-SQLAlchemy~=2.5.1
@@ -18,7 +18,7 @@ marshmallow-sqlalchemy~=0.24.2
 
 # REST GUI 
 apispec~=4.4.0
-flask-smorest~=0.29.0
+flask-smorest~=0.31.2
 
 # Deployment in production
 gevent~=21.1.2
@@ -31,7 +31,7 @@ flaat~=0.13.0
 requests~=2.24.0
 
 # Caching
-flask-caching~=1.7.2
+flask-caching~=1.10.0
 
 # Environment variable parsing
 environs~=9.3.1
