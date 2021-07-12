@@ -33,3 +33,7 @@ class SiteQueryArgs(Schema):
 
 class FlavorQueryArgs(Schema):
     name = fields.String()
+
+
+class SearchQueryArgs(Schema):
+    terms = fields.List(fields.String(), missing=[])

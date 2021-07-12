@@ -1,8 +1,7 @@
 """Site models."""
 from backend.database import PkModel
-from sqlalchemy import Column, ForeignKey, Text, UniqueConstraint
+from sqlalchemy import Column, ForeignKey, Text, UniqueConstraint, or_
 from sqlalchemy.orm import relationship
-from sqlalchemy_utils import UUIDType as UUID
 
 
 class Site(PkModel):
@@ -25,6 +24,27 @@ class Site(PkModel):
             str: A human-readable representation string of the site.
         """
         return '<{} {}>'.format(self.__class__.__name__, self.name)
+
+    @classmethod
+    def query_with(cls, terms):
+        """Query all sites containing all keywords in the columns.
+
+        Args:
+            terms (List[str]): A list of all keywords that need to be matched.
+        Returns:
+            List[Result]: A list containing all matching query sites in the
+            database.
+        """
+        results = cls.query
+        for keyword in terms:
+            results = results.filter(
+                or_(
+                    Site.name.contains(keyword),
+                    Site.address.contains(keyword),
+                    Site.description.contains(keyword)
+                ))
+
+        return results
 
 
 class Flavor(PkModel):

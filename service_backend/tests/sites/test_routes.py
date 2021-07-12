@@ -80,6 +80,37 @@ class TestRoot:
         assert response_POST.status_code == 422
 
 
+@mark.usefixtures('session', 'db_sites')
+@mark.parametrize('endpoint', ['sites.Search'], indirect=True)
+@mark.parametrize('db_sites', indirect=True, argvalues=[
+    [site_1, site_2]
+])
+class TestSearch:
+    """Tests for 'Search' route in blueprint."""
+
+    @mark.parametrize('query', indirect=True,  argvalues=[
+        {'terms': [site_1["name"]]},
+        {'terms': [site_1["address"]]},
+        {'terms': [site_1["description"]]},
+        {'terms': [site_1["name"], site_1["description"]]},
+        {'terms': []}   # Empty terms
+    ])
+    def test_GET_200(self, response_GET, url):
+        """GET method succeeded 200."""
+        assert response_GET.status_code == 200
+        assert response_GET.json != []
+        for element in response_GET.json:
+            asserts.correct_site(element)
+            asserts.match_search(element, url)
+
+    @mark.parametrize('query', [
+        {'bad_key': "This is a non expected query key"}
+    ])
+    def test_GET_422(self, response_GET):
+        """GET method fails 422 if bad request body."""
+        assert response_GET.status_code == 422
+
+
 @mark.usefixtures('session', 'site')
 @mark.parametrize('endpoint', ['sites.Site'], indirect=True)
 @mark.parametrize('site_id', [uuid4()], indirect=True)

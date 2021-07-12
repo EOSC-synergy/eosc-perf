@@ -29,6 +29,16 @@ class Root(MethodView):
         return site.update(flavors=flavors)
 
 
+@blp.route('/search')
+class Search(MethodView):
+
+    @blp.arguments(schemas.SearchQueryArgs, location='query')
+    @blp.response(200, schemas.Site(many=True))
+    def get(self, args):
+        """Filters and list sites."""
+        return models.Site.query_with(args['terms'])
+
+
 @blp.route('/<uuid:site_id>')
 class Site(MethodView):
 
