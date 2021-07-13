@@ -1,6 +1,7 @@
 """Benchmark models."""
-from sqlalchemy.sql.expression import update
 from backend.database import PkModel
+from backend.reports.models import BenchmarkReport
+from backend.users.models import User
 from sqlalchemy import Column, ForeignKey, Text, UniqueConstraint, or_
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -20,7 +21,8 @@ class Benchmark(PkModel):
     description = Column(Text, default="")
     json_template = Column(JSON, default={})
     report_id = Column(ForeignKey('benchmark_report.id'))
-    report = relationship("BenchmarkReport", back_populates="benchmark")
+    report = relationship(
+        BenchmarkReport, back_populates="benchmark", cascade="all, delete")
     verdict = association_proxy('report', 'verdict')
 
     @hybrid_property

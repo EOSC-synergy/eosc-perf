@@ -1,19 +1,22 @@
 """Functional tests using pytest-flask."""
 from uuid import uuid4
 
-from pytest import mark
-from tests.elements import flavor_1, flavor_2, flavor_3, site_1, site_2
 from backend.sites import models
+from pytest import mark
+from tests.elements import flavor_1, flavor_2, flavor_3, site_1, site_2, user_1
 
 from . import asserts
 
 
-@mark.usefixtures('session', 'db_sites', 'db_flavors')
+@mark.usefixtures('session', 'db_sites', 'db_flavors', 'db_users')
 @mark.parametrize('db_sites', indirect=True, argvalues=[
     [site_1, site_2]
 ])
 @mark.parametrize('db_flavors', indirect=True, argvalues=[
     [flavor_1, flavor_2, flavor_3]
+])
+@mark.parametrize('db_users', indirect=True, argvalues=[
+    [user_1]    # User to assign the generated report
 ])
 @mark.parametrize('endpoint', ['sites.Root'], indirect=True)
 class TestRoot:
@@ -40,6 +43,8 @@ class TestRoot:
         assert response_GET.status_code == 422
 
     @mark.usefixtures('grant_logged')
+    @mark.parametrize('token_sub', [user_1['sub']], indirect=True)
+    @mark.parametrize('token_iss', [user_1['iss']], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
         {'name': "s3", 'address': "addr2", 'description': "Text"},
         {'name': "s3", 'address': "addr2"}
@@ -61,6 +66,8 @@ class TestRoot:
         assert response_POST.status_code == 401
 
     @mark.usefixtures('grant_logged')
+    @mark.parametrize('token_sub', [user_1['sub']], indirect=True)
+    @mark.parametrize('token_iss', [user_1['iss']], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
         {'name': "site1", 'address': "address1"},
         {'name': "site2", 'address': "address2"}
@@ -191,12 +198,15 @@ class TestSite:
             assert models.Flavor.query.get(flavor.id) != None
 
 
-@mark.usefixtures('session', 'db_sites', 'db_flavors')
+@mark.usefixtures('session', 'db_sites', 'db_flavors', 'db_users')
 @mark.parametrize('db_sites', indirect=True, argvalues=[
     [site_1, site_2]
 ])
 @mark.parametrize('db_flavors', indirect=True, argvalues=[
     [flavor_1, flavor_2, flavor_3]
+])
+@mark.parametrize('db_users', indirect=True, argvalues=[
+    [user_1]    # User to assign the generated report
 ])
 @mark.parametrize('endpoint', ['sites.Flavors'], indirect=True)
 @mark.parametrize('site_id', [site_1['id']], indirect=True)
@@ -224,6 +234,8 @@ class TestFlavors:
         assert response_GET.status_code == 422
 
     @mark.usefixtures('grant_logged')
+    @mark.parametrize('token_sub', [user_1['sub']], indirect=True)
+    @mark.parametrize('token_iss', [user_1['iss']], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
         {'name': "flavor3", 'description': "Flavor3 site1"},
         {'name': "flavor3"}
@@ -246,6 +258,8 @@ class TestFlavors:
         assert response_POST.status_code == 401
 
     @mark.usefixtures('grant_logged')
+    @mark.parametrize('token_sub', [user_1['sub']], indirect=True)
+    @mark.parametrize('token_iss', [user_1['iss']], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
         {'name': "flavor1"},
         {'name': "flavor2"}

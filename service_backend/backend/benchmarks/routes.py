@@ -1,10 +1,11 @@
 """Benchmark routes."""
 from backend.extensions import auth
+from flaat import tokentools
+from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 
 from . import models, schemas
-
 
 blp = Blueprint(
     'benchmarks', __name__, description='Operations on benchmarks'
@@ -25,7 +26,11 @@ class Root(MethodView):
     @blp.response(201, schemas.Benchmark)
     def post(self, **kwargs):
         """Creates a new benchmark."""
-        return models.Benchmark.create(**kwargs)
+        access_token = tokentools.get_access_token_from_request(request)
+        report = models.BenchmarkReport(
+            uploader=models.User.get(token=access_token),
+        )
+        return models.Benchmark.create(report=report, **kwargs)
 
 
 @blp.route('/search')

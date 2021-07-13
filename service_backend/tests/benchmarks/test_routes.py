@@ -3,15 +3,19 @@ from uuid import uuid4
 
 from backend.benchmarks import models
 from pytest import mark
-from tests.elements import benchmark_1, benchmark_2, benchmark_3
+from tests.elements import benchmark_1, benchmark_2, benchmark_3, user_1
 
 from . import asserts
 
 
-@mark.usefixtures('session', 'db_benchmarks')
+@mark.usefixtures('session', 'db_benchmarks', 'db_users')
+@mark.usefixtures('mock_token_info')
 @mark.parametrize('endpoint', ['benchmarks.Root'], indirect=True)
 @mark.parametrize('db_benchmarks', indirect=True,  argvalues=[
     [benchmark_1, benchmark_2]
+])
+@mark.parametrize('db_users', indirect=True,  argvalues=[
+    [user_1]    # User to assign the generated report
 ])
 class TestRoot:
     """Tests for 'Root' route in blueprint."""
@@ -38,6 +42,8 @@ class TestRoot:
         assert response_GET.status_code == 422
 
     @mark.usefixtures('grant_logged')
+    @mark.parametrize('token_sub', [user_1['sub']], indirect=True)
+    @mark.parametrize('token_iss', [user_1['iss']], indirect=True)
     @mark.parametrize('body', [
         {'docker_image': "b1", 'docker_tag': "t3"},
         {'docker_image': "b3", 'docker_tag': "t1"},
@@ -61,6 +67,8 @@ class TestRoot:
         assert response_POST.status_code == 401
 
     @mark.usefixtures('grant_logged')
+    @mark.parametrize('token_sub', [user_1['sub']], indirect=True)
+    @mark.parametrize('token_iss', [user_1['iss']], indirect=True)
     @mark.parametrize('body', [
         {'docker_image': "b1", 'docker_tag': "v1.0"},
         {'docker_image': "b1", 'docker_tag': "v2.0"}
@@ -70,6 +78,8 @@ class TestRoot:
         assert response_POST.status_code == 409
 
     @mark.usefixtures('grant_logged')
+    @mark.parametrize('token_sub', [user_1['sub']], indirect=True)
+    @mark.parametrize('token_iss', [user_1['iss']], indirect=True)
     @mark.parametrize('body', [
         {'docker_image': "b1"},  # Missing docker_tag
         {'docker_tag': "t1"},  # Missing docker_image

@@ -1,5 +1,7 @@
 """Site models."""
 from backend.database import PkModel
+from backend.reports.models import FlavorReport, SiteReport
+from backend.users.models import User
 from sqlalchemy import Column, ForeignKey, Text, UniqueConstraint, or_
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -15,12 +17,11 @@ class Site(PkModel):
     name = Column(Text, unique=True, nullable=False)
     address = Column(Text, nullable=False)
     description = Column(Text, nullable=True, default="")
-    flavors = relationship(
-        "Flavor",
-        cascade="all, save-update, delete-orphan")
+    flavors = relationship("Flavor", cascade="all, delete-orphan")
 
     report_id = Column(ForeignKey('site_report.id'))
-    report = relationship("SiteReport", back_populates="site")
+    report = relationship(
+        SiteReport, back_populates="site", cascade="all, delete")
     verdict = association_proxy('report', 'verdict')
 
     @hybrid_property
@@ -70,7 +71,8 @@ class Flavor(PkModel):
     site_id = Column(ForeignKey('site.id'))
 
     report_id = Column(ForeignKey('flavor_report.id'))
-    report = relationship("FlavorReport", back_populates="flavor")
+    report = relationship(
+        FlavorReport, back_populates="flavor", cascade="all, delete")
     verdict = association_proxy('report', 'verdict')
 
     @hybrid_property

@@ -2,9 +2,11 @@
 from flask import url_for
 from pytest import fixture
 from pytest_factoryboy import register
-from tests.factories import BenchmarkFactory
+from tests import factories
 
-register(BenchmarkFactory)
+register(factories.UserFactory)
+register(factories.BenchmarkReportFactory)
+register(factories.BenchmarkFactory)
 
 
 @fixture(scope='function')
@@ -28,3 +30,8 @@ def url(endpoint, benchmark_id, query):
 @fixture(scope='function')
 def db_benchmarks(request, benchmark_factory):
     return [benchmark_factory(**kwargs) for kwargs in request.param]
+
+
+@fixture(scope='function')
+def db_users(request, user_factory):
+    return [user_factory(**kwargs) for kwargs in request.param]

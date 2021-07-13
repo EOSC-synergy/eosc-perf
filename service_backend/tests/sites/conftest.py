@@ -2,10 +2,14 @@
 from flask import url_for
 from pytest import fixture
 from pytest_factoryboy import register
-from tests.factories import FlavorFactory, SiteFactory
+from tests import factories
 
-register(SiteFactory)
-register(FlavorFactory)
+
+register(factories.UserFactory)
+register(factories.SiteFactory)
+register(factories.SiteReportFactory)
+register(factories.FlavorFactory)
+register(factories.FlavorReportFactory)
 
 
 @fixture(scope='function')
@@ -46,3 +50,8 @@ def db_sites(request, site_factory):
 @fixture(scope='function')
 def db_flavors(request, flavor_factory):
     return [flavor_factory(**kwargs) for kwargs in request.param]
+
+
+@fixture(scope='function')
+def db_users(request, user_factory):
+    return [user_factory(**kwargs) for kwargs in request.param]

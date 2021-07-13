@@ -2,14 +2,16 @@
 import uuid
 from datetime import datetime
 
+from backend import reports
 from backend.benchmarks.models import Benchmark
-from backend.reports.models import BenchmarkReport, FlavorReport, ResultReport, SiteReport
+from backend.reports.models import (BenchmarkReport, FlavorReport,
+                                    ResultReport, SiteReport)
 from backend.results.models import Result
 from backend.sites.models import Flavor, Site
 from backend.tags.models import Tag
 from backend.users.models import User
-from factory import (LazyFunction, SelfAttribute, Sequence,
-                     SubFactory, post_generation)
+from factory import (LazyFunction, SelfAttribute, Sequence, SubFactory,
+                     post_generation)
 from factory.alchemy import SQLAlchemyModelFactory
 from factory.fuzzy import FuzzyNaiveDateTime
 
@@ -23,19 +25,6 @@ class BaseMeta:
     # Use the not-so-global scoped_session
     # Warning: DO NOT USE common.Session()!
     sqlalchemy_session = conftest.Session
-
-
-class BenchmarkFactory(SQLAlchemyModelFactory):
-    """Benchmark factory."""
-    class Meta(BaseMeta):
-        model = Benchmark
-        sqlalchemy_get_or_create = ('docker_image', 'docker_tag')
-
-    id = LazyFunction(uuid.uuid4)
-    docker_image = Sequence(lambda n: f"b{n}")
-    docker_tag = "latest"
-    description = ""
-    json_template = {}
 
 
 class TagFactory(SQLAlchemyModelFactory):
@@ -60,6 +49,68 @@ class UserFactory(SQLAlchemyModelFactory):
     email = Sequence(lambda n: f"user{n}@example.com")
 
 
+class BenchmarkReportFactory(SQLAlchemyModelFactory):
+    """BenchmarkReport factory."""
+    class Meta(BaseMeta):
+        model = BenchmarkReport
+
+    id = LazyFunction(uuid.uuid4)
+    date = fdt.fuzz()
+    verdict = True
+    message = Sequence(lambda n: f"Report message {n}")
+    uploader = SubFactory(UserFactory)
+
+
+class ResultReportFactory(SQLAlchemyModelFactory):
+    """ResultReport factory."""
+    class Meta(BaseMeta):
+        model = ResultReport
+
+    id = LazyFunction(uuid.uuid4)
+    date = fdt.fuzz()
+    verdict = True
+    message = Sequence(lambda n: f"Report message {n}")
+    uploader = SubFactory(UserFactory)
+
+
+class SiteReportFactory(SQLAlchemyModelFactory):
+    """SiteReport factory."""
+    class Meta(BaseMeta):
+        model = SiteReport
+
+    id = LazyFunction(uuid.uuid4)
+    date = fdt.fuzz()
+    verdict = True
+    message = Sequence(lambda n: f"Report message {n}")
+    uploader = SubFactory(UserFactory)
+
+
+class FlavorReportFactory(SQLAlchemyModelFactory):
+    """FlavorReport factory."""
+    class Meta(BaseMeta):
+        model = FlavorReport
+
+    id = LazyFunction(uuid.uuid4)
+    date = fdt.fuzz()
+    verdict = True
+    message = Sequence(lambda n: f"Report message {n}")
+    uploader = SubFactory(UserFactory)
+
+
+class BenchmarkFactory(SQLAlchemyModelFactory):
+    """Benchmark factory."""
+    class Meta(BaseMeta):
+        model = Benchmark
+        sqlalchemy_get_or_create = ('docker_image', 'docker_tag')
+
+    id = LazyFunction(uuid.uuid4)
+    docker_image = Sequence(lambda n: f"b{n}")
+    docker_tag = "latest"
+    description = ""
+    json_template = {}
+    report = SubFactory(BenchmarkReportFactory)
+
+
 class SiteFactory(SQLAlchemyModelFactory):
     """Site factory."""
     class Meta(BaseMeta):
@@ -70,6 +121,7 @@ class SiteFactory(SQLAlchemyModelFactory):
     name = Sequence(lambda n: f"site{n}")
     address = Sequence(lambda n: f"address{n}")
     description = "Text"
+    report = SubFactory(SiteReportFactory)
 
     @post_generation
     def flavors(self, create, names, **kwargs):
@@ -87,6 +139,7 @@ class FlavorFactory(SQLAlchemyModelFactory):
     name = Sequence(lambda n: f"flavor{n}")
     description = "Text"
     site_id = None
+    report = SubFactory(FlavorReportFactory)
 
 
 class ResultFactory(SQLAlchemyModelFactory):
@@ -99,6 +152,7 @@ class ResultFactory(SQLAlchemyModelFactory):
     benchmark = SubFactory(BenchmarkFactory)
     site = SubFactory(SiteFactory)
     flavor = SubFactory(FlavorFactory, site_id=SelfAttribute('..site.id'))
+    report = SubFactory(ResultReportFactory)
     uploader = SubFactory(UserFactory)
 
     @post_generation
@@ -107,60 +161,3 @@ class ResultFactory(SQLAlchemyModelFactory):
             self.tags = [TagFactory(**kw) for kw in kws]
         else:
             self.tags = []
-
-
-class BenchmarkReportFactory(SQLAlchemyModelFactory):
-    """BenchmarkReport factory."""
-    class Meta(BaseMeta):
-        model = BenchmarkReport
-
-    id = LazyFunction(uuid.uuid4)
-    date = fdt.fuzz()
-    verified = True
-    verdict = True
-    message = "Benchmark report message"
-    uploader = SubFactory(UserFactory)
-    benchmark = SubFactory(BenchmarkFactory)
-
-
-class ResultReportFactory(SQLAlchemyModelFactory):
-    """ResultReport factory."""
-    class Meta(BaseMeta):
-        model = ResultReport
-
-    id = LazyFunction(uuid.uuid4)
-    date = fdt.fuzz()
-    verified = True
-    verdict = True
-    message = "Result report message"
-    uploader = SubFactory(UserFactory)
-    result = SubFactory(ResultFactory)
-
-
-class SiteReportFactory(SQLAlchemyModelFactory):
-    """SiteReport factory."""
-    class Meta(BaseMeta):
-        model = SiteReport
-
-    id = LazyFunction(uuid.uuid4)
-    date = fdt.fuzz()
-    verified = True
-    verdict = True
-    message = "Site report message"
-    uploader = SubFactory(UserFactory)
-    site = SubFactory(SiteFactory)
-
-
-class FlavorReportFactory(SQLAlchemyModelFactory):
-    """FlavorReport factory."""
-    class Meta(BaseMeta):
-        model = FlavorReport
-
-    id = LazyFunction(uuid.uuid4)
-    date = fdt.fuzz()
-    verified = True
-    verdict = True
-    message = "Flavor report message"
-    uploader = SubFactory(UserFactory)
-    site = SubFactory(SiteFactory)
-    flavor = SubFactory(FlavorFactory, site_id=SelfAttribute('..site.id'))

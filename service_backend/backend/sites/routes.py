@@ -1,5 +1,7 @@
 """Site routes."""
 from backend.extensions import auth
+from flaat import tokentools
+from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint
 
@@ -22,11 +24,13 @@ class Root(MethodView):
     @auth.login_required()
     @blp.arguments(schemas.Site, as_kwargs=True)
     @blp.response(201, schemas.Site)
-    def post(self, flavors=[], **kwargs):
+    def post(self, **kwargs):
         """Creates a new site."""
-        site = models.Site(**kwargs)
-        flavors = [models.Flavor(site_id=site.id, **x) for x in flavors]
-        return site.update(flavors=flavors)
+        access_token = tokentools.get_access_token_from_request(request)
+        report = models.SiteReport(
+            uploader=models.User.get(token=access_token),
+        )
+        return models.Site.create(report=report, **kwargs)
 
 
 @blp.route('/search')
@@ -50,13 +54,9 @@ class Site(MethodView):
     @auth.admin_required()
     @blp.arguments(schemas.EditSite, as_kwargs=True)
     @blp.response(204)
-    def put(self, site_id, flavors=None, **kwargs):
+    def put(self, site_id, **kwargs):
         """Updates an existing site."""
-        site = models.Site.get_by_id(site_id).update(commit=False, **kwargs)
-        if flavors:
-            flavors = [models.Flavor(site_id=site_id, **x) for x in flavors]
-            site.update(commit=False, flavors=flavors)
-        site.save()
+        models.Site.get_by_id(site_id).update(**kwargs)
 
     @auth.admin_required()
     @blp.response(204)
@@ -81,10 +81,13 @@ class Flavors(MethodView):
     @blp.response(201, schemas.Flavor)
     def post(self, site_id, **kwargs):
         """Creates a new flavor on a site."""
+        access_token = tokentools.get_access_token_from_request(request)
         site = models.Site.get_by_id(site_id)
-        flavors = site.flavors
-        flavor = models.Flavor(site_id=site.id, **kwargs)
-        site.update(flavors=flavors+[flavor])
+        report = models.FlavorReport(
+            uploader=models.User.get(token=access_token),
+        )
+        flavor = models.Flavor(report=report, site_id=site.id, **kwargs)
+        site.update(flavors=site.flavors+[flavor])
         return flavor
 
 
