@@ -4,12 +4,18 @@ from pytest import fixture
 from tests import factories
 from pytest_factoryboy import register
 
-register(factories.BenchmarkFactory)
-register(factories.ResultFactory)
-register(factories.SiteFactory)
-register(factories.FlavorFactory)
+
 register(factories.TagFactory)
 register(factories.UserFactory)
+
+register(factories.BenchmarkFactory)
+register(factories.BenchmarkReportFactory)
+register(factories.ResultFactory)
+register(factories.ResultReportFactory)
+register(factories.SiteFactory)
+register(factories.SiteReportFactory)
+register(factories.FlavorFactory)
+register(factories.FlavorReportFactory)
 
 
 @fixture(scope='function')
