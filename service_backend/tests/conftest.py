@@ -8,7 +8,7 @@ from backend import create_app, database
 from backend.extensions import auth
 from flaat import tokentools
 from pytest import fixture
-from pytest_postgresql.factories import DatabaseJanitor
+from pytest_postgresql.janitor import DatabaseJanitor
 from sqlalchemy import orm
 
 TEST_DB = 'test_database'
@@ -37,7 +37,7 @@ def session_environment(sql_database):
     os.environ['DB_PASSWORD'] = ""
     os.environ['DB_HOST'] = str(sql_database.host)
     os.environ['DB_PORT'] = str(sql_database.port)
-    os.environ['DB_NAME'] = str(sql_database.db_name)
+    os.environ['DB_NAME'] = str(sql_database.dbname)
     # OIDC environments
     os.environ['OIDC_CLIENT_ID'] = "eosc-perf"
     os.environ['OIDC_CLIENT_SECRET'] = "not-so-secret-for-testing"
