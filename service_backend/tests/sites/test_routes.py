@@ -278,7 +278,7 @@ class TestFlavors:
         assert response_POST.status_code == 422
 
 
-@mark.usefixtures('session', 'site', 'flavor')
+@mark.usefixtures('session', 'flavor')
 @mark.parametrize('endpoint', ['sites.Flavor'], indirect=True)
 @mark.parametrize('flavor_id', [uuid4()], indirect=True)
 class TestFlavor:
@@ -337,11 +337,17 @@ class TestFlavor:
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
         assert models.Flavor.query.get(flavor.id) == None
+        site = models.Site.query.get(flavor.site_id)
+        assert site != None
+        assert flavor not in site.flavors
 
     def test_DELETE_401(self, flavor, response_DELETE):
         """DELETE method fails 401 if not authorized."""
         assert response_DELETE.status_code == 401
         assert models.Flavor.query.get(flavor.id) != None
+        site = models.Site.query.get(flavor.site_id)
+        assert site != None
+        assert flavor in site.flavors
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('flavor__id', [uuid4()])
@@ -349,3 +355,6 @@ class TestFlavor:
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404
         assert models.Flavor.query.get(flavor.id) != None
+        site = models.Site.query.get(flavor.site_id)
+        assert site != None
+        assert flavor in site.flavors
