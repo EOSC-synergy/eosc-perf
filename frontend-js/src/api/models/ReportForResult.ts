@@ -5,10 +5,10 @@
 import type { Result } from './Result';
 
 export type ReportForResult = {
-    readonly result?: Result;
+    verified?: boolean;
     verdict?: boolean;
     readonly date?: string;
-    verified?: boolean;
     readonly id?: string;
+    readonly result?: Result;
     message: string;
 }

@@ -3,7 +3,7 @@
 /* eslint-disable */
 
 export type EditReport = {
-    verified?: boolean;
     verdict?: boolean;
+    verified?: boolean;
     message?: string;
 }

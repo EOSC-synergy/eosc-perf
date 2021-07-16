@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 export type User = {
-    readonly created_at?: string;
     readonly iss?: string;
-    readonly sub?: string;
+    readonly created_at?: string;
     readonly email?: string;
+    readonly sub?: string;
 }

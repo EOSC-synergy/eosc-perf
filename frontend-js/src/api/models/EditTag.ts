@@ -3,6 +3,6 @@
 /* eslint-disable */
 
 export type EditTag = {
-    description?: string;
     name?: string;
+    description?: string;
 }

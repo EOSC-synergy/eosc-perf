@@ -4,5 +4,6 @@
 
 export type EditSite = {
     name?: string;
+    description?: string;
     address?: string;
 }

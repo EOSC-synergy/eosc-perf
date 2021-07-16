@@ -5,10 +5,10 @@
 import type { Site } from './Site';
 
 export type ReportForSite = {
-    verdict?: boolean;
-    readonly site?: Site;
-    readonly date?: string;
     verified?: boolean;
+    verdict?: boolean;
+    readonly date?: string;
     readonly id?: string;
+    readonly site?: Site;
     message: string;
 }

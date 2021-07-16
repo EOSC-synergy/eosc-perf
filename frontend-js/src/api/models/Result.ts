@@ -2,12 +2,17 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { Benchmark } from './Benchmark';
+import type { Flavor } from './Flavor';
+import type { Site } from './Site';
+import type { Tag } from './Tag';
+
 export type Result = {
-    readonly benchmark_image?: any;
-    readonly flavor_name?: any;
-    readonly benchmark_tag?: any;
-    readonly site_name?: any;
-    readonly tag_names?: any;
-    readonly id?: string;
     json: any;
+    flavor?: Flavor;
+    readonly upload_date?: string;
+    benchmark?: Benchmark;
+    readonly id?: string;
+    tags?: Array<Tag>;
+    site?: Site;
 }

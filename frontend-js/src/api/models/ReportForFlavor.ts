@@ -6,11 +6,11 @@ import type { Flavor } from './Flavor';
 import type { Site } from './Site';
 
 export type ReportForFlavor = {
-    verdict?: boolean;
-    readonly site?: Site;
     readonly flavor?: Flavor;
-    readonly date?: string;
     verified?: boolean;
+    verdict?: boolean;
+    readonly date?: string;
     readonly id?: string;
+    readonly site?: Site;
     message: string;
 }

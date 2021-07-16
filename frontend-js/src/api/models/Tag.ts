@@ -4,6 +4,6 @@
 
 export type Tag = {
     readonly id?: string;
+    description?: string;
     name: string;
-    description: string;
 }

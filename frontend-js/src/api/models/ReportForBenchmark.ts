@@ -5,9 +5,9 @@
 import type { Benchmark } from './Benchmark';
 
 export type ReportForBenchmark = {
+    verified?: boolean;
     verdict?: boolean;
     readonly date?: string;
-    verified?: boolean;
     readonly benchmark?: Benchmark;
     readonly id?: string;
     message: string;
