@@ -1,0 +1,13 @@
+{
+    "arguments": "Total Time - 4K, 16 Rays Per Pixel",
+    "result": {
+        "!score": 612.003
+    },
+    "machine":{
+        "cpu": {
+            "brand_raw": "AMD Ryzen 9 5900X 12-Core Processor",
+            "!count": 1
+        }
+    },
+    "!test": "pts/c-ray-1.2.0"
+}
