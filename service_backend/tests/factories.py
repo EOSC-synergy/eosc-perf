@@ -2,12 +2,11 @@
 import uuid
 from datetime import datetime
 
-from backend import reports
-from backend.benchmarks.models import Benchmark
-from backend.reports.models import (BenchmarkReport, FlavorReport,
-                                    ResultReport, SiteReport)
-from backend.results.models import Result
-from backend.sites.models import Flavor, Site
+from backend.benchmarks.models import Benchmark, BenchmarkReportAssociation
+from backend.reports.models import Report
+from backend.results.models import Result, ResultReportAssociation
+from backend.sites.models import (Flavor, FlavorReportAssociation, Site,
+                                  SiteReportAssociation)
 from backend.tags.models import Tag
 from backend.users.models import User
 from factory import (LazyFunction, SelfAttribute, Sequence, SubFactory,
@@ -49,52 +48,53 @@ class UserFactory(SQLAlchemyModelFactory):
     email = Sequence(lambda n: f"user{n}@example.com")
 
 
-class BenchmarkReportFactory(SQLAlchemyModelFactory):
-    """BenchmarkReport factory."""
+class ReportFactory(SQLAlchemyModelFactory):
+    """Report factory."""
     class Meta(BaseMeta):
-        model = BenchmarkReport
+        model = Report
 
     id = LazyFunction(uuid.uuid4)
-    date = fdt.fuzz()
+    creation_date = fdt.fuzz()
     verdict = True
     message = Sequence(lambda n: f"Report message {n}")
     uploader = SubFactory(UserFactory)
 
 
-class ResultReportFactory(SQLAlchemyModelFactory):
-    """ResultReport factory."""
-    class Meta(BaseMeta):
-        model = ResultReport
-
+class ReportAssociationFactory(SQLAlchemyModelFactory):
+    """Report association factory base."""
     id = LazyFunction(uuid.uuid4)
-    date = fdt.fuzz()
-    verdict = True
-    message = Sequence(lambda n: f"Report message {n}")
-    uploader = SubFactory(UserFactory)
+    parent = None
+
+    @post_generation
+    def reports(self, create, ids, **kwargs):
+        ids = ids if ids != None else [uuid.uuid4()]
+        for id in ids:
+            report = ReportFactory(id=id, association_id=self.id, **kwargs)
+            self.reports.append(report)
 
 
-class SiteReportFactory(SQLAlchemyModelFactory):
-    """SiteReport factory."""
+class BenchmarkReportAssociationFactory(ReportAssociationFactory):
+    """Benchmark Report association factory."""
     class Meta(BaseMeta):
-        model = SiteReport
-
-    id = LazyFunction(uuid.uuid4)
-    date = fdt.fuzz()
-    verdict = True
-    message = Sequence(lambda n: f"Report message {n}")
-    uploader = SubFactory(UserFactory)
+        model = BenchmarkReportAssociation
 
 
-class FlavorReportFactory(SQLAlchemyModelFactory):
-    """FlavorReport factory."""
+class ResultReportAssociationFactory(ReportAssociationFactory):
+    """Result Report association factory."""
     class Meta(BaseMeta):
-        model = FlavorReport
+        model = ResultReportAssociation
 
-    id = LazyFunction(uuid.uuid4)
-    date = fdt.fuzz()
-    verdict = True
-    message = Sequence(lambda n: f"Report message {n}")
-    uploader = SubFactory(UserFactory)
+
+class SiteReportAssociationFactory(ReportAssociationFactory):
+    """Site Report association factory."""
+    class Meta(BaseMeta):
+        model = SiteReportAssociation
+
+
+class FlavorReportAssociationFactory(ReportAssociationFactory):
+    """Flavor Report association factory."""
+    class Meta(BaseMeta):
+        model = FlavorReportAssociation
 
 
 class BenchmarkFactory(SQLAlchemyModelFactory):
@@ -108,7 +108,7 @@ class BenchmarkFactory(SQLAlchemyModelFactory):
     docker_tag = "latest"
     description = ""
     json_template = {}
-    report = SubFactory(BenchmarkReportFactory)
+    report_association = SubFactory(BenchmarkReportAssociationFactory)
 
 
 class SiteFactory(SQLAlchemyModelFactory):
@@ -121,7 +121,7 @@ class SiteFactory(SQLAlchemyModelFactory):
     name = Sequence(lambda n: f"site{n}")
     address = Sequence(lambda n: f"address{n}")
     description = "Text"
-    report = SubFactory(SiteReportFactory)
+    report_association = SubFactory(SiteReportAssociationFactory)
 
     @post_generation
     def flavors(self, create, names, **kwargs):
@@ -138,8 +138,8 @@ class FlavorFactory(SQLAlchemyModelFactory):
     id = LazyFunction(uuid.uuid4)
     name = Sequence(lambda n: f"flavor{n}")
     description = "Text"
-    site_id = None
-    report = SubFactory(FlavorReportFactory)
+    site_id = LazyFunction(lambda: SiteFactory().id)
+    report_association = SubFactory(FlavorReportAssociationFactory)
 
 
 class ResultFactory(SQLAlchemyModelFactory):
@@ -149,11 +149,11 @@ class ResultFactory(SQLAlchemyModelFactory):
 
     id = LazyFunction(uuid.uuid4)
     json = Sequence(lambda n: {'name': f"report_{n}"})
+    uploader = SubFactory(UserFactory)
     benchmark = SubFactory(BenchmarkFactory)
     site = SubFactory(SiteFactory)
     flavor = SubFactory(FlavorFactory, site_id=SelfAttribute('..site.id'))
-    report = SubFactory(ResultReportFactory)
-    uploader = SubFactory(UserFactory)
+    report_association = SubFactory(ResultReportAssociationFactory)
 
     @post_generation
     def tags(self, create, kws, **kwargs):

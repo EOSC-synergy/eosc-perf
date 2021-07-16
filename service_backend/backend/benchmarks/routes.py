@@ -27,10 +27,10 @@ class Root(MethodView):
     def post(self, **kwargs):
         """Creates a new benchmark."""
         access_token = tokentools.get_access_token_from_request(request)
-        report = models.BenchmarkReport(
+        report = models.Report(
             uploader=models.User.get(token=access_token),
         )
-        return models.Benchmark.create(report=report, **kwargs)
+        return models.Benchmark.create(reports=[report], **kwargs)
 
 
 @blp.route('/search')

@@ -9,13 +9,13 @@ register(factories.TagFactory)
 register(factories.UserFactory)
 
 register(factories.BenchmarkFactory)
-register(factories.BenchmarkReportFactory)
+register(factories.BenchmarkReportAssociationFactory)
 register(factories.ResultFactory)
-register(factories.ResultReportFactory)
+register(factories.ResultReportAssociationFactory)
 register(factories.SiteFactory)
-register(factories.SiteReportFactory)
+register(factories.SiteReportAssociationFactory)
 register(factories.FlavorFactory)
-register(factories.FlavorReportFactory)
+register(factories.FlavorReportAssociationFactory)
 
 
 @fixture(scope='function')

@@ -1,12 +1,19 @@
 """Benchmark models."""
 from backend.database import PkModel
-from backend.reports.models import BenchmarkReport
+from backend.reports.models import Report, ReportAssociation
 from backend.users.models import User
 from sqlalchemy import Column, ForeignKey, Text, UniqueConstraint, or_
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
+
+
+class BenchmarkReportAssociation(ReportAssociation):
+    __tablename__ = None
+    __mapper_args__ = {"polymorphic_identity": "benchmark_report"}
+    parent = relationship("Benchmark", uselist=False,
+                          back_populates="report_association")
 
 
 class Benchmark(PkModel):
@@ -20,10 +27,16 @@ class Benchmark(PkModel):
     docker_tag = Column(Text, nullable=False)
     description = Column(Text, default="")
     json_template = Column(JSON, default={})
-    report_id = Column(ForeignKey('benchmark_report.id'))
-    report = relationship(
-        BenchmarkReport, back_populates="benchmark", cascade="all, delete")
-    verdict = association_proxy('report', 'verdict')
+
+    report_association_id = Column(ForeignKey("report_association.id"))
+    report_association = relationship(
+        BenchmarkReportAssociation, single_parent=True,
+        cascade="all, delete-orphan",
+        back_populates="parent")
+    reports = association_proxy(
+        "report_association", "reports",
+        creator=lambda reports: BenchmarkReportAssociation(reports=reports))
+    verdict = association_proxy('reports', 'verdict')
 
     @hybrid_property
     def hidden(self):

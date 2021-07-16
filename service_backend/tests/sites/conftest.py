@@ -7,9 +7,9 @@ from tests import factories
 
 register(factories.UserFactory)
 register(factories.SiteFactory)
-register(factories.SiteReportFactory)
+register(factories.SiteReportAssociationFactory)
 register(factories.FlavorFactory)
-register(factories.FlavorReportFactory)
+register(factories.FlavorReportAssociationFactory)
 
 
 @fixture(scope='function')

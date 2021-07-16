@@ -5,10 +5,11 @@ from pytest_factoryboy import register
 from tests import factories
 
 
-register(factories.BenchmarkReportFactory)
-register(factories.ResultReportFactory)
-register(factories.SiteReportFactory)
-register(factories.FlavorReportFactory)
+register(factories.ReportFactory)
+register(factories.BenchmarkReportAssociationFactory)
+register(factories.ResultReportAssociationFactory)
+register(factories.SiteReportAssociationFactory)
+register(factories.FlavorReportAssociationFactory)
 
 register(factories.BenchmarkFactory)
 register(factories.ResultFactory)
@@ -24,27 +25,45 @@ def report_id(request):
 
 
 @fixture(scope='function')
-def benchmark_report__id(report_id):
-    """Use, if defined, the id for the report factory."""
-    return report_id
+def report_type(request):
+    """Selects the type of resource the report points to."""
+    return request.param if hasattr(request, 'param') else None
 
 
 @fixture(scope='function')
-def result_report__id(report_id):
-    """Use, if defined, the id for the report factory."""
-    return report_id
+def report_verdict(request):
+    """Selects the initialization value for report.verdict."""
+    return request.param if hasattr(request, 'param') else None
 
 
 @fixture(scope='function')
-def site_report__id(report_id):
-    """Use, if defined, the id for the report factory."""
-    return report_id
+def report__id(request, report_id):
+    """Use the id for the report factory if defined."""
+    return request.param if hasattr(request, 'param') else report_id
 
 
 @fixture(scope='function')
-def flavor_report__id(report_id):
-    """Use, if defined, the id for the report factory."""
-    return report_id
+def report(
+    benchmark_factory, result_factory, site_factory, flavor_factory,
+    report__id, report_type, report_verdict,
+):
+    """Creates a report."""
+    kwargs = {
+        'report_association__reports': [report__id],
+        'report_association__reports__verdict': report_verdict
+    }
+    if report_type == None:
+        raise Exception("report_type undefined")
+    elif report_type == "benchmark":
+        return benchmark_factory(**kwargs).reports[0]
+    elif report_type == "result":
+        return result_factory(**kwargs).reports[0]
+    elif report_type == "site":
+        return site_factory(**kwargs).reports[0]
+    elif report_type == "flavor":
+        return flavor_factory(**kwargs).reports[0]
+    else:
+        raise Exception(f"Unknown report_type: {report_type}")
 
 
 @fixture(scope='function')
@@ -54,21 +73,5 @@ def url(endpoint, report_id, query):
 
 
 @fixture(scope='function')
-def db_benchmark_reports(request, benchmark_report_factory):
-    return [benchmark_report_factory(**kwargs) for kwargs in request.param]
-
-
-@fixture(scope='function')
-def db_result_reports(request, result_report_factory):
-    return [result_report_factory(**kwargs) for kwargs in request.param]
-
-
-@fixture(scope='function')
-def db_site_reports(request, site_report_factory):
-    return [site_report_factory(**kwargs) for kwargs in request.param]
-
-
-@fixture(scope='function')
-def db_flavor_reports(request, flavor_report_factory):
-    flavors = [flavor_report_factory(**kwargs) for kwargs in request.param]
-    return flavors
+def db_results(request, result_factory):
+    return [result_factory(**kwargs) for kwargs in request.param]

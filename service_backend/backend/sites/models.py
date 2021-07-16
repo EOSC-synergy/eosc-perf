@@ -1,11 +1,19 @@
 """Site models."""
+from sqlalchemy.sql.expression import null
 from backend.database import PkModel
-from backend.reports.models import FlavorReport, SiteReport
+from backend.reports.models import Report, ReportAssociation
 from backend.users.models import User
 from sqlalchemy import Column, ForeignKey, Text, UniqueConstraint, or_
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
+
+
+class SiteReportAssociation(ReportAssociation):
+    __tablename__ = None
+    __mapper_args__ = {"polymorphic_identity": "site_report"}
+    parent = relationship("Site", uselist=False,
+                          back_populates="report_association")
 
 
 class Site(PkModel):
@@ -19,10 +27,15 @@ class Site(PkModel):
     description = Column(Text, nullable=True, default="")
     flavors = relationship("Flavor", cascade="all, delete-orphan")
 
-    report_id = Column(ForeignKey('site_report.id'))
-    report = relationship(
-        SiteReport, back_populates="site", cascade="all, delete")
-    verdict = association_proxy('report', 'verdict')
+    report_association_id = Column(ForeignKey("report_association.id"))
+    report_association = relationship(
+        SiteReportAssociation, single_parent=True,
+        cascade="all, delete-orphan",
+        back_populates="parent")
+    reports = association_proxy(
+        "report_association", "reports",
+        creator=lambda reports: SiteReportAssociation(reports=reports))
+    verdicts = association_proxy('reports', 'verdict')
 
     @hybrid_property
     def hidden(self):
@@ -58,6 +71,13 @@ class Site(PkModel):
         return results
 
 
+class FlavorReportAssociation(ReportAssociation):
+    __tablename__ = None
+    __mapper_args__ = {"polymorphic_identity": "flavor_report"}
+    parent = relationship("Flavor", uselist=False,
+                          back_populates="report_association")
+
+
 class Flavor(PkModel):
     """The Flavor class represents a flavor of virtual machines available
     for usage on a Site.
@@ -68,12 +88,18 @@ class Flavor(PkModel):
 
     name = Column(Text, nullable=False)
     description = Column(Text, nullable=True, default="")
-    site_id = Column(ForeignKey('site.id'))
+    site_id = Column(ForeignKey('site.id'), nullable=False)
+    verdict = association_proxy('reports', 'verdict')
 
-    report_id = Column(ForeignKey('flavor_report.id'))
-    report = relationship(
-        FlavorReport, back_populates="flavor", cascade="all, delete")
-    verdict = association_proxy('report', 'verdict')
+    report_association_id = Column(ForeignKey("report_association.id"))
+    report_association = relationship(
+        FlavorReportAssociation, single_parent=True,
+        cascade="all, delete-orphan",
+        back_populates="parent")
+    reports = association_proxy(
+        "report_association", "reports",
+        creator=lambda reports: FlavorReportAssociation(reports=reports))
+    verdicts = association_proxy('reports', 'verdict')
 
     @hybrid_property
     def hidden(self):

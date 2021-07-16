@@ -27,10 +27,10 @@ class Root(MethodView):
     def post(self, **kwargs):
         """Creates a new site."""
         access_token = tokentools.get_access_token_from_request(request)
-        report = models.SiteReport(
+        report = models.Report(
             uploader=models.User.get(token=access_token),
         )
-        return models.Site.create(report=report, **kwargs)
+        return models.Site.create(reports=[report], **kwargs)
 
 
 @blp.route('/search')
@@ -83,10 +83,10 @@ class Flavors(MethodView):
         """Creates a new flavor on a site."""
         access_token = tokentools.get_access_token_from_request(request)
         site = models.Site.get_by_id(site_id)
-        report = models.FlavorReport(
+        report = models.Report(
             uploader=models.User.get(token=access_token),
         )
-        flavor = models.Flavor(report=report, site_id=site.id, **kwargs)
+        flavor = models.Flavor(reports=[report], site_id=site.id, **kwargs)
         site.update(flavors=site.flavors+[flavor])
         return flavor
 

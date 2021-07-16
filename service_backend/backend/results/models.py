@@ -3,6 +3,7 @@ from datetime import datetime
 
 from backend.benchmarks.models import Benchmark
 from backend.database import PkModel, Table
+from backend.reports.models import Report, ReportAssociation
 from backend.sites.models import Flavor, Site
 from backend.tags.models import Tag
 from backend.users.models import User
@@ -20,6 +21,13 @@ tag_association = Table(
     Column('tag_id', UUID, ForeignKey('tag.id')),
     PrimaryKeyConstraint('result_id', 'tag_id')
 )
+
+
+class ResultReportAssociation(ReportAssociation):
+    __tablename__ = None
+    __mapper_args__ = {"polymorphic_identity": "result_report"}
+    parent = relationship("Result", uselist=False,
+                          back_populates="report_association")
 
 
 class Result(PkModel):
@@ -50,13 +58,19 @@ class Result(PkModel):
     uploader_sub = Column(Text, nullable=False)
     uploader = relationship(User)
 
-    report_id = Column(ForeignKey('result_report.id'))
-    report = relationship("ResultReport", back_populates="result")
-    verdict = association_proxy('report', 'verdict')
+    report_association_id = Column(ForeignKey("report_association.id"))
+    report_association = relationship(
+        ResultReportAssociation, single_parent=True,
+        cascade="all, delete-orphan",
+        back_populates="parent")
+    reports = association_proxy(
+        "report_association", "reports",
+        creator=lambda reports: ResultReportAssociation(reports=reports))
+    verdicts = association_proxy('reports', 'verdict')
 
-    @hybrid_property
+    @ hybrid_property
     def hidden(self):
-        return not self.verdict
+        return not all(self.verdicts)
 
     __table_args__ = (ForeignKeyConstraint(['uploader_iss', 'uploader_sub'],
                                            ['user.iss', 'user.sub']),
@@ -70,7 +84,7 @@ class Result(PkModel):
         """
         return '<{} {}>'.format(self.__class__.__name__, self.id)
 
-    @classmethod
+    @ classmethod
     def query_with(cls, terms):
         """Query all results containing all keywords in the columns.
 

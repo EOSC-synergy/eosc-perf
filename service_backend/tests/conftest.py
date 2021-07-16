@@ -179,6 +179,12 @@ def response_PUT(client, url, body):
 
 
 @fixture(scope='function')
+def response_PATCH(client, url, body):
+    """Fixture that return the result of a PATCH request."""
+    return client.patch(url, json=body)
+
+
+@fixture(scope='function')
 def response_DELETE(client, url):
     """Fixture that return the result of a DELETE request."""
     return client.delete(url)
