@@ -1,16 +1,18 @@
 import React from 'react';
 import { Benchmark } from '../../api';
 
+import modules from '..';
+
 type TableProps = {
     results: Benchmark[];
 };
 
 export function Table(props: TableProps) {
     return (
-        <table>
+        <table style={{ width: '100%' }}>
             <thead>
                 <tr>
-                    <th>Benchmarks</th>
+                    <th style={{ borderBottom: '3px solid #000' }}>Benchmarks</th>
                 </tr>
             </thead>
             <tbody>
@@ -18,9 +20,13 @@ export function Table(props: TableProps) {
                     props.results.map((result: Benchmark) => (
                         <tr>
                             <td>
-                                {/* TODO: link to result search module with query strings */}
-                                {result.docker_image + ':' + result.docker_tag}
-                                <div> {/*result.description*/} </div>
+                                <a
+                                    href={modules.ResultSearch.path + '?benchmark=' + result.id}
+                                    title={result.docker_image + ':' + result.docker_tag}
+                                >
+                                    {result.docker_image + ':' + result.docker_tag}
+                                </a>
+                                <div> {result.description} </div>
                             </td>
                         </tr>
                     ))

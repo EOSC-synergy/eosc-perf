@@ -28,7 +28,6 @@ function Page(props: PageProps) {
             return getHelper<Benchmark[]>('/benchmarks', props.token);
         },
         {
-            enabled: !!token,
             refetchOnWindowFocus: false, // do not spam queries
         }
     );
@@ -37,12 +36,20 @@ function Page(props: PageProps) {
             <h1>Benchmark Search</h1>
             <SearchForm />
             <div style={{ position: 'relative' }}>
-                {isLoading && <LoadingOverlay />}
-                <Table
-                    results={
-                        /*data ? data.slice(page * resultsPerPage, page * (resultsPerPage + 1)) :*/ []
-                    }
-                />
+                {isLoading && (
+                    <>
+                        <Table results={[]} /> <LoadingOverlay />
+                    </>
+                )}
+                {isError && <div>Failed to fetch benchmarks!</div>}
+                {isSuccess && (
+                    <Table
+                        results={data!.data.slice(
+                            page * resultsPerPage,
+                            (page + 1) * resultsPerPage
+                        )}
+                    />
+                )}
             </div>
         </div>
     );
