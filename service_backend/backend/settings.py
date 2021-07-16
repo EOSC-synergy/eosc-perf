@@ -79,7 +79,7 @@ else:
     ADMIN_ENTITLEMENTS = env.str("ADMIN_ENTITLEMENTS", default=[])
     EGI_CLIENT_SECRET_FILE = env.str("OIDC_CLIENT_SECRET_FILE", "")
     if EGI_CLIENT_SECRET_FILE == "":
-        EGI_CLIENT_SECRET = env.str("EGI_CLIENT_SECRET", default="")
+        EGI_CLIENT_SECRET = env.str("OIDC_CLIENT_SECRET", default="not-defined")
     else:
         EGI_CLIENT_SECRET = open(EGI_CLIENT_SECRET_FILE).read().rstrip('\n')
 
