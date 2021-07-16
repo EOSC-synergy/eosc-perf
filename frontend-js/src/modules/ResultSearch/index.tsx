@@ -62,7 +62,7 @@ function ResultSearch(props: ResultSearchProps) {
     let { status, isLoading, isError, data, isSuccess } = useQuery(
         'benchmarkSearch',
         () => {
-            return getHelper<SelectableResult[]>('/api/results', props.token);
+            return getHelper<SelectableResult[]>('/results', props.token);
         },
         {
             enabled: !!token,

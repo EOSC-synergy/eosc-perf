@@ -25,7 +25,7 @@ function Page(props: PageProps) {
     let { status, isLoading, isError, data, isSuccess } = useQuery(
         'benchmarkSearch',
         () => {
-            return getHelper<Benchmark[]>('/api/benchmarks', props.token);
+            return getHelper<Benchmark[]>('/benchmarks', props.token);
         },
         {
             enabled: !!token,

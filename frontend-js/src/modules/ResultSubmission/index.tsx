@@ -22,7 +22,7 @@ function BenchmarkSelection(props: { token: string }) {
     let { status, isLoading, isError, data, isSuccess } = useQuery(
         'benchmarkSelect',
         () => {
-            return getHelper<Benchmark[]>('/api/benchmarks', props.token);
+            return getHelper<Benchmark[]>('/benchmarks', props.token);
         },
         {
             enabled: !!props.token,
@@ -56,7 +56,7 @@ function SiteSelection(props: { token: string }) {
     let { status, isLoading, isError, data, isSuccess } = useQuery(
         'siteSelect',
         () => {
-            return getHelper<Site[]>('/api/sites', props.token);
+            return getHelper<Site[]>('/sites', props.token);
         },
         {
             enabled: !!props.token,
@@ -163,7 +163,7 @@ function TagSelection(props: { token: string }) {
     let { status, isLoading, isError, data, isSuccess } = useQuery(
         'tagSelect',
         () => {
-            return getHelper<Site[]>('/api/tags', props.token);
+            return getHelper<Site[]>('/tags', props.token);
         },
         {
             enabled: !!props.token,
