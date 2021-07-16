@@ -111,7 +111,7 @@ class ConfigHandler:
         if load_env:
             env_values: dict = {
                 'secret_key_file': _get_var('COOKIE_KEY_PATH'),
-                'oidc_client_secret_file': _get_var('OIDC_CLIENT_SECRET_PATH'),
+                'oidc_client_secret_file': _get_var('OIDC_CLIENT_SECRET_FILE'),
                 'oidc_client_id': _get_var('OIDC_CLIENT_ID'),
                 'oidc_redirect_hostname': _get_var('DOMAIN'),
                 'admin_entitlements': _get_var('ADMIN_ENTITLEMENTS', list),
