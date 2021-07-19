@@ -16,6 +16,7 @@ blp = Blueprint(
 class Root(MethodView):
 
     @auth.admin_required()
+    @blp.doc(operationId='GetUsers')
     @blp.arguments(schemas.UserQuery, location='query')
     @blp.response(200, schemas.User(many=True))
     def get(self, args):
@@ -27,6 +28,7 @@ class Root(MethodView):
 class Search(MethodView):
 
     @auth.admin_required()
+    @blp.doc(operationId='SearchUsers')
     @blp.arguments(schemas.SearchQueryArgs, location='query')
     @blp.response(200, schemas.User(many=True))
     def get(self, args):
@@ -38,12 +40,14 @@ class Search(MethodView):
 class User(MethodView):
 
     @auth.admin_required()
+    @blp.doc(operationId='GetUser')
     @blp.response(200, schemas.User)
     def get(self, user_iss, user_sub):
         """Retrieves user details."""
         return models.User.get(sub=user_sub, iss=user_iss)
 
     @auth.admin_required()
+    @blp.doc(operationId='DelUser')
     @blp.response(204)
     def delete(self, user_iss, user_sub):
         """Deletes an existing user."""
@@ -55,6 +59,7 @@ class User(MethodView):
 class Admin(MethodView):
 
     @auth.admin_required()
+    @blp.doc(operationId='Admin')
     @blp.response(204)
     def get(self):
         """Returns 204 if you are admin."""
@@ -65,6 +70,7 @@ class Admin(MethodView):
 class Register(MethodView):
 
     @auth.login_required()
+    @blp.doc(operationId='MyUser')
     @blp.response(200, schemas.User)
     def get(self):
         """Retrieves the logged in user info."""
@@ -72,6 +78,7 @@ class Register(MethodView):
         return models.User.get(token=access_token)
 
     @auth.login_required()
+    @blp.doc(operationId='RegisterMe')
     @blp.response(201, schemas.User)
     def post(self):
         """Registers the logged in user."""
@@ -79,6 +86,7 @@ class Register(MethodView):
         return models.User.create(token=access_token)
 
     @auth.login_required()
+    @blp.doc(operationId='UpdateMe')
     @blp.response(204)
     def put(self):
         """Updates the logged in user info."""

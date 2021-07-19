@@ -14,6 +14,7 @@ blp = Blueprint(
 class Root(MethodView):
 
     @auth.admin_required()
+    @blp.doc(operationId='GetReports')
     @blp.arguments(schemas.FilterQueryArgs, location='query', as_kwargs=True)
     @blp.response(200, schemas.Report(many=True))
     def get(self, before=None, after=None, **kwargs):
@@ -31,12 +32,14 @@ class Root(MethodView):
 class ReportId(MethodView):
 
     @auth.admin_required()
+    @blp.doc(operationId='GetReport')
     @blp.response(200, schemas.Report)
     def get(self, report_id):
         """Retrieves report details."""
         return models.Report.get_by_id(report_id)
 
     @auth.admin_required()
+    @blp.doc(operationId='DelReport')
     @blp.response(204)
     def delete(self, report_id):
         """Deletes an existing report."""
@@ -47,6 +50,7 @@ class ReportId(MethodView):
 class Approve(MethodView):
 
     @auth.admin_required()
+    @blp.doc(operationId='ApproveReport')
     @blp.response(204)
     def patch(self, report_id):
         """Approves the indicated report id."""
@@ -57,6 +61,7 @@ class Approve(MethodView):
 class Reject(MethodView):
 
     @auth.admin_required()
+    @blp.doc(operationId='RejectReport')
     @blp.response(204)
     def patch(self, report_id):
         """Rejects the indicated report id."""

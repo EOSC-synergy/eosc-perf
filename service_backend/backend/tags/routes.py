@@ -13,6 +13,7 @@ blp = Blueprint(
 @blp.route('')
 class Root(MethodView):
 
+    @blp.doc(operationId='GetTags')
     @blp.arguments(schemas.TagsQueryArgs, location='query')
     @blp.response(200, schemas.Tag(many=True))
     def get(self, args):
@@ -20,6 +21,7 @@ class Root(MethodView):
         return models.Tag.filter_by(**args)
 
     @auth.login_required()
+    @blp.doc(operationId='AddTag')
     @blp.arguments(schemas.Tag, as_kwargs=True)
     @blp.response(201, schemas.Tag)
     def post(self, **kwargs):
@@ -30,6 +32,7 @@ class Root(MethodView):
 @blp.route('/search')
 class Search(MethodView):
 
+    @blp.doc(operationId='SearchTags')
     @blp.arguments(schemas.SearchQueryArgs, location='query', as_kwargs=True)
     @blp.response(200, schemas.Tag(many=True))
     def get(self, terms):
@@ -40,12 +43,14 @@ class Search(MethodView):
 @blp.route('/<uuid:tag_id>')
 class Tag(MethodView):
 
+    @blp.doc(operationId='GetTag')
     @blp.response(200, schemas.Tag)
     def get(self, tag_id):
         """Retrieves tag details."""
         return models.Tag.get_by_id(tag_id)
 
     @auth.admin_required()
+    @blp.doc(operationId='EditTag')
     @blp.arguments(schemas.EditTag, as_kwargs=True)
     @blp.response(204)
     def put(self, tag_id, **kwargs):
@@ -53,6 +58,7 @@ class Tag(MethodView):
         models.Tag.get_by_id(tag_id).update(**kwargs)
 
     @auth.admin_required()
+    @blp.doc(operationId='DelTag')
     @blp.response(204)
     def delete(self, tag_id):
         """Deletes an existing tag."""

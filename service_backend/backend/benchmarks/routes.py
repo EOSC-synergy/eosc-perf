@@ -15,6 +15,7 @@ blp = Blueprint(
 @blp.route('')
 class Root(MethodView):
 
+    @blp.doc(operationId='GetBenchmarks')
     @blp.arguments(schemas.BenchmarkQueryArgs, location='query')
     @blp.response(200, schemas.Benchmark(many=True))
     def get(self, args):
@@ -22,6 +23,7 @@ class Root(MethodView):
         return models.Benchmark.filter_by(**args)
 
     @auth.login_required()
+    @blp.doc(operationId='AddBenchmark')
     @blp.arguments(schemas.Benchmark, as_kwargs=True)
     @blp.response(201, schemas.Benchmark)
     def post(self, **kwargs):
@@ -36,6 +38,7 @@ class Root(MethodView):
 @blp.route('/search')
 class Search(MethodView):
 
+    @blp.doc(operationId='SearchBenchmarks')
     @blp.arguments(schemas.SearchQueryArgs, location='query', as_kwargs=True)
     @blp.response(200, schemas.Benchmark(many=True))
     def get(self, terms):
@@ -46,12 +49,14 @@ class Search(MethodView):
 @blp.route('/<uuid:benchmark_id>')
 class Benchmark(MethodView):
 
+    @blp.doc(operationId='GetBenchmark')
     @blp.response(200, schemas.Benchmark)
     def get(self, benchmark_id):
         """Retrieves benchmark details."""
         return models.Benchmark.get_by_id(benchmark_id)
 
     @auth.admin_required()
+    @blp.doc(operationId='EditBenchmark')
     @blp.arguments(schemas.EditBenchmark, as_kwargs=True)
     @blp.response(204)
     def put(self, benchmark_id, **kwargs):
@@ -59,6 +64,7 @@ class Benchmark(MethodView):
         models.Benchmark.get_by_id(benchmark_id).update(**kwargs)
 
     @auth.admin_required()
+    @blp.doc(operationId='DelBenchmark')
     @blp.response(204)
     def delete(self, benchmark_id):
         """Deletes an existing benchmark."""

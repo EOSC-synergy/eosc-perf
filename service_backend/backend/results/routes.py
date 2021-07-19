@@ -16,6 +16,7 @@ blp = Blueprint(
 @blp.route('')
 class Root(MethodView):
 
+    @blp.doc(operationId='GetResults')
     @blp.arguments(schemas.FilterQueryArgs, location='query', as_kwargs=True)
     @blp.response(200, schemas.Result(many=True))
     def get(self, tag_names=None, before=None, after=None, **kwargs):
@@ -31,6 +32,7 @@ class Root(MethodView):
         return query.all()
 
     @auth.login_required()
+    @blp.doc(operationId='AddResult')
     @blp.arguments(schemas.CreateQueryArgs, location='query')
     @blp.arguments(schemas.Json)
     @blp.response(201, schemas.Result)
@@ -51,6 +53,7 @@ class Root(MethodView):
 @blp.route('/search')
 class Search(MethodView):
 
+    @blp.doc(operationId='SearchResults')
     @blp.arguments(schemas.SearchQueryArgs, location='query', as_kwargs=True)
     @blp.response(200, schemas.Result(many=True))
     def get(self, terms=[]):
@@ -61,12 +64,14 @@ class Search(MethodView):
 @blp.route('/<uuid:result_id>')
 class Result(MethodView):
 
+    @blp.doc(operationId='GetResult')
     @blp.response(200, schemas.Result)
     def get(self, result_id):
         """Retrieves result details."""
         return models.Result.get_by_id(result_id)
 
     @auth.login_required()
+    @blp.doc(operationId='EditResult')
     @blp.arguments(schemas.TagsIds, as_kwargs=True)
     @blp.response(204)
     def put(self, result_id, tags_ids=None):
@@ -86,6 +91,7 @@ class Result(MethodView):
             abort(403)
 
     @auth.admin_required()
+    @blp.doc(operationId='DelResult')
     @blp.response(204)
     def delete(self, result_id):
         """Deletes an existing result."""
@@ -96,6 +102,7 @@ class Result(MethodView):
 class Uploader(MethodView):
 
     @auth.admin_required()
+    @blp.doc(operationId='GetResultUploader')
     @blp.response(200, schemas.User)
     def get(self, result_id):
         """Retrieves result uploader."""
@@ -106,6 +113,7 @@ class Uploader(MethodView):
 class Report(MethodView):
 
     @auth.login_required()
+    @blp.doc(operationId='AddResultReport')
     @blp.arguments(schemas.Report)
     @blp.response(201, schemas.Report)
     def post(self, json, result_id):

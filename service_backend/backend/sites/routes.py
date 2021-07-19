@@ -15,6 +15,7 @@ blp = Blueprint(
 @blp.route('')
 class Root(MethodView):
 
+    @blp.doc(operationId='GetSites')
     @blp.arguments(schemas.SiteQueryArgs, location='query')
     @blp.response(200, schemas.Site(many=True))
     def get(self, args):
@@ -22,6 +23,7 @@ class Root(MethodView):
         return models.Site.filter_by(**args)
 
     @auth.login_required()
+    @blp.doc(operationId='AddSite')
     @blp.arguments(schemas.Site, as_kwargs=True)
     @blp.response(201, schemas.Site)
     def post(self, **kwargs):
@@ -36,6 +38,7 @@ class Root(MethodView):
 @blp.route('/search')
 class Search(MethodView):
 
+    @blp.doc(operationId='SearchSites')
     @blp.arguments(schemas.SearchQueryArgs, location='query')
     @blp.response(200, schemas.Site(many=True))
     def get(self, args):
@@ -46,12 +49,14 @@ class Search(MethodView):
 @blp.route('/<uuid:site_id>')
 class Site(MethodView):
 
+    @blp.doc(operationId='GetSite')
     @blp.response(200, schemas.Site)
     def get(self, site_id):
         """Retrieves site details."""
         return models.Site.get_by_id(site_id)
 
     @auth.admin_required()
+    @blp.doc(operationId='EditSite')
     @blp.arguments(schemas.EditSite, as_kwargs=True)
     @blp.response(204)
     def put(self, site_id, **kwargs):
@@ -59,6 +64,7 @@ class Site(MethodView):
         models.Site.get_by_id(site_id).update(**kwargs)
 
     @auth.admin_required()
+    @blp.doc(operationId='DelSite')
     @blp.response(204)
     def delete(self, site_id):
         """Deletes an existing site."""
@@ -68,6 +74,7 @@ class Site(MethodView):
 @blp.route('/<uuid:site_id>/flavors')
 class Flavors(MethodView):
 
+    @blp.doc(operationId='GetFlavors')
     @blp.arguments(schemas.FlavorQueryArgs, location='query')
     @blp.response(200, schemas.Flavor(many=True))
     def get(self, args, site_id):
@@ -77,6 +84,7 @@ class Flavors(MethodView):
         return [x for x in site_flavors if filter(x, **args)]
 
     @auth.login_required()
+    @blp.doc(operationId='AddFlavor')
     @blp.arguments(schemas.Flavor, as_kwargs=True)
     @blp.response(201, schemas.Flavor)
     def post(self, site_id, **kwargs):
@@ -95,11 +103,13 @@ class Flavors(MethodView):
 class Flavor(MethodView):
 
     @blp.response(200, schemas.Flavor)
+    @blp.doc(operationId='GetFlavor')
     def get(self, flavor_id):
         """Retrieves flavor details."""
         return models.Flavor.get_by_id(id=flavor_id)
 
     @auth.admin_required()
+    @blp.doc(operationId='EditFlavor')
     @blp.arguments(schemas.EditFlavor, as_kwargs=True)
     @blp.response(204)
     def put(self, flavor_id, **kwargs):
@@ -107,6 +117,7 @@ class Flavor(MethodView):
         models.Flavor.get_by_id(id=flavor_id).update(**kwargs)
 
     @auth.admin_required()
+    @blp.doc(operationId='DelFlavor')
     @blp.response(204)
     def delete(self, flavor_id):
         """Deletes an existing site."""
