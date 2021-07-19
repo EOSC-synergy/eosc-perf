@@ -1,11 +1,12 @@
 """Functional tests using pytest-flask."""
 from uuid import uuid4
-from tests.reports import asserts as report_asserts
 
 from backend.results import models
 from pytest import mark
 from tests.elements import (benchmark_1, flavor_1, result_1, result_2, site_1,
                             tag_1, tag_2, tag_3, user_1, user_2)
+from tests.reports import asserts as report_asserts
+from tests.users import asserts as user_asserts
 
 from . import asserts
 
@@ -267,8 +268,8 @@ class TestUploader:
     def test_GET_200(self, user, response_GET):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
-        asserts.correct_user(response_GET.json)
-        asserts.match_user(response_GET.json, user)
+        user_asserts.correct_user(response_GET.json)
+        user_asserts.match_user(response_GET.json, user)
 
     def test_GET_401(self, response_GET):
         """GET method fails 401 if not authorized."""
