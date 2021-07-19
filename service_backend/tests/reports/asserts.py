@@ -33,6 +33,13 @@ def match_report(json, report):
     return True
 
 
+def match_report_in_db(json):
+    db_report = models.Report.query.get(json['id'])
+    assert match_report(json, db_report)
+
+    return True
+
+
 def match_query(json, url):
     """Checks the json elements matches the url query."""
     presult = parse.urlparse(url)

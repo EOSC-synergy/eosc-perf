@@ -1,5 +1,6 @@
 """Result schemas."""
 from backend.benchmarks.schemas import Benchmark
+from backend.reports.schemas import Report
 from backend.sites.schemas import Site, Flavor
 from backend.tags.schemas import Tag, TagsIds
 from backend.users.schemas import User

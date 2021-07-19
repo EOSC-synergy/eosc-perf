@@ -6,6 +6,7 @@ from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 
 from . import models, schemas
+from backend import results
 
 
 blp = Blueprint(
@@ -21,13 +22,10 @@ class Root(MethodView):
     def get(self, tag_names=None, before=None, after=None, **kwargs):
         """Filters and list results."""
         query = models.Result.query.filter_by(**kwargs)
-
         if type(tag_names) == list:
             query = query.filter(models.Result.tag_names.in_(tag_names))
-
         if before:
             query = query.filter(models.Result.upload_date < before)
-
         if after:
             query = query.filter(models.Result.upload_date > after)
 
@@ -43,6 +41,7 @@ class Root(MethodView):
         return models.Result.create(
             uploader=models.User.get(token=access_token),
             json=json,
+            reports=[],
             benchmark=models.Benchmark.get_by_id(query_args['benchmark_id']),
             site=models.Site.get_by_id(query_args['site_id']),
             flavor=models.Flavor.get_by_id(query_args['flavor_id']),
@@ -102,3 +101,21 @@ class Uploader(MethodView):
     def get(self, result_id):
         """Retrieves result uploader."""
         return models.Result.get_by_id(result_id).uploader
+
+
+@blp.route('/<uuid:result_id>/report')
+class Report(MethodView):
+
+    @auth.login_required()
+    @blp.arguments(schemas.Report)
+    @blp.response(201, schemas.Report)
+    def post(self, json, result_id):
+        """Creates a result report."""
+        access_token = tokentools.get_access_token_from_request(request)
+        result = models.Result.get_by_id(result_id)
+        report = models.Report(
+            uploader=models.User.get(token=access_token),
+            message=json['message']
+        )
+        result.update(reports=result.reports+[report])
+        return report

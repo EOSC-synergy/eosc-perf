@@ -14,10 +14,10 @@ resource_types = [
 class Report(Schema):
     id = fields.UUID(dump_only=True)
     creation_date = fields.Date(dump_only=True)
-    verdict = fields.Boolean()
-    message = fields.String()
+    verdict = fields.Boolean(dump_only=True)
+    message = fields.String(required=True)
     resource_type = fields.String(dump_only=True)
-    resource_id = fields.UUID(required=True)
+    resource_id = fields.UUID(dump_only=True)
 
 
 class FilterQueryArgs(Schema):

@@ -1,11 +1,11 @@
 """Functional tests using pytest-flask."""
 from uuid import uuid4
-from backend import results
+from tests.reports import asserts as report_asserts
 
 from backend.results import models
 from pytest import mark
 from tests.elements import (benchmark_1, flavor_1, result_1, result_2, site_1,
-                            tag_1, tag_2, tag_3, user_1)
+                            tag_1, tag_2, tag_3, user_1, user_2)
 
 from . import asserts
 
@@ -284,3 +284,52 @@ class TestUploader:
     def test_GET_404(self, response_GET):
         """GET method fails 404 if no id found."""
         assert response_GET.status_code == 404
+
+
+@mark.usefixtures('session', 'result', 'db_users')
+@mark.parametrize('endpoint', ['results.Report'], indirect=True)
+@mark.parametrize('result_id', [uuid4()], indirect=True)
+@mark.parametrize('user__sub', [user_1['sub']])
+@mark.parametrize('user__iss', [user_1['iss']])
+@mark.parametrize('user__email', [user_1['email']])
+@mark.parametrize('db_users', indirect=True, argvalues=[
+    [user_1, user_2]
+])
+class TestReport:
+    """Tests for 'Report' route in blueprint."""
+
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('token_sub', [user_2['sub']], indirect=True)
+    @mark.parametrize('token_iss', [user_2['iss']], indirect=True)
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'message': "This is an example report"}
+    ])
+    def test_POST_201(self, response_POST, url, body):
+        """POST method succeeded 201."""
+        assert response_POST.status_code == 201
+        report_asserts.correct_report(response_POST.json)
+        report_asserts.match_body(response_POST.json, body)
+        report_asserts.match_report_in_db(response_POST.json)
+
+    def test_POST_401(self, response_POST):
+        """POST method fails 401 if not authorized."""
+        assert response_POST.status_code == 401
+
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('result__id', [uuid4()])
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'message': "This is an example report"}
+    ])
+    def test_POST_404(self, response_POST):
+        """POST method fails 404 if no id found."""
+        assert response_POST.status_code == 404
+
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('token_sub', [user_2['sub']], indirect=True)
+    @mark.parametrize('token_iss', [user_2['iss']], indirect=True)
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'bad_field': "This is a bad field to raise 422"}
+    ])
+    def test_POST_422(self, response_POST):
+        """POST method fails 422 if missing required."""
+        assert response_POST.status_code == 422
