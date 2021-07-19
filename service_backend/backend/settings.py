@@ -29,7 +29,7 @@ if ENV == 'production':
 else:
     DEBUG = env.bool("DEBUG", default=True)
     SECRET_KEY_FILE = env.str("SECRET_KEY_FILE", "")
-    if SECRET_KEY_FILE == "":
+    if not SECRET_KEY_FILE:
         SECRET_KEY = env.str("SECRET_KEY", default="not-so-secret")
     else:
         SECRET_KEY = open(SECRET_KEY_FILE).read().rstrip('\n')
@@ -78,7 +78,7 @@ else:
     DISABLE_ADMIN_PROTECTION = env.bool("DISABLE_ADMIN_PROTECTION", default=True)
     ADMIN_ENTITLEMENTS = env.str("ADMIN_ENTITLEMENTS", default=[])
     EGI_CLIENT_SECRET_FILE = env.str("OIDC_CLIENT_SECRET_FILE", "")
-    if EGI_CLIENT_SECRET_FILE == "":
+    if not EGI_CLIENT_SECRET_FILE:
         EGI_CLIENT_SECRET = env.str("OIDC_CLIENT_SECRET", default="not-defined")
     else:
         EGI_CLIENT_SECRET = open(EGI_CLIENT_SECRET_FILE).read().rstrip('\n')
