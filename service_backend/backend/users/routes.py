@@ -17,7 +17,7 @@ class Root(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='GetUsers')
-    @blp.arguments(schemas.UserQuery, location='query')
+    @blp.arguments(schemas.UserQueryArgs, location='query')
     @blp.response(200, schemas.User(many=True))
     def get(self, args):
         """Filters and list users."""

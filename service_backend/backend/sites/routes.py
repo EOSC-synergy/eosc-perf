@@ -24,7 +24,7 @@ class Root(MethodView):
 
     @auth.login_required()
     @blp.doc(operationId='AddSite')
-    @blp.arguments(schemas.Site, as_kwargs=True)
+    @blp.arguments(schemas.SiteCreate, as_kwargs=True)
     @blp.response(201, schemas.Site)
     def post(self, **kwargs):
         """Creates a new site."""
@@ -57,7 +57,7 @@ class Site(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='EditSite')
-    @blp.arguments(schemas.EditSite, as_kwargs=True)
+    @blp.arguments(schemas.SiteEdit, as_kwargs=True)
     @blp.response(204)
     def put(self, site_id, **kwargs):
         """Updates an existing site."""
@@ -85,7 +85,7 @@ class Flavors(MethodView):
 
     @auth.login_required()
     @blp.doc(operationId='AddFlavor')
-    @blp.arguments(schemas.Flavor, as_kwargs=True)
+    @blp.arguments(schemas.FlavorCreate, as_kwargs=True)
     @blp.response(201, schemas.Flavor)
     def post(self, site_id, **kwargs):
         """Creates a new flavor on a site."""
@@ -110,7 +110,7 @@ class Flavor(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='EditFlavor')
-    @blp.arguments(schemas.EditFlavor, as_kwargs=True)
+    @blp.arguments(schemas.FlavorEdit, as_kwargs=True)
     @blp.response(204)
     def put(self, flavor_id, **kwargs):
         """Updates an existing site."""

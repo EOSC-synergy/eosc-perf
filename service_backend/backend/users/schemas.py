@@ -2,18 +2,19 @@
 from marshmallow import Schema, fields
 
 
+__all__ = [
+    "User", "SearchQueryArgs", "UserQueryArgs"
+]
+
+
 class User(Schema):
-    sub = fields.String(dump_only=True)
-    iss = fields.String(dump_only=True)
-    email = fields.Email(dump_only=True)
-    created_at = fields.String(dump_only=True)
-
-
-class UserEdit(User):
+    sub = fields.String()
+    iss = fields.String()
     email = fields.Email()
+    created_at = fields.DateTime()
 
 
-class UserQuery(User):
+class UserQueryArgs(User):
     iss = fields.String()
     email = fields.String()
 

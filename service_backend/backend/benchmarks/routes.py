@@ -24,7 +24,7 @@ class Root(MethodView):
 
     @auth.login_required()
     @blp.doc(operationId='AddBenchmark')
-    @blp.arguments(schemas.Benchmark, as_kwargs=True)
+    @blp.arguments(schemas.BenchmarkCreate, as_kwargs=True)
     @blp.response(201, schemas.Benchmark)
     def post(self, **kwargs):
         """Creates a new benchmark."""
@@ -57,7 +57,7 @@ class Benchmark(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='EditBenchmark')
-    @blp.arguments(schemas.EditBenchmark, as_kwargs=True)
+    @blp.arguments(schemas.BenchmarkEdit, as_kwargs=True)
     @blp.response(204)
     def put(self, benchmark_id, **kwargs):
         """Updates an existing benchmark."""

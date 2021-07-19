@@ -1,24 +1,34 @@
 """Tag schemas."""
 from marshmallow import Schema, fields
 
+__all__ = [
+    "Tag", "TagsIds", "TagCreate", "TagEdit",
+    "SearchQueryArgs", "TagsQueryArgs"
+]
+
 
 class Tag(Schema):
-    id = fields.UUID(dump_only=True)
-    name = fields.String(required=True)
+    id = fields.UUID()
+    name = fields.String()
     description = fields.String()
 
 
 class TagsIds(Schema):
-    tags_ids = fields.List(fields.UUID, load_only=True)
+    tags_ids = fields.List(fields.UUID)
+
+
+class TagCreate(Schema):
+    name = fields.String(required=True)
+    description = fields.String()
+
+
+class TagEdit(Schema):
+    name = fields.String()
+    description = fields.String()
 
 
 class TagsQueryArgs(Schema):
     name = fields.String()
-
-
-class EditTag(Schema):
-    name = fields.String()
-    description = fields.String()
 
 
 class SearchQueryArgs(Schema):

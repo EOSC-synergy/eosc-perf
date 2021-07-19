@@ -22,7 +22,7 @@ class Root(MethodView):
 
     @auth.login_required()
     @blp.doc(operationId='AddTag')
-    @blp.arguments(schemas.Tag, as_kwargs=True)
+    @blp.arguments(schemas.TagCreate, as_kwargs=True)
     @blp.response(201, schemas.Tag)
     def post(self, **kwargs):
         """Creates a new tag."""
@@ -51,7 +51,7 @@ class Tag(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='EditTag')
-    @blp.arguments(schemas.EditTag, as_kwargs=True)
+    @blp.arguments(schemas.TagEdit, as_kwargs=True)
     @blp.response(204)
     def put(self, tag_id, **kwargs):
         """Updates an existing tag."""

@@ -114,7 +114,7 @@ class Report(MethodView):
 
     @auth.login_required()
     @blp.doc(operationId='AddResultReport')
-    @blp.arguments(schemas.Report)
+    @blp.arguments(schemas.ReportCreate)
     @blp.response(201, schemas.Report)
     def post(self, json, result_id):
         """Creates a result report."""

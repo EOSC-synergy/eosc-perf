@@ -3,6 +3,11 @@ from marshmallow import Schema, fields
 from marshmallow.validate import OneOf
 
 
+__all__ = [
+    "Report", "ReportCreate",
+    "FilterQueryArgs"
+]
+
 resource_types = [
     "benchmark_report",
     "result_report",
@@ -12,12 +17,16 @@ resource_types = [
 
 
 class Report(Schema):
-    id = fields.UUID(dump_only=True)
-    creation_date = fields.Date(dump_only=True)
-    verdict = fields.Boolean(dump_only=True)
+    id = fields.UUID()
+    creation_date = fields.DateTime()
+    verdict = fields.Boolean()
+    message = fields.String()
+    resource_type = fields.String()
+    resource_id = fields.UUID()
+
+
+class ReportCreate(Schema):
     message = fields.String(required=True)
-    resource_type = fields.String(dump_only=True)
-    resource_id = fields.UUID(dump_only=True)
 
 
 class FilterQueryArgs(Schema):

@@ -18,7 +18,7 @@ def match_user(json, user):
     assert json['sub'] == user.sub
     assert json['iss'] == user.iss
     assert json['email'] == user.email
-    assert json['created_at'] == str(user.created_at)
+    assert json['created_at'] == str(user.created_at).replace(" ", "T")
 
     return True
 

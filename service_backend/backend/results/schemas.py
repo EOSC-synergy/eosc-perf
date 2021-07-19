@@ -1,6 +1,6 @@
 """Result schemas."""
 from backend.benchmarks.schemas import Benchmark
-from backend.reports.schemas import Report
+from backend.reports.schemas import Report, ReportCreate
 from backend.sites.schemas import Site, Flavor
 from backend.tags.schemas import Tag, TagsIds
 from backend.users.schemas import User
@@ -8,7 +8,7 @@ from marshmallow import Schema, fields, INCLUDE
 
 
 __all__ = [
-    "Result", "Report", "TagsIds", "Json", "User",
+    "Result", "TagsIds", "Json", "User", "Report", "ReportCreate",
     "FilterQueryArgs", "CreateQueryArgs", "SearchQueryArgs"
 ]
 
@@ -19,9 +19,9 @@ class Json(Schema):
 
 
 class Result(Schema):
-    id = fields.UUID(dump_only=True)
-    upload_date = fields.DateTime(dump_only=True)
-    json = fields.Dict(required=True)
+    id = fields.UUID()
+    upload_date = fields.DateTime()
+    json = fields.Dict()
     benchmark = fields.Nested(Benchmark)
     site = fields.Nested(Site)
     flavor = fields.Nested(Flavor)

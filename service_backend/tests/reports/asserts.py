@@ -20,7 +20,7 @@ def correct_report(json):
 def match_report(json, report):
     """Checks the json elements matches the report object."""
     assert json['id'] == str(report.id)
-    assert json['creation_date'] == str(report.creation_date.date())
+    assert json['creation_date'] == str(report.creation_date).replace(" ", "T")
     assert json['verdict'] == report.verdict
     assert json['message'] == report.message
     assert json['resource_type'] == report.resource_type
