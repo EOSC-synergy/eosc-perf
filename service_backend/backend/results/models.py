@@ -13,12 +13,11 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
-from sqlalchemy_utils import UUIDType as UUID
 
 tag_association = Table(
     'result_tags',
-    Column('result_id', UUID, ForeignKey('result.id')),
-    Column('tag_id', UUID, ForeignKey('tag.id')),
+    Column('result_id', ForeignKey('result.id')),
+    Column('tag_id', ForeignKey('tag.id')),
     PrimaryKeyConstraint('result_id', 'tag_id')
 )
 

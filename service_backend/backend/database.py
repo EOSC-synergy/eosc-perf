@@ -4,7 +4,7 @@ import uuid
 import flask
 from sqlalchemy import Column
 from sqlalchemy.exc import *
-from sqlalchemy_utils import UUIDType as UUID
+from sqlalchemy.dialects.postgresql import UUID
 
 from backend.extensions import db
 
@@ -58,11 +58,7 @@ class PkModel(BaseModel):
     """Base model class that includes CRUD convenience methods, 
     plus adds a 'primary key' column named ``id``."""
     __abstract__ = True
-    id = Column(UUID(binary=False), primary_key=True)
-
-    def __init__(self, id=None, **kwargs):
-        super().__init__(**kwargs)
-        self.id = id if id else uuid.uuid4()
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     @classmethod
     def get_by_id(cls, id):
