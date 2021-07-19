@@ -72,6 +72,7 @@ class TestRoot:
         {'name': "site1", 'address': "address1"},
         {'name': "site2", 'address': "address2"}
     ])
+    @mark.filterwarnings("ignore:.*conflicts.*:sqlalchemy.exc.SAWarning")
     def test_POST_409(self, response_POST):
         """POST method fails 409 if resource already exists."""
         assert response_POST.status_code == 409
@@ -264,6 +265,7 @@ class TestFlavors:
         {'name': "flavor1"},
         {'name': "flavor2"}
     ])
+    @mark.filterwarnings("ignore:.*conflicts.*:sqlalchemy.exc.SAWarning")
     def test_POST_409(self, response_POST):
         """POST method fails 409 if resource already exists."""
         assert response_POST.status_code == 409

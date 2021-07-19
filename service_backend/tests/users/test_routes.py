@@ -219,6 +219,7 @@ class TestSelf:
     @mark.parametrize('token_sub', ["sub_1"], indirect=True)
     @mark.parametrize('token_iss', ["egi.com"], indirect=True)
     @mark.parametrize('introspection_email', ["user@email.com"], indirect=True)
+    @mark.filterwarnings("ignore:.*conflicts.*:sqlalchemy.exc.SAWarning")
     def test_POST_409(self, response_POST):
         """POST method fails 409 if resource already exists."""
         assert response_POST.status_code == 409

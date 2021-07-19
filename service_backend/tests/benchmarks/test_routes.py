@@ -73,6 +73,7 @@ class TestRoot:
         {'docker_image': "b1", 'docker_tag': "v1.0"},
         {'docker_image': "b1", 'docker_tag': "v2.0"}
     ])
+    @mark.filterwarnings("ignore:.*conflicts.*:sqlalchemy.exc.SAWarning")
     def test_POST_409(self, response_POST):
         """POST method fails 409 if resource already exists."""
         assert response_POST.status_code == 409

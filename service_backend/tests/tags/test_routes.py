@@ -61,6 +61,7 @@ class TestRoot:
         {'name': "tag1", 'description': "desc_1"},
         {'name': "tag1"}
     ])
+    @mark.filterwarnings("ignore:.*conflicts.*:sqlalchemy.exc.SAWarning")
     def test_POST_409(self, response_POST):
         """POST method fails 409 if resource already exists."""
         assert response_POST.status_code == 409
