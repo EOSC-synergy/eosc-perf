@@ -73,7 +73,7 @@ class Flavors(MethodView):
     def get(self, args, site_id):
         """Filters and list flavors."""
         site_flavors = models.Site.get_by_id(site_id).flavors
-        filter = lambda x, **kw: all(getattr(x, k) == v for k, v in kw.items())
+        def filter(a, **kw): return all(getattr(a, k) == kw[k] for k in kw)
         return [x for x in site_flavors if filter(x, **args)]
 
     @auth.login_required()

@@ -1,10 +1,8 @@
 """Functional tests using pytest-flask."""
-from backend.reports.routes import ReportId
 from uuid import uuid4
 
 from backend.reports import models
 from backend.results.models import Result
-from backend.users.models import User
 from pytest import mark
 from tests.elements import result_1, result_2
 
@@ -78,21 +76,21 @@ class TestReport:
     def test_DELETE_204(self, report, response_DELETE):
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
-        assert models.Report.query.get(report.id) == None
+        assert models.Report.query.get(report.id) is None
 
         if report.resource_type == "result":
             resource = Result.query.get(report.resource_id)
-            assert resource != None  # Is not deleted
+            assert resource is not None  # Is not deleted
             assert report not in resource.reports
 
     def test_DELETE_401(self, report, response_DELETE):
         """DELETE method fails 401 if not authorized."""
         assert response_DELETE.status_code == 401
-        assert models.Report.query.get(report.id) != None
+        assert models.Report.query.get(report.id) is not None
 
         if report.resource_type == "result":
             resource = Result.query.get(report.resource_id)
-            assert resource != None  # Is not deleted
+            assert resource is not None  # Is not deleted
             assert report in resource.reports
 
     @mark.usefixtures('grant_admin')
@@ -100,11 +98,11 @@ class TestReport:
     def test_DELETE_404(self, report, response_DELETE):
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404
-        assert models.Report.query.get(report.id) != None
+        assert models.Report.query.get(report.id) is not None
 
         if report.resource_type == "result":
             resource = Result.query.get(report.resource_id)
-            assert resource != None  # Is not deleted
+            assert resource is not None  # Is not deleted
             assert report in resource.reports
 
 
@@ -128,25 +126,25 @@ class TestApprove:
     def test_PATCH_204(self, report, response_PATCH):
         """PATCH method succeeded 204."""
         assert response_PATCH.status_code == 204
-        assert models.Report.query.get(report.id).verdict == True
+        assert models.Report.query.get(report.id).verdict is True
 
     def test_PATCH_401(self, report, response_PATCH):
         """PATCH method fails 401 if not authorized."""
         assert response_PATCH.status_code == 401
-        assert models.Report.query.get(report.id).verdict != True
+        assert models.Report.query.get(report.id).verdict is not True
 
     @mark.usefixtures('grant_logged')
     def test_PATCH_403(self, report, response_PATCH):
         """PATCH method fails 403 if forbidden."""
         assert response_PATCH.status_code == 403
-        assert models.Report.query.get(report.id).verdict != True
+        assert models.Report.query.get(report.id).verdict is not True
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('report__id', [uuid4()])
     def test_PATCH_404(self, report, response_PATCH):
         """PATCH method fails 404 if no id found."""
         assert response_PATCH.status_code == 404
-        assert models.Report.query.get(report.id).verdict != True
+        assert models.Report.query.get(report.id).verdict is not True
 
 
 @mark.usefixtures('session', 'report')
@@ -168,22 +166,22 @@ class TestReject:
     def test_PATCH_204(self, report, response_PATCH):
         """PATCH method succeeded 204."""
         assert response_PATCH.status_code == 204
-        assert models.Report.query.get(report.id).verdict == False
+        assert models.Report.query.get(report.id).verdict is False
 
     def test_PATCH_401(self, report, response_PATCH):
         """PATCH method fails 401 if not authorized."""
         assert response_PATCH.status_code == 401
-        assert models.Report.query.get(report.id).verdict == True
+        assert models.Report.query.get(report.id).verdict is True
 
     @mark.usefixtures('grant_logged')
     def test_PATCH_403(self, report, response_PATCH):
         """PATCH method fails 403 if forbidden."""
         assert response_PATCH.status_code == 403
-        assert models.Report.query.get(report.id).verdict == True
+        assert models.Report.query.get(report.id).verdict is True
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('report__id', [uuid4()])
     def test_PATCH_404(self, report, response_PATCH):
         """PATCH method fails 404 if no id found."""
         assert response_PATCH.status_code == 404
-        assert models.Report.query.get(report.id).verdict == True
+        assert models.Report.query.get(report.id).verdict is True

@@ -3,7 +3,7 @@ from backend.extensions import auth
 from flaat import tokentools
 from flask import request
 from flask.views import MethodView
-from flask_smorest import Blueprint, abort
+from flask_smorest import Blueprint
 
 from . import models, schemas
 

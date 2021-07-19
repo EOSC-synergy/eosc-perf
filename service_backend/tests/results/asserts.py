@@ -5,7 +5,6 @@ from backend.results import models
 from tests.benchmarks.asserts import correct_benchmark
 from tests.sites.asserts import correct_flavor, correct_site
 from tests.tags.asserts import correct_tag
-from tests.users.asserts import correct_user, match_user
 
 
 def correct_result(json):

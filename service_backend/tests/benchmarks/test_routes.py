@@ -180,22 +180,22 @@ class TestId:
     def test_DELETE_204(self, benchmark, response_DELETE):
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
-        assert models.Benchmark.query.get(benchmark.id) == None
+        assert models.Benchmark.query.get(benchmark.id) is None
 
     def test_DELETE_401(self, benchmark, response_DELETE):
         """DELETE method fails 401 if not authorized."""
         assert response_DELETE.status_code == 401
-        assert models.Benchmark.query.get(benchmark.id) != None
+        assert models.Benchmark.query.get(benchmark.id) is not None
 
     @mark.usefixtures('grant_logged')
     def test_DELETE_403(self, benchmark, response_PUT):
         """DELETE method fails 403 if method forbidden."""
         assert response_PUT.status_code == 403
-        assert models.Benchmark.query.get(benchmark.id) != None
+        assert models.Benchmark.query.get(benchmark.id) is not None
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('benchmark__id', [uuid4()])
     def test_DELETE_404(self, benchmark, response_DELETE):
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404
-        assert models.Benchmark.query.get(benchmark.id) != None
+        assert models.Benchmark.query.get(benchmark.id) is not None

@@ -6,7 +6,6 @@ from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 
 from . import models, schemas
-from backend import results
 
 
 blp = Blueprint(
@@ -80,7 +79,7 @@ class Result(MethodView):
             result.uploader_sub == token_info['body']['sub']
         ])
         if auth.valid_admin() or valid_uploader:
-            if tags_ids != None:  # Empty list should pass
+            if tags_ids is not None:  # Empty list should pass
                 tags = [models.Tag.get_by_id(id) for id in tags_ids]
                 result.update(tags=tags)
         else:

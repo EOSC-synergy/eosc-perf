@@ -1,8 +1,6 @@
 """Defines fixtures available to users tests."""
-from uuid import uuid4
-
 from flask import url_for
-from pytest import fixture, mark
+from pytest import fixture
 from pytest_factoryboy import register
 from tests.factories import UserFactory
 

@@ -1,5 +1,7 @@
 """Authorization module."""
-# Simplify code when Authlib V1.0 using https://docs.authlib.org/en/latest/specs/rfc7662.html#use-introspection-in-resource-server
+# Simplify code when Authlib V1.0 using:
+# https://docs.authlib.org/en/latest/specs/rfc7662.html
+#   #use-introspection-in-resource-server
 
 from functools import wraps
 from flaat import Flaat
@@ -10,7 +12,7 @@ class Authorization(Flaat):
     """Monkeypatch flaat to solve lazy configuration
     https://github.com/indigo-dc/flaat/issues/32
 
-    For more information see: 
+    For more information see:
     https://flask.palletsprojects.com/en/2.0.x/extensiondev/#the-extension-code
     """
 
@@ -55,7 +57,7 @@ class Authorization(Flaat):
     def valid_user(self):
         """Function to evaluate the validity of the user login"""
         if current_app.config['DISABLE_AUTHENTICATION']:
-            current_app.logger.warning(f"AUTHENTICATION is disabled")
+            current_app.logger.warning("AUTHENTICATION is disabled")
             return True
 
         try:
@@ -69,16 +71,17 @@ class Authorization(Flaat):
 
     def login_required(self, on_failure=None):
         """Decorator to enforce a valid login.
-        Optional on_failure is a function that will be invoked if there was no valid user detected.
+        Optional on_failure is called if no valid user detected.
         Useful for redirecting to some login page"""
         def wrapper(view_func):
             @wraps(view_func)
             def decorated(*args, **kwargs):
                 if self.valid_user():
-                    current_app.logger.debug(f"User accepted")
+                    current_app.logger.debug("User accepted")
                     return self._wrap_async_call(view_func, *args, **kwargs)
                 elif on_failure:
-                    return self._return_formatter_wf(on_failure(self.get_last_error()), 401)
+                    failure = on_failure(self.get_last_error())
+                    return self._return_formatter_wf(failure, 401)
                 else:
                     alert = f"No valid authentication: {self.get_last_error()}"
                     return self._return_formatter_wf(alert, 401)
@@ -88,7 +91,7 @@ class Authorization(Flaat):
     def valid_admin(self, match='all'):
         """Function to evaluate the validity of the user as admin"""
         if current_app.config['DISABLE_ADMIN_PROTECTION']:
-            current_app.logger.warning(f"ADMIN validation is disabled")
+            current_app.logger.warning("ADMIN validation is disabled")
             return True
 
         try:
@@ -97,23 +100,23 @@ class Authorization(Flaat):
             current_app.logger.debug(f"request info: {all_info}")
 
             group = self.admin_entitlements
-            req_group_list = group if isinstance(group, list) else [group]
+            req_glist = group if isinstance(group, list) else [group]
 
             # copy entries from incoming claim
-            (avail_group_entries, user_message) = self._get_entitlements_from_claim(
+            (g_entries, user_msg) = self._get_entitlements_from_claim(
                 all_info, claim)
-            if not avail_group_entries:
-                raise Exception(user_message)
+            if not g_entries:
+                raise Exception(user_msg)
 
             required = self._determine_number_of_required_matches(
-                match, req_group_list)
+                match, req_glist)
             if not required:
                 raise Exception("Error interpreting 'match' parameter")
 
             # now we do the actual checking
             matches = 0
-            for entry in avail_group_entries:
-                for g in req_group_list:
+            for entry in g_entries:
+                for g in req_glist:
                     if entry == g:
                         matches += 1
             current_app.logger.debug(f"found {matches} of {required} matches")
@@ -125,13 +128,13 @@ class Authorization(Flaat):
 
     def admin_required(self, on_failure=None):
         """Decorator to enforce a valid admin.
-        on_failure is a function that will be invoked if there was no valid user detected.
+        Optional on_failure is called if no valid admin detected.
         Useful for redirecting to some login page"""
         def wrapper(view_func):
             @wraps(view_func)
             def decorated(*args, **kwargs):
                 if self.valid_admin():
-                    current_app.logger.debug(f"Admin accepted")
+                    current_app.logger.debug("Admin accepted")
                     return self._wrap_async_call(view_func, *args, **kwargs)
                 elif on_failure:
                     alert = 'You are not authorized'

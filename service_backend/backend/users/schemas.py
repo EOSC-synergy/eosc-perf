@@ -1,5 +1,4 @@
 """User schemas."""
-from json import dump
 from marshmallow import Schema, fields
 
 

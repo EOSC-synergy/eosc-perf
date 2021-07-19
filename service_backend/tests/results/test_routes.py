@@ -239,19 +239,19 @@ class TestResult:
     def test_DELETE_204(self, result, response_DELETE):
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
-        assert models.Result.query.get(result.id) == None
+        assert models.Result.query.get(result.id) is None
 
     def test_DELETE_401(self, result, response_DELETE):
         """DELETE method fails 401 if not authorized."""
         assert response_DELETE.status_code == 401
-        assert models.Result.query.get(result.id) != None
+        assert models.Result.query.get(result.id) is not None
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('result__id', [uuid4()])
     def test_DELETE_404(self, result, response_DELETE):
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404
-        assert models.Result.query.get(result.id) != None
+        assert models.Result.query.get(result.id) is not None
 
 
 @mark.usefixtures('session', 'result', 'user')

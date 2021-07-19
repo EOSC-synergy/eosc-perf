@@ -1,6 +1,5 @@
 """Function asserts for tests"""
 from urllib import parse
-from backend import benchmarks
 from backend.benchmarks import models
 
 

@@ -52,7 +52,7 @@ def report(
         'report_association__reports': [report__id],
         'report_association__reports__verdict': report_verdict
     }
-    if report_type == None:
+    if report_type is None:
         raise Exception("report_type undefined")
     elif report_type == "benchmark":
         return benchmark_factory(**kwargs).reports[0]

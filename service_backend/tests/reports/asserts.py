@@ -2,10 +2,6 @@
 from urllib import parse
 
 from backend.reports import models
-from tests.benchmarks.asserts import correct_benchmark, match_benchmark
-from tests.results.asserts import correct_result, match_result
-from tests.sites.asserts import (correct_flavor, correct_site, match_flavor,
-                                 match_site)
 
 
 def correct_report(json):
@@ -13,7 +9,7 @@ def correct_report(json):
     assert 'id' in json and type(json['id']) is str
     assert 'creation_date' in json and type(json['creation_date']) is str
     assert 'verdict' in json
-    assert type(json['verdict']) is bool or json['verdict'] == None
+    assert type(json['verdict']) is bool or json['verdict'] is None
     assert 'message' in json and type(json['message']) is str
     assert 'resource_type' in json and type(json['resource_type']) is str
     assert 'resource_id' in json and type(json['resource_id']) is str

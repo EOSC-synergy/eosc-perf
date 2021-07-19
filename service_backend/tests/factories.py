@@ -67,7 +67,7 @@ class ReportAssociationFactory(SQLAlchemyModelFactory):
 
     @post_generation
     def reports(self, create, ids, **kwargs):
-        ids = ids if ids != None else [uuid.uuid4()]
+        ids = ids if ids is not None else [uuid.uuid4()]
         for id in ids:
             report = ReportFactory(id=id, association_id=self.id, **kwargs)
             self.reports.append(report)

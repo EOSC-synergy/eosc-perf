@@ -1,18 +1,16 @@
-"""Database module, including the SQLAlchemy database object and DB-related utilities."""
+"""Database module, for generic Mixins and models."""
 import uuid
 
 import flask
 from sqlalchemy import Column
-from sqlalchemy.exc import *
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.dialects.postgresql import UUID
 
 from backend.extensions import db
 
-Table = db.Table
-
 
 class CRUDMixin(object):
-    """Mixin that adds convenience methods for CRUD 
+    """Mixin that adds convenience methods for CRUD
     (create, read, update, delete) operations."""
 
     @classmethod
@@ -55,7 +53,7 @@ class BaseModel(CRUDMixin, db.Model):
 
 
 class PkModel(BaseModel):
-    """Base model class that includes CRUD convenience methods, 
+    """Base model class that includes CRUD convenience methods,
     plus adds a 'primary key' column named ``id``."""
     __abstract__ = True
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)

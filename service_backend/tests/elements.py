@@ -1,6 +1,6 @@
 """Module with db elements specifications for factories"""
 from uuid import uuid4
-from datetime import date, datetime
+from datetime import datetime
 
 
 # Tags specifications

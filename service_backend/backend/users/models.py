@@ -5,9 +5,7 @@ from backend.database import BaseModel
 from backend.extensions import auth
 from flaat import tokentools
 from flask_smorest import abort
-from marshmallow.fields import DateTime
 from sqlalchemy import Column, DateTime, Text, UniqueConstraint
-from sqlalchemy.sql.schema import UniqueConstraint
 
 
 class User(BaseModel):

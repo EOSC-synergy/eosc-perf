@@ -163,16 +163,16 @@ class TestId:
     def test_DELETE_204(self, tag, response_DELETE):
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
-        assert models.Tag.query.get(tag.id) == None
+        assert models.Tag.query.get(tag.id) is None
 
     def test_DELETE_401(self, tag, response_DELETE):
         """DELETE method fails 401 if not authorized."""
         assert response_DELETE.status_code == 401
-        assert models.Tag.query.get(tag.id) != None
+        assert models.Tag.query.get(tag.id) is not None
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('tag__id', [uuid4()])
     def test_DELETE_404(self, tag, response_DELETE):
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404
-        assert models.Tag.query.get(tag.id) != None
+        assert models.Tag.query.get(tag.id) is not None

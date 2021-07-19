@@ -9,6 +9,12 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 
+__all__ = [
+    'Report', 'User',
+    'Benchmark', 'BenchmarkReportAssociation'
+]
+
+
 class BenchmarkReportAssociation(ReportAssociation):
     __tablename__ = None
     __mapper_args__ = {"polymorphic_identity": "benchmark_report"}

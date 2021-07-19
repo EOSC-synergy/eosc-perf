@@ -6,8 +6,12 @@ from backend.users.models import User
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey,
                         ForeignKeyConstraint, String, Text)
 from sqlalchemy.ext.associationproxy import association_proxy
-from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.orm import backref, relationship
+from sqlalchemy.orm import relationship
+
+
+__all__ = [
+    'Report', 'User', 'ReportAssociation'
+]
 
 
 class ReportAssociation(PkModel):

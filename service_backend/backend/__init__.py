@@ -7,18 +7,19 @@ from flask import Flask
 from webargs.flaskparser import FlaskParser
 
 from . import benchmarks, reports, results, sites, tags, users
-from .extensions import api  # Api interface module
-from .extensions import bcrypt  # Encrypt passwords and others
-from .extensions import cache  # Caches responses
-from .extensions import db  # SQLAlchemy instance
-from .extensions import migrate  # Alembic ext. manage db migrations
-from .extensions import auth # flaat ext. manage db migrations
+from .extensions import api         # Api interface module
+from .extensions import bcrypt      # Encrypt passwords and others
+from .extensions import cache       # Caches responses
+from .extensions import db          # SQLAlchemy instance
+from .extensions import migrate     # Alembic ext. manage db migrations
+from .extensions import auth        # flaat ext. manage db migrations
 
 # Raise ValidationError when unknown fields in query
 FlaskParser.DEFAULT_UNKNOWN_BY_LOCATION["query"] = ma.RAISE
 
 
-# sourced from: https://web.archive.org/web/20131129080707/http://flask.pocoo.org/snippets/35/
+# Sourced from:
+# https://web.archive.org/web/20131129080707/http://flask.pocoo.org/snippets/35
 class ReverseProxied(object):
     '''Wrap the application in this middleware and configure the
     front-end server to add these headers, to let you quietly bind
@@ -58,8 +59,8 @@ def create_app(
         config_base="backend.settings",
         **settings_override
 ):
-    """Create application factory, as explained here: 
-    http://flask.pocoo.org/docs/patterns/appfactories/.
+    """Create application factory, as explained here:
+    http://flask.pocoo.org/docs/patterns/appfactories
 
     :param config_object: The configuration object to use.
     """

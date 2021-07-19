@@ -178,25 +178,25 @@ class TestSite:
     def test_DELETE_204(self, site, response_DELETE):
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
-        assert models.Site.query.get(site.id) == None
+        assert models.Site.query.get(site.id) is None
         for flavor in site.flavors:  # Flavors are removed
-            assert models.Flavor.query.get(flavor.id) == None
+            assert models.Flavor.query.get(flavor.id) is None
 
     def test_DELETE_401(self, site, response_DELETE):
         """DELETE method fails 401 if not authorized."""
         assert response_DELETE.status_code == 401
-        assert models.Site.query.get(site.id) != None
+        assert models.Site.query.get(site.id) is not None
         for flavor in site.flavors:  # Flavors exist
-            assert models.Flavor.query.get(flavor.id) != None
+            assert models.Flavor.query.get(flavor.id) is not None
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('site__id', [uuid4()])
     def test_DELETE_404(self, site, response_DELETE):
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404
-        assert models.Site.query.get(site.id) != None
+        assert models.Site.query.get(site.id) is not None
         for flavor in site.flavors:  # Flavors exist
-            assert models.Flavor.query.get(flavor.id) != None
+            assert models.Flavor.query.get(flavor.id) is not None
 
 
 @mark.usefixtures('session', 'db_sites', 'db_flavors', 'db_users')
@@ -338,17 +338,17 @@ class TestFlavor:
     def test_DELETE_204(self, flavor, response_DELETE):
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
-        assert models.Flavor.query.get(flavor.id) == None
+        assert models.Flavor.query.get(flavor.id) is None
         site = models.Site.query.get(flavor.site_id)
-        assert site != None
+        assert site is not None
         assert flavor not in site.flavors
 
     def test_DELETE_401(self, flavor, response_DELETE):
         """DELETE method fails 401 if not authorized."""
         assert response_DELETE.status_code == 401
-        assert models.Flavor.query.get(flavor.id) != None
+        assert models.Flavor.query.get(flavor.id) is not None
         site = models.Site.query.get(flavor.site_id)
-        assert site != None
+        assert site is not None
         assert flavor in site.flavors
 
     @mark.usefixtures('grant_admin')
@@ -356,7 +356,7 @@ class TestFlavor:
     def test_DELETE_404(self, flavor, response_DELETE):
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404
-        assert models.Flavor.query.get(flavor.id) != None
+        assert models.Flavor.query.get(flavor.id) is not None
         site = models.Site.query.get(flavor.site_id)
-        assert site != None
+        assert site is not None
         assert flavor in site.flavors

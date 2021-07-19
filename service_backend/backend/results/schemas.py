@@ -7,6 +7,12 @@ from backend.users.schemas import User
 from marshmallow import Schema, fields, INCLUDE
 
 
+__all__ = [
+    "Result", "Report", "TagsIds", "Json", "User",
+    "FilterQueryArgs", "CreateQueryArgs", "SearchQueryArgs"
+]
+
+
 class Json(Schema):
     class Meta:
         unknown = INCLUDE

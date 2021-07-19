@@ -2,24 +2,33 @@
 from datetime import datetime
 
 from backend.benchmarks.models import Benchmark
-from backend.database import PkModel, Table
+from backend.database import BaseModel, PkModel
 from backend.reports.models import Report, ReportAssociation
 from backend.sites.models import Flavor, Site
 from backend.tags.models import Tag
 from backend.users.models import User
 from sqlalchemy import (Column, DateTime, ForeignKey, ForeignKeyConstraint,
-                        PrimaryKeyConstraint, Text, or_)
+                        Text, UniqueConstraint, or_)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
-tag_association = Table(
-    'result_tags',
-    Column('result_id', ForeignKey('result.id')),
-    Column('tag_id', ForeignKey('tag.id')),
-    PrimaryKeyConstraint('result_id', 'tag_id')
-)
+
+__all__ = [
+    'Report', 'User',
+    'Tag', 'ResultTagsAssociation',
+    'Result', 'ResultReportAssociation'
+]
+
+
+class ResultTagsAssociation(BaseModel):
+    result_id = Column(ForeignKey('result.id'), primary_key=True)
+    tag_id = Column(ForeignKey('tag.id'), primary_key=True)
+
+    __table_args__ = (
+        UniqueConstraint('result_id', 'tag_id'),
+    )
 
 
 class ResultReportAssociation(ReportAssociation):
@@ -37,7 +46,7 @@ class Result(PkModel):
 
     upload_date = Column(DateTime, nullable=False, default=datetime.now)
     json = Column(JSONB, nullable=False)
-    tags = relationship(Tag, secondary=tag_association)
+    tags = relationship(Tag, secondary="result_tags_association")
     tag_names = association_proxy('tags', 'name')
 
     benchmark_id = Column(ForeignKey('benchmark.id'), nullable=False)
