@@ -30,7 +30,7 @@ services:
       context: ./service_backend
       target: ${EOSC_PERF_ENV}
       args:
-        INSTALL_PYTHON_VERSION: 3
+        INSTALL_PYTHON_VERSION: 3.8
     depends_on:
       - database
     env_file: .env
