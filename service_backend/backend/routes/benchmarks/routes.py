@@ -39,7 +39,7 @@ class Root(MethodView):
 class Search(MethodView):
 
     @blp.doc(operationId='SearchBenchmarks')
-    @blp.arguments(schemas.SearchQueryArgs, location='query', as_kwargs=True)
+    @blp.arguments(schemas.SearchArgs, location='query', as_kwargs=True)
     @blp.response(200, schemas.Benchmark(many=True))
     def get(self, terms):
         """Filters and list benchmarks."""

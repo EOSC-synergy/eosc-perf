@@ -3,7 +3,7 @@ from marshmallow import Schema, fields
 
 
 __all__ = [
-    "Site", "SiteCreate", "SiteEdit", "SiteQueryArgs", "SearchQueryArgs",
+    "Site", "SiteCreate", "SiteEdit", "SiteQueryArgs", "SearchArgs",
     "Flavor", "FlavorCreate", "FlavorEdit", "FlavorQueryArgs"
 ]
 
@@ -52,5 +52,5 @@ class FlavorQueryArgs(Schema):
     name = fields.String()
 
 
-class SearchQueryArgs(Schema):
+class SearchArgs(Schema):
     terms = fields.List(fields.String(), missing=[])

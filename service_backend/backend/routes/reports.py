@@ -1,9 +1,8 @@
 """Report routes."""
+from backend import models, schemas
 from backend.extensions import auth
 from flask.views import MethodView
 from flask_smorest import Blueprint
-
-from . import models, schemas
 
 blp = Blueprint(
     'reports', __name__, description='Operations on reports'
@@ -15,7 +14,7 @@ class Root(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='GetReports')
-    @blp.arguments(schemas.FilterQueryArgs, location='query', as_kwargs=True)
+    @blp.arguments(schemas.report.FilterArgs, location='query', as_kwargs=True)
     @blp.response(200, schemas.Report(many=True))
     def get(self, before=None, after=None, **kwargs):
         """Filters and list  reports."""

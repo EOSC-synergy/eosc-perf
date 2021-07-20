@@ -1,6 +1,6 @@
 """Site models."""
 from backend.database import PkModel
-from backend.routes.reports.models import Report, ReportAssociation
+from backend.models import Report, ReportAssociation
 from backend.models import User
 from sqlalchemy import Column, ForeignKey, Text, UniqueConstraint, or_
 from sqlalchemy.ext.associationproxy import association_proxy

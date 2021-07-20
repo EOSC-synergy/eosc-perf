@@ -39,7 +39,7 @@ class Root(MethodView):
 class Search(MethodView):
 
     @blp.doc(operationId='SearchSites')
-    @blp.arguments(schemas.SearchQueryArgs, location='query')
+    @blp.arguments(schemas.SearchArgs, location='query')
     @blp.response(200, schemas.Site(many=True))
     def get(self, args):
         """Filters and list sites."""

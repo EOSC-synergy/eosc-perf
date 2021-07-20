@@ -1,6 +1,7 @@
 """Result schemas."""
 from backend.routes.benchmarks.schemas import Benchmark
-from backend.routes.reports.schemas import Report, ReportCreate
+from backend.schemas import Report
+from backend.schemas.report import Create as ReportCreate
 from backend.routes.sites.schemas import Site, Flavor
 from backend.schemas import User, Tag
 from backend.schemas.tag import Ids as TagsIds
@@ -9,7 +10,7 @@ from marshmallow import Schema, fields, INCLUDE
 
 __all__ = [
     "Result", "TagsIds", "Json", "User", "Report", "ReportCreate",
-    "FilterQueryArgs", "CreateQueryArgs", "SearchQueryArgs"
+    "FilterArgs", "CreateQueryArgs", "SearchArgs"
 ]
 
 
@@ -28,7 +29,7 @@ class Result(Schema):
     tags = fields.Nested(Tag, many=True)
 
 
-class FilterQueryArgs(Schema):
+class FilterArgs(Schema):
     #TODO: json = fields.Dict()
     docker_image = fields.String()
     docker_tag = fields.String()
@@ -46,5 +47,5 @@ class CreateQueryArgs(Schema):
     tags_ids = fields.List(fields.UUID, missing=[])
 
 
-class SearchQueryArgs(Schema):
+class SearchArgs(Schema):
     terms = fields.List(fields.String(), missing=[])

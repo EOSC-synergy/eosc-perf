@@ -17,7 +17,7 @@ blp = Blueprint(
 class Root(MethodView):
 
     @blp.doc(operationId='GetResults')
-    @blp.arguments(schemas.FilterQueryArgs, location='query', as_kwargs=True)
+    @blp.arguments(schemas.FilterArgs, location='query', as_kwargs=True)
     @blp.response(200, schemas.Result(many=True))
     def get(self, tag_names=None, before=None, after=None, **kwargs):
         """Filters and list results."""
@@ -54,7 +54,7 @@ class Root(MethodView):
 class Search(MethodView):
 
     @blp.doc(operationId='SearchResults')
-    @blp.arguments(schemas.SearchQueryArgs, location='query', as_kwargs=True)
+    @blp.arguments(schemas.SearchArgs, location='query', as_kwargs=True)
     @blp.response(200, schemas.Result(many=True))
     def get(self, terms=[]):
         """Filters and list results."""

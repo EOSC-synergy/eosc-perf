@@ -16,9 +16,9 @@ class Edit(Schema):
     description = fields.String()
 
 
-class ListQueryArgs(Schema):
+class FilterArgs(Schema):
     name = fields.String()
 
 
-class SearchQueryArgs(Schema):
+class SearchArgs(Schema):
     terms = fields.List(fields.String(), missing=[])

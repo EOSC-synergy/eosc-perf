@@ -1,12 +1,10 @@
 """User routes."""
+from backend import models, schemas
 from backend.extensions import auth
 from flaat import tokentools
 from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint
-
-from backend import models, schemas
-
 
 blp = Blueprint(
     'users', __name__, description='Operations on users'
@@ -18,7 +16,7 @@ class Root(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='GetUsers')
-    @blp.arguments(schemas.user.ListQueryArgs, location='query')
+    @blp.arguments(schemas.user.FilterArgs, location='query')
     @blp.response(200, schemas.User(many=True))
     def get(self, args):
         """Filters and list users."""
@@ -30,7 +28,7 @@ class Search(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='SearchUsers')
-    @blp.arguments(schemas.user.SearchQueryArgs, location='query')
+    @blp.arguments(schemas.user.SearchArgs, location='query')
     @blp.response(200, schemas.User(many=True))
     def get(self, kwargs):
         """Filters and list users."""

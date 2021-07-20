@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime
 
 from backend.routes.benchmarks.models import Benchmark, BenchmarkReportAssociation
-from backend.routes.reports.models import Report
+from backend.models import Report
 from backend.routes.results.models import Result, ResultReportAssociation
 from backend.routes.sites.models import (Flavor, FlavorReportAssociation, Site,
                                   SiteReportAssociation)

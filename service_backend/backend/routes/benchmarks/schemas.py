@@ -4,7 +4,7 @@ from marshmallow import Schema, fields
 
 __all__ = [
     "Benchmark", "BenchmarkCreate", "BenchmarkEdit",
-    "BenchmarkQueryArgs", "SearchQueryArgs"
+    "BenchmarkQueryArgs", "SearchArgs"
 ]
 
 
@@ -35,5 +35,5 @@ class BenchmarkQueryArgs(Schema):
     docker_tag = fields.String()
 
 
-class SearchQueryArgs(Schema):
+class SearchArgs(Schema):
     terms = fields.List(fields.String(), missing=[])

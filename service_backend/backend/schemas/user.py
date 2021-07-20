@@ -2,10 +2,10 @@
 from marshmallow import Schema, fields
 
 
-class ListQueryArgs(Schema):
+class FilterArgs(Schema):
     iss = fields.String()
     email = fields.String()
 
 
-class SearchQueryArgs(Schema):
+class SearchArgs(Schema):
     terms = fields.List(fields.String(), missing=[])
