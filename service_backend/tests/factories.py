@@ -7,7 +7,7 @@ from backend.routes.reports.models import Report
 from backend.routes.results.models import Result, ResultReportAssociation
 from backend.routes.sites.models import (Flavor, FlavorReportAssociation, Site,
                                   SiteReportAssociation)
-from backend.routes.tags.models import Tag
+from backend.models import Tag
 from backend.models import User
 from factory import (LazyFunction, SelfAttribute, Sequence, SubFactory,
                      post_generation)

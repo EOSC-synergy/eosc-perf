@@ -2,8 +2,8 @@
 from backend.routes.benchmarks.schemas import Benchmark
 from backend.routes.reports.schemas import Report, ReportCreate
 from backend.routes.sites.schemas import Site, Flavor
-from backend.routes.tags.schemas import Tag, TagsIds
-from backend.schemas import User
+from backend.schemas import User, Tag
+from backend.schemas.tag import Ids as TagsIds
 from marshmallow import Schema, fields, INCLUDE
 
 

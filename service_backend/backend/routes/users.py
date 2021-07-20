@@ -32,9 +32,9 @@ class Search(MethodView):
     @blp.doc(operationId='SearchUsers')
     @blp.arguments(schemas.user.SearchQueryArgs, location='query')
     @blp.response(200, schemas.User(many=True))
-    def get(self, args):
+    def get(self, kwargs):
         """Filters and list users."""
-        return models.User.query_emails_with(args['terms'])
+        return models.User.query_emails_with(**kwargs)
 
 
 @blp.route('/<string:user_iss>/<string:user_sub>')

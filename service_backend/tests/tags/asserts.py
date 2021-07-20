@@ -1,6 +1,6 @@
 """Function asserts for tests"""
 from urllib import parse
-from backend.routes.tags import models
+from backend import models
 
 
 def correct_tag(json):

@@ -1,6 +1,13 @@
 """Backend package for schemas definition."""
 from marshmallow import Schema, fields
-from . import user
+
+from . import tag, user
+
+
+class Tag(Schema):
+    id = fields.UUID()
+    name = fields.String()
+    description = fields.String()
 
 
 class User(Schema):

@@ -3,7 +3,8 @@ from backend.extensions import auth
 from flask.views import MethodView
 from flask_smorest import Blueprint
 
-from . import models, schemas
+from backend import models, schemas
+
 
 blp = Blueprint(
     'tags', __name__, description='Operations on tags'
@@ -14,7 +15,7 @@ blp = Blueprint(
 class Root(MethodView):
 
     @blp.doc(operationId='GetTags')
-    @blp.arguments(schemas.TagsQueryArgs, location='query')
+    @blp.arguments(schemas.tag.ListQueryArgs, location='query')
     @blp.response(200, schemas.Tag(many=True))
     def get(self, args):
         """Filters and list tags."""
@@ -22,7 +23,7 @@ class Root(MethodView):
 
     @auth.login_required()
     @blp.doc(operationId='AddTag')
-    @blp.arguments(schemas.TagCreate, as_kwargs=True)
+    @blp.arguments(schemas.tag.Create, as_kwargs=True)
     @blp.response(201, schemas.Tag)
     def post(self, **kwargs):
         """Creates a new tag."""
@@ -33,11 +34,11 @@ class Root(MethodView):
 class Search(MethodView):
 
     @blp.doc(operationId='SearchTags')
-    @blp.arguments(schemas.SearchQueryArgs, location='query', as_kwargs=True)
+    @blp.arguments(schemas.tag.SearchQueryArgs, location='query')
     @blp.response(200, schemas.Tag(many=True))
-    def get(self, terms):
+    def get(self, query):
         """Filters and list tags."""
-        return models.Tag.query_with(terms)
+        return models.Tag.query_with(**query)
 
 
 @blp.route('/<uuid:tag_id>')
@@ -51,7 +52,7 @@ class Tag(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='EditTag')
-    @blp.arguments(schemas.TagEdit, as_kwargs=True)
+    @blp.arguments(schemas.tag.Edit, as_kwargs=True)
     @blp.response(204)
     def put(self, tag_id, **kwargs):
         """Updates an existing tag."""

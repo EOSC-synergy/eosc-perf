@@ -5,7 +5,7 @@ from backend.routes.benchmarks.models import Benchmark
 from backend.database import BaseModel, PkModel
 from backend.routes.reports.models import Report, ReportAssociation
 from backend.routes.sites.models import Flavor, Site
-from backend.routes.tags.models import Tag
+from backend.models import Tag
 from backend.models import User
 from sqlalchemy import (Column, DateTime, ForeignKey, ForeignKeyConstraint,
                         Text, UniqueConstraint, or_)
