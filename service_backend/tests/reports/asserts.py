@@ -1,7 +1,7 @@
 """Function asserts for tests"""
 from urllib import parse
 
-from backend.reports import models
+from backend.routes.reports import models
 
 
 def correct_report(json):

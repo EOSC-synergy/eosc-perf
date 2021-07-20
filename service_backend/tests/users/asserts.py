@@ -1,6 +1,6 @@
 """Function asserts for tests"""
 from urllib import parse
-from backend.users import models
+from backend.routes.users import models
 
 
 def correct_user(json):

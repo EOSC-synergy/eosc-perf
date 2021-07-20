@@ -1,4 +1,4 @@
-"""User models."""
+"""Backend package for models definition."""
 from datetime import datetime as dt
 
 from backend.database import BaseModel

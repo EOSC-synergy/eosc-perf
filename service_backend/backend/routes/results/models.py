@@ -1,12 +1,12 @@
 """Result models."""
 from datetime import datetime
 
-from backend.benchmarks.models import Benchmark
+from backend.routes.benchmarks.models import Benchmark
 from backend.database import BaseModel, PkModel
-from backend.reports.models import Report, ReportAssociation
-from backend.sites.models import Flavor, Site
-from backend.tags.models import Tag
-from backend.users.models import User
+from backend.routes.reports.models import Report, ReportAssociation
+from backend.routes.sites.models import Flavor, Site
+from backend.routes.tags.models import Tag
+from backend.models import User
 from sqlalchemy import (Column, DateTime, ForeignKey, ForeignKeyConstraint,
                         Text, UniqueConstraint, or_)
 from sqlalchemy.dialects.postgresql import JSONB

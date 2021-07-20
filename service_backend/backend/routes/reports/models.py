@@ -2,7 +2,7 @@
 from datetime import datetime
 
 from backend.database import PkModel
-from backend.users.models import User
+from backend.models import User
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey,
                         ForeignKeyConstraint, String, Text)
 from sqlalchemy.ext.associationproxy import association_proxy

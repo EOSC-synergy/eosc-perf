@@ -1,7 +1,7 @@
 """Benchmark models."""
 from backend.database import PkModel
-from backend.reports.models import Report, ReportAssociation
-from backend.users.models import User
+from backend.routes.reports.models import Report, ReportAssociation
+from backend.models import User
 from sqlalchemy import Column, ForeignKey, Text, UniqueConstraint, or_
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.associationproxy import association_proxy

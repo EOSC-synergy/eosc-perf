@@ -1,9 +1,9 @@
 """Result schemas."""
-from backend.benchmarks.schemas import Benchmark
-from backend.reports.schemas import Report, ReportCreate
-from backend.sites.schemas import Site, Flavor
-from backend.tags.schemas import Tag, TagsIds
-from backend.users.schemas import User
+from backend.routes.benchmarks.schemas import Benchmark
+from backend.routes.reports.schemas import Report, ReportCreate
+from backend.routes.sites.schemas import Site, Flavor
+from backend.routes.tags.schemas import Tag, TagsIds
+from backend.schemas import User
 from marshmallow import Schema, fields, INCLUDE
 
 

@@ -1,5 +1,5 @@
 """Functional tests using pytest-flask."""
-from backend.users import models
+from backend.routes.users import models
 from pytest import mark
 from tests.elements import user_1, user_2
 

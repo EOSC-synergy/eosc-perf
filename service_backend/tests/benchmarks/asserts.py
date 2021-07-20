@@ -1,6 +1,6 @@
 """Function asserts for tests"""
 from urllib import parse
-from backend.benchmarks import models
+from backend.routes.benchmarks import models
 
 
 def correct_benchmark(json):
