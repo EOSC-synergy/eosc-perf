@@ -1,7 +1,15 @@
 """Backend package for schemas definition."""
 from marshmallow import Schema, fields
 
-from . import report, tag, user
+from . import benchmark, report, tag, user
+
+
+class Benchmark(Schema):
+    id = fields.UUID()
+    docker_image = fields.String()
+    docker_tag = fields.String()
+    description = fields.String()
+    json_template = fields.Dict()
 
 
 class Report(Schema):

@@ -1,11 +1,10 @@
 """Benchmark routes."""
+from backend import models, schemas
 from backend.extensions import auth
 from flaat import tokentools
 from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint
-
-from . import models, schemas
 
 blp = Blueprint(
     'benchmarks', __name__, description='Operations on benchmarks'
@@ -16,7 +15,7 @@ blp = Blueprint(
 class Root(MethodView):
 
     @blp.doc(operationId='GetBenchmarks')
-    @blp.arguments(schemas.BenchmarkQueryArgs, location='query')
+    @blp.arguments(schemas.benchmark.FilterArgs, location='query')
     @blp.response(200, schemas.Benchmark(many=True))
     def get(self, args):
         """Filters and list benchmarks."""
@@ -24,7 +23,7 @@ class Root(MethodView):
 
     @auth.login_required()
     @blp.doc(operationId='AddBenchmark')
-    @blp.arguments(schemas.BenchmarkCreate, as_kwargs=True)
+    @blp.arguments(schemas.benchmark.Create, as_kwargs=True)
     @blp.response(201, schemas.Benchmark)
     def post(self, **kwargs):
         """Creates a new benchmark."""
@@ -39,11 +38,11 @@ class Root(MethodView):
 class Search(MethodView):
 
     @blp.doc(operationId='SearchBenchmarks')
-    @blp.arguments(schemas.SearchArgs, location='query', as_kwargs=True)
+    @blp.arguments(schemas.benchmark.SearchArgs, location='query')
     @blp.response(200, schemas.Benchmark(many=True))
-    def get(self, terms):
+    def get(self, kwargs):
         """Filters and list benchmarks."""
-        return models.Benchmark.query_with(terms)
+        return models.Benchmark.query_with(**kwargs)
 
 
 @blp.route('/<uuid:benchmark_id>')
@@ -57,7 +56,7 @@ class Benchmark(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='EditBenchmark')
-    @blp.arguments(schemas.BenchmarkEdit, as_kwargs=True)
+    @blp.arguments(schemas.benchmark.Edit, as_kwargs=True)
     @blp.response(204)
     def put(self, benchmark_id, **kwargs):
         """Updates an existing benchmark."""

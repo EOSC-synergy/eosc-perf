@@ -1,7 +1,7 @@
 """Result models."""
 from datetime import datetime
 
-from backend.routes.benchmarks.models import Benchmark
+from backend.models import Benchmark
 from backend.database import BaseModel, PkModel
 from backend.models import Report, ReportAssociation
 from backend.routes.sites.models import Flavor, Site
