@@ -1,7 +1,7 @@
 """Report routes."""
-from backend import models, schemas
 from backend.extensions import auth
-from backend.schemas import query_args
+from backend.models import models
+from backend.schemas import query_args, schemas
 from flask.views import MethodView
 from flask_smorest import Blueprint
 
