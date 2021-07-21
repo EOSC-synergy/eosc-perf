@@ -89,7 +89,7 @@ def register_blueprints(app):
     api.register_blueprint(benchmarks.blp, url_prefix='/benchmarks')
     api.register_blueprint(reports.blp, url_prefix='/reports')
     api.register_blueprint(results.blueprint, url_prefix='/results')
-    api.register_blueprint(sites.blueprint, url_prefix='/sites')
+    api.register_blueprint(sites.blp, url_prefix='/sites')
     api.register_blueprint(tags.blp, url_prefix='/tags')
     api.register_blueprint(users.blp, url_prefix='/users')
 

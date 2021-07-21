@@ -1,7 +1,7 @@
 """Function asserts for tests"""
 from urllib import parse
 
-from backend.routes.sites import models
+from backend import models
 
 
 def correct_site(json):

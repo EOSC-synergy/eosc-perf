@@ -20,3 +20,21 @@ class BenchmarkReportAssociation(ReportAssociation):
         back_populates="report_association"
     )
     __mapper_args__ = {"polymorphic_identity": "benchmark_report"}
+
+
+class SiteReportAssociation(ReportAssociation):
+    __tablename__ = None
+    parent = relationship(
+        "Site", uselist=False,
+        back_populates="report_association"
+    )
+    __mapper_args__ = {"polymorphic_identity": "site_report"}
+
+
+class FlavorReportAssociation(ReportAssociation):
+    __tablename__ = None
+    parent = relationship(
+        "Flavor", uselist=False,
+        back_populates="report_association"
+    )
+    __mapper_args__ = {"polymorphic_identity": "flavor_report"}
