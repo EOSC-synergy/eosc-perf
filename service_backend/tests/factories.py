@@ -2,8 +2,7 @@
 import uuid
 from datetime import datetime
 
-from backend import models
-from backend.models import associations
+from backend.models import associations, models
 from factory import (LazyFunction, SelfAttribute, Sequence, SubFactory,
                      post_generation)
 from factory.alchemy import SQLAlchemyModelFactory

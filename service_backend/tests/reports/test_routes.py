@@ -1,8 +1,7 @@
 """Functional tests using pytest-flask."""
 from uuid import uuid4
 
-from backend.routes.reports import models
-from backend.models import Result
+from backend.models import models
 from pytest import mark
 from tests.elements import result_1, result_2
 
@@ -79,7 +78,7 @@ class TestReport:
         assert models.Report.query.get(report.id) is None
 
         if report.resource_type == "result":
-            resource = Result.query.get(report.resource_id)
+            resource = models.Result.query.get(report.resource_id)
             assert resource is not None  # Is not deleted
             assert report not in resource.reports
 
@@ -89,7 +88,7 @@ class TestReport:
         assert models.Report.query.get(report.id) is not None
 
         if report.resource_type == "result":
-            resource = Result.query.get(report.resource_id)
+            resource = models.Result.query.get(report.resource_id)
             assert resource is not None  # Is not deleted
             assert report in resource.reports
 
@@ -101,7 +100,7 @@ class TestReport:
         assert models.Report.query.get(report.id) is not None
 
         if report.resource_type == "result":
-            resource = Result.query.get(report.resource_id)
+            resource = models.Result.query.get(report.resource_id)
             assert resource is not None  # Is not deleted
             assert report in resource.reports
 
