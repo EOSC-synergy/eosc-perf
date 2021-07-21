@@ -7,13 +7,14 @@ from flaat import tokentools
 from flask_smorest import abort
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey,
                         ForeignKeyConstraint, Text, UniqueConstraint, or_)
-from sqlalchemy.dialects.postgresql import JSON
+from sqlalchemy.dialects.postgresql import JSON, JSONB
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from .associations import (BenchmarkReportAssociation, FlavorReportAssociation,
-                           ReportAssociation, SiteReportAssociation)
+                           ReportAssociation, ResultReportAssociation,
+                           SiteReportAssociation)
 
 
 class User(BaseModel):
@@ -314,6 +315,85 @@ class Tag(PkModel):
                 or_(
                     Tag.name.contains(keyword),
                     Tag.description.contains(keyword)
+                ))
+
+        return results
+
+
+class Result(PkModel):
+    """The Result class represents a single benchmark result and its contents.
+
+    They carry the JSON data output by the ran benchmarks.
+    """
+
+    upload_date = Column(DateTime, nullable=False, default=dt.now)
+    json = Column(JSONB, nullable=False)
+    tags = relationship(Tag, secondary="result_tags_association")
+    tag_names = association_proxy('tags', 'name')
+
+    benchmark_id = Column(ForeignKey('benchmark.id'), nullable=False)
+    benchmark = relationship(Benchmark)
+    docker_image = association_proxy('benchmark', 'docker_image')
+    docker_tag = association_proxy('benchmark', 'docker_tag')
+
+    site_id = Column(ForeignKey('site.id'), nullable=False)
+    site = relationship(Site)
+    site_name = association_proxy('site', 'name')
+
+    flavor_id = Column(ForeignKey('flavor.id'), nullable=False)
+    flavor = relationship(Flavor)
+    flavor_name = association_proxy('flavor', 'name')
+
+    uploader_iss = Column(Text, nullable=False)
+    uploader_sub = Column(Text, nullable=False)
+    uploader = relationship(User)
+
+    report_association_id = Column(ForeignKey("report_association.id"))
+    report_association = relationship(
+        ResultReportAssociation, single_parent=True,
+        cascade="all, delete-orphan",
+        back_populates="parent")
+    reports = association_proxy(
+        "report_association", "reports",
+        creator=lambda reports: ResultReportAssociation(reports=reports))
+    verdicts = association_proxy('reports', 'verdict')
+
+    @ hybrid_property
+    def hidden(self):
+        return not all(self.verdicts)
+
+    __table_args__ = (ForeignKeyConstraint(['uploader_iss', 'uploader_sub'],
+                                           ['user.iss', 'user.sub']),
+                      {})
+
+    def __repr__(self) -> str:
+        """Get a human-readable representation string of the result.
+
+        Returns:
+            str: A human-readable representation string of the result.
+        """
+        return '<{} {}>'.format(self.__class__.__name__, self.id)
+
+    @ classmethod
+    def query_with(cls, terms):
+        """Query all results containing all keywords in the columns.
+
+        Args:
+            terms (List[str]): A list of all keywords that need to be matched.
+        Returns:
+            List[Result]: A list containing all matching query results in the
+            database.
+        """
+        results = cls.query
+        for keyword in terms:
+            results = results.filter(
+                or_(
+                    # TODO: Result.json.contains(keyword),
+                    Result.docker_image.contains(keyword),
+                    Result.docker_tag.contains(keyword),
+                    Result.site_name.contains(keyword),
+                    Result.flavor_name.contains(keyword),
+                    Result.tag_names == keyword
                 ))
 
         return results

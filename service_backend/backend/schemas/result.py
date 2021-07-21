@@ -1,17 +1,5 @@
 """Result schemas."""
-from backend.schemas import Benchmark
-from backend.schemas import Report
-from backend.schemas.report import Create as ReportCreate
-from backend.schemas import Site, Flavor
-from backend.schemas import User, Tag
-from backend.schemas.tag import Ids as TagsIds
 from marshmallow import Schema, fields, INCLUDE
-
-
-__all__ = [
-    "Result", "TagsIds", "Json", "User", "Report", "ReportCreate",
-    "FilterArgs", "CreateQueryArgs", "SearchArgs"
-]
 
 
 class Json(Schema):
@@ -19,17 +7,7 @@ class Json(Schema):
         unknown = INCLUDE
 
 
-class Result(Schema):
-    id = fields.UUID()
-    upload_date = fields.DateTime()
-    json = fields.Dict()
-    benchmark = fields.Nested(Benchmark)
-    site = fields.Nested(Site)
-    flavor = fields.Nested(Flavor)
-    tags = fields.Nested(Tag, many=True)
-
-
-class FilterArgs(Schema):
+class ListArgs(Schema):
     #TODO: json = fields.Dict()
     docker_image = fields.String()
     docker_tag = fields.String()
@@ -40,7 +18,7 @@ class FilterArgs(Schema):
     upload_after = fields.Date(attribute="after")
 
 
-class CreateQueryArgs(Schema):
+class CreateArgs(Schema):
     benchmark_id = fields.UUID(required=True)
     site_id = fields.UUID(required=True)
     flavor_id = fields.UUID(required=True)

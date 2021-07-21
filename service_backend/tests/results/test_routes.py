@@ -1,7 +1,7 @@
 """Functional tests using pytest-flask."""
 from uuid import uuid4
 
-from backend.routes.results import models
+from backend import models
 from pytest import mark
 from tests.elements import (benchmark_1, flavor_1, result_1, result_2, site_1,
                             tag_1, tag_2, tag_3, user_1, user_2)

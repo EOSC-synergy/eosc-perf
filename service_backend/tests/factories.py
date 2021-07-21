@@ -4,7 +4,7 @@ from datetime import datetime
 
 from backend.models import Benchmark, BenchmarkReportAssociation
 from backend.models import Report
-from backend.routes.results.models import Result, ResultReportAssociation
+from backend.models import Result, ResultReportAssociation
 from backend.models import (Flavor, FlavorReportAssociation, Site,
                             SiteReportAssociation)
 from backend.models import Tag

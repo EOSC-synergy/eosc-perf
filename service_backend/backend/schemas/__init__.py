@@ -1,7 +1,7 @@
 """Backend package for schemas definition."""
 from marshmallow import Schema, fields
 
-from . import benchmark, flavor, report, site, tag, user
+from . import benchmark, flavor, report, site, tag, user, result
 
 
 class Benchmark(Schema):
@@ -45,3 +45,13 @@ class Flavor(Schema):
     id = fields.UUID()
     name = fields.String()
     description = fields.String()
+
+
+class Result(Schema):
+    id = fields.UUID()
+    upload_date = fields.DateTime()
+    json = fields.Dict()
+    benchmark = fields.Nested(Benchmark)
+    site = fields.Nested(Site)
+    flavor = fields.Nested(Flavor)
+    tags = fields.Nested(Tag, many=True)

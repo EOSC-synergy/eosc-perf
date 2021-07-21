@@ -2,7 +2,7 @@
 from uuid import uuid4
 
 from backend.routes.reports import models
-from backend.routes.results.models import Result
+from backend.models import Result
 from pytest import mark
 from tests.elements import result_1, result_2
 
