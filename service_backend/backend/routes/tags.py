@@ -1,6 +1,7 @@
 """Tag routes."""
 from backend import models, schemas
 from backend.extensions import auth
+from backend.schemas import query_args
 from flask.views import MethodView
 from flask_smorest import Blueprint
 
@@ -13,7 +14,7 @@ blp = Blueprint(
 class Root(MethodView):
 
     @blp.doc(operationId='GetTags')
-    @blp.arguments(schemas.tag.FilterArgs, location='query')
+    @blp.arguments(query_args.TagFilter, location='query')
     @blp.response(200, schemas.Tag(many=True))
     def get(self, args):
         """Filters and list tags."""
@@ -21,7 +22,7 @@ class Root(MethodView):
 
     @auth.login_required()
     @blp.doc(operationId='AddTag')
-    @blp.arguments(schemas.tag.Create, as_kwargs=True)
+    @blp.arguments(schemas.TagCreate, as_kwargs=True)
     @blp.response(201, schemas.Tag)
     def post(self, **kwargs):
         """Creates a new tag."""
@@ -32,11 +33,11 @@ class Root(MethodView):
 class Search(MethodView):
 
     @blp.doc(operationId='SearchTags')
-    @blp.arguments(schemas.tag.SearchArgs, location='query')
+    @blp.arguments(query_args.TagSearch, location='query')
     @blp.response(200, schemas.Tag(many=True))
-    def get(self, query):
+    def get(self, search):
         """Filters and list tags."""
-        return models.Tag.query_with(**query)
+        return models.Tag.query_with(**search)
 
 
 @blp.route('/<uuid:tag_id>')
@@ -50,7 +51,7 @@ class Tag(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='EditTag')
-    @blp.arguments(schemas.tag.Edit, as_kwargs=True)
+    @blp.arguments(schemas.TagEdit, as_kwargs=True)
     @blp.response(204)
     def put(self, tag_id, **kwargs):
         """Updates an existing tag."""

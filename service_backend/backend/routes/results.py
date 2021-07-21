@@ -1,6 +1,7 @@
 """Result routes."""
 from backend import models, schemas
 from backend.extensions import auth
+from backend.schemas import query_args
 from flaat import tokentools
 from flask import request
 from flask.views import MethodView
@@ -15,7 +16,7 @@ blp = Blueprint(
 class Root(MethodView):
 
     @blp.doc(operationId='GetResults')
-    @blp.arguments(schemas.result.ListArgs, location='query', as_kwargs=True)
+    @blp.arguments(query_args.ResultFilter, location='query', as_kwargs=True)
     @blp.response(200, schemas.Result(many=True))
     def get(self, tag_names=None, before=None, after=None, **kwargs):
         """Filters and list results."""
@@ -31,8 +32,8 @@ class Root(MethodView):
 
     @auth.login_required()
     @blp.doc(operationId='AddResult')
-    @blp.arguments(schemas.result.CreateArgs, location='query')
-    @blp.arguments(schemas.result.Json)
+    @blp.arguments(query_args.ResultContext, location='query')
+    @blp.arguments(schemas.Json)
     @blp.response(201, schemas.Result)
     def post(self, query_args, json):
         """Creates a new result."""
@@ -52,11 +53,11 @@ class Root(MethodView):
 class Search(MethodView):
 
     @blp.doc(operationId='SearchResults')
-    @blp.arguments(schemas.result.SearchArgs, location='query', as_kwargs=True)
+    @blp.arguments(query_args.ResultSearch, location='query')
     @blp.response(200, schemas.Result(many=True))
-    def get(self, terms=[]):
+    def get(self, search):
         """Filters and list results."""
-        return models.Result.query_with(terms)
+        return models.Result.query_with(**search)
 
 
 @blp.route('/<uuid:result_id>')
@@ -70,7 +71,7 @@ class Result(MethodView):
 
     @auth.login_required()
     @blp.doc(operationId='EditResult')
-    @blp.arguments(schemas.tag.Ids, as_kwargs=True)
+    @blp.arguments(schemas.TagsIds, as_kwargs=True)
     @blp.response(204)
     def put(self, result_id, tags_ids=None):
         """Updates an existing result tags."""
@@ -112,7 +113,7 @@ class Report(MethodView):
 
     @auth.login_required()
     @blp.doc(operationId='AddResultReport')
-    @blp.arguments(schemas.report.Create)
+    @blp.arguments(schemas.ReportCreate)
     @blp.response(201, schemas.Report)
     def post(self, json, result_id):
         """Creates a result report."""

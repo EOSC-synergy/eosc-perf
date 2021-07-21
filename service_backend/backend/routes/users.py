@@ -1,6 +1,7 @@
 """User routes."""
 from backend import models, schemas
 from backend.extensions import auth
+from backend.schemas import query_args
 from flaat import tokentools
 from flask import request
 from flask.views import MethodView
@@ -16,7 +17,7 @@ class Root(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='GetUsers')
-    @blp.arguments(schemas.user.FilterArgs, location='query')
+    @blp.arguments(query_args.UserFilter, location='query')
     @blp.response(200, schemas.User(many=True))
     def get(self, args):
         """Filters and list users."""
@@ -28,11 +29,11 @@ class Search(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='SearchUsers')
-    @blp.arguments(schemas.user.SearchArgs, location='query')
+    @blp.arguments(query_args.UserSearch, location='query')
     @blp.response(200, schemas.User(many=True))
-    def get(self, kwargs):
+    def get(self, search):
         """Filters and list users."""
-        return models.User.query_emails_with(**kwargs)
+        return models.User.query_emails_with(**search)
 
 
 @blp.route('/<string:user_iss>/<string:user_sub>')

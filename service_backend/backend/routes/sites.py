@@ -1,6 +1,7 @@
 """Site routes."""
 from backend import models, schemas
 from backend.extensions import auth
+from backend.schemas import query_args
 from flaat import tokentools
 from flask import request
 from flask.views import MethodView
@@ -15,7 +16,7 @@ blp = Blueprint(
 class Root(MethodView):
 
     @blp.doc(operationId='GetSites')
-    @blp.arguments(schemas.site.ListArgs, location='query')
+    @blp.arguments(query_args.SiteFilter, location='query')
     @blp.response(200, schemas.Site(many=True))
     def get(self, args):
         """Filters and list sites."""
@@ -23,7 +24,7 @@ class Root(MethodView):
 
     @auth.login_required()
     @blp.doc(operationId='AddSite')
-    @blp.arguments(schemas.site.Create, as_kwargs=True)
+    @blp.arguments(schemas.SiteCreate, as_kwargs=True)
     @blp.response(201, schemas.Site)
     def post(self, **kwargs):
         """Creates a new site."""
@@ -38,11 +39,11 @@ class Root(MethodView):
 class Search(MethodView):
 
     @blp.doc(operationId='SearchSites')
-    @blp.arguments(schemas.site.SearchArgs, location='query')
+    @blp.arguments(query_args.SiteSearch, location='query')
     @blp.response(200, schemas.Site(many=True))
-    def get(self, args):
+    def get(self, search):
         """Filters and list sites."""
-        return models.Site.query_with(args['terms'])
+        return models.Site.query_with(**search)
 
 
 @blp.route('/<uuid:site_id>')
@@ -56,7 +57,7 @@ class Site(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='EditSite')
-    @blp.arguments(schemas.site.Edit, as_kwargs=True)
+    @blp.arguments(schemas.SiteEdit, as_kwargs=True)
     @blp.response(204)
     def put(self, site_id, **kwargs):
         """Updates an existing site."""
@@ -74,7 +75,7 @@ class Site(MethodView):
 class Flavors(MethodView):
 
     @blp.doc(operationId='GetFlavors')
-    @blp.arguments(schemas.flavor.ListArgs, location='query')
+    @blp.arguments(query_args.FlavorFilter, location='query')
     @blp.response(200, schemas.Flavor(many=True))
     def get(self, args, site_id):
         """Filters and list flavors."""
@@ -84,7 +85,7 @@ class Flavors(MethodView):
 
     @auth.login_required()
     @blp.doc(operationId='AddFlavor')
-    @blp.arguments(schemas.flavor.Create, as_kwargs=True)
+    @blp.arguments(schemas.FlavorCreate, as_kwargs=True)
     @blp.response(201, schemas.Flavor)
     def post(self, site_id, **kwargs):
         """Creates a new flavor on a site."""
@@ -109,7 +110,7 @@ class Flavor(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='EditFlavor')
-    @blp.arguments(schemas.flavor.Edit, as_kwargs=True)
+    @blp.arguments(schemas.FlavorEdit, as_kwargs=True)
     @blp.response(204)
     def put(self, flavor_id, **kwargs):
         """Updates an existing site."""
