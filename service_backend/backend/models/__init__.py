@@ -3,6 +3,7 @@ from datetime import datetime as dt
 
 from backend.database import BaseModel, PkModel
 from backend.extensions import auth
+from backend.models import associations
 from flaat import tokentools
 from flask_smorest import abort
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey,
@@ -11,11 +12,6 @@ from sqlalchemy.dialects.postgresql import JSON, JSONB
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
-
-from .associations import (BenchmarkReportAssociation, FlavorReportAssociation,
-                           ReportAssociation, ResultReportAssociation,
-                           SiteReportAssociation)
-
 
 # --------------------------------------------------------------------
 # USER model
@@ -108,7 +104,9 @@ class Report(PkModel):
     message = Column(Text, nullable=True)
 
     association_id = Column(ForeignKey("report_association.id"))
-    association = relationship(ReportAssociation, back_populates="reports")
+    association = relationship(
+        associations.ReportBase,
+        back_populates="reports")
 
     resource = association_proxy("association", "parent")
     resource_type = association_proxy("association", "discriminator")
@@ -142,12 +140,12 @@ class Benchmark(PkModel):
 
     report_association_id = Column(ForeignKey("report_association.id"))
     report_association = relationship(
-        BenchmarkReportAssociation, single_parent=True,
+        associations.BenchmarkReport, single_parent=True,
         cascade="all, delete-orphan",
         back_populates="parent")
     reports = association_proxy(
         "report_association", "reports",
-        creator=lambda reports: BenchmarkReportAssociation(reports=reports))
+        creator=lambda reports: associations.BenchmarkReport(reports=reports))
     verdict = association_proxy('reports', 'verdict')
 
     @hybrid_property
@@ -209,12 +207,12 @@ class Site(PkModel):
 
     report_association_id = Column(ForeignKey("report_association.id"))
     report_association = relationship(
-        SiteReportAssociation, single_parent=True,
+        associations.SiteReport, single_parent=True,
         cascade="all, delete-orphan",
         back_populates="parent")
     reports = association_proxy(
         "report_association", "reports",
-        creator=lambda reports: SiteReportAssociation(reports=reports))
+        creator=lambda reports: associations.SiteReport(reports=reports))
     verdicts = association_proxy('reports', 'verdict')
 
     @hybrid_property
@@ -269,12 +267,12 @@ class Flavor(PkModel):
 
     report_association_id = Column(ForeignKey("report_association.id"))
     report_association = relationship(
-        FlavorReportAssociation, single_parent=True,
+        associations.FlavorReport, single_parent=True,
         cascade="all, delete-orphan",
         back_populates="parent")
     reports = association_proxy(
         "report_association", "reports",
-        creator=lambda reports: FlavorReportAssociation(reports=reports))
+        creator=lambda reports: associations.FlavorReport(reports=reports))
     verdicts = association_proxy('reports', 'verdict')
 
     @hybrid_property
@@ -371,12 +369,12 @@ class Result(PkModel):
 
     report_association_id = Column(ForeignKey("report_association.id"))
     report_association = relationship(
-        ResultReportAssociation, single_parent=True,
+        associations.ResultReport, single_parent=True,
         cascade="all, delete-orphan",
         back_populates="parent")
     reports = association_proxy(
         "report_association", "reports",
-        creator=lambda reports: ResultReportAssociation(reports=reports))
+        creator=lambda reports: associations.ResultReport(reports=reports))
     verdicts = association_proxy('reports', 'verdict')
 
     @ hybrid_property

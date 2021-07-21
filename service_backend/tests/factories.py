@@ -2,13 +2,8 @@
 import uuid
 from datetime import datetime
 
-from backend.models import Benchmark, BenchmarkReportAssociation
-from backend.models import Report
-from backend.models import Result, ResultReportAssociation
-from backend.models import (Flavor, FlavorReportAssociation, Site,
-                            SiteReportAssociation)
-from backend.models import Tag
-from backend.models import User
+from backend import models
+from backend.models import associations
 from factory import (LazyFunction, SelfAttribute, Sequence, SubFactory,
                      post_generation)
 from factory.alchemy import SQLAlchemyModelFactory
@@ -29,7 +24,7 @@ class BaseMeta:
 class TagFactory(SQLAlchemyModelFactory):
     """Tag factory."""
     class Meta(BaseMeta):
-        model = Tag
+        model = models.Tag
         sqlalchemy_get_or_create = ('name',)
 
     id = LazyFunction(uuid.uuid4)
@@ -40,7 +35,7 @@ class TagFactory(SQLAlchemyModelFactory):
 class UserFactory(SQLAlchemyModelFactory):
     """User factory."""
     class Meta(BaseMeta):
-        model = User
+        model = models.User
         sqlalchemy_get_or_create = ('sub', 'iss')
 
     sub = Sequence(lambda n: f"user{n}")
@@ -51,7 +46,7 @@ class UserFactory(SQLAlchemyModelFactory):
 class ReportFactory(SQLAlchemyModelFactory):
     """Report factory."""
     class Meta(BaseMeta):
-        model = Report
+        model = models.Report
 
     id = LazyFunction(uuid.uuid4)
     creation_date = fdt.fuzz()
@@ -76,31 +71,31 @@ class ReportAssociationFactory(SQLAlchemyModelFactory):
 class BenchmarkReportAssociationFactory(ReportAssociationFactory):
     """Benchmark Report association factory."""
     class Meta(BaseMeta):
-        model = BenchmarkReportAssociation
+        model = associations.BenchmarkReport
 
 
 class ResultReportAssociationFactory(ReportAssociationFactory):
     """Result Report association factory."""
     class Meta(BaseMeta):
-        model = ResultReportAssociation
+        model = associations.ResultReport
 
 
 class SiteReportAssociationFactory(ReportAssociationFactory):
     """Site Report association factory."""
     class Meta(BaseMeta):
-        model = SiteReportAssociation
+        model = associations.SiteReport
 
 
 class FlavorReportAssociationFactory(ReportAssociationFactory):
     """Flavor Report association factory."""
     class Meta(BaseMeta):
-        model = FlavorReportAssociation
+        model = associations.FlavorReport
 
 
 class BenchmarkFactory(SQLAlchemyModelFactory):
     """Benchmark factory."""
     class Meta(BaseMeta):
-        model = Benchmark
+        model = models.Benchmark
         sqlalchemy_get_or_create = ('docker_image', 'docker_tag')
 
     id = LazyFunction(uuid.uuid4)
@@ -114,7 +109,7 @@ class BenchmarkFactory(SQLAlchemyModelFactory):
 class SiteFactory(SQLAlchemyModelFactory):
     """Site factory."""
     class Meta(BaseMeta):
-        model = Site
+        model = models.Site
         sqlalchemy_get_or_create = ('name',)
 
     id = LazyFunction(uuid.uuid4)
@@ -132,7 +127,7 @@ class SiteFactory(SQLAlchemyModelFactory):
 class FlavorFactory(SQLAlchemyModelFactory):
     """Flavor factory."""
     class Meta(BaseMeta):
-        model = Flavor
+        model = models.Flavor
         sqlalchemy_get_or_create = ('name', 'site_id')
 
     id = LazyFunction(uuid.uuid4)
@@ -145,7 +140,7 @@ class FlavorFactory(SQLAlchemyModelFactory):
 class ResultFactory(SQLAlchemyModelFactory):
     """Result factory."""
     class Meta(BaseMeta):
-        model = Result
+        model = models.Result
 
     id = LazyFunction(uuid.uuid4)
     json = Sequence(lambda n: {'name': f"report_{n}"})

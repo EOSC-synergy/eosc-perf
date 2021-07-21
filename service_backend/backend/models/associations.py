@@ -4,7 +4,8 @@ from sqlalchemy import Column, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 
-class ReportAssociation(PkModel):
+class ReportBase(PkModel):
+    __tablename__ = "report_association"
     discriminator = Column(String)  # Refers to the type of parent
     reports = relationship(
         "Report", cascade="all, delete-orphan",
@@ -13,7 +14,7 @@ class ReportAssociation(PkModel):
     __mapper_args__ = {"polymorphic_on": discriminator}
 
 
-class BenchmarkReportAssociation(ReportAssociation):
+class BenchmarkReport(ReportBase):
     __tablename__ = None
     parent = relationship(
         "Benchmark", uselist=False,
@@ -22,7 +23,7 @@ class BenchmarkReportAssociation(ReportAssociation):
     __mapper_args__ = {"polymorphic_identity": "benchmark_report"}
 
 
-class SiteReportAssociation(ReportAssociation):
+class SiteReport(ReportBase):
     __tablename__ = None
     parent = relationship(
         "Site", uselist=False,
@@ -31,7 +32,7 @@ class SiteReportAssociation(ReportAssociation):
     __mapper_args__ = {"polymorphic_identity": "site_report"}
 
 
-class FlavorReportAssociation(ReportAssociation):
+class FlavorReport(ReportBase):
     __tablename__ = None
     parent = relationship(
         "Flavor", uselist=False,
@@ -40,7 +41,7 @@ class FlavorReportAssociation(ReportAssociation):
     __mapper_args__ = {"polymorphic_identity": "flavor_report"}
 
 
-class ResultReportAssociation(ReportAssociation):
+class ResultReport(ReportBase):
     __tablename__ = None
     parent = relationship(
         "Result", uselist=False,
@@ -49,7 +50,8 @@ class ResultReportAssociation(ReportAssociation):
     __mapper_args__ = {"polymorphic_identity": "result_report"}
 
 
-class ResultTagsAssociation(BaseModel):
+class ResultTags(BaseModel):
+    __tablename__ = "result_tags_association"
     result_id = Column(ForeignKey('result.id'), primary_key=True)
     tag_id = Column(ForeignKey('tag.id'), primary_key=True)
     __table_args__ = (UniqueConstraint('result_id', 'tag_id'),)
