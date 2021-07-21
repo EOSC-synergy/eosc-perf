@@ -17,6 +17,9 @@ from .associations import (BenchmarkReportAssociation, FlavorReportAssociation,
                            SiteReportAssociation)
 
 
+# --------------------------------------------------------------------
+# USER model
+
 class User(BaseModel):
     """A user of the app."""
 
@@ -87,6 +90,9 @@ class User(BaseModel):
         )
 
 
+# --------------------------------------------------------------------
+# REPORT model
+
 class Report(PkModel):
     """The Report class represents an automated or an user’s report.
 
@@ -118,6 +124,9 @@ class Report(PkModel):
     def __repr__(self):
         return f"{self.__class__.__name__} {self.id}"
 
+
+# --------------------------------------------------------------------
+# BENCHMARK model
 
 class Benchmark(PkModel):
     """The benchmark class represents a single type of benchmark that was run.
@@ -184,6 +193,9 @@ class Benchmark(PkModel):
         return results
 
 
+# --------------------------------------------------------------------
+# SITE model
+
 class Site(PkModel):
     """The Site class represents a location where a benchmark can be executed.
 
@@ -239,6 +251,9 @@ class Site(PkModel):
         return results
 
 
+# --------------------------------------------------------------------
+# FLAVOR model
+
 class Flavor(PkModel):
     """The Flavor class represents a flavor of virtual machines available
     for usage on a Site.
@@ -278,6 +293,9 @@ class Flavor(PkModel):
         """
         return '<{} {}>'.format(self.__class__.__name__, self.name)
 
+
+# --------------------------------------------------------------------
+# TAG model
 
 class Tag(PkModel):
     """The Tag class represents a user-created label that can be used for
@@ -319,6 +337,9 @@ class Tag(PkModel):
 
         return results
 
+
+# --------------------------------------------------------------------
+# RESULT model
 
 class Result(PkModel):
     """The Result class represents a single benchmark result and its contents.
