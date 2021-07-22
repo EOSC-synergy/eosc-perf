@@ -78,7 +78,7 @@ def db(app):
     database.db.drop_all()
 
 
-@fixture(scope='function')
+@fixture(scope='function', autouse=True)
 def session(db):
     """Creates a new database session for a test."""
     db.session.begin(nested=True)  # Rollback app commits

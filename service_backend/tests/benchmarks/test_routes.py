@@ -8,7 +8,7 @@ from tests.elements import benchmark_1, benchmark_2, benchmark_3, user_1
 from . import asserts
 
 
-@mark.usefixtures('session', 'db_benchmarks', 'db_users')
+@mark.usefixtures('db_benchmarks', 'db_users')
 @mark.usefixtures('mock_token_info')
 @mark.parametrize('endpoint', ['benchmarks.Root'], indirect=True)
 @mark.parametrize('db_benchmarks', indirect=True,  argvalues=[
@@ -91,7 +91,7 @@ class TestRoot:
         assert response_POST.status_code == 422
 
 
-@mark.usefixtures('session', 'db_benchmarks')
+@mark.usefixtures('db_benchmarks')
 @mark.parametrize('endpoint', ['benchmarks.Search'], indirect=True)
 @mark.parametrize('db_benchmarks', indirect=True,  argvalues=[
     [benchmark_1, benchmark_2, benchmark_3]
@@ -120,7 +120,7 @@ class TestSearch:
         assert response_GET.status_code == 422
 
 
-@mark.usefixtures('session', 'benchmark')
+@mark.usefixtures('benchmark')
 @mark.parametrize('endpoint', ['benchmarks.Benchmark'], indirect=True)
 @mark.parametrize('benchmark_id', [uuid4()], indirect=True)
 class TestId:
