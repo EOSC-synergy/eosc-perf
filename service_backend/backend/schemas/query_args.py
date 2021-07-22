@@ -58,14 +58,17 @@ class TagSearch(Schema):
 
 
 class ResultFilter(Schema):
-    #TODO: json = fields.Dict()
     docker_image = fields.String()
     docker_tag = fields.String()
     site_name = fields.String()
     flavor_name = fields.String()
-    tag_names = fields.List(fields.String())
-    upload_before = fields.Date(attribute="before")
-    upload_after = fields.Date(attribute="after")
+    tag_names = fields.List(fields.String(), missing=None)
+    upload_before = fields.Date(attribute="before", missing=None)
+    upload_after = fields.Date(attribute="after", missing=None)
+    filters = fields.List(
+        fields.String(example="machine.cpu.count > 4"),
+        missing=[]
+    )
 
 
 class ResultContext(Schema):
@@ -77,9 +80,3 @@ class ResultContext(Schema):
 
 class ResultSearch(Schema):
     terms = fields.List(fields.String(), missing=[])
-
-
-class ResultFilters(BenchmarkFilter, Schema):
-    filters = fields.List(
-        fields.String(example="machine.cpu.count > 4")
-    )

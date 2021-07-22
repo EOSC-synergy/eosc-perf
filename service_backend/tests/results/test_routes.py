@@ -28,7 +28,6 @@ class TestRoot:
     """Tests for 'Root' route in blueprint."""
 
     @mark.parametrize('query', indirect=True, argvalues=[
-        # TODO: Json field instance
         {'docker_image': result_1["benchmark__docker_image"]},
         {'docker_tag': result_1["benchmark__docker_tag"]},
         {'site_name': result_1["site__name"]},
@@ -36,6 +35,7 @@ class TestRoot:
         {'tag_names': [tag['name'] for tag in result_1["tags"]]},
         {'upload_before': "3000-01-01"},
         {'upload_after': "2000-01-01"},
+        {'filters': ["time < 100", "time > 5"]},
         {}  # Multiple results
     ])
     def test_GET_200(self, response_GET, url):
