@@ -77,3 +77,9 @@ class ResultContext(Schema):
 
 class ResultSearch(Schema):
     terms = fields.List(fields.String(), missing=[])
+
+
+class ResultFilters(BenchmarkFilter, Schema):
+    filters = fields.List(
+        fields.String(example="machine.cpu.count > 4")
+    )

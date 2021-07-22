@@ -6,6 +6,7 @@ from flaat import tokentools
 from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
+from sqlalchemy import and_
 
 blp = Blueprint(
     'results', __name__, description='Operations on results'
@@ -58,6 +59,77 @@ class Search(MethodView):
     def get(self, search):
         """Filters and list results."""
         return models.Result.query_with(**search)
+
+
+@blp.route('/filter')
+class Filter(MethodView):
+
+    @blp.doc(operationId='FilterResults')
+    @blp.arguments(query_args.ResultFilters, location='query', as_kwargs=True)
+    @blp.response(200, schemas.Result(many=True))
+    def get(self, filters, **query):
+        """Filters and list results.
+        
+        This method allows to return results filtered by values inside the
+        result. The filter is composed by 3 arguments separated by spaces
+        (%20 on URL-encoding): <path.separated.by.dots> <operator> <value>
+
+        There are five filter operators:
+        - Equals ( == :: %3D%3D ): Return results where path value is exact to
+        the query value.
+        For example 'filters=machine.cpu.count%20%3D%3D%205'
+
+        - Greater than ( > :: %3E ): Return results where path value strictly
+        greater than the query value.
+        For example 'filters=machine.cpu.count%20%3E%205'
+
+        - Less than ( < :: %3C ): Return results where path value strictly
+        lower than the query value.
+        For example 'filters=machine.cpu.count%20%3C%205'
+
+        - Greater or equal ( >= :: %3E%3D ): Return results where path value
+        is equal or greater than the query value.
+        For example 'filters=machine.cpu.count%20%3E%3D%205'
+
+        - Less or equal ( <= :: %3C%3D ): Return results where path value is
+        equal or lower than the query value.
+        For example 'filters=machine.cpu.count%20%3C%3D%205'
+
+        Note that all the components of the filter must be URL-encoded in
+        order to be included in URL query strings. You can use the swagger GUI
+        to automatically handle the codification, but the space separator must
+        be included.
+        """
+        results = models.Result.query.filter_by(**query)
+        parsed_filters = []
+        for filter in filters:
+            try:
+                path, operator, value = tuple(filter.split(' '))
+            except ValueError as err:
+                abort(422, messages={
+                    'filter': filter, 'reason': err.args,
+                    'hint': "Probably missing spaces (%20)",
+                    'example': "filters=machine.cpu.count%20%3E%205"
+                })
+            path = tuple(path.split('.'))
+            if operator is None:
+                abort(422, "filter operator not defined")
+            elif operator == "<":
+                parsed_filters.append(models.Result.json[path] < value)
+            elif operator == ">":
+                parsed_filters.append(models.Result.json[path] > value)
+            elif operator == ">=":
+                parsed_filters.append(models.Result.json[path] >= value)
+            elif operator == "<=":
+                parsed_filters.append(models.Result.json[path] <= value)
+            elif operator == "==":
+                parsed_filters.append(models.Result.json[path] == value)
+            else:
+                abort(422, f"Bad filter operator {operator}")
+        try:
+            return results.filter(and_(*parsed_filters))
+        except Exception as err:
+            abort(422, f"Bad filter expression {err}")
 
 
 @blp.route('/<uuid:result_id>')
