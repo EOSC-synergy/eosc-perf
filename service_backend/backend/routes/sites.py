@@ -1,11 +1,11 @@
 """Site routes."""
 from backend.extensions import auth
+from backend.models import models
+from backend.schemas import query_args, schemas
 from flaat import tokentools
 from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint
-
-from . import models, schemas
 
 blp = Blueprint(
     'sites', __name__, description='Operations on sites'
@@ -16,7 +16,7 @@ blp = Blueprint(
 class Root(MethodView):
 
     @blp.doc(operationId='GetSites')
-    @blp.arguments(schemas.SiteQueryArgs, location='query')
+    @blp.arguments(query_args.SiteFilter, location='query')
     @blp.response(200, schemas.Site(many=True))
     def get(self, args):
         """Filters and list sites."""
@@ -39,11 +39,11 @@ class Root(MethodView):
 class Search(MethodView):
 
     @blp.doc(operationId='SearchSites')
-    @blp.arguments(schemas.SearchQueryArgs, location='query')
+    @blp.arguments(query_args.SiteSearch, location='query')
     @blp.response(200, schemas.Site(many=True))
-    def get(self, args):
+    def get(self, search):
         """Filters and list sites."""
-        return models.Site.query_with(args['terms'])
+        return models.Site.query_with(**search)
 
 
 @blp.route('/<uuid:site_id>')
@@ -75,7 +75,7 @@ class Site(MethodView):
 class Flavors(MethodView):
 
     @blp.doc(operationId='GetFlavors')
-    @blp.arguments(schemas.FlavorQueryArgs, location='query')
+    @blp.arguments(query_args.FlavorFilter, location='query')
     @blp.response(200, schemas.Flavor(many=True))
     def get(self, args, site_id):
         """Filters and list flavors."""

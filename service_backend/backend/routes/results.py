@@ -1,12 +1,11 @@
 """Result routes."""
 from backend.extensions import auth
+from backend.models import models
+from backend.schemas import query_args, schemas
 from flaat import tokentools
 from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-
-from . import models, schemas
-
 
 blp = Blueprint(
     'results', __name__, description='Operations on results'
@@ -17,7 +16,7 @@ blp = Blueprint(
 class Root(MethodView):
 
     @blp.doc(operationId='GetResults')
-    @blp.arguments(schemas.FilterQueryArgs, location='query', as_kwargs=True)
+    @blp.arguments(query_args.ResultFilter, location='query', as_kwargs=True)
     @blp.response(200, schemas.Result(many=True))
     def get(self, tag_names=None, before=None, after=None, **kwargs):
         """Filters and list results."""
@@ -33,7 +32,7 @@ class Root(MethodView):
 
     @auth.login_required()
     @blp.doc(operationId='AddResult')
-    @blp.arguments(schemas.CreateQueryArgs, location='query')
+    @blp.arguments(query_args.ResultContext, location='query')
     @blp.arguments(schemas.Json)
     @blp.response(201, schemas.Result)
     def post(self, query_args, json):
@@ -54,11 +53,11 @@ class Root(MethodView):
 class Search(MethodView):
 
     @blp.doc(operationId='SearchResults')
-    @blp.arguments(schemas.SearchQueryArgs, location='query', as_kwargs=True)
+    @blp.arguments(query_args.ResultSearch, location='query')
     @blp.response(200, schemas.Result(many=True))
-    def get(self, terms=[]):
+    def get(self, search):
         """Filters and list results."""
-        return models.Result.query_with(terms)
+        return models.Result.query_with(**search)
 
 
 @blp.route('/<uuid:result_id>')

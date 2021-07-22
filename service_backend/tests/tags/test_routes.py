@@ -1,14 +1,14 @@
 """Functional tests using pytest-flask."""
 from uuid import uuid4
 
-from backend.tags import models
+from backend.models import models
 from pytest import mark
 from tests.elements import tag_1, tag_2, tag_3, tag_4
 
 from . import asserts
 
 
-@mark.usefixtures('session', 'db_tags')
+@mark.usefixtures('db_tags')
 @mark.parametrize('endpoint', ['tags.Root'], indirect=True)
 @mark.parametrize('db_tags', indirect=True,  argvalues=[
     [tag_1, tag_2]
@@ -76,7 +76,7 @@ class TestRoot:
         assert response_POST.status_code == 422
 
 
-@mark.usefixtures('session', 'db_tags')
+@mark.usefixtures('db_tags')
 @mark.parametrize('endpoint', ['tags.Search'], indirect=True)
 @mark.parametrize('db_tags', indirect=True,  argvalues=[
     [tag_1, tag_2, tag_3, tag_4]
@@ -105,7 +105,7 @@ class TestSearch:
         assert response_GET.status_code == 422
 
 
-@mark.usefixtures('session', 'tag')
+@mark.usefixtures('tag')
 @mark.parametrize('endpoint', ['tags.Tag'], indirect=True)
 @mark.parametrize('tag_id', [uuid4()], indirect=True)
 class TestId:

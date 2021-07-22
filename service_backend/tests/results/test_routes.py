@@ -1,7 +1,7 @@
 """Functional tests using pytest-flask."""
 from uuid import uuid4
 
-from backend.results import models
+from backend.models import models
 from pytest import mark
 from tests.elements import (benchmark_1, flavor_1, result_1, result_2, site_1,
                             tag_1, tag_2, tag_3, user_1, user_2)
@@ -18,7 +18,7 @@ post_query = {
 }
 
 
-@mark.usefixtures('session', 'db_results')
+@mark.usefixtures('db_results')
 @mark.usefixtures('mock_token_info')
 @mark.parametrize('endpoint', ['results.Root'], indirect=True)
 @mark.parametrize('db_results', indirect=True, argvalues=[
@@ -113,7 +113,7 @@ class TestRoot:
         assert response_POST.status_code == 422
 
 
-@mark.usefixtures('session', 'db_results')
+@mark.usefixtures('db_results')
 @mark.parametrize('endpoint', ['results.Search'], indirect=True)
 @mark.parametrize('db_results', indirect=True, argvalues=[
     [result_1, result_2]
@@ -255,7 +255,7 @@ class TestResult:
         assert models.Result.query.get(result.id) is not None
 
 
-@mark.usefixtures('session', 'result', 'user')
+@mark.usefixtures('result', 'user')
 @mark.parametrize('endpoint', ['results.Uploader'], indirect=True)
 @mark.parametrize('result_id', [uuid4()], indirect=True)
 @mark.parametrize('user__sub', [user_1['sub']])
@@ -287,7 +287,7 @@ class TestUploader:
         assert response_GET.status_code == 404
 
 
-@mark.usefixtures('session', 'result', 'db_users')
+@mark.usefixtures('result', 'db_users')
 @mark.parametrize('endpoint', ['results.Report'], indirect=True)
 @mark.parametrize('result_id', [uuid4()], indirect=True)
 @mark.parametrize('user__sub', [user_1['sub']])

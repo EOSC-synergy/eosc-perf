@@ -77,7 +77,7 @@ else:
     EGI_CLIENT_ID = str("OIDC_CLIENT_ID", default="not-defined")
     DISABLE_AUTHENTICATION = bool("DISABLE_AUTHENTICATION", default=True)
     DISABLE_ADMIN_PROTECTION = bool("DISABLE_ADMIN_PROTECTION", default=True)
-    ADMIN_ENTITLEMENTS = str("ADMIN_ENTITLEMENTS", default=[])
+    ADMIN_ENTITLEMENTS = str("ADMIN_ENTITLEMENTS", default="")
     EGI_CLIENT_SECRET_FILE = str("OIDC_CLIENT_SECRET_FILE", "")
     if not EGI_CLIENT_SECRET_FILE:
         EGI_CLIENT_SECRET = str("OIDC_CLIENT_SECRET", default="not-defined")

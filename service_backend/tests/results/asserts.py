@@ -1,7 +1,7 @@
 """Function asserts for tests"""
 from urllib import parse
 
-from backend.results import models
+from backend.models import models
 from tests.benchmarks.asserts import correct_benchmark
 from tests.sites.asserts import correct_flavor, correct_site
 from tests.tags.asserts import correct_tag

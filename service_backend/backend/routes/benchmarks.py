@@ -1,11 +1,11 @@
 """Benchmark routes."""
 from backend.extensions import auth
+from backend.models import models
+from backend.schemas import query_args, schemas
 from flaat import tokentools
 from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint
-
-from . import models, schemas
 
 blp = Blueprint(
     'benchmarks', __name__, description='Operations on benchmarks'
@@ -16,7 +16,7 @@ blp = Blueprint(
 class Root(MethodView):
 
     @blp.doc(operationId='GetBenchmarks')
-    @blp.arguments(schemas.BenchmarkQueryArgs, location='query')
+    @blp.arguments(query_args.BenchmarkFilter, location='query')
     @blp.response(200, schemas.Benchmark(many=True))
     def get(self, args):
         """Filters and list benchmarks."""
@@ -39,11 +39,11 @@ class Root(MethodView):
 class Search(MethodView):
 
     @blp.doc(operationId='SearchBenchmarks')
-    @blp.arguments(schemas.SearchQueryArgs, location='query', as_kwargs=True)
+    @blp.arguments(query_args.BenchmarkSearch, location='query')
     @blp.response(200, schemas.Benchmark(many=True))
-    def get(self, terms):
+    def get(self, search):
         """Filters and list benchmarks."""
-        return models.Benchmark.query_with(terms)
+        return models.Benchmark.query_with(**search)
 
 
 @blp.route('/<uuid:benchmark_id>')

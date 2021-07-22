@@ -1,11 +1,11 @@
 """User routes."""
 from backend.extensions import auth
+from backend.models import models
+from backend.schemas import query_args, schemas
 from flaat import tokentools
 from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint
-
-from . import models, schemas
 
 blp = Blueprint(
     'users', __name__, description='Operations on users'
@@ -17,7 +17,7 @@ class Root(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='GetUsers')
-    @blp.arguments(schemas.UserQueryArgs, location='query')
+    @blp.arguments(query_args.UserFilter, location='query')
     @blp.response(200, schemas.User(many=True))
     def get(self, args):
         """Filters and list users."""
@@ -29,11 +29,11 @@ class Search(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='SearchUsers')
-    @blp.arguments(schemas.SearchQueryArgs, location='query')
+    @blp.arguments(query_args.UserSearch, location='query')
     @blp.response(200, schemas.User(many=True))
-    def get(self, args):
+    def get(self, search):
         """Filters and list users."""
-        return models.User.query_emails_with(args['terms'])
+        return models.User.query_emails_with(**search)
 
 
 @blp.route('/<string:user_iss>/<string:user_sub>')

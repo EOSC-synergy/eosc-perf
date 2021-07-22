@@ -1,14 +1,14 @@
 """Functional tests using pytest-flask."""
 from uuid import uuid4
 
-from backend.sites import models
+from backend.models import models
 from pytest import mark
 from tests.elements import flavor_1, flavor_2, flavor_3, site_1, site_2, user_1
 
 from . import asserts
 
 
-@mark.usefixtures('session', 'db_sites', 'db_flavors', 'db_users')
+@mark.usefixtures('db_sites', 'db_flavors', 'db_users')
 @mark.parametrize('db_sites', indirect=True, argvalues=[
     [site_1, site_2]
 ])
@@ -88,7 +88,7 @@ class TestRoot:
         assert response_POST.status_code == 422
 
 
-@mark.usefixtures('session', 'db_sites')
+@mark.usefixtures('db_sites')
 @mark.parametrize('endpoint', ['sites.Search'], indirect=True)
 @mark.parametrize('db_sites', indirect=True, argvalues=[
     [site_1, site_2]
@@ -119,7 +119,7 @@ class TestSearch:
         assert response_GET.status_code == 422
 
 
-@mark.usefixtures('session', 'site')
+@mark.usefixtures('site')
 @mark.parametrize('endpoint', ['sites.Site'], indirect=True)
 @mark.parametrize('site_id', [uuid4()], indirect=True)
 @mark.parametrize('site__flavors', [["f1", "f2"]])
@@ -199,7 +199,7 @@ class TestSite:
             assert models.Flavor.query.get(flavor.id) is not None
 
 
-@mark.usefixtures('session', 'db_sites', 'db_flavors', 'db_users')
+@mark.usefixtures('db_sites', 'db_flavors', 'db_users')
 @mark.parametrize('db_sites', indirect=True, argvalues=[
     [site_1, site_2]
 ])
@@ -280,7 +280,7 @@ class TestFlavors:
         assert response_POST.status_code == 422
 
 
-@mark.usefixtures('session', 'flavor')
+@mark.usefixtures('flavor')
 @mark.parametrize('endpoint', ['sites.Flavor'], indirect=True)
 @mark.parametrize('flavor_id', [uuid4()], indirect=True)
 class TestFlavor:

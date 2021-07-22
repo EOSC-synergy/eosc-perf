@@ -1,12 +1,12 @@
 """Functional tests using pytest-flask."""
-from backend.users import models
+from backend.models import models
 from pytest import mark
 from tests.elements import user_1, user_2
 
 from . import asserts
 
 
-@mark.usefixtures('session', 'db_users')
+@mark.usefixtures('db_users')
 @mark.parametrize('endpoint', ['users.Root'], indirect=True)
 @mark.parametrize('db_users', indirect=True,  argvalues=[
     [user_1, user_2]
@@ -53,7 +53,7 @@ class TestRoot:
         assert response_GET.status_code == 422
 
 
-@mark.usefixtures('session', 'db_users')
+@mark.usefixtures('db_users')
 @mark.parametrize('endpoint', ['users.Search'], indirect=True)
 @mark.parametrize('db_users', indirect=True,  argvalues=[
     [user_1, user_2]
@@ -99,7 +99,7 @@ class TestSearch:
         assert response_GET.status_code == 422
 
 
-@mark.usefixtures('session', 'user')
+@mark.usefixtures('user')
 @mark.parametrize('endpoint', ['users.User'], indirect=True)
 @mark.parametrize('user_sub', ["sub_1"], indirect=True)
 @mark.parametrize('user_iss', ["egi.com"], indirect=True)
@@ -167,7 +167,7 @@ class TestAdmin:
         assert response_GET.status_code == 403
 
 
-@mark.usefixtures('session', 'db_users')
+@mark.usefixtures('db_users')
 @mark.usefixtures('mock_token_info', 'mock_introspection_info')
 @mark.parametrize('endpoint', ['users.Register'], indirect=True)
 @mark.parametrize('db_users', indirect=True,  argvalues=[

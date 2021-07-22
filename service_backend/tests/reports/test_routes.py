@@ -1,15 +1,14 @@
 """Functional tests using pytest-flask."""
 from uuid import uuid4
 
-from backend.reports import models
-from backend.results.models import Result
+from backend.models import models
 from pytest import mark
 from tests.elements import result_1, result_2
 
 from . import asserts
 
 
-@mark.usefixtures('session', 'mock_token_info')
+@mark.usefixtures('mock_token_info')
 @mark.parametrize('endpoint', ['reports.Root'], indirect=True)
 @mark.usefixtures('db_results')
 @mark.parametrize('db_results', indirect=True, argvalues=[
@@ -38,7 +37,7 @@ class TestRoot:
             asserts.match_query(element, url)
 
 
-@mark.usefixtures('session', 'report')
+@mark.usefixtures('report')
 @mark.parametrize('endpoint', ['reports.ReportId'], indirect=True)
 @mark.parametrize('report_id', [uuid4()], indirect=True)
 @mark.parametrize('report_type', indirect=True, argvalues=[
@@ -79,7 +78,7 @@ class TestReport:
         assert models.Report.query.get(report.id) is None
 
         if report.resource_type == "result":
-            resource = Result.query.get(report.resource_id)
+            resource = models.Result.query.get(report.resource_id)
             assert resource is not None  # Is not deleted
             assert report not in resource.reports
 
@@ -89,7 +88,7 @@ class TestReport:
         assert models.Report.query.get(report.id) is not None
 
         if report.resource_type == "result":
-            resource = Result.query.get(report.resource_id)
+            resource = models.Result.query.get(report.resource_id)
             assert resource is not None  # Is not deleted
             assert report in resource.reports
 
@@ -101,12 +100,12 @@ class TestReport:
         assert models.Report.query.get(report.id) is not None
 
         if report.resource_type == "result":
-            resource = Result.query.get(report.resource_id)
+            resource = models.Result.query.get(report.resource_id)
             assert resource is not None  # Is not deleted
             assert report in resource.reports
 
 
-@mark.usefixtures('session', 'report')
+@mark.usefixtures('report')
 @mark.parametrize('endpoint', ['reports.Approve'], indirect=True)
 @mark.parametrize('report_id', [uuid4()], indirect=True)
 @mark.parametrize('report_type', indirect=True, argvalues=[
@@ -147,7 +146,7 @@ class TestApprove:
         assert models.Report.query.get(report.id).verdict is not True
 
 
-@mark.usefixtures('session', 'report')
+@mark.usefixtures('report')
 @mark.parametrize('endpoint', ['reports.Reject'], indirect=True)
 @mark.parametrize('report_id', [uuid4()], indirect=True)
 @mark.parametrize('report_type', indirect=True, argvalues=[

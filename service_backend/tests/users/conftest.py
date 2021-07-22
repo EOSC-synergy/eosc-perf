@@ -1,10 +1,6 @@
 """Defines fixtures available to users tests."""
 from flask import url_for
 from pytest import fixture
-from pytest_factoryboy import register
-from tests.factories import UserFactory
-
-register(UserFactory)
 
 
 @fixture(scope='function')
@@ -35,8 +31,3 @@ def user__sub(user_sub):
 def url(endpoint, user_iss, user_sub, query):
     """Fixture that return the url for the request."""
     return url_for(endpoint, user_iss=user_iss, user_sub=user_sub, **query)
-
-
-@fixture(scope='function')
-def db_users(request, user_factory):
-    return [user_factory(**kwargs) for kwargs in request.param]

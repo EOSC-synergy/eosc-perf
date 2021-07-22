@@ -6,7 +6,7 @@ import marshmallow as ma
 from flask import Flask
 from webargs.flaskparser import FlaskParser
 
-from . import benchmarks, reports, results, sites, tags, users
+from .routes import benchmarks, reports, results, sites, tags, users
 from .extensions import api         # Api interface module
 from .extensions import bcrypt      # Encrypt passwords and others
 from .extensions import cache       # Caches responses
@@ -86,12 +86,12 @@ def register_extensions(app):
 
 def register_blueprints(app):
     """Register Flask blueprints."""
-    api.register_blueprint(benchmarks.blueprint, url_prefix='/benchmarks')
-    api.register_blueprint(reports.blueprint, url_prefix='/reports')
-    api.register_blueprint(results.blueprint, url_prefix='/results')
-    api.register_blueprint(sites.blueprint, url_prefix='/sites')
-    api.register_blueprint(tags.blueprint, url_prefix='/tags')
-    api.register_blueprint(users.blueprint, url_prefix='/users')
+    api.register_blueprint(benchmarks.blp, url_prefix='/benchmarks')
+    api.register_blueprint(reports.blp, url_prefix='/reports')
+    api.register_blueprint(results.blp, url_prefix='/results')
+    api.register_blueprint(sites.blp, url_prefix='/sites')
+    api.register_blueprint(tags.blp, url_prefix='/tags')
+    api.register_blueprint(users.blp, url_prefix='/users')
 
 
 def configure_logger(app):

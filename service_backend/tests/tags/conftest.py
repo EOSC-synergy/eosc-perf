@@ -1,10 +1,6 @@
 """Defines fixtures available to tags tests."""
 from flask import url_for
 from pytest import fixture
-from pytest_factoryboy import register
-from tests.factories import TagFactory
-
-register(TagFactory)
 
 
 @fixture(scope='function')
@@ -23,8 +19,3 @@ def tag__id(tag_id):
 def url(endpoint, tag_id, query):
     """Fixture that return the url for the request."""
     return url_for(endpoint, tag_id=tag_id, **query)
-
-
-@fixture(scope='function')
-def db_tags(request, tag_factory):
-    return [tag_factory(**kwargs) for kwargs in request.param]
