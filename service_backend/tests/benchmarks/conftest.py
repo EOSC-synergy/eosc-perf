@@ -1,12 +1,6 @@
 """Defines fixtures available to benchmarks tests."""
 from flask import url_for
 from pytest import fixture
-from pytest_factoryboy import register
-from tests import factories
-
-register(factories.UserFactory)
-register(factories.BenchmarkReportAssociationFactory)
-register(factories.BenchmarkFactory)
 
 
 @fixture(scope='function')
@@ -27,11 +21,3 @@ def url(endpoint, benchmark_id, query):
     return url_for(endpoint, benchmark_id=benchmark_id, **query)
 
 
-@fixture(scope='function')
-def db_benchmarks(request, benchmark_factory):
-    return [benchmark_factory(**kwargs) for kwargs in request.param]
-
-
-@fixture(scope='function')
-def db_users(request, user_factory):
-    return [user_factory(**kwargs) for kwargs in request.param]
