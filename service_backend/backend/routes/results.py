@@ -65,7 +65,7 @@ class Root(MethodView):
         # Extend query with tags
         if type(tag_names) == list:
             results = results.filter(models.Result.tag_names.in_(tag_names))
-        
+
         # Extend query with date filter
         if before:
             results = results.filter(models.Result.upload_date < before)
@@ -97,11 +97,14 @@ class Root(MethodView):
             elif operator == "==":
                 parsed_filters.append(models.Result.json[path] == value)
             else:
-                abort(422, f"Bad filter operator {operator}")
+                abort(422, message={
+                    'filter': f"Unknown filter operator: '{operator}'",
+                    'hint': "Use only one of ['==', '>', '<', '>=', '<=']"
+                })
         try:
             return results.filter(and_(*parsed_filters))
         except Exception as err:
-            abort(422, f"Bad filter expression {err}")
+            abort(422, message={'filter': err.args})
 
         return query.all()
 
