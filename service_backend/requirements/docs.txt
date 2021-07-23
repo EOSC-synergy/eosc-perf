@@ -1,0 +1,4 @@
+# Everything needed to build documentation
+-r prod.txt
+
+sphinx ~= 4.1.1
