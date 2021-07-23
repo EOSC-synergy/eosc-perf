@@ -19,45 +19,78 @@ class Root(MethodView):
     @blp.doc(operationId='GetResults')
     @blp.arguments(query_args.ResultFilter, location='query', as_kwargs=True)
     @blp.response(200, schemas.Result(many=True))
-    def get(self, tag_names, before, after, filters, **query):
+    def get(
+        self, tag_names=None, before=None, after=None, filters=None, **query
+    ):
         """Filters and list results.
 
         Method to get a list of results based on a query based matching
         conditions:
-         - docker_image: Returns the results matching the docker image.
-         - docker_tag: Returns the results matching the docker tag.
-         - site_name: Returns the results matching the site name.
-         - flavor_name: Returns the results matching the flavor name.
-         - tag_names: Returns the results matching the list of tag names.
-         - upload_before: Returns the results uploaded before a ISO8601 date.
-         - upload_after: Returns the results uploaded after a ISO8601 date.
-         - filters: A set of matching conditions (to describe bellow).
+
+         - **docker_image**: Returns results matching the docker image.
+         - **docker_tag**: Returns results matching the docker tag.
+         - **site_name**: Returns results matching the site name.
+         - **flavor_name**: Returns results matching the flavor name.
+         - **tag_names**: Returns results matching the list of tag names.
+         - **upload_before**: Returns results uploaded before a ISO8601 date.
+         - **upload_after**: Returns results uploaded after a ISO8601 date.
+         - **filters**: A set of matching conditions (to describe bellow).
 
         This method allows to return results filtered by values inside the
         result. The filter is composed by 3 arguments separated by spaces
         ('%20' on URL-encoding): <path.separated.by.dots> <operator> <value>
 
         There are five filter operators:
-         - Equals ( == :: %3D%3D ): Return results where path value is exact 
-           to the query value. 
-           For example 'filters=machine.cpu.count%20%3D%3D%205'
-         - Greater than ( > :: %3E ): Return results where path value 
+
+         - **Equals ( == :: %3D%3D )**: Return results where path value is
+           exact to the query value. 
+           For example *filters=cpu.count%20%3D%3D%205*
+         - **Greater than ( > :: %3E )**: Return results where path value 
            strictly greater than the query value.
-           For example 'filters=machine.cpu.count%20%3E%205'
-         - Less than ( < :: %3C ): Return results where path value strictly
+           For example *filters=cpu.count%20%3E%205*
+         - **Less than ( < :: %3C )**: Return results where path value strictly
            lower than the query value.
-           For example 'filters=machine.cpu.count%20%3C%205'
-         - Greater or equal ( >= :: %3E%3D ): Return results where path value
+           For example *filters=cpu.count%20%3C%205*
+         - **Greater or equal ( >= :: %3E%3D )**: Return results where path value
            is equal or greater than the query value.
-           For example 'filters=machine.cpu.count%20%3E%3D%205'
-         - Less or equal ( <= :: %3C%3D ): Return results where path value is
+           For example *filters=cpu.count%20%3E%3D%205*
+         - **Less or equal ( <= :: %3C%3D )**: Return results where path value is
            equal or lower than the query value.
-           For example 'filters=machine.cpu.count%20%3C%3D%205'
+           For example *filters=cpu.count%20%3C%3D%205*
 
         Note that all the components of the filter must be URL-encoded in
         order to be included in URL query strings. You can use the swagger GUI
         to automatically handle the codification, but the space separator must
         be included.
+
+        ---
+
+        :param docker_image: Constraints the results returned to only those
+               using a benchmark with a specific docker image
+        :type docker_image: String, optional
+        :param docker_tag: Constraints the results returned to only those
+               using a benchmark with a specific docker tag
+        :type docker_tag: String, optional
+        :param site_name: Constraints the results returned to only those
+               performed on a specific site
+        :type site_name: String, optional
+        :param flavor_name: Constraints the results returned to only those
+               performed with an specific VM flavor
+        :type flavor_name: String, optional
+        :param tag_names: Constraints the results returned to only those
+               containing a specific set of tags
+        :type tag_names: List[String], optional
+        :param before: Constraints the results returned to only those
+               uploaded before an specific ISO8601 date
+        :type before: ISO8601 date, optional
+        :param after: Constraints the results returned to only those
+               uploaded after an specific ISO8601 date
+        :type after: ISO8601 date, optional
+        :param filters: Constraints the results returned to only those
+               that pass a certain list of conditions (filters)
+        :type filters: List[String], optional
+        :return: An sqlalchemy query which returns the filtered results.
+        :rtype: flask_sqlalchemy.BaseQuery
         """
         # First query definition using main filters
         results = models.Result.query.filter_by(**query)
