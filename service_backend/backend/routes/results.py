@@ -135,7 +135,7 @@ class Root(MethodView):
                     'hint': "Use only one of ['==', '>', '<', '>=', '<=']"
                 })
         try:
-            return results.filter(and_(*parsed_filters))
+            return results.filter(and_(True, *parsed_filters))
         except Exception as err:
             abort(422, message={'filter': err.args})
 
