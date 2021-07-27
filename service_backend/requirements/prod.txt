@@ -9,28 +9,26 @@ SQLAlchemy~=1.4.1
 psycopg2-binary~=2.8.6
 
 # Migrations
-flask-migrate~=2.7.0
+flask-migrate~=3.0.0
 
 # Schemas
 marshmallow~=3.10.0
-marshmallow-sqlalchemy~=0.24.2
 
 # REST GUI 
-apispec~=4.4.0
-flask-smorest~=0.31.2
+flask-smorest~=0.31.3
 
 # Deployment in production
 gevent~=21.1.2
-gunicorn~=19.9.0
+gunicorn~=20.1.0
 supervisor~=4.2.2
 
 # Auth
 flask-bcrypt~=0.7.1
-flaat~=0.13.0
-requests~=2.24.0
+flaat~=0.14.5
+requests~=2.26.0
 
 # Caching
-flask-caching~=1.10.0
+flask-caching~=1.10.1
 
 # Environment variable parsing
-environs~=9.3.1
+environs~=9.3.2
