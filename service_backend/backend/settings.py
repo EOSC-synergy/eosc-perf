@@ -59,7 +59,7 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # Cache and crypt configuration
 BCRYPT_LOG_ROUNDS = int("BCRYPT_LOG_ROUNDS", default=13)
-CACHE_TYPE = "simple"  # Can be "memcached", "redis", etc.
+CACHE_TYPE = "flask_caching.backends.SimpleCache"
 
 
 # Authorization configuration.
