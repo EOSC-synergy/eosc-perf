@@ -67,7 +67,7 @@ if ENV == 'production':
     EGI_CLIENT_ID = str("OIDC_CLIENT_ID")
     DISABLE_AUTHENTICATION = False
     DISABLE_ADMIN_PROTECTION = False
-    ADMIN_ENTITLEMENTS = str("ADMIN_ENTITLEMENTS")
+    ADMIN_ENTITLEMENTS = str("ADMIN_ENTITLEMENTS", default=[])
     try:
         EGI_CLIENT_SECRET = str("OIDC_CLIENT_SECRET")
     except EnvError:
