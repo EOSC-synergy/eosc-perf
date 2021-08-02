@@ -19,14 +19,17 @@ export function Table(props: TableProps) {
                 {props.results.length > 0 ? (
                     props.results.map((result: Benchmark) => (
                         <tr>
-                            <td>
+                            <td style={{ borderBottom: '1px solid #ddd' }}>
                                 <a
                                     href={modules.ResultSearch.path + '?benchmark=' + result.id}
                                     title={result.docker_image + ':' + result.docker_tag}
                                 >
                                     {result.docker_image + ':' + result.docker_tag}
                                 </a>
-                                <div> {result.description} </div>
+                                <div>
+                                    {result.description}
+                                    <br />
+                                </div>
                             </td>
                         </tr>
                     ))
