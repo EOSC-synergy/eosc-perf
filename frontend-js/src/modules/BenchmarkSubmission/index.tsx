@@ -1,18 +1,27 @@
 import React, { useState } from 'react';
 import { Button, Container, Form } from 'react-bootstrap';
+import { useMutation } from 'react-query';
+import { postHelper, putHelper } from '../../api-helpers';
+import { BenchmarkCreate } from '../../api';
 
 // TODO: do not show invalid on first load
 //       use default state valid?
 
-function BenchmarkSubmission() {
+function BenchmarkSubmission(props: { token: string }) {
     const [dockerName, setDockerName] = useState('');
     const [dockerTag, setDockerTag] = useState('');
-    const [description, setDescription] = useState('');
     const [template, setTemplate] = useState('');
+    const [description, setDescription] = useState('');
+
+    const { mutate, isLoading } = useMutation(
+        (data: BenchmarkCreate) => postHelper<BenchmarkCreate>('/benchmarks', data, props.token),
+        {
+            onSuccess: (data) => {},
+        }
+    );
 
     function isDockerNameValid() {
         // match pattern (...)/(...)
-        console.log(dockerName, '/[^\\/]+\\/[^\\/]+/', dockerName.match(/[^\/]+\/[^\/]+/));
         return dockerName.match(/[^\/]+\/[^\/]+/);
     }
 
@@ -21,6 +30,9 @@ function BenchmarkSubmission() {
     }
 
     function isTemplateValid() {
+        if (template.length == 0) {
+            return true;
+        }
         try {
             JSON.parse(template);
             return true;
@@ -37,7 +49,14 @@ function BenchmarkSubmission() {
         if (!isFormValid()) {
             return;
         }
-        // TODO!
+        const description_ = description && description.length ? description : undefined;
+        const template_ = template && template.length ? template : undefined;
+        mutate({
+            docker_image: dockerName,
+            docker_tag: dockerTag,
+            description: description_,
+            json_template: template_,
+        });
     }
 
     return (
