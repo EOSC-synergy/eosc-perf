@@ -2,7 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type EditTag = {
+export type SiteEdit = {
     name?: string;
+    address?: string;
     description?: string;
 }

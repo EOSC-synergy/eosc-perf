@@ -2,8 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type EditSite = {
-    name?: string;
+export type TagCreate = {
+    name: string;
     description?: string;
-    address?: string;
 }
