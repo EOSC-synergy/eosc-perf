@@ -7,20 +7,9 @@ import { LoadingOverlay } from '../loadingOverlay';
 import { Benchmark } from '../../api';
 import { getHelper } from '../../api-helpers';
 
-type PageProps = {
-    token: string;
-};
-
-function Page(props: PageProps) {
+function Page(props: { token: string }) {
     const [resultsPerPage, setResultsPerPage] = useState(10);
     const [page, setPage] = useState(0);
-
-    // put token in state
-    const [token, setToken] = useState(props.token);
-    // propagate props to state for token update
-    useEffect(() => {
-        setToken(props.token);
-    }, [props.token]);
 
     let { status, isLoading, isError, data, isSuccess } = useQuery(
         'benchmarkSearch',
