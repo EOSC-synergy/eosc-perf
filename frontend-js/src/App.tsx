@@ -18,6 +18,7 @@ import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 // data fetch
 import axios from 'axios';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 const queryClient = new QueryClient();
 
@@ -165,6 +166,7 @@ const hof = (WrappedComponent: any) => {
     return (props: {}) => (
         <QueryClientProvider client={queryClient}>
             <WrappedComponent {...props} />
+            <ReactQueryDevtools />
         </QueryClientProvider>
     );
 };
