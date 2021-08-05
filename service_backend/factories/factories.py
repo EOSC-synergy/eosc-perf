@@ -6,7 +6,6 @@ from factory import (LazyFunction, SelfAttribute, Sequence, SubFactory,
                      post_generation)
 from factory.alchemy import SQLAlchemyModelFactory
 
-import factories.associations
 from factories import BaseMeta, fdt
 
 
@@ -14,7 +13,7 @@ class DBUser(SQLAlchemyModelFactory):
     """User factory."""
     class Meta(BaseMeta):
         model = models.User
-        sqlalchemy_get_or_create = ('sub', 'iss')
+        sqlalchemy_get_or_create = ('email',)
 
     sub = Sequence(lambda n: f"user{n}")
     iss = "egi.com"
@@ -27,10 +26,10 @@ class DBReport(SQLAlchemyModelFactory):
         model = models.Report
 
     id = LazyFunction(uuid.uuid4)
-    creation_date = fdt.fuzz()
+    created_at = fdt.fuzz()
     verdict = True
     message = Sequence(lambda n: f"Report message {n}")
-    uploader = SubFactory(DBUser)
+    created_by = SubFactory(DBUser)
 
 
 class DBBenchmark(SQLAlchemyModelFactory):
@@ -44,7 +43,17 @@ class DBBenchmark(SQLAlchemyModelFactory):
     docker_tag = "latest"
     description = ""
     json_template = {}
-    report_association = SubFactory(factories.associations.DBBenchmarkReport)
+    created_at = fdt.fuzz()
+    created_by = SubFactory(DBUser)
+
+    @post_generation
+    def creation_report(self, create, _, **kwargs):
+        creation_report = DBReport(
+            association_id=self.report_association_id,
+            created_at=self.created_at,
+            created_by__email=self.created_by.email
+        )
+        self.report_association.reports.append(creation_report)
 
 
 class DBSite(SQLAlchemyModelFactory):
@@ -57,12 +66,17 @@ class DBSite(SQLAlchemyModelFactory):
     name = Sequence(lambda n: f"site{n}")
     address = Sequence(lambda n: f"address{n}")
     description = "Text"
-    report_association = SubFactory(factories.associations.DBSiteReport)
+    created_at = fdt.fuzz()
+    created_by = SubFactory(DBUser)
 
     @post_generation
-    def flavors(self, create, names, **kwargs):
-        if names:
-            [DBFlavor(site_id=self.id, name=n, **kwargs) for n in names]
+    def creation_report(self, create, _, **kwargs):
+        creation_report = DBReport(
+            association_id=self.report_association_id,
+            created_at=self.created_at,
+            created_by__email=self.created_by.email
+        )
+        self.report_association.reports.append(creation_report)
 
 
 class DBFlavor(SQLAlchemyModelFactory):
@@ -75,7 +89,17 @@ class DBFlavor(SQLAlchemyModelFactory):
     name = Sequence(lambda n: f"flavor{n}")
     description = "Text"
     site_id = LazyFunction(lambda: DBSite().id)
-    report_association = SubFactory(factories.associations.DBFlavorReport)
+    created_at = fdt.fuzz()
+    created_by = SubFactory(DBUser)
+
+    @post_generation
+    def creation_report(self, create, _, **kwargs):
+        creation_report = DBReport(
+            association_id=self.report_association_id,
+            created_at=self.created_at,
+            created_by__email=self.created_by.email
+        )
+        self.report_association.reports.append(creation_report)
 
 
 class DBTag(SQLAlchemyModelFactory):
@@ -93,18 +117,29 @@ class DBResult(SQLAlchemyModelFactory):
     """Result factory."""
     class Meta(BaseMeta):
         model = models.Result
+        sqlalchemy_get_or_create = ('id',)
 
     id = LazyFunction(uuid.uuid4)
     json = Sequence(lambda n: {'name': f"report_{n}"})
-    uploader = SubFactory(DBUser)
     benchmark = SubFactory(DBBenchmark)
     site = SubFactory(DBSite)
     flavor = SubFactory(DBFlavor, site_id=SelfAttribute('..site.id'))
-    report_association = SubFactory(factories.associations.DBResultReport)
+    created_at = fdt.fuzz()
+    created_by = SubFactory(DBUser)
 
     @post_generation
-    def tags(self, create, kws, **kwargs):
-        if kws:
-            self.tags = [DBTag(**kw) for kw in kws]
-        else:
-            self.tags = []
+    def tags(self, create, names, **kwargs):
+        names = names if names is not None else []
+        for name in names:
+            tag = DBTag(name=name, **kwargs)
+            self.tags.append(tag)
+
+    @post_generation
+    def reports(self, create, reports, **kwargs):
+        reports = reports if reports is not None else []
+        for kwargs in reports:
+            report = DBReport(
+                association_id=self.report_association_id,
+                **kwargs
+            )
+            self.report_association.reports.append(report)
