@@ -3,16 +3,10 @@ from marshmallow import Schema, fields
 from marshmallow.validate import OneOf
 
 
-resource_types = [
-    "benchmark_report",
-    "result_report",
-    "site_report",
-    "flavor_report"
-]
+resource_types = ["benchmark", "result", "site", "flavor"]
 
 
 class UserFilter(Schema):
-    iss = fields.String()
     email = fields.String()
 
 

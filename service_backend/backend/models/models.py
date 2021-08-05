@@ -1,133 +1,26 @@
 """Models module package for main models definition."""
-from datetime import datetime as dt
-
-from backend.database import BaseModel, PkModel
-from backend.extensions import auth
-from backend.models import associations
-from flaat import tokentools
-from flask_smorest import abort
-from sqlalchemy import (Boolean, Column, DateTime, ForeignKey,
-                        ForeignKeyConstraint, Text, UniqueConstraint, or_)
+from sqlalchemy import Column, ForeignKey, Text, UniqueConstraint, or_
 from sqlalchemy.dialects.postgresql import JSON, JSONB
 from sqlalchemy.ext.associationproxy import association_proxy
-from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.orm import backref, relationship
 
+from . import PkModel
+from .utils.reports import HasReports, Report
+from .utils.tags import HasTags, Tag
+from .utils.users import User
+from .utils.utils import HasCreationDetails
 
-# --------------------------------------------------------------------
-# USER model
-
-class User(BaseModel):
-    """A user of the app."""
-
-    sub = Column(Text, primary_key=True, nullable=False)
-    iss = Column(Text, primary_key=True, nullable=False)
-    email = Column(Text, unique=True, nullable=False)
-    created_at = Column(DateTime, nullable=False, default=dt.utcnow)
-
-    __table_args__ = (
-        UniqueConstraint('sub', 'iss'),
-    )
-
-    def __repr__(self) -> str:
-        """Get a human-readable representation string of the user.
-
-        Returns:
-            str: A human-readable representation string of the user.
-        """
-        return "<{} {}>".format(self.__class__.__name__, self.email)
-
-    @classmethod
-    def create(cls, token):
-        token_info = tokentools.get_accesstoken_info(token)
-        user_info = auth.get_info_from_introspection_endpoints(token)
-
-        if not user_info:
-            abort(500, messages={'introspection endpoint': "No user info"})
-
-        elif 'email' not in user_info:
-            abort(422, messages={'token': "No scope for email"})
-
-        return super().create(
-            sub=token_info['body']['sub'],
-            iss=token_info['body']['iss'],
-            email=user_info['email']
-        )
-
-    @classmethod
-    def get(cls, sub=None, iss=None, token=None):
-
-        if not sub and not iss and not token:
-            raise TypeError("Missing sub & iss or token")
-
-        elif not sub and not iss:
-            token_info = tokentools.get_accesstoken_info(token)
-            sub = token_info['body']['sub'],
-            iss = token_info['body']['iss'],
-
-        user = cls.query.get((sub, iss))
-        if user:
-            return user
-        else:
-            abort(404, messages={'user': "Not registered"})
-
-    @classmethod
-    def query_emails_with(cls, terms):
-        results = cls.query
-        for keyword in terms:
-            results = results.filter(
-                User.email.contains(keyword)
-            )
-        return results
-
-    def update_info(self, token):
-        user_info = auth.get_info_from_introspection_endpoints(token)
-        return super().update(
-            email=user_info['email']
-        )
-
-
-# --------------------------------------------------------------------
-# REPORT model
-
-class Report(PkModel):
-    """The Report class represents an automated or an user’s report.
-
-    Reports are automated if used to submit new benchmarks or sites, in which
-    case the report will need to be approved before the associated site or
-    benchmark becomes visible.
-
-    Reports can also be manually generated if users choose to report a result
-    from their search results if they suspect it may be falsified or incorrect.
-    """
-    creation_date = Column(DateTime, nullable=False, default=dt.now)
-    verdict = Column(Boolean, nullable=True)
-    message = Column(Text, nullable=True)
-
-    association_id = Column(ForeignKey("report_association.id"))
-    association = relationship(
-        associations.ReportBase,
-        back_populates="reports")
-
-    resource = association_proxy("association", "parent")
-    resource_type = association_proxy("association", "discriminator")
-    resource_id = association_proxy("association", "parent.id")
-
-    uploader_iss = Column(Text, nullable=False)
-    uploader_sub = Column(Text, nullable=False)
-    uploader = relationship(User)
-    __table_args__ = (ForeignKeyConstraint(['uploader_iss', 'uploader_sub'],
-                                           ['user.iss', 'user.sub']),
-                      {})
-
-    def __repr__(self):
-        return f"{self.__class__.__name__} {self.id}"
+__all__ = [
+    "Result", "Benchmark", "Site", "Flavor",
+    "User", "Report", "Tag"
+]
 
 
 # --------------------------------------------------------------------
 # BENCHMARK model
 
-class Benchmark(PkModel):
+class Benchmark(HasReports, HasCreationDetails, PkModel):
     """The benchmark class represents a single type of benchmark that was run.
 
     Benchmarks are tied down to a specific docker image version to avoid
@@ -139,23 +32,13 @@ class Benchmark(PkModel):
     description = Column(Text, default="")
     json_template = Column(JSON, default={})
 
-    report_association_id = Column(ForeignKey("report_association.id"))
-    report_association = relationship(
-        associations.BenchmarkReport, single_parent=True,
-        cascade="all, delete-orphan",
-        back_populates="parent")
-    reports = association_proxy(
-        "report_association", "reports",
-        creator=lambda reports: associations.BenchmarkReport(reports=reports))
-    verdict = association_proxy('reports', 'verdict')
-
-    @hybrid_property
-    def hidden(self):
-        return not self.verdict
-
-    __table_args__ = (
-        UniqueConstraint('docker_image', 'docker_tag'),
-    )
+    @declared_attr
+    def __table_args__(cls):
+        mixin_indexes = list((HasCreationDetails.__table_args__))
+        mixin_indexes.extend([
+            UniqueConstraint('docker_image', 'docker_tag')
+        ])
+        return tuple(mixin_indexes)
 
     def __repr__(self) -> str:
         """Get a human-readable representation string of the benchmark.
@@ -195,30 +78,15 @@ class Benchmark(PkModel):
 # --------------------------------------------------------------------
 # SITE model
 
-class Site(PkModel):
+class Site(HasReports, HasCreationDetails, PkModel):
     """The Site class represents a location where a benchmark can be executed.
 
     This generally refers to the different virtual machine providers.
     """
-
     name = Column(Text, unique=True, nullable=False)
     address = Column(Text, nullable=False)
     description = Column(Text, nullable=True, default="")
     flavors = relationship("Flavor", cascade="all, delete-orphan")
-
-    report_association_id = Column(ForeignKey("report_association.id"))
-    report_association = relationship(
-        associations.SiteReport, single_parent=True,
-        cascade="all, delete-orphan",
-        back_populates="parent")
-    reports = association_proxy(
-        "report_association", "reports",
-        creator=lambda reports: associations.SiteReport(reports=reports))
-    verdicts = association_proxy('reports', 'verdict')
-
-    @hybrid_property
-    def hidden(self):
-        return not self.verdict
 
     def __repr__(self) -> str:
         """Get a human-readable representation string of the site.
@@ -253,36 +121,24 @@ class Site(PkModel):
 # --------------------------------------------------------------------
 # FLAVOR model
 
-class Flavor(PkModel):
+class Flavor(HasReports, HasCreationDetails, PkModel):
     """The Flavor class represents a flavor of virtual machines available
     for usage on a Site.
 
     Flavours can be pre-existing options filled in by administrators or a
     custom configuration by the user.
     """
-
     name = Column(Text, nullable=False)
     description = Column(Text, nullable=True, default="")
     site_id = Column(ForeignKey('site.id'), nullable=False)
-    verdict = association_proxy('reports', 'verdict')
 
-    report_association_id = Column(ForeignKey("report_association.id"))
-    report_association = relationship(
-        associations.FlavorReport, single_parent=True,
-        cascade="all, delete-orphan",
-        back_populates="parent")
-    reports = association_proxy(
-        "report_association", "reports",
-        creator=lambda reports: associations.FlavorReport(reports=reports))
-    verdicts = association_proxy('reports', 'verdict')
-
-    @hybrid_property
-    def hidden(self):
-        return not self.verdict
-
-    __table_args__ = (
-        UniqueConstraint('site_id', 'name'),
-    )
+    @declared_attr
+    def __table_args__(cls):
+        mixin_indexes = list((HasCreationDetails.__table_args__))
+        mixin_indexes.extend([
+            UniqueConstraint('site_id', 'name')
+        ])
+        return tuple(mixin_indexes)
 
     def __repr__(self) -> str:
         """Get a human-readable representation string of the site flavor.
@@ -294,97 +150,33 @@ class Flavor(PkModel):
 
 
 # --------------------------------------------------------------------
-# TAG model
-
-class Tag(PkModel):
-    """The Tag class represents a user-created label that can be used for
-    filtering a list of results.
-
-    These are entirely created by users and may not necessarily be related to
-    any benchmark output data. These may be used to indicate if, for example, a
-    benchmark is used to measure CPU or GPU performance, since some benchmarks
-    may be used to test both.
-    """
-
-    name = Column(Text, unique=True, nullable=False)
-    description = Column(Text, nullable=False, default="")
-
-    def __repr__(self) -> str:
-        """Get a human-readable representation string of the tag.
-
-        Returns:
-            str: A human-readable representation string of the tag.
-        """
-        return '<{} {}>'.format(self.__class__.__name__, self.name)
-
-    @classmethod
-    def query_with(cls, terms):
-        """Query all tags containing all keywords.
-
-        Args:
-            terms (List[str]): A list of all keywords to match on the search.
-        Returns:
-            List[Tag]: A list containing all matching tags in the database.
-        """
-        results = cls.query
-        for keyword in terms:
-            results = results.filter(
-                or_(
-                    Tag.name.contains(keyword),
-                    Tag.description.contains(keyword)
-                ))
-
-        return results
-
-
-# --------------------------------------------------------------------
 # RESULT model
 
-class Result(PkModel):
+class Result(HasReports, HasTags, HasCreationDetails, PkModel):
     """The Result class represents a single benchmark result and its contents.
 
     They carry the JSON data output by the ran benchmarks.
     """
-
-    upload_date = Column(DateTime, nullable=False, default=dt.now)
     json = Column(JSONB, nullable=False)
-    tags = relationship(Tag, secondary="result_tags_association")
-    tag_names = association_proxy('tags', 'name')
 
     benchmark_id = Column(ForeignKey('benchmark.id'), nullable=False)
-    benchmark = relationship(Benchmark)
+    benchmark = relationship(Benchmark, backref=backref(
+        "results", cascade="all, delete-orphan"
+    ))
     docker_image = association_proxy('benchmark', 'docker_image')
     docker_tag = association_proxy('benchmark', 'docker_tag')
 
     site_id = Column(ForeignKey('site.id'), nullable=False)
-    site = relationship(Site)
+    site = relationship(Site, backref=backref(
+        "results", cascade="all, delete-orphan"
+    ))
     site_name = association_proxy('site', 'name')
 
     flavor_id = Column(ForeignKey('flavor.id'), nullable=False)
-    flavor = relationship(Flavor)
+    flavor = relationship(Flavor, backref=backref(
+        "results", cascade="all, delete-orphan"
+    ))
     flavor_name = association_proxy('flavor', 'name')
-
-    uploader_iss = Column(Text, nullable=False)
-    uploader_sub = Column(Text, nullable=False)
-    uploader = relationship(User)
-
-    report_association_id = Column(ForeignKey("report_association.id"))
-    report_association = relationship(
-        associations.ResultReport, single_parent=True,
-        cascade="all, delete-orphan",
-        back_populates="parent")
-    reports = association_proxy(
-        "report_association", "reports",
-        creator=lambda reports: associations.ResultReport(reports=reports))
-    verdicts = association_proxy('reports', 'verdict')
-
-    @ hybrid_property
-    def hidden(self):
-        return not all(self.verdicts)
-
-    __table_args__ = (ForeignKeyConstraint(['uploader_iss', 'uploader_sub'],
-                                           ['user.iss', 'user.sub']),
-                      {})
 
     def __repr__(self) -> str:
         """Get a human-readable representation string of the result.
@@ -394,7 +186,7 @@ class Result(PkModel):
         """
         return '<{} {}>'.format(self.__class__.__name__, self.id)
 
-    @ classmethod
+    @classmethod
     def query_with(cls, terms):
         """Query all results containing all keywords in the columns.
 
@@ -408,7 +200,6 @@ class Result(PkModel):
         for keyword in terms:
             results = results.filter(
                 or_(
-                    # TODO: Result.json.contains(keyword),
                     Result.docker_image.contains(keyword),
                     Result.docker_tag.contains(keyword),
                     Result.site_name.contains(keyword),

@@ -1,9 +1,10 @@
 """Schemas module for schemas definition."""
-from marshmallow import Schema, fields, INCLUDE
-
+from backend.models import models
+from marshmallow import INCLUDE, Schema, fields, post_load
 
 # ---------------------------------------------------------------------
 # Definition of User schemas
+
 
 class User(Schema):
     sub = fields.String()
@@ -16,12 +17,12 @@ class User(Schema):
 # Definition of Report schemas
 
 class Report(Schema):
-    id = fields.UUID()
-    creation_date = fields.DateTime()
-    verdict = fields.Boolean()
-    message = fields.String()
-    resource_type = fields.String()
-    resource_id = fields.UUID()
+    id = fields.UUID(required=True, dump_only=True)
+    created_at = fields.DateTime(required=True)
+    verdict = fields.Boolean(required=True)
+    message = fields.String(required=True)
+    resource_type = fields.String(required=True)
+    resource_id = fields.UUID(required=True)
 
 
 class ReportCreate(Schema):
@@ -122,7 +123,7 @@ class TagEdit(Schema):
 
 class Result(Schema):
     id = fields.UUID()
-    upload_date = fields.DateTime()
+    upload_date = fields.DateTime(attribute="created_at")
     json = fields.Dict()
     benchmark = fields.Nested(Benchmark)
     site = fields.Nested(Site)
