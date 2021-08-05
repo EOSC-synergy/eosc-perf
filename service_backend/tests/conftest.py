@@ -4,33 +4,18 @@ See: https://pytest-flask.readthedocs.io/en/latest/features.html
 import logging
 import os
 
-from backend import create_app, database
-from backend.extensions import auth
+from backend import create_app
+from backend.extensions import auth as authentication
+from backend.extensions import db as database
+from factories import factories
 from flaat import tokentools
 from pytest import fixture
-from pytest_factoryboy import register
 from pytest_postgresql.janitor import DatabaseJanitor
 
-from factories import factories
-from factories import associations as f_associations
+from tests import db_instances
 
 TEST_DB = 'test_database'
 VERSION = 12.2  # postgresql version number
-
-# Factories registration
-register(factories.DBReport)
-register(factories.DBTag)
-register(factories.DBUser)
-
-register(factories.DBBenchmark)
-register(factories.DBResult)
-register(factories.DBSite)
-register(factories.DBFlavor)
-
-register(f_associations.DBBenchmarkReport)
-register(f_associations.DBResultReport)
-register(f_associations.DBSiteReport)
-register(f_associations.DBFlavorReport)
 
 
 @fixture(scope='session')
@@ -73,9 +58,15 @@ def app(session_environment):
 @fixture(scope='session')
 def db(app):
     """Create database for the tests."""
-    database.db.create_all()
-    yield database.db
-    database.db.drop_all()
+    database.create_all()
+    [factories.DBUser(**x) for x in db_instances.users]
+    [factories.DBTag(**x) for x in db_instances.tags]
+    [factories.DBBenchmark(**x) for x in db_instances.benchmarks]
+    [factories.DBSite(**x) for x in db_instances.sites]
+    [factories.DBFlavor(**x) for x in db_instances.flavors]
+    [factories.DBResult(**x) for x in db_instances.results]
+    yield database
+    database.drop_all()
 
 
 @fixture(scope='function', autouse=True)
@@ -84,7 +75,7 @@ def session(db):
     db.session.begin(nested=True)  # Rollback app commits
     yield db.session
     db.session.rollback()   # Discard test changes
-    db.session.remove()     # Next test gets a new session
+    db.session.close()      # Next test gets a new session
 
 
 @fixture(scope='function')
@@ -119,7 +110,7 @@ def introspection_email(request):
 def mock_introspection_info(monkeypatch, introspection_email):
     """Patch fixture to test function with valid oidc token."""
     monkeypatch.setattr(
-        auth,
+        authentication,
         "get_info_from_introspection_endpoints",
         lambda _: {'email': introspection_email}
     )
@@ -129,7 +120,7 @@ def mock_introspection_info(monkeypatch, introspection_email):
 def grant_logged(monkeypatch, mock_token_info, mock_introspection_info):
     """Patch fixture to test function as logged user."""
     monkeypatch.setattr(
-        auth,
+        authentication,
         "get_info_from_userinfo_endpoints",
         lambda _: {}
     )
@@ -148,9 +139,8 @@ def grant_logged(monkeypatch, mock_token_info, mock_introspection_info):
 @fixture(scope='function')
 def grant_admin(monkeypatch, grant_logged):
     """Patch fixture to test function as admin user."""
-    # monkeypatch.setattr(auth, "valid_admin", lambda: True)
     monkeypatch.setattr(
-        auth,
+        authentication,
         "get_info_from_userinfo_endpoints",
         lambda _: {'eduperson_assurance': ["admins"]}
     )
@@ -202,57 +192,3 @@ def response_PATCH(client, url, body):
 def response_DELETE(client, url):
     """Fixture that return the result of a DELETE request."""
     return client.delete(url)
-
-
-@fixture(scope='function')
-def db_benchmarks(request, db_benchmark):
-    return [db_benchmark(**kwargs) for kwargs in request.param]
-
-
-@fixture(scope='function')
-def db_results(request, db_result):
-    return [db_result(**kwargs) for kwargs in request.param]
-
-
-@fixture(scope='function')
-def db_sites(request, db_site):
-    return [db_site(**kwargs) for kwargs in request.param]
-
-
-@fixture(scope='function')
-def db_flavors(request, db_flavor):
-    return [db_flavor(**kwargs) for kwargs in request.param]
-
-
-@fixture(scope='function')
-def db_tags(request, db_tag):
-    return [db_tag(**kwargs) for kwargs in request.param]
-
-
-@fixture(scope='function')
-def db_users(request, db_user):
-    return [db_user(**kwargs) for kwargs in request.param]
-
-
-@fixture(scope='function')
-def report(
-    db_benchmark, db_result, db_site, db_flavor,
-    report__id, report_type, report_verdict,
-):
-    """Creates a report."""
-    kwargs = {
-        'report_association__reports': [report__id],
-        'report_association__reports__verdict': report_verdict
-    }
-    if report_type is None:
-        raise Exception("report_type undefined")
-    elif report_type == "benchmark":
-        return db_benchmark(**kwargs).reports[0]
-    elif report_type == "result":
-        return db_result(**kwargs).reports[0]
-    elif report_type == "site":
-        return db_site(**kwargs).reports[0]
-    elif report_type == "flavor":
-        return db_flavor(**kwargs).reports[0]
-    else:
-        raise Exception(f"Unknown report_type: {report_type}")

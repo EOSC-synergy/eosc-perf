@@ -1,21 +1,28 @@
 """Defines fixtures available to results tests."""
+from backend.models import models
 from flask import url_for
 from pytest import fixture
 
 
 @fixture(scope='function')
 def result_id(request):
-    """Override result id as a separate fixture."""
+    """Result id of the result to test."""
     return request.param if hasattr(request, 'param') else None
 
 
 @fixture(scope='function')
-def result__id(result_id):
-    """Use, if defined, the id for the result factory."""
-    return result_id
+def result(result_id):
+    """Returns the result to test."""
+    return models.Result.query.get(result_id)
 
 
 @fixture(scope='function')
-def url(endpoint, result_id, query):
+def request_id(request, result_id):
+    """Result id to use on the url call."""
+    return request.param if hasattr(request, 'param') else result_id
+
+
+@fixture(scope='function')
+def url(endpoint, request_id, query):
     """Fixture that return the url for the request."""
-    return url_for(endpoint, result_id=result_id, **query)
+    return url_for(endpoint, result_id=request_id, **query)

@@ -1,23 +1,28 @@
 """Defines fixtures available to benchmarks tests."""
+from backend.models import models
 from flask import url_for
 from pytest import fixture
 
 
 @fixture(scope='function')
 def benchmark_id(request):
-    """Override benchmark id as a separate fixture."""
+    """Benchmark id of the benchmark to test."""
     return request.param if hasattr(request, 'param') else None
 
 
 @fixture(scope='function')
-def benchmark__id(benchmark_id):
-    """Use, if defined, the id for the benchmark factory."""
-    return benchmark_id if benchmark_id else None
+def benchmark(benchmark_id):
+    """Returns the benchmark to test."""
+    return models.Benchmark.query.get(benchmark_id)
 
 
 @fixture(scope='function')
-def url(endpoint, benchmark_id, query):
+def request_id(request, benchmark_id):
+    """Benchmark id to use on the url call."""
+    return request.param if hasattr(request, 'param') else benchmark_id
+
+
+@fixture(scope='function')
+def url(endpoint, request_id, query):
     """Fixture that return the url for the request."""
-    return url_for(endpoint, benchmark_id=benchmark_id, **query)
-
-
+    return url_for(endpoint, benchmark_id=request_id, **query)

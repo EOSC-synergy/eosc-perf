@@ -3,27 +3,22 @@ from uuid import uuid4
 
 from backend.models import models
 from pytest import mark
-from tests.elements import result_1, result_2
+from tests.db_instances import benchmarks, results, sites, flavors, users
 
 from . import asserts
 
 
-@mark.usefixtures('mock_token_info')
 @mark.parametrize('endpoint', ['reports.Root'], indirect=True)
-@mark.usefixtures('db_results')
-@mark.parametrize('db_results', indirect=True, argvalues=[
-    [result_1, result_2]
-])
 class TestRoot:
     """Tests for 'Root' route in blueprint."""
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[
         {'verdict': True},
-        {'resource_type': "benchmark_report"},
-        {'resource_type': "result_report"},
-        {'resource_type': "site_report"},
-        {'resource_type': "flavor_report"},
+        {'resource_type': "benchmark"},
+        {'resource_type': "result"},
+        {'resource_type': "site"},
+        {'resource_type': "flavor"},
         {'created_before': "3000-01-01"},
         {'created_after': "2000-01-01"},
         {}  # Multiple reports
@@ -32,19 +27,18 @@ class TestRoot:
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
         assert response_GET.json != []
-        for element in response_GET.json:
-            asserts.correct_report(element)
-            asserts.match_query(element, url)
+        for json in response_GET.json:
+            report = models.Report.query.get(json['id'])
+            asserts.match_query(json, url)
+            asserts.match_report(json, report)
 
 
-@mark.usefixtures('report')
 @mark.parametrize('endpoint', ['reports.ReportId'], indirect=True)
-@mark.parametrize('report_id', [uuid4()], indirect=True)
-@mark.parametrize('report_type', indirect=True, argvalues=[
-    "benchmark",    # Tests using a report pointing a benchmark
-    "result",   # Tests using a report pointing a result
-    "site",     # Tests using a report pointing a site
-    "flavor"    # Tests using a report pointing a flavor
+@mark.parametrize('resource_type_id', indirect=True, argvalues=[
+    ("benchmark", benchmarks[0]['id']),
+    ("result",    results[0]['id']),
+    ("site",      sites[0]['id']),
+    ("flavor",    flavors[0]['id'])
 ])
 class TestReport:
     """Tests for 'ReportId' route in blueprint."""
@@ -53,7 +47,6 @@ class TestReport:
     def test_GET_200(self, report, response_GET):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
-        asserts.correct_report(response_GET.json)
         asserts.match_report(response_GET.json, report)
 
     def test_GET_401(self, response_GET):
@@ -66,53 +59,39 @@ class TestReport:
         assert response_GET.status_code == 403
 
     @mark.usefixtures('grant_admin')
-    @mark.parametrize('report__id', [uuid4()])
+    @mark.parametrize('request_id', [uuid4()], indirect=True)
     def test_GET_404(self, response_GET):
         """GET method fails 404 if no id found."""
         assert response_GET.status_code == 404
 
     @mark.usefixtures('grant_admin')
-    def test_DELETE_204(self, report, response_DELETE):
+    def test_DELETE_204(self, report, resource_model, response_DELETE):
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
         assert models.Report.query.get(report.id) is None
+        assert resource_model.query.get(report.resource.id) is not None
 
-        if report.resource_type == "result":
-            resource = models.Result.query.get(report.resource_id)
-            assert resource is not None  # Is not deleted
-            assert report not in resource.reports
-
-    def test_DELETE_401(self, report, response_DELETE):
+    def test_DELETE_204(self, report, resource_model, response_DELETE):
         """DELETE method fails 401 if not authorized."""
         assert response_DELETE.status_code == 401
         assert models.Report.query.get(report.id) is not None
-
-        if report.resource_type == "result":
-            resource = models.Result.query.get(report.resource_id)
-            assert resource is not None  # Is not deleted
-            assert report in resource.reports
+        assert resource_model.query.get(report.resource.id) is not None
 
     @mark.usefixtures('grant_admin')
-    @mark.parametrize('report__id', [uuid4()])
-    def test_DELETE_404(self, report, response_DELETE):
+    @mark.parametrize('request_id', [uuid4()], indirect=True)
+    def test_DELETE_204(self, report, resource_model, response_DELETE):
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404
         assert models.Report.query.get(report.id) is not None
-
-        if report.resource_type == "result":
-            resource = models.Result.query.get(report.resource_id)
-            assert resource is not None  # Is not deleted
-            assert report in resource.reports
+        assert resource_model.query.get(report.resource.id) is not None
 
 
-@mark.usefixtures('report')
 @mark.parametrize('endpoint', ['reports.Approve'], indirect=True)
-@mark.parametrize('report_id', [uuid4()], indirect=True)
-@mark.parametrize('report_type', indirect=True, argvalues=[
-    "benchmark",    # Tests using a report pointing a benchmark
-    "result",   # Tests using a report pointing a result
-    "site",     # Tests using a report pointing a site
-    "flavor"    # Tests using a report pointing a flavor
+@mark.parametrize('resource_type_id', indirect=True, argvalues=[
+    ("benchmark", benchmarks[0]['id']),
+    ("result",    results[0]['id']),
+    ("site",      sites[0]['id']),
+    ("flavor",    flavors[0]['id'])
 ])
 @mark.parametrize('report_verdict', indirect=True, argvalues=[
     None,   # Tests when verdict value is not initialized
@@ -122,38 +101,36 @@ class TestApprove:
     """Tests for 'Approve' route in blueprint."""
 
     @mark.usefixtures('grant_admin')
-    def test_PATCH_204(self, report, response_PATCH):
+    def test_PATCH_204(self, report, report_verdict, response_PATCH):
         """PATCH method succeeded 204."""
         assert response_PATCH.status_code == 204
         assert models.Report.query.get(report.id).verdict is True
 
-    def test_PATCH_401(self, report, response_PATCH):
+    def test_PATCH_401(self, report, report_verdict, response_PATCH):
         """PATCH method fails 401 if not authorized."""
         assert response_PATCH.status_code == 401
         assert models.Report.query.get(report.id).verdict is not True
 
     @mark.usefixtures('grant_logged')
-    def test_PATCH_403(self, report, response_PATCH):
+    def test_PATCH_403(self, report, report_verdict, response_PATCH):
         """PATCH method fails 403 if forbidden."""
         assert response_PATCH.status_code == 403
         assert models.Report.query.get(report.id).verdict is not True
 
     @mark.usefixtures('grant_admin')
-    @mark.parametrize('report__id', [uuid4()])
-    def test_PATCH_404(self, report, response_PATCH):
+    @mark.parametrize('request_id', [uuid4()], indirect=True)
+    def test_PATCH_404(self, report, report_verdict, response_PATCH):
         """PATCH method fails 404 if no id found."""
         assert response_PATCH.status_code == 404
         assert models.Report.query.get(report.id).verdict is not True
 
 
-@mark.usefixtures('report')
 @mark.parametrize('endpoint', ['reports.Reject'], indirect=True)
-@mark.parametrize('report_id', [uuid4()], indirect=True)
-@mark.parametrize('report_type', indirect=True, argvalues=[
-    "benchmark",    # Tests using a report pointing a benchmark
-    "result",   # Tests using a report pointing a result
-    "site",     # Tests using a report pointing a site
-    "flavor"    # Tests using a report pointing a flavor
+@mark.parametrize('resource_type_id', indirect=True, argvalues=[
+    ("benchmark", benchmarks[0]['id']),
+    ("result",    results[0]['id']),
+    ("site",      sites[0]['id']),
+    ("flavor",    flavors[0]['id'])
 ])
 @mark.parametrize('report_verdict', indirect=True, argvalues=[
     True    # Tests when verdict value initialized as True
@@ -162,25 +139,26 @@ class TestReject:
     """Tests for 'Approve' route in blueprint."""
 
     @mark.usefixtures('grant_admin')
-    def test_PATCH_204(self, report, response_PATCH):
+    def test_PATCH_204(self, report, report_verdict, response_PATCH):
         """PATCH method succeeded 204."""
         assert response_PATCH.status_code == 204
         assert models.Report.query.get(report.id).verdict is False
 
-    def test_PATCH_401(self, report, response_PATCH):
+    def test_PATCH_401(self, report, report_verdict, response_PATCH):
         """PATCH method fails 401 if not authorized."""
         assert response_PATCH.status_code == 401
         assert models.Report.query.get(report.id).verdict is True
 
     @mark.usefixtures('grant_logged')
-    def test_PATCH_403(self, report, response_PATCH):
+    def test_PATCH_403(self, report, report_verdict, response_PATCH):
         """PATCH method fails 403 if forbidden."""
         assert response_PATCH.status_code == 403
         assert models.Report.query.get(report.id).verdict is True
 
     @mark.usefixtures('grant_admin')
-    @mark.parametrize('report__id', [uuid4()])
-    def test_PATCH_404(self, report, response_PATCH):
+    @mark.parametrize('request_id', [uuid4()], indirect=True)
+    def test_PATCH_404(self, report, report_verdict, response_PATCH):
         """PATCH method fails 404 if no id found."""
         assert response_PATCH.status_code == 404
         assert models.Report.query.get(report.id).verdict is True
+

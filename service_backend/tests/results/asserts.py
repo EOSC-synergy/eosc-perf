@@ -1,62 +1,50 @@
 """Function asserts for tests"""
 from urllib import parse
 
-from backend.models import models
-from tests.benchmarks.asserts import correct_benchmark
-from tests.sites.asserts import correct_flavor, correct_site
-from tests.tags.asserts import correct_tag
-
-
-def correct_result(json):
-    """Checks the json result contains the correct attributes."""
-    assert 'id' in json and type(json['id']) is str
-    assert 'upload_date' in json and type(json['upload_date']) is str
-    assert 'json' in json and type(json['json']) is dict
-    assert 'benchmark' in json and correct_benchmark(json['benchmark'])
-    assert 'site' in json and correct_site(json['site'])
-    assert 'flavor' in json and correct_flavor(json['flavor'])
-    assert 'tags' in json and type(json['tags']) is list
-    for tag in json['tags']:
-        assert correct_tag(tag)
-
-    return True
+from tests.benchmarks.asserts import match_benchmark
+from tests.sites.asserts import match_flavor, match_site
+from tests.tags.asserts import match_tag
+from tests.users.asserts import match_user
+from tests.reports.asserts import match_report
 
 
 def match_result(json, result):
-    """Checks the json elements matches the result object."""
+    """Checks the json db_instances matches the result object."""
+
+    # Check the result has an id
+    assert 'id' in json and type(json['id']) is str
     assert json['id'] == str(result.id)
-    assert json['upload_date'] == str(result.upload_date).replace(" ", "T")
+
+    # Check the result has a json
+    assert 'json' in json and type(json['json']) is dict
     assert json['json'] == result.json
 
-    benchmark = json['benchmark']
-    assert benchmark['id'] == str(result.benchmark.id)
-    assert benchmark['docker_image'] == result.docker_image
-    assert benchmark['docker_tag'] == result.docker_tag
+    # Check the result has an upload date
+    assert 'upload_date' in json and type(json['upload_date']) is str
+    assert json['upload_date'] == str(result.created_at).replace(" ", "T")
 
-    site = json['site']
-    assert site['id'] == str(result.site.id)
-    assert site['name'] == result.site_name
+    # Check the result has a benchmark
+    assert 'benchmark' in json
+    assert match_benchmark(json['benchmark'], result.benchmark)
 
-    flavor = json['flavor']
-    assert flavor['id'] == str(result.flavor.id)
-    assert flavor['name'] == result.flavor_name
+    # Check the result has a site
+    assert 'site' in json
+    assert match_site(json['site'], result.site)
 
-    tags = json['tags']
-    assert set(t['id'] for t in tags) == set(str(t.id) for t in result.tags)
-    assert set(t['name'] for t in tags) == set(result.tag_names)
+    # Check the result has a flavor
+    assert 'flavor' in json
+    assert match_flavor(json['flavor'], result.flavor)
 
-    return True
-
-
-def match_result_in_db(json):
-    db_result = models.Result.query.get(json['id'])
-    assert match_result(json, db_result)
+    # Check the result has tags
+    assert 'tags' in json and type(json['tags']) is list
+    for json, tag in zip(json['tags'], result.tags):
+        assert match_tag(json, tag)
 
     return True
 
 
 def match_query(json, url):
-    """Checks the json elements matches the url query."""
+    """Checks the json db_instances matches the url query."""
     presult = parse.urlparse(url)
     items = parse.parse_qs(presult.query)
 
@@ -83,14 +71,13 @@ def match_query(json, url):
 
 
 def match_search(json, url):
-    """Checks the json elements matches the url search."""
+    """Checks the json db_instances matches the url search."""
     presult = parse.urlparse(url)
     dict_terms = dict(parse.parse_qs(presult.query).items())
     if dict_terms == {}:
         return True
     for term in dict_terms['terms']:
         assert any([
-            # TODO: json check:  json['json']
             json['benchmark']['docker_image'].__contains__(term),
             json['benchmark']['docker_tag'].__contains__(term),
             json['site']['name'].__contains__(term),
@@ -102,7 +89,7 @@ def match_search(json, url):
 
 
 def match_body(json, body):
-    """Checks the json elements matches the body dict."""
+    """Checks the json db_instances matches the body dict."""
     if type(body) is list:
         for n in range(len(body)):
             match_body(json[n], body[n])

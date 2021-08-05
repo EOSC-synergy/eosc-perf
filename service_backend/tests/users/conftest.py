@@ -1,33 +1,16 @@
 """Defines fixtures available to users tests."""
+from backend.models import models
 from flask import url_for
 from pytest import fixture
 
 
 @fixture(scope='function')
-def user_iss(request):
-    """Override user iss as a separate fixture."""
-    return request.param if hasattr(request, 'param') else None
+def user(token_sub, token_iss):
+    """Fixture that returns the tested user."""
+    return models.User.query.get((token_sub, token_iss))
 
 
 @fixture(scope='function')
-def user__iss(user_iss):
-    """Use, if defined, the iss for the user factory."""
-    return user_iss if user_iss else None
-
-
-@fixture(scope='function')
-def user_sub(request):
-    """Override user sub as a separate fixture."""
-    return request.param if hasattr(request, 'param') else None
-
-
-@fixture(scope='function')
-def user__sub(user_sub):
-    """Use, if defined, the sub for the user factory."""
-    return user_sub if user_sub else None
-
-
-@fixture(scope='function')
-def url(endpoint, user_iss, user_sub, query):
+def url(endpoint, query):
     """Fixture that return the url for the request."""
-    return url_for(endpoint, user_iss=user_iss, user_sub=user_sub, **query)
+    return url_for(endpoint, **query)

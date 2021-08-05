@@ -4,60 +4,48 @@ from urllib import parse
 from backend.models import models
 
 
-def correct_site(json):
-    """Checks the json site contains the correct attributes."""
-    assert 'id' in json and type(json['id']) is str
-    assert 'name' in json and type(json['name']) is str
-    assert 'address' in json and type(json['address']) is str
-    assert 'description' in json and type(json['description']) is str
-
-    return True
-
-
 def match_site(json, site):
-    """Checks the json elements matches the site object."""
+    """Checks the json db_instances matches the site object."""
+
+    # Check the site has id
+    assert 'id' in json and type(json['id']) is str
     assert json['id'] == str(site.id)
+
+    # Check the site has name
+    assert 'name' in json and type(json['name']) is str
     assert json['name'] == site.name
+
+    # Check the site has address
+    assert 'address' in json and type(json['address']) is str
     assert json['address'] == site.address
+
+    # Check the site has description
+    assert 'description' in json and type(json['description']) is str
     assert json['description'] == site.description
 
     return True
 
 
-def match_site_in_db(json):
-    db_site = models.Site.query.get(json['id'])
-    assert match_site(json, db_site)
-
-    return True
-
-
-def correct_flavor(json):
-    """Checks the json flavor contains the correct attributes."""
-    assert 'id' in json and type(json['id']) is str
-    assert 'name' in json and type(json['name']) is str
-    assert 'description' in json and type(json['description']) is str
-
-    return True
-
-
 def match_flavor(json, flavor):
-    """Checks the json elements matches the flavor object."""
+    """Checks the json db_instances matches the flavor object."""
+
+    # Check the flavor has id
+    assert 'id' in json and type(json['id']) is str
     assert json['id'] == str(flavor.id)
+
+    # Check the flavor has name
+    assert 'name' in json and type(json['name']) is str
     assert json['name'] == flavor.name
+
+    # Check the flavor has description
+    assert 'description' in json and type(json['description']) is str
     assert json['description'] == flavor.description
 
     return True
 
 
-def match_flavor_in_db(json):
-    db_flavor = models.Flavor.query.get(json['id'])
-    assert match_flavor(json, db_flavor)
-
-    return True
-
-
 def match_query(json, url):
-    """Checks the json elements matches the url query."""
+    """Checks the json db_instances matches the url query."""
     presult = parse.urlparse(url)
     for k, lv in parse.parse_qs(presult.query).items():
         assert lv[0] == json[k]
@@ -66,7 +54,7 @@ def match_query(json, url):
 
 
 def match_search(json, url):
-    """Checks the json elements matches the url search."""
+    """Checks the json db_instances matches the url search."""
     presult = parse.urlparse(url)
     dict_terms = dict(parse.parse_qs(presult.query).items())
     if dict_terms == {}:
@@ -82,7 +70,7 @@ def match_search(json, url):
 
 
 def match_body(json, body):
-    """Checks the json elements matches the body dict."""
+    """Checks the json db_instances matches the body dict."""
     for k in body:
         assert k in json
         if type(body[k]) is dict:
@@ -94,16 +82,5 @@ def match_body(json, body):
                 match_body(json[k][n], body[k][n])
         else:
             assert body[k] == json[k]
-
-    return True
-
-
-def site_has_flavor(json, url):
-    """Checks the json elements matches the site object."""
-    presult = parse.urlparse(url)
-    site_id = presult.path.split('/')[2]
-    site = models.Site.get_by_id(site_id)
-    flavors_names = [x.name for x in site.flavors]
-    assert json['name'] in flavors_names
 
     return True

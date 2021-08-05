@@ -1,36 +1,31 @@
 """Functional tests using pytest-flask."""
 from backend.models import models
 from pytest import mark
-from tests.elements import user_1, user_2
+from tests.db_instances import users
 
 from . import asserts
 
 
-@mark.usefixtures('db_users')
 @mark.parametrize('endpoint', ['users.Root'], indirect=True)
-@mark.parametrize('db_users', indirect=True,  argvalues=[
-    [user_1, user_2]
-])
 class TestRoot:
     """Tests for 'Root' route in blueprint."""
 
     @mark.usefixtures('grant_admin')
-    @mark.parametrize('query', [
-        {'iss': "egi.com", 'email': 'sub_1@email.com'},
-        {'iss': "egi.com"},  # Query with 1 field
-        {'email': "sub_1@email.com"},  # Query with 1 field
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {'email': "sub_1@email.com"},
         {}  # Multiple results
     ])
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
         assert response_GET.json != []
-        for element in response_GET.json:
-            asserts.correct_user(element)
-            asserts.match_query(element, url)
+        for json in response_GET.json:
+            user = models.User.query.get((json['sub'], json['iss']))
+            asserts.match_query(json, url)
+            asserts.match_user(json, user)
 
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'iss': "egi.com"}
+        {'email': "sub_1@email.com"}
     ])
     def test_GET_401(self, response_GET):
         """GET method fails 401 if not logged in."""
@@ -38,7 +33,7 @@ class TestRoot:
 
     @mark.usefixtures('grant_logged')
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'iss': "egi.com"}
+        {'email': "sub_1@email.com"}
     ])
     def test_GET_403(self, response_GET):
         """GET method fails 403 if forbidden."""
@@ -52,12 +47,43 @@ class TestRoot:
         """GET method fails 422 if bad request body."""
         assert response_GET.status_code == 422
 
+    @mark.usefixtures('grant_admin')
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {'email': "sub_1@email.com"}
+    ])
+    def test_DELETE_204(self, query, response_DELETE):
+        """DELETE method succeeded 204."""
+        assert response_DELETE.status_code == 204
+        assert models.User.query.filter_by(email=query['email']).all() == []
 
-@mark.usefixtures('db_users')
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {'email': "sub_1@email.com"}
+    ])
+    def test_DELETE_401(self, query, response_DELETE):
+        """DELETE method fails 401 if not authorized."""
+        assert response_DELETE.status_code == 401
+        assert models.User.query.filter_by(email=query['email']).all() != []
+
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {'email': "sub_1@email.com"}
+    ])
+    def test_DELETE_403(self, query, response_DELETE):
+        """DELETE method fails 403 if forbidden."""
+        assert response_DELETE.status_code == 403
+        assert models.User.query.filter_by(email=query['email']).all() != []
+
+    @mark.usefixtures('grant_admin')
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {}  # Attempt to delete all users should be forbiden
+    ])
+    def test_DELETE_422(self, response_DELETE):
+        """DELETE method fails 422 if bad request body."""
+        assert response_DELETE.status_code == 422
+        assert models.User.query.all() != []
+
+
 @mark.parametrize('endpoint', ['users.Search'], indirect=True)
-@mark.parametrize('db_users', indirect=True,  argvalues=[
-    [user_1, user_2]
-])
 class TestSearch:
     """Tests for 'Search' route in blueprint."""
 
@@ -71,9 +97,10 @@ class TestSearch:
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
         assert response_GET.json != []
-        for element in response_GET.json:
-            asserts.correct_user(element)
-            asserts.match_search(element, url)
+        for json in response_GET.json:
+            user = models.User.query.get((json['sub'], json['iss']))
+            asserts.match_search(json, url)
+            asserts.match_user(json, user)
 
     @mark.parametrize('query', indirect=True,  argvalues=[
         {'terms': ["sub_1@email.com"]}
@@ -91,7 +118,7 @@ class TestSearch:
         assert response_GET.status_code == 403
 
     @mark.usefixtures('grant_admin')
-    @mark.parametrize('query', [
+    @mark.parametrize('query', indirect=True, argvalues=[
         {'bad_key': "This is a non expected query key"}
     ])
     def test_GET_422(self, response_GET):
@@ -99,55 +126,6 @@ class TestSearch:
         assert response_GET.status_code == 422
 
 
-@mark.usefixtures('user')
-@mark.parametrize('endpoint', ['users.User'], indirect=True)
-@mark.parametrize('user_sub', ["sub_1"], indirect=True)
-@mark.parametrize('user_iss', ["egi.com"], indirect=True)
-class TestId:
-    """Tests for 'Id' route in blueprint."""
-
-    @mark.usefixtures('grant_admin')
-    def test_GET_200(self, user, response_GET):
-        """GET method succeeded 200."""
-        assert response_GET.status_code == 200
-        asserts.correct_user(response_GET.json)
-        asserts.match_user(response_GET.json, user)
-
-    def test_GET_401(self, response_GET):
-        """GET method fails 401 if not authorized."""
-        assert response_GET.status_code == 401
-
-    @mark.usefixtures('grant_logged')
-    def test_GET_403(self, response_GET):
-        """GET method fails 403 if forbidden."""
-        assert response_GET.status_code == 403
-
-    @mark.usefixtures('grant_admin')
-    @mark.parametrize('user__sub', ["sub_2"])
-    def test_GET_404(self, response_GET):
-        """GET method fails 404 if no id found."""
-        assert response_GET.status_code == 404
-
-    @mark.usefixtures('grant_admin')
-    def test_DELETE_204(self, user, response_DELETE):
-        """DELETE method succeeded 204."""
-        assert response_DELETE.status_code == 204
-        assert models.User.query.get((user.sub, user.iss)) is None
-
-    def test_DELETE_401(self, user, response_DELETE):
-        """DELETE method fails 401 if not authorized."""
-        assert response_DELETE.status_code == 401
-        assert models.User.query.get((user.sub, user.iss)) is not None
-
-    @mark.usefixtures('grant_admin')
-    @mark.parametrize('user__sub', ["sub_2"])
-    def test_DELETE_404(self, user, response_DELETE):
-        """DELETE method fails 404 if no id found."""
-        assert response_DELETE.status_code == 404
-        assert models.User.query.get((user.sub, user.iss)) is not None
-
-
-@mark.usefixtures('session')
 @mark.parametrize('endpoint', ['users.Admin'], indirect=True)
 class TestAdmin:
     """Tests for 'Admin' route in blueprint."""
@@ -167,85 +145,81 @@ class TestAdmin:
         assert response_GET.status_code == 403
 
 
-@mark.usefixtures('db_users')
-@mark.usefixtures('mock_token_info', 'mock_introspection_info')
+@mark.usefixtures('mock_token_info')
 @mark.parametrize('endpoint', ['users.Register'], indirect=True)
-@mark.parametrize('db_users', indirect=True,  argvalues=[
-    [user_1, user_2]
-])
 class TestSelf:
     """Tests for 'Self' route in blueprint."""
 
     @mark.usefixtures('grant_logged')
-    @mark.parametrize('token_sub', ["sub_1"], indirect=True)
-    @mark.parametrize('token_iss', ["egi.com"], indirect=True)
-    def test_GET_200(self, response_GET):
+    @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
+    def test_GET_200(self, user, response_GET):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
-        asserts.correct_user(response_GET.json)
+        asserts.match_user(response_GET.json, user)
 
-    @mark.parametrize('token_sub', ["sub_1"], indirect=True)
-    @mark.parametrize('token_iss', ["egi.com"], indirect=True)
+    @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     def test_GET_401(self, response_GET):
         """GET method fails 401 if not logged in."""
         assert response_GET.status_code == 401
 
     @mark.usefixtures('grant_logged')
-    @mark.parametrize('token_sub', ["sub_3"], indirect=True)
+    @mark.parametrize('token_sub', ["non_existing"], indirect=True)
     @mark.parametrize('token_iss', ["egi.com"], indirect=True)
-    def test_GET_404(self, response_GET):
-        """GET method fails 404 if no id found."""
-        assert response_GET.status_code == 404
+    def test_GET_403(self, response_GET):
+        """GET method fails 403 if not registered."""
+        assert response_GET.status_code == 403
 
-    @mark.usefixtures('grant_logged')
-    @mark.parametrize('token_sub', ["sub_3"], indirect=True)
+    @mark.usefixtures('grant_logged', 'mock_introspection_info')
+    @mark.parametrize('token_sub', ["new_user"], indirect=True)
     @mark.parametrize('token_iss', ["egi.com"], indirect=True)
     @mark.parametrize('introspection_email', ["user@email.com"], indirect=True)
-    def test_POST_201(self, response_POST, url):
+    def test_POST_201(self, response_POST, user, url):
         """POST method succeeded 201."""
         assert response_POST.status_code == 201
-        asserts.correct_user(response_POST.json)
         asserts.match_query(response_POST.json, url)
-        asserts.match_user_in_db(response_POST.json)
+        asserts.match_user(response_POST.json, user)
 
-    @mark.parametrize('token_sub', ["sub_3"], indirect=True)
+    @mark.usefixtures('mock_introspection_info')
+    @mark.parametrize('token_sub', ["new_user"], indirect=True)
     @mark.parametrize('token_iss', ["egi.com"], indirect=True)
     @mark.parametrize('introspection_email', ["user@email.com"], indirect=True)
     def test_POST_401(self, response_POST):
         """POST method fails 401 if not authorized."""
         assert response_POST.status_code == 401
 
-    @mark.usefixtures('grant_logged')
-    @mark.parametrize('token_sub', ["sub_1"], indirect=True)
-    @mark.parametrize('token_iss', ["egi.com"], indirect=True)
+    @mark.usefixtures('grant_logged', 'mock_introspection_info')
+    @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('introspection_email', ["user@email.com"], indirect=True)
-    @mark.filterwarnings("ignore:.*conflicts.*:sqlalchemy.exc.SAWarning")
     def test_POST_409(self, response_POST):
         """POST method fails 409 if resource already exists."""
         assert response_POST.status_code == 409
 
-    @mark.usefixtures('grant_logged')
-    @mark.parametrize('token_sub', ["sub_1"], indirect=True)
-    @mark.parametrize('token_iss', ["egi.com"], indirect=True)
+    @mark.usefixtures('grant_logged', 'mock_introspection_info')
+    @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('introspection_email', ["user@email.com"], indirect=True)
-    def test_PUT_204(self, response_PUT, response_GET, introspection_email):
+    def test_PUT_204(self, introspection_email, response_PUT, user):
         """PUT method succeeded 204."""
         assert response_PUT.status_code == 204
-        assert response_GET.status_code == 200
-        asserts.correct_user(response_GET.json)
-        assert response_GET.json['email'] == introspection_email
+        assert user.email == introspection_email
 
-    @mark.parametrize('token_sub', ["sub_1"], indirect=True)
-    @mark.parametrize('token_iss', ["egi.com"], indirect=True)
+    @mark.usefixtures('mock_introspection_info')
+    @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('introspection_email', ["user@email.com"], indirect=True)
-    def test_PUT_401(self, response_PUT, ):
+    def test_PUT_401(self, token_sub, token_iss, user, response_PUT):
         """PUT method fails 401 if not authorized."""
         assert response_PUT.status_code == 401
+        assert user == models.User.query.get((token_sub, token_iss))
 
-    @mark.usefixtures('grant_logged')
-    @mark.parametrize('token_sub', ["sub_3"], indirect=True)
+
+    @mark.usefixtures('grant_logged', 'mock_introspection_info')
+    @mark.parametrize('token_sub', ["not-registered"], indirect=True)
     @mark.parametrize('token_iss', ["egi.com"], indirect=True)
     @mark.parametrize('introspection_email', ["user@email.com"], indirect=True)
-    def test_PUT_404(self, response_PUT):
-        """PUT method fails 404 if no id found."""
-        assert response_PUT.status_code == 404
+    def test_PUT_403(self, response_PUT):
+        """PUT method fails 403 if not registered."""
+        assert response_PUT.status_code == 403
