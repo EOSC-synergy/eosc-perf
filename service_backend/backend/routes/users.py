@@ -5,7 +5,7 @@ from backend.schemas import query_args, schemas
 from flaat import tokentools
 from flask import request
 from flask.views import MethodView
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
 
 blp = Blueprint(
     'users', __name__, description='Operations on users'
@@ -21,7 +21,19 @@ class Root(MethodView):
     @blp.response(200, schemas.User(many=True))
     def get(self, args):
         """Filters and list users."""
-        return models.User.filter_by(**args)
+        return models.User.query.filter_by(**args)
+
+    @auth.admin_required()
+    @blp.doc(operationId='DelUsers')
+    @blp.arguments(query_args.UserFilter, location='query')
+    @blp.response(204)
+    def delete(self, args):
+        """Deletes an existing user."""
+        if args != {}:
+            for user in models.User.query.filter_by(**args):
+                user.delete()
+        else:
+            abort(422, messages={'cancelled': "Undefined users"})
 
 
 @blp.route('email_search')
@@ -33,26 +45,7 @@ class Search(MethodView):
     @blp.response(200, schemas.User(many=True))
     def get(self, search):
         """Filters and list users."""
-        return models.User.query_emails_with(**search)
-
-
-@blp.route('/<string:user_iss>/<string:user_sub>')
-class User(MethodView):
-
-    @auth.admin_required()
-    @blp.doc(operationId='GetUser')
-    @blp.response(200, schemas.User)
-    def get(self, user_iss, user_sub):
-        """Retrieves user details."""
-        return models.User.get(sub=user_sub, iss=user_iss)
-
-    @auth.admin_required()
-    @blp.doc(operationId='DelUser')
-    @blp.response(204)
-    def delete(self, user_iss, user_sub):
-        """Deletes an existing user."""
-        user = models.User.get(sub=user_sub, iss=user_iss)
-        user.delete()
+        return models.User.search(**search)
 
 
 @blp.route('/admin')
@@ -92,4 +85,4 @@ class Register(MethodView):
         """Updates the logged in user info."""
         access_token = tokentools.get_access_token_from_request(request)
         user = models.User.get(token=access_token)
-        user.update_info(token=access_token)
+        user.update(token=access_token)

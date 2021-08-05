@@ -18,7 +18,7 @@ class Root(MethodView):
     @blp.response(200, schemas.Tag(many=True))
     def get(self, args):
         """Filters and list tags."""
-        return models.Tag.filter_by(**args)
+        return models.Tag.query.filter_by(**args)
 
     @auth.login_required()
     @blp.doc(operationId='AddTag')
@@ -47,7 +47,7 @@ class Tag(MethodView):
     @blp.response(200, schemas.Tag)
     def get(self, tag_id):
         """Retrieves tag details."""
-        return models.Tag.get_by_id(tag_id)
+        return models.Tag.get(tag_id)
 
     @auth.admin_required()
     @blp.doc(operationId='EditTag')
@@ -55,11 +55,11 @@ class Tag(MethodView):
     @blp.response(204)
     def put(self, tag_id, **kwargs):
         """Updates an existing tag."""
-        models.Tag.get_by_id(tag_id).update(**kwargs)
+        models.Tag.get(tag_id).update(**kwargs)
 
     @auth.admin_required()
     @blp.doc(operationId='DelTag')
     @blp.response(204)
     def delete(self, tag_id):
         """Deletes an existing tag."""
-        models.Tag.get_by_id(tag_id).delete()
+        models.Tag.get(tag_id).delete()

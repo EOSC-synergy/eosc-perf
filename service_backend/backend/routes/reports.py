@@ -21,9 +21,9 @@ class Root(MethodView):
         """Filters and list  reports."""
         query = models.Report.query.filter_by(**kwargs)
         if before:
-            query = query.filter(models.Report.creation_date < before)
+            query = query.filter(models.Report.created_at < before)
         if after:
-            query = query.filter(models.Report.creation_date > after)
+            query = query.filter(models.Report.created_at > after)
 
         return query.all()
 
@@ -36,14 +36,14 @@ class ReportId(MethodView):
     @blp.response(200, schemas.Report)
     def get(self, report_id):
         """Retrieves report details."""
-        return models.Report.get_by_id(report_id)
+        return models.Report.get(report_id)
 
     @auth.admin_required()
     @blp.doc(operationId='DelReport')
     @blp.response(204)
     def delete(self, report_id):
         """Deletes an existing report."""
-        models.Report.get_by_id(report_id).delete()
+        models.Report.get(report_id).delete()
 
 
 @blp.route('/<uuid:report_id>/approve')
@@ -54,7 +54,7 @@ class Approve(MethodView):
     @blp.response(204)
     def patch(self, report_id):
         """Approves the indicated report id."""
-        models.Report.get_by_id(report_id).update(verdict=True)
+        models.Report.get(report_id).update(verdict=True)
 
 
 @blp.route('/<uuid:report_id>/reject')
@@ -65,4 +65,4 @@ class Reject(MethodView):
     @blp.response(204)
     def patch(self, report_id):
         """Rejects the indicated report id."""
-        models.Report.get_by_id(report_id).update(verdict=False)
+        models.Report.get(report_id).update(verdict=False)

@@ -97,13 +97,15 @@ class Root(MethodView):
 
         # Extend query with tags
         if type(tag_names) == list:
-            results = results.filter(models.Result.tag_names.in_(tag_names))
+            for tag_name in tag_names:
+                results = results.filter(
+                    models.Result.tag_names.in_([tag_name]))
 
         # Extend query with date filter
         if before:
-            results = results.filter(models.Result.upload_date < before)
+            results = results.filter(models.Result.created_at < before)
         if after:
-            results = results.filter(models.Result.upload_date > after)
+            results = results.filter(models.Result.created_at > after)
 
         # Extend query with filters
         parsed_filters = []
@@ -149,14 +151,17 @@ class Root(MethodView):
     def post(self, query_args, json):
         """Creates a new result."""
         access_token = tokentools.get_access_token_from_request(request)
+        user = models.User.get(token=access_token)
+        report = models.Report(
+            created_by=user, message="New result created",
+            verdict=True  # Does not require accept from admin
+        )
         return models.Result.create(
-            uploader=models.User.get(token=access_token),
-            json=json,
-            reports=[],
-            benchmark=models.Benchmark.get_by_id(query_args['benchmark_id']),
-            site=models.Site.get_by_id(query_args['site_id']),
-            flavor=models.Flavor.get_by_id(query_args['flavor_id']),
-            tags=[models.Tag.get_by_id(id) for id in query_args['tags_ids']]
+            json=json, created_by=user, reports=[report],
+            benchmark=models.Benchmark.get(query_args['benchmark_id']),
+            site=models.Site.get(query_args['site_id']),
+            flavor=models.Flavor.get(query_args['flavor_id']),
+            tags=[models.Tag.get(id) for id in query_args['tags_ids']]
         )
 
 
@@ -178,7 +183,7 @@ class Result(MethodView):
     @blp.response(200, schemas.Result)
     def get(self, result_id):
         """Retrieves result details."""
-        return models.Result.get_by_id(result_id)
+        return models.Result.get(result_id)
 
     @auth.login_required()
     @blp.doc(operationId='EditResult')
@@ -187,15 +192,13 @@ class Result(MethodView):
     def put(self, result_id, tags_ids=None):
         """Updates an existing result tags."""
         access_token = tokentools.get_access_token_from_request(request)
-        token_info = tokentools.get_accesstoken_info(access_token)
-        result = models.Result.get_by_id(result_id)
-        valid_uploader = all([
-            result.uploader_iss == token_info['body']['iss'],
-            result.uploader_sub == token_info['body']['sub']
-        ])
-        if auth.valid_admin() or valid_uploader:
+        result = models.Result.get(result_id)
+        def is_owner(): 
+            user = models.User.get(token=access_token)
+            return result.created_by.email == user.email
+        if auth.valid_admin() or is_owner():
             if tags_ids is not None:  # Empty list should pass
-                tags = [models.Tag.get_by_id(id) for id in tags_ids]
+                tags = [models.Tag.get(id) for id in tags_ids]
                 result.update(tags=tags)
         else:
             abort(403)
@@ -205,7 +208,7 @@ class Result(MethodView):
     @blp.response(204)
     def delete(self, result_id):
         """Deletes an existing result."""
-        models.Result.get_by_id(result_id).delete()
+        models.Result.get(result_id).delete()
 
 
 @blp.route('/<uuid:result_id>/uploader')
@@ -216,7 +219,7 @@ class Uploader(MethodView):
     @blp.response(200, schemas.User)
     def get(self, result_id):
         """Retrieves result uploader."""
-        return models.Result.get_by_id(result_id).uploader
+        return models.Result.get(result_id).created_by
 
 
 @blp.route('/<uuid:result_id>/report')
@@ -229,9 +232,9 @@ class Report(MethodView):
     def post(self, json, result_id):
         """Creates a result report."""
         access_token = tokentools.get_access_token_from_request(request)
-        result = models.Result.get_by_id(result_id)
+        result = models.Result.get(result_id)
         report = models.Report(
-            uploader=models.User.get(token=access_token),
+            created_by=models.User.get(token=access_token),
             message=json['message']
         )
         result.update(reports=result.reports+[report])

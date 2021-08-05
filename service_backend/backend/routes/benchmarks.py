@@ -20,7 +20,7 @@ class Root(MethodView):
     @blp.response(200, schemas.Benchmark(many=True))
     def get(self, args):
         """Filters and list benchmarks."""
-        return models.Benchmark.filter_by(**args)
+        return models.Benchmark.query.filter_by(**args)
 
     @auth.login_required()
     @blp.doc(operationId='AddBenchmark')
@@ -29,10 +29,9 @@ class Root(MethodView):
     def post(self, **kwargs):
         """Creates a new benchmark."""
         access_token = tokentools.get_access_token_from_request(request)
-        report = models.Report(
-            uploader=models.User.get(token=access_token),
-        )
-        return models.Benchmark.create(reports=[report], **kwargs)
+        user = models.User.get(token=access_token)
+        report = models.Report(created_by=user)
+        return models.Benchmark.create(created_by=user, reports=[report], **kwargs)
 
 
 @blp.route('/search')
@@ -53,7 +52,7 @@ class Benchmark(MethodView):
     @blp.response(200, schemas.Benchmark)
     def get(self, benchmark_id):
         """Retrieves benchmark details."""
-        return models.Benchmark.get_by_id(benchmark_id)
+        return models.Benchmark.get(benchmark_id)
 
     @auth.admin_required()
     @blp.doc(operationId='EditBenchmark')
@@ -61,11 +60,11 @@ class Benchmark(MethodView):
     @blp.response(204)
     def put(self, benchmark_id, **kwargs):
         """Updates an existing benchmark."""
-        models.Benchmark.get_by_id(benchmark_id).update(**kwargs)
+        models.Benchmark.get(benchmark_id).update(**kwargs)
 
     @auth.admin_required()
     @blp.doc(operationId='DelBenchmark')
     @blp.response(204)
     def delete(self, benchmark_id):
         """Deletes an existing benchmark."""
-        models.Benchmark.get_by_id(benchmark_id).delete()
+        models.Benchmark.get(benchmark_id).delete()
