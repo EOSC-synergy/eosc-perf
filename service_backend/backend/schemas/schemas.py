@@ -1,16 +1,15 @@
 """Schemas module for schemas definition."""
-from backend.models import models
-from marshmallow import INCLUDE, Schema, fields, post_load
+from marshmallow import INCLUDE, Schema, fields
 
 # ---------------------------------------------------------------------
 # Definition of User schemas
 
 
 class User(Schema):
-    sub = fields.String()
-    iss = fields.String()
-    email = fields.Email()
-    created_at = fields.DateTime()
+    sub = fields.String(required=True, dump_only=True)
+    iss = fields.String(required=True, dump_only=True)
+    email = fields.Email(required=True)
+    created_at = fields.DateTime(required=True)
 
 
 # ---------------------------------------------------------------------
@@ -33,11 +32,11 @@ class ReportCreate(Schema):
 # Definition of benchmark schemas
 
 class Benchmark(Schema):
-    id = fields.UUID()
-    docker_image = fields.String()
-    docker_tag = fields.String()
-    description = fields.String()
-    json_template = fields.Dict()
+    id = fields.UUID(required=True, dump_only=True)
+    docker_image = fields.String(required=True)
+    docker_tag = fields.String(required=True)
+    description = fields.String(required=True)
+    json_template = fields.Dict(required=True)
 
 
 class BenchmarkCreate(Schema):
@@ -58,10 +57,10 @@ class BenchmarkEdit(Schema):
 # Definition of Site schemas
 
 class Site(Schema):
-    id = fields.UUID()
-    name = fields.String()
-    address = fields.String()
-    description = fields.String()
+    id = fields.UUID(required=True, dump_only=True)
+    name = fields.String(required=True)
+    address = fields.String(required=True)
+    description = fields.String(required=True)
 
 
 class SiteCreate(Schema):
@@ -80,9 +79,9 @@ class SiteEdit(Schema):
 # Definition of Flavor schemas
 
 class Flavor(Schema):
-    id = fields.UUID()
-    name = fields.String()
-    description = fields.String()
+    id = fields.UUID(required=True, dump_only=True)
+    name = fields.String(required=True)
+    description = fields.String(required=True)
 
 
 class FlavorCreate(Schema):
@@ -99,9 +98,9 @@ class FlavorEdit(Schema):
 # Definition of Tag schemas
 
 class Tag(Schema):
-    id = fields.UUID()
-    name = fields.String()
-    description = fields.String()
+    id = fields.UUID(required=True, dump_only=True)
+    name = fields.String(required=True)
+    description = fields.String(required=True)
 
 
 class TagsIds(Schema):
@@ -122,13 +121,13 @@ class TagEdit(Schema):
 # Definition of Result schemas
 
 class Result(Schema):
-    id = fields.UUID()
-    upload_date = fields.DateTime(attribute="created_at")
-    json = fields.Dict()
-    benchmark = fields.Nested(Benchmark)
-    site = fields.Nested(Site)
-    flavor = fields.Nested(Flavor)
-    tags = fields.Nested(Tag, many=True)
+    id = fields.UUID(required=True, dump_only=True)
+    upload_date = fields.DateTime(attribute="created_at", required=True)
+    json = fields.Dict(required=True)
+    benchmark = fields.Nested(Benchmark, required=True)
+    site = fields.Nested(Site, required=True)
+    flavor = fields.Nested(Flavor, required=True)
+    tags = fields.Nested(Tag, many=True, required=True)
 
 
 class Json(Schema):
