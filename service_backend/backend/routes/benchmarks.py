@@ -20,7 +20,8 @@ class Root(MethodView):
     @blp.response(200, schemas.Benchmark(many=True))
     def get(self, args):
         """Filters and list benchmarks."""
-        return models.Benchmark.query.filter_by(**args)
+        query = models.Benchmark.query.filter_by(**args)
+        return query.filter(~models.Benchmark.has_open_reports)
 
     @auth.login_required()
     @blp.doc(operationId='AddBenchmark')
@@ -42,7 +43,8 @@ class Search(MethodView):
     @blp.response(200, schemas.Benchmark(many=True))
     def get(self, search):
         """Filters and list benchmarks."""
-        return models.Benchmark.query_with(**search)
+        search = models.Benchmark.query_with(**search)
+        return search.filter(~models.Benchmark.has_open_reports)
 
 
 @blp.route('/<uuid:benchmark_id>')

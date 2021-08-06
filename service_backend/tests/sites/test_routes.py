@@ -26,6 +26,7 @@ class TestRoot:
             site = models.Site.query.get(json['id'])
             asserts.match_query(json, url)
             asserts.match_site(json, site)
+            assert site.has_open_reports == False
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'bad_key': "This is a non expected query key"}
@@ -84,10 +85,10 @@ class TestSearch:
     """Tests for 'Search' route in blueprint."""
 
     @mark.parametrize('query', indirect=True,  argvalues=[
-        {'terms': [sites[0]["name"]]},
-        {'terms': [sites[0]["address"]]},
-        {'terms': [sites[0]["description"]]},
-        {'terms': [sites[0]["name"], sites[0]["description"]]},
+        {'terms': [sites[1]["name"]]},
+        {'terms': [sites[1]["address"]]},
+        {'terms': [sites[1]["description"]]},
+        {'terms': [sites[1]["name"], sites[1]["description"]]},
         {'terms': []}   # Empty terms
     ])
     def test_GET_200(self, response_GET, url):
@@ -98,6 +99,7 @@ class TestSearch:
             site = models.Site.query.get(json['id'])
             asserts.match_search(json, url)
             asserts.match_site(json, site)
+            assert site.has_open_reports == False
 
     @mark.parametrize('query', [
         {'bad_key': "This is a non expected query key"}
@@ -110,7 +112,6 @@ class TestSearch:
 @mark.parametrize('endpoint', ['sites.Site'], indirect=True)
 @mark.parametrize('site_id', indirect=True, argvalues=[
     sites[0]['id'],
-    sites[1]['id']
 ])
 class TestSite:
     """Tests for 'Site' route in blueprint."""
@@ -191,7 +192,6 @@ class TestSite:
 
 @mark.parametrize('endpoint', ['sites.Flavors'], indirect=True)
 @mark.parametrize('site_id', indirect=True, argvalues=[
-    sites[0]['id'],
     sites[1]['id']
 ])
 class TestFlavors:
@@ -210,6 +210,8 @@ class TestFlavors:
             flavor = models.Flavor.query.get(json['id'])
             asserts.match_query(json, url)
             asserts.match_flavor(json, flavor)
+            assert flavor.has_open_reports == False
+
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'bad_key': "This is a non expected query key"}
@@ -222,8 +224,8 @@ class TestFlavors:
     @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
     @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
-        {'name': "flavor2", 'description': "Flavor2 for siteX"},
-        {'name': "flavor2"}
+        {'name': "flavorN", 'description': "FlavorN for siteX"},
+        {'name': "flavorN"}
     ])
     def test_POST_201(self, response_POST, site, url, body):
         """POST method succeeded 201."""

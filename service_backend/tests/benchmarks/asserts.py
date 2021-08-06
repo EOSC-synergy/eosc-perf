@@ -25,6 +25,10 @@ def match_benchmark(json, benchmark):
     assert 'json_template' in json and type(json['json_template']) is dict
     assert json['json_template'] == benchmark.json_template
 
+    
+
+
+
     return True
 
 

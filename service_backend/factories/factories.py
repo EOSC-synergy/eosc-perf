@@ -27,7 +27,7 @@ class DBReport(SQLAlchemyModelFactory):
 
     id = LazyFunction(uuid.uuid4)
     created_at = fdt.fuzz()
-    verdict = True
+    verdict = None
     message = Sequence(lambda n: f"Report message {n}")
     created_by = SubFactory(DBUser)
 
@@ -48,12 +48,13 @@ class DBBenchmark(SQLAlchemyModelFactory):
 
     @post_generation
     def creation_report(self, create, _, **kwargs):
-        creation_report = DBReport(
-            association_id=self.report_association_id,
-            created_at=self.created_at,
-            created_by__email=self.created_by.email
-        )
-        self.report_association.reports.append(creation_report)
+        if self.reports == []:
+            creation_report = DBReport(
+                association_id=self.report_association_id,
+                created_by__email=self.created_by.email,
+                created_at=self.created_at, **kwargs
+            )
+            self.report_association.reports.append(creation_report)
 
 
 class DBSite(SQLAlchemyModelFactory):
@@ -71,12 +72,13 @@ class DBSite(SQLAlchemyModelFactory):
 
     @post_generation
     def creation_report(self, create, _, **kwargs):
-        creation_report = DBReport(
-            association_id=self.report_association_id,
-            created_at=self.created_at,
-            created_by__email=self.created_by.email
-        )
-        self.report_association.reports.append(creation_report)
+        if self.reports == []:
+            creation_report = DBReport(
+                association_id=self.report_association_id,
+                created_by__email=self.created_by.email,
+                created_at=self.created_at, **kwargs
+            )
+            self.report_association.reports.append(creation_report)
 
 
 class DBFlavor(SQLAlchemyModelFactory):
@@ -94,12 +96,13 @@ class DBFlavor(SQLAlchemyModelFactory):
 
     @post_generation
     def creation_report(self, create, _, **kwargs):
-        creation_report = DBReport(
-            association_id=self.report_association_id,
-            created_at=self.created_at,
-            created_by__email=self.created_by.email
-        )
-        self.report_association.reports.append(creation_report)
+        if self.reports == []:
+            creation_report = DBReport(
+                association_id=self.report_association_id,
+                created_by__email=self.created_by.email,
+                created_at=self.created_at, **kwargs
+            )
+            self.report_association.reports.append(creation_report)
 
 
 class DBTag(SQLAlchemyModelFactory):

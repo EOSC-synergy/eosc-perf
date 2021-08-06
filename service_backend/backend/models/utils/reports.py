@@ -8,7 +8,8 @@ table.
 SQLAlchemy's single-table-inheritance feature is used
 to target different association types.
 """
-from sqlalchemy import Boolean, Column, ForeignKey, String, Text, select
+from operator import or_
+from sqlalchemy import Boolean, Column, ForeignKey, String, Text, select, exists, Integer, or_
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -16,18 +17,6 @@ from sqlalchemy.orm import backref, column_property, relationship
 
 from .. import PkModel
 from . import utils
-
-
-class ReportAssociation(PkModel):
-    """Associates a collection of Report objects with a particular parent.
-    """
-    __tablename__ = "report_association"
-    discriminator = Column(String)  # Refers to the type of parent
-    reports = relationship(
-        "Report", cascade="all, delete-orphan",
-        back_populates="association"
-    )
-    __mapper_args__ = {"polymorphic_on": discriminator}
 
 
 class Report(utils.HasCreationDetails, PkModel):
@@ -44,7 +33,7 @@ class Report(utils.HasCreationDetails, PkModel):
     message = Column(Text, nullable=True)
 
     association_id = Column(ForeignKey("report_association.id"))
-    association = relationship(ReportAssociation, back_populates="reports")
+    association = relationship("ReportAssociation", back_populates="reports")
 
     resource = association_proxy("association", "parent")
     resource_type = association_proxy("association", "discriminator")
@@ -52,6 +41,18 @@ class Report(utils.HasCreationDetails, PkModel):
 
     def __repr__(self):
         return f"{self.__class__.__name__} {self.id}"
+
+
+class ReportAssociation(PkModel):
+    """Associates a collection of Report objects with a particular parent.
+    """
+    __tablename__ = "report_association"
+    discriminator = Column(String)  # Refers to the type of parent
+    reports = relationship(
+        "Report", cascade="all, delete-orphan",
+        back_populates="association"
+    )
+    __mapper_args__ = {"polymorphic_on": discriminator}
 
 
 class HasReports(object):
@@ -87,6 +88,7 @@ class HasReports(object):
             "reports",
             creator=lambda reports: assoc_cls(reports=reports),
         )
+
         return relationship(
             assoc_cls, single_parent=True,
             cascade="all, delete-orphan",
@@ -94,20 +96,11 @@ class HasReports(object):
         )
 
     @declared_attr
-    def reports_unresolved(cls):
+    def has_open_reports(cls):
         return column_property(
-            select([Report.id]).
+            exists().
             where(Report.association_id == cls.report_association_id).
-            where(Report.verdict == False).
-            scalar_subquery()
-        )
-
-    @hybrid_property
-    def hidden(self):
-        return self.reports_unresolved != None
-
-    @hidden.expression
-    def hidden(cls):
-        return cls.id.in_(
-            select([cls.id]).where(cls.reports_unresolved != None)
+            where(or_(Report.verdict == False,
+                      Report.verdict == None)).
+            label("has_open_reports")
         )

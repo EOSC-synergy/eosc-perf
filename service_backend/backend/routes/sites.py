@@ -20,7 +20,8 @@ class Root(MethodView):
     @blp.response(200, schemas.Site(many=True))
     def get(self, args):
         """Filters and list sites."""
-        return models.Site.query.filter_by(**args)
+        sites = models.Site.query.filter_by(**args)
+        return sites.filter(~models.Site.has_open_reports)
 
     @auth.login_required()
     @blp.doc(operationId='AddSite')
@@ -42,7 +43,8 @@ class Search(MethodView):
     @blp.response(200, schemas.Site(many=True))
     def get(self, search):
         """Filters and list sites."""
-        return models.Site.query_with(**search)
+        sites = models.Site.query_with(**search)
+        return sites.filter(~models.Site.has_open_reports)
 
 
 @blp.route('/<uuid:site_id>')
@@ -78,9 +80,8 @@ class Flavors(MethodView):
     @blp.response(200, schemas.Flavor(many=True))
     def get(self, args, site_id):
         """Filters and list flavors."""
-        site_flavors = models.Site.get(site_id).flavors
-        def filter(a, **kw): return all(getattr(a, k) == kw[k] for k in kw)
-        return [x for x in site_flavors if filter(x, **args)]
+        flavors = models.Flavor.query.filter_by(site_id=site_id, **args)
+        return flavors.filter(~models.Flavor.has_open_reports)
 
     @auth.login_required()
     @blp.doc(operationId='AddFlavor')

@@ -17,7 +17,7 @@ class TestRoot:
     @mark.parametrize('query', indirect=True,  argvalues=[
         {'docker_image': "b1", 'docker_tag': "v1.0"},
         {'docker_image': "b1"},  # Query with 1 field
-        {'docker_tag': "v1.0"},    # Query with 1 field
+        {'docker_tag': "v1.0"},  # Query with 1 field
         {}  # All results
     ])
     def test_GET_200(self, response_GET, url):
@@ -28,6 +28,7 @@ class TestRoot:
             benchmark = models.Benchmark.query.get(json['id'])
             asserts.match_query(json, url)
             asserts.match_benchmark(json, benchmark)
+            assert benchmark.has_open_reports == False
 
     @mark.parametrize('query', indirect=True,  argvalues=[
         {'bad_key': "This is a non expected query key"}
@@ -103,6 +104,7 @@ class TestSearch:
             benchmark = models.Benchmark.query.get(json['id'])
             asserts.match_search(json, url)
             asserts.match_benchmark(json, benchmark)
+            assert benchmark.has_open_reports == False
 
     @mark.parametrize('query', indirect=True,  argvalues=[
         {'bad_key': "This is a non expected query key"}

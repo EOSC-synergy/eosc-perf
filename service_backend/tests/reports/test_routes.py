@@ -36,7 +36,7 @@ class TestRoot:
 @mark.parametrize('endpoint', ['reports.ReportId'], indirect=True)
 @mark.parametrize('resource_type_id', indirect=True, argvalues=[
     ("benchmark", benchmarks[0]['id']),
-    ("result",    results[0]['id']),
+    ("result",    results[1]['id']),
     ("site",      sites[0]['id']),
     ("flavor",    flavors[0]['id'])
 ])
@@ -89,7 +89,7 @@ class TestReport:
 @mark.parametrize('endpoint', ['reports.Approve'], indirect=True)
 @mark.parametrize('resource_type_id', indirect=True, argvalues=[
     ("benchmark", benchmarks[0]['id']),
-    ("result",    results[0]['id']),
+    ("result",    results[1]['id']),
     ("site",      sites[0]['id']),
     ("flavor",    flavors[0]['id'])
 ])
@@ -128,7 +128,7 @@ class TestApprove:
 @mark.parametrize('endpoint', ['reports.Reject'], indirect=True)
 @mark.parametrize('resource_type_id', indirect=True, argvalues=[
     ("benchmark", benchmarks[0]['id']),
-    ("result",    results[0]['id']),
+    ("result",    results[1]['id']),
     ("site",      sites[0]['id']),
     ("flavor",    flavors[0]['id'])
 ])

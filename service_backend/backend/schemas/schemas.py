@@ -1,9 +1,9 @@
 """Schemas module for schemas definition."""
 from marshmallow import INCLUDE, Schema, fields
 
+
 # ---------------------------------------------------------------------
 # Definition of User schemas
-
 
 class User(Schema):
     sub = fields.String(required=True, dump_only=True)

@@ -137,11 +137,11 @@ class Root(MethodView):
                     'hint': "Use only one of ['==', '>', '<', '>=', '<=']"
                 })
         try:
-            return results.filter(and_(True, *parsed_filters))
+            results = results.filter(and_(True, *parsed_filters))
         except Exception as err:
             abort(422, message={'filter': err.args})
 
-        return query.all()
+        return results.filter(~models.Result.has_open_reports)
 
     @auth.login_required()
     @blp.doc(operationId='AddResult')
@@ -173,7 +173,8 @@ class Search(MethodView):
     @blp.response(200, schemas.Result(many=True))
     def get(self, search):
         """Filters and list results."""
-        return models.Result.query_with(**search)
+        results = models.Result.query_with(**search)
+        return results.filter(~models.Result.has_open_reports)
 
 
 @blp.route('/<uuid:result_id>')

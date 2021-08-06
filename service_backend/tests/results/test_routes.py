@@ -28,7 +28,7 @@ class TestRoot:
         {'flavor_name': results[0]["flavor__name"]},
         {'tag_names': [tag for tag in results[0]["tags"]]},
         {'upload_before': "3000-01-01"},
-        {'upload_after': "2000-01-01"},
+        {'upload_after': "1000-01-01"},
         {'filters': ["time < 100", "time > 5"]},
         {}  # Multiple results
     ])
@@ -40,6 +40,7 @@ class TestRoot:
             result = models.Result.query.get(json['id'])
             asserts.match_query(json, url)
             asserts.match_result(json, result)
+            assert result.has_open_reports == False
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'bad_key': "This is a non expected query key"},
@@ -127,6 +128,7 @@ class TestSearch:
             result = models.Result.query.get(json['id'])
             asserts.match_search(json, url)
             asserts.match_result(json, result)
+            assert result.has_open_reports == False
 
     @mark.parametrize('query', [
         {'bad_key': "This is a non expected query key"}
