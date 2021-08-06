@@ -37,7 +37,7 @@ class TestRoot:
         """GET method fails 422 if bad request body."""
         assert response_GET.status_code == 422
 
-    @mark.usefixtures('grant_logged')
+    @mark.usefixtures('grant_logged', 'mock_docker_registry')
     @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
     @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('body', indirect=True,  argvalues=[
@@ -62,7 +62,7 @@ class TestRoot:
         """POST method fails 401 if not authorized."""
         assert response_POST.status_code == 401
 
-    @mark.usefixtures('grant_logged')
+    @mark.usefixtures('grant_logged', 'mock_docker_registry')
     @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
     @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('body', indirect=True,  argvalues=[

@@ -7,6 +7,7 @@ import os
 from backend import create_app
 from backend.extensions import auth as authentication
 from backend.extensions import db as database
+from backend.models.utils import dockerhub
 from factories import factories
 from flaat import tokentools
 from pytest import fixture
@@ -144,6 +145,13 @@ def grant_admin(monkeypatch, grant_logged):
         "get_info_from_userinfo_endpoints",
         lambda _: {'eduperson_assurance': ["admins"]}
     )
+
+
+@fixture(scope='function')
+def mock_docker_registry(monkeypatch):
+    """Patch fixture to test function with valid oidc token."""
+    def always_true(*arg, **kwarg): return True
+    monkeypatch.setattr(dockerhub, "valid_image", always_true)
 
 
 @fixture(scope='function')

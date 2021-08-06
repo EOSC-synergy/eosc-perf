@@ -1,4 +1,5 @@
 """Models module package for main models definition."""
+from flask_smorest import abort
 from sqlalchemy import Column, ForeignKey, Text, UniqueConstraint, or_
 from sqlalchemy.dialects.postgresql import JSON, JSONB
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -6,6 +7,7 @@ from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import backref, relationship
 
 from . import PkModel
+from .utils import dockerhub
 from .utils.reports import HasReports, Report
 from .utils.tags import HasTags, Tag
 from .utils.users import User
@@ -51,6 +53,17 @@ class Benchmark(HasReports, HasCreationDetails, PkModel):
             self.docker_image,
             self.docker_tag
         )
+
+    @classmethod
+    def create(cls, docker_image, docker_tag="latest", **kwargs):
+        if not dockerhub.valid_image(docker_image, docker_tag):
+            abort(422, messages={'error': "Unknown docker image"})
+        else:
+            return super().create(
+                docker_image=docker_image,
+                docker_tag=docker_tag,
+                **kwargs
+            )
 
     @classmethod
     def query_with(cls, terms):
