@@ -1,46 +1,10 @@
 """Function asserts for tests"""
 from urllib import parse
 
-from tests.benchmarks.asserts import match_benchmark
-from tests.sites.asserts import match_flavor, match_site
-from tests.tags.asserts import match_tag
-from tests.users.asserts import match_user
-from tests.reports.asserts import match_report
+from tests.asserts import match_benchmark, match_report, match_flavor, match_site, match_tag, match_user
 
 
-def match_result(json, result):
-    """Checks the json db_instances matches the result object."""
 
-    # Check the result has an id
-    assert 'id' in json and type(json['id']) is str
-    assert json['id'] == str(result.id)
-
-    # Check the result has a json
-    assert 'json' in json and type(json['json']) is dict
-    assert json['json'] == result.json
-
-    # Check the result has an upload date
-    assert 'upload_date' in json and type(json['upload_date']) is str
-    assert json['upload_date'] == str(result.created_at).replace(" ", "T")
-
-    # Check the result has a benchmark
-    assert 'benchmark' in json
-    assert match_benchmark(json['benchmark'], result.benchmark)
-
-    # Check the result has a site
-    assert 'site' in json
-    assert match_site(json['site'], result.site)
-
-    # Check the result has a flavor
-    assert 'flavor' in json
-    assert match_flavor(json['flavor'], result.flavor)
-
-    # Check the result has tags
-    assert 'tags' in json and type(json['tags']) is list
-    for json, tag in zip(json['tags'], result.tags):
-        assert match_tag(json, tag)
-
-    return True
 
 
 def match_query(json, url):

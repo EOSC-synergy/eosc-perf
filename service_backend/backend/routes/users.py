@@ -1,7 +1,7 @@
 """User routes."""
 from backend.extensions import auth
 from backend.models import models
-from backend.schemas import query_args, schemas
+from backend.schemas import args, schemas
 from flaat import tokentools
 from flask import request
 from flask.views import MethodView
@@ -17,15 +17,16 @@ class Root(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='GetUsers')
-    @blp.arguments(query_args.UserFilter, location='query')
-    @blp.response(200, schemas.User(many=True))
-    def get(self, args):
+    @blp.arguments(args.UserFilter, location='query', as_kwargs=True)
+    @blp.response(200, schemas.Users)
+    def get(self, page=1, per_page=100, **kwargs):
         """Filters and list users."""
-        return models.User.query.filter_by(**args)
+        query = models.User.query.filter_by(**kwargs)
+        return query.paginate(page, per_page)
 
     @auth.admin_required()
     @blp.doc(operationId='DelUsers')
-    @blp.arguments(query_args.UserFilter, location='query')
+    @blp.arguments(args.UserFilter, location='query')
     @blp.response(204)
     def delete(self, args):
         """Deletes an existing user."""
@@ -36,16 +37,17 @@ class Root(MethodView):
             abort(422, messages={'cancelled': "Undefined users"})
 
 
-@blp.route('email_search')
+@blp.route('search')
 class Search(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='SearchUsers')
-    @blp.arguments(query_args.UserSearch, location='query')
-    @blp.response(200, schemas.User(many=True))
-    def get(self, search):
+    @blp.arguments(args.UserSearch, location='query', as_kwargs=True)
+    @blp.response(200, schemas.Users)
+    def get(self, terms, page=1, per_page=100):
         """Filters and list users."""
-        return models.User.search(**search)
+        search = models.User.search(terms)
+        return search.paginate(page, per_page)
 
 
 @blp.route('/admin')

@@ -1,57 +1,58 @@
 """Module to define query arguments."""
 from marshmallow import Schema, fields
 from marshmallow.validate import OneOf
+from . import Pagination
 
 
 resource_types = ["benchmark", "result", "site", "flavor"]
 
 
-class UserFilter(Schema):
+class UserFilter(Pagination, Schema):
     email = fields.String()
 
 
-class UserSearch(Schema):
+class UserSearch(Pagination, Schema):
     terms = fields.List(fields.String(), missing=[])
 
 
-class ReportFilter(Schema):
+class ReportFilter(Pagination, Schema):
     verdict = fields.Boolean()
     resource_type = fields.String(validate=OneOf(resource_types))
     created_before = fields.Date(attribute="before")
     created_after = fields.Date(attribute="after")
 
 
-class BenchmarkFilter(Schema):
+class BenchmarkFilter(Pagination, Schema):
     docker_image = fields.String()
     docker_tag = fields.String()
 
 
-class BenchmarkSearch(Schema):
+class BenchmarkSearch(Pagination, Schema):
     terms = fields.List(fields.String(), missing=[])
 
 
-class SiteFilter(Schema):
+class SiteFilter(Pagination, Schema):
     name = fields.String()
     address = fields.String()
 
 
-class SiteSearch(Schema):
+class SiteSearch(Pagination, Schema):
     terms = fields.List(fields.String(), missing=[])
 
 
-class FlavorFilter(Schema):
+class FlavorFilter(Pagination, Schema):
     name = fields.String()
 
 
-class TagFilter(Schema):
+class TagFilter(Pagination, Schema):
     name = fields.String()
 
 
-class TagSearch(Schema):
+class TagSearch(Pagination, Schema):
     terms = fields.List(fields.String(), missing=[])
 
 
-class ResultFilter(Schema):
+class ResultFilter(Pagination, Schema):
     docker_image = fields.String()
     docker_tag = fields.String()
     site_name = fields.String()
@@ -72,5 +73,5 @@ class ResultContext(Schema):
     tags_ids = fields.List(fields.UUID, missing=[])
 
 
-class ResultSearch(Schema):
+class ResultSearch(Pagination, Schema):
     terms = fields.List(fields.String(), missing=[])

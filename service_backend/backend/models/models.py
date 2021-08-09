@@ -66,7 +66,7 @@ class Benchmark(HasReports, HasCreationDetails, PkModel):
             )
 
     @classmethod
-    def query_with(cls, terms):
+    def search(cls, terms):
         """Query all benchmarks containing all keywords in the name.
 
         Args:
@@ -110,7 +110,7 @@ class Site(HasReports, HasCreationDetails, PkModel):
         return '<{} {}>'.format(self.__class__.__name__, self.name)
 
     @classmethod
-    def query_with(cls, terms):
+    def search(cls, terms):
         """Query all sites containing all keywords in the columns.
 
         Args:
@@ -200,7 +200,7 @@ class Result(HasReports, HasTags, HasCreationDetails, PkModel):
         return '<{} {}>'.format(self.__class__.__name__, self.id)
 
     @classmethod
-    def query_with(cls, terms):
+    def search(cls, terms):
         """Query all results containing all keywords in the columns.
 
         Args:

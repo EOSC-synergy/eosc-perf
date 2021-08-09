@@ -4,9 +4,8 @@ from uuid import uuid4
 from backend.models import models
 from backend.schemas import schemas
 from pytest import mark
+from tests import asserts
 from tests.db_instances import flavors, sites, users
-
-from . import asserts
 
 
 @mark.parametrize('endpoint', ['sites.Root'], indirect=True)
@@ -21,11 +20,12 @@ class TestRoot:
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
-        assert response_GET.json != []
-        for json in response_GET.json:
-            site = models.Site.query.get(json['id'])
-            asserts.match_query(json, url)
-            asserts.match_site(json, site)
+        asserts.match_pagination(response_GET.json, url)
+        assert response_GET.json.items != []
+        for item in response_GET.json['items']:
+            site = models.Site.query.get(item['id'])
+            asserts.match_query(item, url)
+            asserts.match_site(item, site)
             assert site.has_open_reports == False
 
     @mark.parametrize('query', indirect=True, argvalues=[
@@ -94,11 +94,12 @@ class TestSearch:
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
-        assert response_GET.json != []
-        for json in response_GET.json:
-            site = models.Site.query.get(json['id'])
-            asserts.match_search(json, url)
-            asserts.match_site(json, site)
+        asserts.match_pagination(response_GET.json, url)
+        assert response_GET.json.items != []
+        for item in response_GET.json['items']:
+            site = models.Site.query.get(item['id'])
+            asserts.match_query(item, url)
+            asserts.match_site(item, site)
             assert site.has_open_reports == False
 
     @mark.parametrize('query', [
@@ -205,13 +206,13 @@ class TestFlavors:
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
-        assert response_GET.json != []
-        for json in response_GET.json:
-            flavor = models.Flavor.query.get(json['id'])
-            asserts.match_query(json, url)
-            asserts.match_flavor(json, flavor)
+        asserts.match_pagination(response_GET.json, url)
+        assert response_GET.json.items != []
+        for item in response_GET.json['items']:
+            flavor = models.Flavor.query.get(item['id'])
+            asserts.match_query(item, url)
+            asserts.match_flavor(item, flavor)
             assert flavor.has_open_reports == False
-
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'bad_key': "This is a non expected query key"}

@@ -1,9 +1,8 @@
 """Functional tests using pytest-flask."""
 from backend.models import models
 from pytest import mark
+from tests import asserts
 from tests.db_instances import users
-
-from . import asserts
 
 
 @mark.parametrize('endpoint', ['users.Root'], indirect=True)
@@ -18,11 +17,12 @@ class TestRoot:
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
-        assert response_GET.json != []
-        for json in response_GET.json:
-            user = models.User.query.get((json['sub'], json['iss']))
-            asserts.match_query(json, url)
-            asserts.match_user(json, user)
+        asserts.match_pagination(response_GET.json, url)
+        assert response_GET.json.items != []
+        for item in response_GET.json['items']:
+            user = models.User.query.get((item['sub'], item['iss']))
+            asserts.match_query(item, url)
+            asserts.match_user(item, user)
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'email': "sub_1@email.com"}
@@ -96,11 +96,12 @@ class TestSearch:
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
-        assert response_GET.json != []
-        for json in response_GET.json:
-            user = models.User.query.get((json['sub'], json['iss']))
-            asserts.match_search(json, url)
-            asserts.match_user(json, user)
+        asserts.match_pagination(response_GET.json, url)
+        assert response_GET.json.items != []
+        for item in response_GET.json['items']:
+            user = models.User.query.get((item['sub'], item['iss']))
+            asserts.match_query(item, url)
+            asserts.match_user(item, user)
 
     @mark.parametrize('query', indirect=True,  argvalues=[
         {'terms': ["sub_1@email.com"]}

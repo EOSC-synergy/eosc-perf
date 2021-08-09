@@ -1,7 +1,8 @@
 """Result routes."""
+from re import search
 from backend.extensions import auth
 from backend.models import models
-from backend.schemas import query_args, schemas
+from backend.schemas import args, schemas
 from flaat import tokentools
 from flask import request
 from flask.views import MethodView
@@ -17,10 +18,11 @@ blp = Blueprint(
 class Root(MethodView):
 
     @blp.doc(operationId='GetResults')
-    @blp.arguments(query_args.ResultFilter, location='query', as_kwargs=True)
-    @blp.response(200, schemas.Result(many=True))
+    @blp.arguments(args.ResultFilter, location='query', as_kwargs=True)
+    @blp.response(200, schemas.Results)
     def get(
-        self, tag_names=None, before=None, after=None, filters=None, **query
+        self, tag_names=None, before=None, after=None, filters=None, 
+        page=1, per_page=100, **kwargs
     ):
         """Filters and list results.
 
@@ -93,19 +95,19 @@ class Root(MethodView):
         :rtype: flask_sqlalchemy.BaseQuery
         """
         # First query definition using main filters
-        results = models.Result.query.filter_by(**query)
+        query = models.Result.query.filter_by(**kwargs)
 
         # Extend query with tags
         if type(tag_names) == list:
             for tag_name in tag_names:
-                results = results.filter(
+                query = query.filter(
                     models.Result.tag_names.in_([tag_name]))
 
         # Extend query with date filter
         if before:
-            results = results.filter(models.Result.created_at < before)
+            query = query.filter(models.Result.created_at < before)
         if after:
-            results = results.filter(models.Result.created_at > after)
+            query = query.filter(models.Result.created_at > after)
 
         # Extend query with filters
         parsed_filters = []
@@ -137,18 +139,19 @@ class Root(MethodView):
                     'hint': "Use only one of ['==', '>', '<', '>=', '<=']"
                 })
         try:
-            results = results.filter(and_(True, *parsed_filters))
+            query = query.filter(and_(True, *parsed_filters))
         except Exception as err:
             abort(422, message={'filter': err.args})
 
-        return results.filter(~models.Result.has_open_reports)
+        query = query.filter(~models.Result.has_open_reports)
+        return query.paginate(page, per_page)
 
     @auth.login_required()
     @blp.doc(operationId='AddResult')
-    @blp.arguments(query_args.ResultContext, location='query')
+    @blp.arguments(args.ResultContext, location='query')
     @blp.arguments(schemas.Json)
     @blp.response(201, schemas.Result)
-    def post(self, query_args, json):
+    def post(self, args, json):
         """Creates a new result."""
         access_token = tokentools.get_access_token_from_request(request)
         user = models.User.get(token=access_token)
@@ -158,10 +161,10 @@ class Root(MethodView):
         )
         return models.Result.create(
             json=json, created_by=user, reports=[report],
-            benchmark=models.Benchmark.get(query_args['benchmark_id']),
-            site=models.Site.get(query_args['site_id']),
-            flavor=models.Flavor.get(query_args['flavor_id']),
-            tags=[models.Tag.get(id) for id in query_args['tags_ids']]
+            benchmark=models.Benchmark.get(args['benchmark_id']),
+            site=models.Site.get(args['site_id']),
+            flavor=models.Flavor.get(args['flavor_id']),
+            tags=[models.Tag.get(id) for id in args['tags_ids']]
         )
 
 
@@ -169,12 +172,13 @@ class Root(MethodView):
 class Search(MethodView):
 
     @blp.doc(operationId='SearchResults')
-    @blp.arguments(query_args.ResultSearch, location='query')
-    @blp.response(200, schemas.Result(many=True))
-    def get(self, search):
+    @blp.arguments(args.ResultSearch, location='query')
+    @blp.response(200, schemas.Results)
+    def get(self, terms, page=1, per_page=100):
         """Filters and list results."""
-        results = models.Result.query_with(**search)
-        return results.filter(~models.Result.has_open_reports)
+        search = models.Result.search(**terms)
+        search = search.filter(~models.Result.has_open_reports)
+        return search.paginate(page, per_page)
 
 
 @blp.route('/<uuid:result_id>')

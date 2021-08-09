@@ -1,7 +1,7 @@
 """Benchmark routes."""
 from backend.extensions import auth
 from backend.models import models
-from backend.schemas import query_args, schemas
+from backend.schemas import args, schemas
 from flaat import tokentools
 from flask import request
 from flask.views import MethodView
@@ -16,12 +16,13 @@ blp = Blueprint(
 class Root(MethodView):
 
     @blp.doc(operationId='GetBenchmarks')
-    @blp.arguments(query_args.BenchmarkFilter, location='query')
-    @blp.response(200, schemas.Benchmark(many=True))
-    def get(self, args):
+    @blp.arguments(args.BenchmarkFilter, location='query', as_kwargs=True)
+    @blp.response(200, schemas.Benchmarks)
+    def get(self, page=1, per_page=100, **kwargs):
         """Filters and list benchmarks."""
-        query = models.Benchmark.query.filter_by(**args)
-        return query.filter(~models.Benchmark.has_open_reports)
+        query = models.Benchmark.query.filter_by(**kwargs)
+        query = query.filter(~models.Benchmark.has_open_reports)
+        return query.paginate(page, per_page)
 
     @auth.login_required()
     @blp.doc(operationId='AddBenchmark')
@@ -39,12 +40,13 @@ class Root(MethodView):
 class Search(MethodView):
 
     @blp.doc(operationId='SearchBenchmarks')
-    @blp.arguments(query_args.BenchmarkSearch, location='query')
-    @blp.response(200, schemas.Benchmark(many=True))
-    def get(self, search):
+    @blp.arguments(args.BenchmarkSearch, location='query', as_kwargs=True)
+    @blp.response(200, schemas.Benchmarks)
+    def get(self, terms, page=1, per_page=100):
         """Filters and list benchmarks."""
-        search = models.Benchmark.query_with(**search)
-        return search.filter(~models.Benchmark.has_open_reports)
+        search = models.Benchmark.search(terms)
+        search = search.filter(~models.Benchmark.has_open_reports)
+        return search.paginate(page, per_page)
 
 
 @blp.route('/<uuid:benchmark_id>')

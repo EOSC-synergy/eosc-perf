@@ -1,7 +1,7 @@
 """Tag routes."""
 from backend.extensions import auth
 from backend.models import models
-from backend.schemas import query_args, schemas
+from backend.schemas import args, schemas
 from flask.views import MethodView
 from flask_smorest import Blueprint
 
@@ -14,11 +14,12 @@ blp = Blueprint(
 class Root(MethodView):
 
     @blp.doc(operationId='GetTags')
-    @blp.arguments(query_args.TagFilter, location='query')
-    @blp.response(200, schemas.Tag(many=True))
-    def get(self, args):
+    @blp.arguments(args.TagFilter, location='query', as_kwargs=True)
+    @blp.response(200, schemas.Tags)
+    def get(self, page=1, per_page=100, **kwargs):
         """Filters and list tags."""
-        return models.Tag.query.filter_by(**args)
+        query = models.Tag.query.filter_by(**kwargs)
+        return query.paginate(page, per_page)
 
     @auth.login_required()
     @blp.doc(operationId='AddTag')
@@ -32,12 +33,12 @@ class Root(MethodView):
 @blp.route('/search')
 class Search(MethodView):
 
-    @blp.doc(operationId='SearchTags')
-    @blp.arguments(query_args.TagSearch, location='query')
-    @blp.response(200, schemas.Tag(many=True))
-    def get(self, search):
+    @blp.arguments(args.TagSearch, location='query', as_kwargs=True)
+    @blp.response(200, schemas.Tags)
+    def get(self, terms, page=1, per_page=100):
         """Filters and list tags."""
-        return models.Tag.query_with(**search)
+        search = models.Tag.search(terms)
+        return search.paginate(page, per_page)
 
 
 @blp.route('/<uuid:tag_id>')

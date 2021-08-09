@@ -4,10 +4,8 @@ from uuid import uuid4
 from backend.models import models
 from backend.schemas import schemas
 from pytest import mark
+from tests import asserts
 from tests.db_instances import benchmarks, flavors, results, sites, tags, users
-from tests.reports import asserts as report_asserts
-
-from . import asserts
 
 post_query = {
     'benchmark_id': benchmarks[0]['id'],
@@ -35,11 +33,12 @@ class TestRoot:
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
-        assert response_GET.json != []
-        for json in response_GET.json:
-            result = models.Result.query.get(json['id'])
-            asserts.match_query(json, url)
-            asserts.match_result(json, result)
+        asserts.match_pagination(response_GET.json, url)
+        assert response_GET.json.items != []
+        for item in response_GET.json['items']:
+            result = models.Result.query.get(item['id'])
+            asserts.match_query(item, url)
+            asserts.match_result(item, result)
             assert result.has_open_reports == False
 
     @mark.parametrize('query', indirect=True, argvalues=[
@@ -123,11 +122,12 @@ class TestSearch:
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
-        assert response_GET.json != []
-        for json in response_GET.json:
-            result = models.Result.query.get(json['id'])
-            asserts.match_search(json, url)
-            asserts.match_result(json, result)
+        asserts.match_pagination(response_GET.json, url)
+        assert response_GET.json.items != []
+        for item in response_GET.json['items']:
+            result = models.Result.query.get(item['id'])
+            asserts.match_query(item, url)
+            asserts.match_result(item, result)
             assert result.has_open_reports == False
 
     @mark.parametrize('query', [
@@ -302,10 +302,10 @@ class TestReport:
     def test_POST_201(self, response_POST, url, body):
         """POST method succeeded 201."""
         assert response_POST.status_code == 201
-        report_asserts.match_query(response_POST.json, url)
-        report_asserts.match_body(response_POST.json, body)
+        asserts.match_query(response_POST.json, url)
+        asserts.match_body(response_POST.json, body)
         report = models.Report.query.get(response_POST.json['id'])
-        report_asserts.match_report(response_POST.json, report)
+        asserts.match_report(response_POST.json, report)
 
     def test_POST_401(self, response_POST):
         """POST method fails 401 if not authorized."""

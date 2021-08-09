@@ -4,9 +4,8 @@ from uuid import uuid4
 from backend.models import models
 from backend.schemas import schemas
 from pytest import mark
+from tests import asserts
 from tests.db_instances import benchmarks, users
-
-from . import asserts
 
 
 @mark.usefixtures('mock_token_info')
@@ -23,11 +22,12 @@ class TestRoot:
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
-        assert response_GET.json != []
-        for json in response_GET.json:
-            benchmark = models.Benchmark.query.get(json['id'])
-            asserts.match_query(json, url)
-            asserts.match_benchmark(json, benchmark)
+        asserts.match_pagination(response_GET.json, url)
+        assert response_GET.json.items != []
+        for item in response_GET.json['items']:
+            benchmark = models.Benchmark.query.get(item['id'])
+            asserts.match_query(item, url)
+            asserts.match_benchmark(item, benchmark)
             assert benchmark.has_open_reports == False
 
     @mark.parametrize('query', indirect=True,  argvalues=[
@@ -99,11 +99,12 @@ class TestSearch:
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
-        assert response_GET.json != []
-        for json in response_GET.json:
-            benchmark = models.Benchmark.query.get(json['id'])
-            asserts.match_search(json, url)
-            asserts.match_benchmark(json, benchmark)
+        asserts.match_pagination(response_GET.json, url)
+        assert response_GET.json['items'] != []
+        for item in response_GET.json['items']:
+            benchmark = models.Benchmark.query.get(item['id'])
+            asserts.match_query(item, url)
+            asserts.match_benchmark(item, benchmark)
             assert benchmark.has_open_reports == False
 
     @mark.parametrize('query', indirect=True,  argvalues=[

@@ -3,9 +3,8 @@ from uuid import uuid4
 
 from backend.models import models
 from pytest import mark
-from tests.db_instances import benchmarks, results, sites, flavors, users
-
-from . import asserts
+from tests import asserts
+from tests.db_instances import benchmarks, flavors, results, sites
 
 
 @mark.parametrize('endpoint', ['reports.Root'], indirect=True)
@@ -26,11 +25,12 @@ class TestRoot:
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
-        assert response_GET.json != []
-        for json in response_GET.json:
-            report = models.Report.query.get(json['id'])
-            asserts.match_query(json, url)
-            asserts.match_report(json, report)
+        asserts.match_pagination(response_GET.json, url)
+        assert response_GET.json.items != []
+        for item in response_GET.json['items']:
+            report = models.Report.query.get(item['id'])
+            asserts.match_query(item, url)
+            asserts.match_report(item, report)
 
 
 @mark.parametrize('endpoint', ['reports.ReportId'], indirect=True)

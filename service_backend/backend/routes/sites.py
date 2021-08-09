@@ -1,7 +1,7 @@
 """Site routes."""
 from backend.extensions import auth
 from backend.models import models
-from backend.schemas import query_args, schemas
+from backend.schemas import args, schemas
 from flaat import tokentools
 from flask import request
 from flask.views import MethodView
@@ -16,12 +16,13 @@ blp = Blueprint(
 class Root(MethodView):
 
     @blp.doc(operationId='GetSites')
-    @blp.arguments(query_args.SiteFilter, location='query')
-    @blp.response(200, schemas.Site(many=True))
-    def get(self, args):
+    @blp.arguments(args.SiteFilter, location='query', as_kwargs=True)
+    @blp.response(200, schemas.Sites)
+    def get(self, page=1, per_page=100, **kwargs):
         """Filters and list sites."""
-        sites = models.Site.query.filter_by(**args)
-        return sites.filter(~models.Site.has_open_reports)
+        query = models.Site.query.filter_by(**kwargs)
+        query = query.filter(~models.Site.has_open_reports)
+        return query.paginate(page, per_page)
 
     @auth.login_required()
     @blp.doc(operationId='AddSite')
@@ -39,12 +40,13 @@ class Root(MethodView):
 class Search(MethodView):
 
     @blp.doc(operationId='SearchSites')
-    @blp.arguments(query_args.SiteSearch, location='query')
-    @blp.response(200, schemas.Site(many=True))
-    def get(self, search):
+    @blp.arguments(args.SiteSearch, location='query', as_kwargs=True)
+    @blp.response(200, schemas.Sites)
+    def get(self, terms, page=1, per_page=100):
         """Filters and list sites."""
-        sites = models.Site.query_with(**search)
-        return sites.filter(~models.Site.has_open_reports)
+        search = models.Site.search(terms)
+        search = search.filter(~models.Site.has_open_reports)
+        return search.paginate(page, per_page)
 
 
 @blp.route('/<uuid:site_id>')
@@ -76,12 +78,13 @@ class Site(MethodView):
 class Flavors(MethodView):
 
     @blp.doc(operationId='GetFlavors')
-    @blp.arguments(query_args.FlavorFilter, location='query')
-    @blp.response(200, schemas.Flavor(many=True))
-    def get(self, args, site_id):
+    @blp.arguments(args.FlavorFilter, location='query', as_kwargs=True)
+    @blp.response(200, schemas.Flavors)
+    def get(self, site_id, page=1, per_page=100, **kwargs):
         """Filters and list flavors."""
-        flavors = models.Flavor.query.filter_by(site_id=site_id, **args)
-        return flavors.filter(~models.Flavor.has_open_reports)
+        query = models.Flavor.query.filter_by(site_id=site_id, **kwargs)
+        query = query.filter(~models.Flavor.has_open_reports)
+        return query.paginate(page, per_page)
 
     @auth.login_required()
     @blp.doc(operationId='AddFlavor')
@@ -94,7 +97,7 @@ class Flavors(MethodView):
         site = models.Site.get(site_id)
         report = models.Report(created_by=user)
         return models.Flavor.create(
-            created_by=user, reports=[report], 
+            created_by=user, reports=[report],
             site_id=site.id, **kwargs
         )
 

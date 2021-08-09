@@ -35,7 +35,7 @@ class Tag(PkModel):
         return '<{} {}>'.format(self.__class__.__name__, self.name)
 
     @classmethod
-    def query_with(cls, terms):
+    def search(cls, terms):
         """Query all tags containing all keywords.
 
         Args:

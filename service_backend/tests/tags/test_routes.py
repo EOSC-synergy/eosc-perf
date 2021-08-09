@@ -5,10 +5,8 @@ from uuid import uuid4
 from backend.models import models
 from backend.schemas import schemas
 from pytest import mark
+from tests import asserts
 from tests.db_instances import tags
-
-from . import asserts
-
 
 @mark.parametrize('endpoint', ['tags.Root'], indirect=True)
 class TestRoot:
@@ -21,11 +19,13 @@ class TestRoot:
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
-        assert response_GET.json != []
-        for json in response_GET.json:
-            tag = models.Tag.query.get(json['id'])
-            asserts.match_query(json, url)
-            asserts.match_tag(json, tag)
+        asserts.match_pagination(response_GET.json, url)
+        assert response_GET.json.items != []
+        for item in response_GET.json['items']:
+            tag = models.Tag.query.get(item['id'])
+            asserts.match_query(item, url)
+            asserts.match_tag(item, tag)
+
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'bad_key': "This is a non expected query key"}
@@ -86,11 +86,12 @@ class TestSearch:
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
-        assert response_GET.json != []
-        for json in response_GET.json:
-            tag = models.Tag.query.get(json['id'])
-            asserts.match_search(json, url)
-            asserts.match_tag(json, tag)
+        asserts.match_pagination(response_GET.json, url)
+        assert response_GET.json.items != []
+        for item in response_GET.json['items']:
+            tag = models.Tag.query.get(item['id'])
+            asserts.match_query(item, url)
+            asserts.match_tag(item, tag)
 
 
     @mark.parametrize('query', indirect=True, argvalues=[

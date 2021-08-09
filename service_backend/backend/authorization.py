@@ -26,24 +26,26 @@ class Authorization(Flaat):
         super().__init__()
 
         self.set_web_framework('flask')
-        self.set_cache_lifetime(120)  # seconds; default is 300
         self.set_trusted_OP_list([
             'https://aai-dev.egi.eu/oidc'
         ])
 
-        # flaat.set_trusted_OP_file('/etc/oidc-agent/issuer.config')
-        # flaat.set_OP_hint("helmholtz")
-        # flaat.set_OP_hint("google")
-        self.set_timeout(3)
+        # Flaat timeout:
+        timeout = app.config.get('FLAAT_TIMEOUT', 3)
+        self.set_timeout(timeout)
 
         # verbosity:
         #     0: No output
         #     1: Errors
         #     2: More info, including token info
         #     3: Max
-        self.set_verbosity(0)
-        # flaat.set_verify_tls(True)
-
+        verbosity = app.config.get('FLAAT_VERBOSITY', 0)
+        self.set_verbosity(verbosity)
+        
+        # TLS verification:
+        verify_tls = app.config.get('VERIFY_TLS', False)
+        self.set_verify_tls(verify_tls)
+        
         # Required for using token introspection endpoint:
         client_id = app.config['EGI_CLIENT_ID']
         self.set_client_id(client_id)

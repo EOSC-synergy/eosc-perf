@@ -7,7 +7,7 @@ Submodules
 backend.schemas.query\_args module
 ----------------------------------
 
-.. automodule:: backend.schemas.query_args
+.. automodule:: backend.schemas.args
    :members:
    :undoc-members:
    :show-inheritance:

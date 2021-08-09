@@ -1,5 +1,6 @@
 """Schemas module for schemas definition."""
 from marshmallow import INCLUDE, Schema, fields
+from . import Pagination
 
 
 # ---------------------------------------------------------------------
@@ -12,6 +13,10 @@ class User(Schema):
     created_at = fields.DateTime(required=True)
 
 
+class Users(Pagination, Schema):
+    items = fields.Nested(User, many=True)
+
+
 # ---------------------------------------------------------------------
 # Definition of Report schemas
 
@@ -22,6 +27,10 @@ class Report(Schema):
     message = fields.String(required=True)
     resource_type = fields.String(required=True)
     resource_id = fields.UUID(required=True)
+
+
+class Reports(Pagination, Schema):
+    items = fields.Nested(Report, many=True)
 
 
 class ReportCreate(Schema):
@@ -37,6 +46,10 @@ class Benchmark(Schema):
     docker_tag = fields.String(required=True)
     description = fields.String(required=True)
     json_template = fields.Dict(required=True)
+
+
+class Benchmarks(Pagination, Schema):
+    items = fields.Nested(Benchmark, many=True)
 
 
 class BenchmarkCreate(Schema):
@@ -63,6 +76,10 @@ class Site(Schema):
     description = fields.String(required=True)
 
 
+class Sites(Pagination, Schema):
+    items = fields.Nested(Site, many=True)
+
+
 class SiteCreate(Schema):
     name = fields.String(required=True)
     address = fields.String(required=True)
@@ -84,6 +101,10 @@ class Flavor(Schema):
     description = fields.String(required=True)
 
 
+class Flavors(Pagination, Schema):
+    items = fields.Nested(Flavor, many=True)
+
+
 class FlavorCreate(Schema):
     name = fields.String(required=True)
     description = fields.String()
@@ -101,6 +122,10 @@ class Tag(Schema):
     id = fields.UUID(required=True, dump_only=True)
     name = fields.String(required=True)
     description = fields.String(required=True)
+
+
+class Tags(Pagination, Schema):
+    items = fields.Nested(Tag, many=True)
 
 
 class TagsIds(Schema):
@@ -128,6 +153,24 @@ class Result(Schema):
     site = fields.Nested(Site, required=True)
     flavor = fields.Nested(Flavor, required=True)
     tags = fields.Nested(Tag, many=True, required=True)
+
+
+class Results(Pagination, Schema):
+    items = fields.Nested(Result, many=True)
+
+
+class Json(Schema):
+    class Meta:
+        unknown = INCLUDE
+
+
+# ---------------------------------------------------------------------
+# Definition of Paginated schemas
+
+class Paginated(Schema):
+
+    def __init__(self, schema_class, *args, **kwargs):
+        return schema_class(*args, **kwargs)
 
 
 class Json(Schema):
