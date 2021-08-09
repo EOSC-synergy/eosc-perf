@@ -27,14 +27,16 @@ class TestRoot:
         {'tag_names': [tag for tag in results[0]["tags"]]},
         {'upload_before': "3000-01-01"},
         {'upload_after': "1000-01-01"},
+        {'filters': ["time < 100", "time > 11"]},
         {'filters': ["time < 100", "time > 5"]},
+        {'filters': ["time > 5"]},
         {}  # Multiple results
     ])
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
         asserts.match_pagination(response_GET.json, url)
-        assert response_GET.json.items != []
+        assert response_GET.json['items'] != []
         for item in response_GET.json['items']:
             result = models.Result.query.get(item['id'])
             asserts.match_query(item, url)
@@ -123,7 +125,7 @@ class TestSearch:
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
         asserts.match_pagination(response_GET.json, url)
-        assert response_GET.json.items != []
+        assert response_GET.json['items'] != []
         for item in response_GET.json['items']:
             result = models.Result.query.get(item['id'])
             asserts.match_query(item, url)

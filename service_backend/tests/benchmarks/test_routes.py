@@ -23,7 +23,7 @@ class TestRoot:
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
         asserts.match_pagination(response_GET.json, url)
-        assert response_GET.json.items != []
+        assert response_GET.json['items'] != []
         for item in response_GET.json['items']:
             benchmark = models.Benchmark.query.get(item['id'])
             asserts.match_query(item, url)

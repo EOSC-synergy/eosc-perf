@@ -21,7 +21,7 @@ class TestRoot:
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
         asserts.match_pagination(response_GET.json, url)
-        assert response_GET.json.items != []
+        assert response_GET.json['items'] != []
         for item in response_GET.json['items']:
             site = models.Site.query.get(item['id'])
             asserts.match_query(item, url)
@@ -95,7 +95,7 @@ class TestSearch:
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
         asserts.match_pagination(response_GET.json, url)
-        assert response_GET.json.items != []
+        assert response_GET.json['items'] != []
         for item in response_GET.json['items']:
             site = models.Site.query.get(item['id'])
             asserts.match_query(item, url)
@@ -207,7 +207,7 @@ class TestFlavors:
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
         asserts.match_pagination(response_GET.json, url)
-        assert response_GET.json.items != []
+        assert response_GET.json['items'] != []
         for item in response_GET.json['items']:
             flavor = models.Flavor.query.get(item['id'])
             asserts.match_query(item, url)
