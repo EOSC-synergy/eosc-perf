@@ -1,9 +1,9 @@
 """Module to define query arguments."""
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, post_load
 from marshmallow.validate import OneOf
 from . import Pagination
 
-
+verdict_values = ["true", "false", "null"]
 resource_types = ["benchmark", "result", "site", "flavor"]
 
 
@@ -16,10 +16,16 @@ class UserSearch(Pagination, Schema):
 
 
 class ReportFilter(Pagination, Schema):
-    verdict = fields.Boolean()
+    verdict = fields.String(validate=OneOf(verdict_values))
     resource_type = fields.String(validate=OneOf(resource_types))
     created_before = fields.Date(attribute="before")
     created_after = fields.Date(attribute="after")
+
+    @post_load
+    def process_input(self, data, **kwargs):
+        if 'verdict' in data and data['verdict'] == "null":
+            data['verdict'] = None
+        return data
 
 
 class BenchmarkFilter(Pagination, Schema):

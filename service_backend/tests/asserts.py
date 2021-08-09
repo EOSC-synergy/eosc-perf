@@ -219,7 +219,12 @@ def match_query(json, url):
     # Exclusive for /reports
     if parsed_url.path == "/reports":
         if 'verdict' in query_param:
-            assert str(json['verdict']) == query_param['verdict'][0]
+            if query_param['verdict'][0] == "true":
+                assert json['verdict'] == True
+            if query_param['verdict'][0] == "false":
+                assert json['verdict'] == False
+            if query_param['verdict'][0] == "null":
+                assert json['verdict'] == None
         if 'type' in query_param:
             assert json['type'] == query_param['type'][0]
         if 'upload_before' in query_param:

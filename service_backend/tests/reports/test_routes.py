@@ -13,7 +13,9 @@ class TestRoot:
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'verdict': True},
+        {'verdict': "true"},
+        {'verdict': "false"},
+        {'verdict': "null"},
         {'resource_type': "benchmark"},
         {'resource_type': "result"},
         {'resource_type': "site"},
