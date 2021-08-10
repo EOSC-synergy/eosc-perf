@@ -8,11 +8,11 @@ import type { Site } from './Site';
 import type { Tag } from './Tag';
 
 export type Result = {
+    benchmark: Benchmark;
+    site: Site;
+    readonly id: string;
+    tags: Array<Tag>;
+    upload_date: string;
+    flavor: Flavor;
     json: any;
-    flavor?: Flavor;
-    readonly upload_date?: string;
-    benchmark?: Benchmark;
-    readonly id?: string;
-    tags?: Array<Tag>;
-    site?: Site;
 }

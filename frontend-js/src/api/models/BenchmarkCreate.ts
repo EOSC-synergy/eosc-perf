@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 export type BenchmarkCreate = {
-    json_template?: any;
     docker_image: string;
-    docker_tag: string;
     description?: string;
+    docker_tag: string;
+    json_template?: any;
 }

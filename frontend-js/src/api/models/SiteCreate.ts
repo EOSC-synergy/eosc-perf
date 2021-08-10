@@ -3,7 +3,7 @@
 /* eslint-disable */
 
 export type SiteCreate = {
-    name: string;
     address: string;
     description?: string;
+    name: string;
 }

@@ -3,6 +3,6 @@
 /* eslint-disable */
 
 export type FlavorEdit = {
-    name?: string;
     description?: string;
+    name?: string;
 }

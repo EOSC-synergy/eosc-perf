@@ -3,9 +3,9 @@
 /* eslint-disable */
 
 export type Benchmark = {
-    docker_image: string;
-    json_template?: any;
+    readonly id: string;
     docker_tag: string;
-    description?: string;
-    readonly id?: string;
+    json_template: any;
+    docker_image: string;
+    description: string;
 }

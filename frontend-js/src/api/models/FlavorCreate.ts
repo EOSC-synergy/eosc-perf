@@ -3,6 +3,6 @@
 /* eslint-disable */
 
 export type FlavorCreate = {
-    name: string;
     description?: string;
+    name: string;
 }

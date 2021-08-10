@@ -3,10 +3,10 @@
 /* eslint-disable */
 
 export type Report = {
-    message?: string;
-    resource_id?: string;
-    creation_date?: string;
-    verdict?: boolean;
-    resource_type?: string;
-    id?: string;
+    resource_id: string;
+    verdict: boolean;
+    created_at: string;
+    readonly id: string;
+    resource_type: string;
+    message: string;
 }

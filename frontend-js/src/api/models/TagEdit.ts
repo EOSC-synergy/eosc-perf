@@ -3,6 +3,6 @@
 /* eslint-disable */
 
 export type TagEdit = {
-    name?: string;
     description?: string;
+    name?: string;
 }
