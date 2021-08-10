@@ -27,9 +27,7 @@ class TestRoot:
         {'tag_names': [tag for tag in results[0]["tags"]]},
         {'upload_before': "3000-01-01"},
         {'upload_after': "1000-01-01"},
-        {'filters': ["time < 100", "time > 11"]},
-        {'filters': ["time < 100", "time > 5"]},
-        {'filters': ["time > 5"]},
+        {'filters': ["time < 11", "time > 9"]},
         {}  # Multiple results
     ])
     def test_GET_200(self, response_GET, url):
