@@ -58,7 +58,7 @@ class DockerTag(String):
 class JsonTemplate(Dict):
     def __init__(self, *args, **kwargs):
         # kwargs['description'] = description   # Does not work
-        kwargs['example'] = "{}",   # TODO: Add valid example
+        # kwargs['example'] = {},   # TODO: Add valid example
         super().__init__(*args, **kwargs)
 
 
