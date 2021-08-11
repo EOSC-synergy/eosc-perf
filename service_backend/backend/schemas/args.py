@@ -20,8 +20,8 @@ class UserDelete(Schema):
 class ReportFilter(Pagination, Schema):
     verdict = fields.Verdict()
     resource_type = fields.Resource()
-    upload_before = fields.UploadBefore(attribute="before")
-    upload_after = fields.UploadAfter(attribute="after")
+    upload_before = fields.UploadBefore(attribute="before", missing=None)
+    upload_after = fields.UploadAfter(attribute="after", missing=None)
 
     @post_load
     def process_input(self, data, **kwargs):
