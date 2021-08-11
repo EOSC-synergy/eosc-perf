@@ -65,7 +65,7 @@ class ReportId(MethodView):
 
         :param report_id: The id of the report to retrieve
         :type report_id: uuid
-        :raises werkzeug.exceptions.NotFound: No report with id found
+        :raises NotFound: No report with id found
         :return: The database report using the described id
         :rtype: :class:`models.Report`
         """        
@@ -85,7 +85,7 @@ class ReportId(MethodView):
 
         :param report_id: The id of the report to delete
         :type report_id: uuid
-        :raises werkzeug.exceptions.NotFound: No report with id found
+        :raises NotFound: No report with id found
         """   
         models.Report.get(report_id).delete()
 
@@ -108,7 +108,7 @@ class Approve(MethodView):
 
         :param report_id: The id of the report to approve
         :type report_id: uuid
-        :raises werkzeug.exceptions.NotFound: No report with id found
+        :raises NotFound: No report with id found
         """
         models.Report.get(report_id).update(verdict=True)
 
@@ -131,6 +131,6 @@ class Reject(MethodView):
 
         :param report_id: The id of the report to close
         :type report_id: uuid
-        :raises werkzeug.exceptions.NotFound: No report with id found
+        :raises NotFound: No report with id found
         """
         models.Report.get(report_id).update(verdict=False)

@@ -52,6 +52,8 @@ class Root(MethodView):
 
         :param body_args: The request body arguments as python dictionary
         :type body_args: dict
+        :raises UnprocessableEntity: Request not processable
+        :raises Conflict: Created object conflicts a database item
         :return: The benchmark created into the database.
         :rtype: :class:`models.Benchmark`
         """
@@ -109,7 +111,7 @@ class Benchmark(MethodView):
 
         :param benchmark_id: The id of the benchmark to retrieve
         :type benchmark_id: uuid
-        :raises werkzeug.exceptions.NotFound: No benchmark with id found
+        :raises NotFound: No benchmark with id found
         :return: The database benchmark using the described id
         :rtype: :class:`models.Benchmark`
         """
@@ -132,7 +134,7 @@ class Benchmark(MethodView):
         :type body_args: dict
         :param benchmark_id: The id of the benchmark to update
         :type benchmark_id: uuid
-        :raises werkzeug.exceptions.NotFound: No benchmark with id found
+        :raises NotFound: No benchmark with id found
         """
         models.Benchmark.get(benchmark_id).update(**body_args)
 
@@ -150,6 +152,6 @@ class Benchmark(MethodView):
 
         :param benchmark_id: The id of the benchmark to delete
         :type benchmark_id: uuid
-        :raises werkzeug.exceptions.NotFound: No benchmark with id found
+        :raises NotFound: No benchmark with id found
         """
         models.Benchmark.get(benchmark_id).delete()
