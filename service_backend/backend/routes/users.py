@@ -26,7 +26,7 @@ class Root(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='DelUsers')
-    @blp.arguments(args.UserFilter, location='query')
+    @blp.arguments(args.UserDelete, location='query')
     @blp.response(204)
     def delete(self, args):
         """Deletes an existing user."""

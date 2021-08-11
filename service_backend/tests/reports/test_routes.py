@@ -20,8 +20,8 @@ class TestRoot:
         {'resource_type': "result"},
         {'resource_type': "site"},
         {'resource_type': "flavor"},
-        {'created_before': "3000-01-01"},
-        {'created_after': "2000-01-01"},
+        {'upload_before': "3000-01-01"},
+        {'upload_after': "2000-01-01"},
         {}  # Multiple reports
     ])
     def test_GET_200(self, response_GET, url):

@@ -1,16 +1,16 @@
 backend.models package
 ======================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   /packages/backend/models.utils
+
 Submodules
 ----------
-
-backend.models.associations module
-----------------------------------
-
-.. automodule:: backend.models.associations
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 backend.models.models module
 ----------------------------

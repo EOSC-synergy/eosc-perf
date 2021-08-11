@@ -14,12 +14,26 @@ blp = Blueprint(
 
 @blp.route('')
 class Root(MethodView):
+    """Class defining the main endpoint methods for benchmarks"""
 
     @blp.doc(operationId='GetBenchmarks')
     @blp.arguments(args.BenchmarkFilter, location='query', as_kwargs=True)
     @blp.response(200, schemas.Benchmarks)
     def get(self, page=1, per_page=100, **kwargs):
-        """Filters and list benchmarks."""
+        """(Free) Filters and list benchmarks
+
+        Use this method to get a list of benchmarks filtered according to your 
+        requirements. The response returns a pagination object with the
+        filtered benchmarks (if succeeds).
+        ---
+
+        :param page: The page number to retrieve, defaults to 1
+        :type page: int, optional
+        :param per_page: N of items to be displayed per page, defaults to 100
+        :type per_page: int, optional
+        :return: Pagination object with filtered benchmarks
+        :rtype: :class:`flask_sqlalchemy.Pagination`
+        """
         query = models.Benchmark.query.filter_by(**kwargs)
         query = query.filter(~models.Benchmark.has_open_reports)
         return query.paginate(page, per_page)
@@ -29,10 +43,19 @@ class Root(MethodView):
     @blp.arguments(schemas.BenchmarkCreate, as_kwargs=True)
     @blp.response(201, schemas.Benchmark)
     def post(self, **kwargs):
-        """Creates a new benchmark."""
+        """(Users) Creates a new benchmark
+    
+        Use this method to create a new benchmarks in the database so it can
+        be accessed by the application users. The method returns the complete
+        created benchmark (if succeeds).
+        ---
+
+        :return: The benchmark created into the database.
+        :rtype: :class:`models.Benchmark`
+        """        
         access_token = tokentools.get_access_token_from_request(request)
         user = models.User.get(token=access_token)
-        report = models.Report(created_by=user)
+        report = models.Report(created_by=user, message="New benchmark")
         return models.Benchmark.create(created_by=user, reports=[report], **kwargs)
 
 

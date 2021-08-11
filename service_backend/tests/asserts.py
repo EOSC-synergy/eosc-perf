@@ -58,8 +58,8 @@ def match_report(json, report):
     assert json['id'] == str(report.id)
 
     # Check the report has a creation date
-    assert 'created_at' in json and type(json['created_at']) is str
-    assert json['created_at'] == str(report.created_at).replace(" ", "T")
+    assert 'upload_date' in json and type(json['upload_date']) is str
+    assert json['upload_date'] == str(report.created_at).replace(" ", "T")
 
     # Check the report has a verdict
     assert type(json['verdict']) is bool or json['verdict'] is None
@@ -228,9 +228,9 @@ def match_query(json, url):
         if 'type' in query_param:
             assert json['type'] == query_param['type'][0]
         if 'upload_before' in query_param:
-            assert json['created_at'] < query_param['created_before'][0]
+            assert json['upload_date'] < query_param['upload_before'][0]
         if 'upload_after' in query_param:
-            assert json['created_at'] > query_param['created_after'][0]
+            assert json['upload_date'] > query_param['upload_after'][0]
 
     # Exclusive for /results
     if parsed_url.path == "/results":

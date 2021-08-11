@@ -1,5 +1,4 @@
 """Result routes."""
-from re import search
 from backend.extensions import auth
 from backend.models import models
 from backend.schemas import args, schemas

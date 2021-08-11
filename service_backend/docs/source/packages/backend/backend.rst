@@ -22,14 +22,6 @@ backend.authorization module
    :undoc-members:
    :show-inheritance:
 
-backend.database module
------------------------
-
-.. automodule:: backend.database
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 backend.extensions module
 -------------------------
 

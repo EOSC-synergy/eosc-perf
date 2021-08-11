@@ -1,25 +1,27 @@
 """Module to define query arguments."""
-from marshmallow import Schema, fields, post_load
-from marshmallow.validate import OneOf
-from . import Pagination
+from marshmallow import post_load
 
-verdict_values = ["true", "false", "null"]
-resource_types = ["benchmark", "result", "site", "flavor"]
+from . import BaseSchema as Schema
+from . import Pagination, fields
 
 
 class UserFilter(Pagination, Schema):
-    email = fields.String()
+    email = fields.Email()
+
+
+class UserDelete(Schema):
+    email = fields.Email()
 
 
 class UserSearch(Pagination, Schema):
-    terms = fields.List(fields.String(), missing=[])
+    terms = fields.Terms()
 
 
 class ReportFilter(Pagination, Schema):
-    verdict = fields.String(validate=OneOf(verdict_values))
-    resource_type = fields.String(validate=OneOf(resource_types))
-    created_before = fields.Date(attribute="before")
-    created_after = fields.Date(attribute="after")
+    verdict = fields.Verdict()
+    resource_type = fields.Resource()
+    upload_before = fields.UploadBefore(attribute="before")
+    upload_after = fields.UploadAfter(attribute="after")
 
     @post_load
     def process_input(self, data, **kwargs):
@@ -29,55 +31,53 @@ class ReportFilter(Pagination, Schema):
 
 
 class BenchmarkFilter(Pagination, Schema):
-    docker_image = fields.String()
-    docker_tag = fields.String()
+    docker_image = fields.DockerImage()
+    docker_tag = fields.DockerTag()
 
 
 class BenchmarkSearch(Pagination, Schema):
-    terms = fields.List(fields.String(), missing=[])
+    terms = fields.Terms()
 
 
 class SiteFilter(Pagination, Schema):
-    name = fields.String()
-    address = fields.String()
+    name = fields.SiteName()
+    address = fields.Address()
 
 
 class SiteSearch(Pagination, Schema):
-    terms = fields.List(fields.String(), missing=[])
+    terms = fields.Terms()
 
 
 class FlavorFilter(Pagination, Schema):
-    name = fields.String()
+    name = fields.FlavorName()
 
 
 class TagFilter(Pagination, Schema):
-    name = fields.String()
+    name = fields.TagName()
 
 
 class TagSearch(Pagination, Schema):
-    terms = fields.List(fields.String(), missing=[])
+    terms = fields.Terms()
 
 
 class ResultFilter(Pagination, Schema):
-    docker_image = fields.String()
-    docker_tag = fields.String()
-    site_name = fields.String()
-    flavor_name = fields.String()
-    tag_names = fields.List(fields.String(), missing=None)
-    upload_before = fields.Date(attribute="before", missing=None)
-    upload_after = fields.Date(attribute="after", missing=None)
-    filters = fields.List(
-        fields.String(example="machine.cpu.count > 4"),
-        missing=[]
-    )
+    docker_image = fields.DockerImage()
+    docker_tag = fields.DockerTag()
+    site_name = fields.SiteName()
+    flavor_name = fields.FlavorName()
+    tag_names = fields.TagNames()
+    upload_before = fields.UploadBefore(attribute="before", missing=None)
+    upload_after = fields.UploadAfter(attribute="after", missing=None)
+    filters = fields.Filters()
 
 
 class ResultContext(Schema):
-    benchmark_id = fields.UUID(required=True)
-    site_id = fields.UUID(required=True)
-    flavor_id = fields.UUID(required=True)
-    tags_ids = fields.List(fields.UUID, missing=[])
+    benchmark_id = fields.Id(required=True)
+    site_id = fields.Id(required=True)
+    flavor_id = fields.Id(required=True)
+    tags_ids = fields.Ids()
 
 
 class ResultSearch(Pagination, Schema):
-    terms = fields.List(fields.String(), missing=[])
+    terms = fields.Terms()
+

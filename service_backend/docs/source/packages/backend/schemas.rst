@@ -4,7 +4,7 @@ backend.schemas package
 Submodules
 ----------
 
-backend.schemas.query\_args module
+backend.schemas.args module
 ----------------------------------
 
 .. automodule:: backend.schemas.args
