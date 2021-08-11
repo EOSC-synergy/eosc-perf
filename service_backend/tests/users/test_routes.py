@@ -2,7 +2,7 @@
 from backend.models import models
 from pytest import mark
 from tests import asserts
-from tests.db_instances import users
+from tests.db_instances import benchmarks, flavors, results, sites, users
 
 
 @mark.parametrize('endpoint', ['users.Root'], indirect=True)
@@ -58,6 +58,11 @@ class TestRoot:
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
         assert models.User.query.filter_by(**query).all() == []
+        # Check delete is cascaded
+        assert models.Benchmark.query.get(benchmarks[0]['id']) == None
+        assert models.Result.query.get(results[0]['id']) == None
+        assert models.Site.query.get(sites[0]['id']) == None
+        assert models.Flavor.query.get(flavors[0]['id']) == None
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'email': "sub_1@email.com"}
