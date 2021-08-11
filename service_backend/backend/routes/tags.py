@@ -33,7 +33,7 @@ class Root(MethodView):
 @blp.route('/search')
 class Search(MethodView):
 
-    @blp.arguments(args.TagSearch, location='query', as_kwargs=True)
+    @blp.arguments(args.Search, location='query', as_kwargs=True)
     @blp.response(200, schemas.Tags)
     def get(self, terms, page=1, per_page=100):
         """Filters and list tags."""

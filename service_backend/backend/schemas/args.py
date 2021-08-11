@@ -13,10 +13,6 @@ class UserDelete(Schema):
     email = fields.Email()
 
 
-class UserSearch(Pagination, Schema):
-    terms = fields.Terms()
-
-
 class ReportFilter(Pagination, Schema):
     verdict = fields.Verdict()
     resource_type = fields.Resource()
@@ -35,17 +31,9 @@ class BenchmarkFilter(Pagination, Schema):
     docker_tag = fields.DockerTag()
 
 
-class BenchmarkSearch(Pagination, Schema):
-    terms = fields.Terms()
-
-
 class SiteFilter(Pagination, Schema):
     name = fields.SiteName()
     address = fields.Address()
-
-
-class SiteSearch(Pagination, Schema):
-    terms = fields.Terms()
 
 
 class FlavorFilter(Pagination, Schema):
@@ -54,10 +42,6 @@ class FlavorFilter(Pagination, Schema):
 
 class TagFilter(Pagination, Schema):
     name = fields.TagName()
-
-
-class TagSearch(Pagination, Schema):
-    terms = fields.Terms()
 
 
 class ResultFilter(Pagination, Schema):
@@ -78,6 +62,6 @@ class ResultContext(Schema):
     tags_ids = fields.Ids()
 
 
-class ResultSearch(Pagination, Schema):
+class Search(Pagination, Schema):
     terms = fields.Terms()
 

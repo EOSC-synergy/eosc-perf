@@ -42,7 +42,7 @@ class Search(MethodView):
 
     @auth.admin_required()
     @blp.doc(operationId='SearchUsers')
-    @blp.arguments(args.UserSearch, location='query', as_kwargs=True)
+    @blp.arguments(args.Search, location='query', as_kwargs=True)
     @blp.response(200, schemas.Users)
     def get(self, terms, page=1, per_page=100):
         """Filters and list users."""
