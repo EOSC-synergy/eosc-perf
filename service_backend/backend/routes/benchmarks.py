@@ -52,6 +52,7 @@ class Root(MethodView):
 
         :param body_args: The request body arguments as python dictionary
         :type body_args: dict
+        :raises Forbidden: The user is not registered
         :raises UnprocessableEntity: Request not processable
         :raises Conflict: Created object conflicts a database item
         :return: The benchmark created into the database.
