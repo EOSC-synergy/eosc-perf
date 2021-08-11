@@ -11,6 +11,8 @@ class TestRoot:
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[
+        {'sub': 'sub_0'},
+        {'iss': 'egi.com'},
         {'email': "sub_1@email.com"},
         {}  # Multiple results
     ])
@@ -49,12 +51,13 @@ class TestRoot:
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'email': "sub_1@email.com"}
+        {'sub': 'sub_0'},
+        {'email': "sub_0@email.com"}
     ])
     def test_DELETE_204(self, query, response_DELETE):
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
-        assert models.User.query.filter_by(email=query['email']).all() == []
+        assert models.User.query.filter_by(**query).all() == []
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'email': "sub_1@email.com"}
@@ -62,7 +65,7 @@ class TestRoot:
     def test_DELETE_401(self, query, response_DELETE):
         """DELETE method fails 401 if not authorized."""
         assert response_DELETE.status_code == 401
-        assert models.User.query.filter_by(email=query['email']).all() != []
+        assert models.User.query.filter_by(**query).all() != []
 
     @mark.usefixtures('grant_logged')
     @mark.parametrize('query', indirect=True, argvalues=[
@@ -71,7 +74,7 @@ class TestRoot:
     def test_DELETE_403(self, query, response_DELETE):
         """DELETE method fails 403 if forbidden."""
         assert response_DELETE.status_code == 403
-        assert models.User.query.filter_by(email=query['email']).all() != []
+        assert models.User.query.filter_by(**query).all() != []
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[

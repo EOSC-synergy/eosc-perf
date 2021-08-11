@@ -6,10 +6,14 @@ from . import Pagination, fields
 
 
 class UserFilter(Pagination, Schema):
+    sub = fields.Sub()
+    iss = fields.Iss()
     email = fields.Email()
 
 
 class UserDelete(Schema):
+    sub = fields.Sub()
+    iss = fields.Iss()
     email = fields.Email()
 
 
