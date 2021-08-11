@@ -12,8 +12,16 @@ backend.schemas.args module
    :undoc-members:
    :show-inheritance:
 
+backend.schemas.fields module
+----------------------------------
+
+.. automodule:: backend.schemas.fields
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 backend.schemas.schemas module
-------------------------------
+----------------------------------
 
 .. automodule:: backend.schemas.schemas
    :members:
