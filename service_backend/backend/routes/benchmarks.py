@@ -60,9 +60,9 @@ class Root(MethodView):
         """
         access_token = tokentools.get_access_token_from_request(request)
         user = models.User.get(token=access_token)
-        report = models.Report(created_by=user, message="New benchmark")
         return models.Benchmark.create(
-            created_by=user, reports=[report], **body_args
+            reports=[models.Report(created_by=user, message="New benchmark")],
+            created_by=user, **body_args
         )
 
 
