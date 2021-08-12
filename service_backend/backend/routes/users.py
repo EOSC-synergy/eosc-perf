@@ -30,6 +30,9 @@ class Root(MethodView):
 
         :param query_args: The request query arguments as python dictionary
         :type query_args: dict
+        :raises Unauthorized: The server could not verify the user identity
+        :raises Forbidden: The user has not the required privileges
+        :raises UnprocessableEntity: Wrong query/body parameters 
         :return: Pagination object with filtered users
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
@@ -53,7 +56,9 @@ class Root(MethodView):
 
         :param query_args: The request query arguments as python dictionary
         :type query_args: dict
-        :raises UnprocessableEntity: Request not processable
+        :raises Unauthorized: The server could not verify the user identity
+        :raises Forbidden: The user has not the required privileges
+        :raises UnprocessableEntity: Wrong query/body parameters 
         :return: Pagination object with filtered users
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """        
@@ -84,6 +89,9 @@ class Search(MethodView):
 
         :param query_args: The request query arguments as python dictionary
         :type query_args: dict
+        :raises Unauthorized: The server could not verify the user identity
+        :raises Forbidden: The user has not the required privileges
+        :raises UnprocessableEntity: Wrong query/body parameters 
         :return: Pagination object with filtered users
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """

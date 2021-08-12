@@ -29,6 +29,7 @@ class Root(MethodView):
 
         :param query_args: The request query arguments as python dictionary
         :type query_args: dict
+        :raises UnprocessableEntity: Wrong query/body parameters 
         :return: Pagination object with filtered tags
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
@@ -51,9 +52,10 @@ class Root(MethodView):
 
         :param body_args: The request body arguments as python dictionary
         :type body_args: dict
+        :raises Unauthorized: The server could not verify the user identity
         :raises Forbidden: The user is not registered
-        :raises UnprocessableEntity: Request not processable
         :raises Conflict: Created object conflicts a database item
+        :raises UnprocessableEntity: Wrong query/body parameters 
         :return: The tag created into the database.
         :rtype: :class:`models.Tag`
         """
@@ -73,13 +75,14 @@ class Search(MethodView):
 
         Use this method to get a list of tags based on a general search
         of terms. For example, calling this method with terms=v1&terms=0
-        returns all tags with 'v1' and '0' on the 'docker_image',
-        'docker_tag' or 'description' fields. The response returns a
-        pagination object with the filtered tags (if succeeds).
+        returns all tags with 'v1' and '0' on the 'name' or 'description'
+        fields. The response returns a pagination object with the filtered
+        tags (if succeeds).
         ---
 
         :param query_args: The request query arguments as python dictionary
         :type query_args: dict
+        :raises UnprocessableEntity: Wrong query/body parameters 
         :return: Pagination object with filtered tags
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
@@ -129,7 +132,10 @@ class Tag(MethodView):
         :type body_args: dict
         :param tag_id: The id of the tag to update
         :type tag_id: uuid
+        :raises Unauthorized: The server could not verify the user identity
+        :raises Forbidden: The user has not the required privileges
         :raises NotFound: No tag with id found
+        :raises UnprocessableEntity: Wrong query/body parameters 
         """
         models.Tag.get(tag_id).update(**body_args)
 
@@ -147,6 +153,8 @@ class Tag(MethodView):
 
         :param tag_id: The id of the tag to delete
         :type tag_id: uuid
+        :raises Unauthorized: The server could not verify the user identity
+        :raises Forbidden: The user has not the required privileges
         :raises NotFound: No tag with id found
         """
         models.Tag.get(tag_id).delete()

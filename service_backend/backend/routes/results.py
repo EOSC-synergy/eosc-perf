@@ -60,7 +60,7 @@ class Root(MethodView):
 
         :param query_args: The request query arguments as python dictionary
         :type query_args: dict
-        :raises UnprocessableEntity: Request not processable
+        :raises UnprocessableEntity: Wrong query/body parameters 
         :return: Pagination object with filtered results
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
@@ -136,8 +136,10 @@ class Root(MethodView):
         :type query_args: dic
         :param body_args: The request body arguments as python dictionary
         :type body_args: dict
+        :raises Unauthorized: The server could not verify the user identity
         :raises Forbidden: The user is not registered
         :raises NotFound: One or more query items do not exist in the database
+        :raises UnprocessableEntity: Wrong query/body parameters 
         :return: The result created into the database.
         :rtype: :class:`models.Result`
         """
@@ -176,6 +178,7 @@ class Search(MethodView):
 
         :param query_args: The request query arguments as python dictionary
         :type query_args: dict
+        :raises UnprocessableEntity: Wrong query/body parameters 
         :return: Pagination object with filtered results
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
@@ -226,7 +229,10 @@ class Result(MethodView):
         :type body_args: dict
         :param result_id: The id of the result to update
         :type result_id: uuid
+        :raises Unauthorized: The server could not verify the user identity
+        :raises Forbidden: The user has not the required privileges
         :raises NotFound: No result with id found
+        :raises UnprocessableEntity: Wrong query/body parameters 
         """
         access_token = tokentools.get_access_token_from_request(request)
         result = models.Result.get(result_id)
@@ -255,6 +261,8 @@ class Result(MethodView):
 
         :param result_id: The id of the result to delete
         :type result_id: uuid
+        :raises Unauthorized: The server could not verify the user identity
+        :raises Forbidden: The user has not the required privileges
         :raises NotFound: No result with id found
         """
         models.Result.get(result_id).delete()
@@ -279,6 +287,8 @@ class Uploader(MethodView):
 
         :param result_id: The id of the result created by the returned user
         :type result_id: uuid
+        :raises Unauthorized: The server could not verify the user identity
+        :raises Forbidden: The user has not the required privileges
         :raises NotFound: No result with id found
         """
         return models.Result.get(result_id).created_by
@@ -306,7 +316,10 @@ class Report(MethodView):
 
         :param result_id: The id of the result created by the returned user
         :type result_id: uuid
+        :raises Unauthorized: The server could not verify the user identity
+        :raises Forbidden: The user is not registered
         :raises NotFound: No result with id found
+        :raises UnprocessableEntity: Wrong query/body parameters 
         """
         access_token = tokentools.get_access_token_from_request(request)
         result = models.Result.get(result_id)

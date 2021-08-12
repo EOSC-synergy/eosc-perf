@@ -28,6 +28,9 @@ class Root(MethodView):
 
         :param query_args: The request query arguments as python dictionary
         :type query_args: dict
+        :raises Unauthorized: The server could not verify the user identity
+        :raises Forbidden: The user has not the required privileges
+        :raises UnprocessableEntity: Wrong query/body parameters 
         :return: Pagination object with filtered reports
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
@@ -65,6 +68,8 @@ class ReportId(MethodView):
 
         :param report_id: The id of the report to retrieve
         :type report_id: uuid
+        :raises Unauthorized: The server could not verify the user identity
+        :raises Forbidden: The user has not the required privileges
         :raises NotFound: No report with id found
         :return: The database report using the described id
         :rtype: :class:`models.Report`
@@ -85,6 +90,8 @@ class ReportId(MethodView):
 
         :param report_id: The id of the report to delete
         :type report_id: uuid
+        :raises Unauthorized: The server could not verify the user identity
+        :raises Forbidden: The user has not the required privileges
         :raises NotFound: No report with id found
         """   
         models.Report.get(report_id).delete()
@@ -108,6 +115,8 @@ class Approve(MethodView):
 
         :param report_id: The id of the report to approve
         :type report_id: uuid
+        :raises Unauthorized: The server could not verify the user identity
+        :raises Forbidden: The user has not the required privileges
         :raises NotFound: No report with id found
         """
         models.Report.get(report_id).update(verdict=True)
@@ -131,6 +140,8 @@ class Reject(MethodView):
 
         :param report_id: The id of the report to close
         :type report_id: uuid
+        :raises Unauthorized: The server could not verify the user identity
+        :raises Forbidden: The user has not the required privileges
         :raises NotFound: No report with id found
         """
         models.Report.get(report_id).update(verdict=False)

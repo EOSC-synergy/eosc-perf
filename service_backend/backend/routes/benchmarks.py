@@ -29,6 +29,7 @@ class Root(MethodView):
 
         :param query_args: The request query arguments as python dictionary
         :type query_args: dict
+        :raises UnprocessableEntity: Wrong query/body parameters 
         :return: Pagination object with filtered benchmarks
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
@@ -52,8 +53,9 @@ class Root(MethodView):
 
         :param body_args: The request body arguments as python dictionary
         :type body_args: dict
+        :raises Unauthorized: The server could not verify the user identity
         :raises Forbidden: The user is not registered
-        :raises UnprocessableEntity: Request not processable
+        :raises UnprocessableEntity: Wrong query/body parameters 
         :raises Conflict: Created object conflicts a database item
         :return: The benchmark created into the database.
         :rtype: :class:`models.Benchmark`
@@ -85,6 +87,7 @@ class Search(MethodView):
 
         :param query_args: The request query arguments as python dictionary
         :type query_args: dict
+        :raises UnprocessableEntity: Wrong query/body parameters 
         :return: Pagination object with filtered benchmarks
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
@@ -135,7 +138,10 @@ class Benchmark(MethodView):
         :type body_args: dict
         :param benchmark_id: The id of the benchmark to update
         :type benchmark_id: uuid
+        :raises Unauthorized: The server could not verify the user identity
+        :raises Forbidden: The user has not the required privileges
         :raises NotFound: No benchmark with id found
+        :raises UnprocessableEntity: Wrong query/body parameters 
         """
         models.Benchmark.get(benchmark_id).update(**body_args)
 
@@ -153,6 +159,8 @@ class Benchmark(MethodView):
 
         :param benchmark_id: The id of the benchmark to delete
         :type benchmark_id: uuid
+        :raises Unauthorized: The server could not verify the user identity
+        :raises Forbidden: The user has not the required privileges
         :raises NotFound: No benchmark with id found
         """
         models.Benchmark.get(benchmark_id).delete()

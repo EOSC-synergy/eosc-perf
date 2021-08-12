@@ -29,6 +29,7 @@ class Root(MethodView):
 
         :param query_args: The request query arguments as python dictionary
         :type query_args: dict
+        :raises UnprocessableEntity: Wrong query/body parameters 
         :return: Pagination object with filtered sites
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
@@ -52,9 +53,10 @@ class Root(MethodView):
 
         :param body_args: The request body arguments as python dictionary
         :type body_args: dict
+        :raises Unauthorized: The server could not verify the user identity
         :raises Forbidden: The user is not registered
-        :raises UnprocessableEntity: Request not processable
         :raises Conflict: Created object conflicts a database item
+        :raises UnprocessableEntity: Wrong query/body parameters 
         :return: The site created into the database.
         :rtype: :class:`models.Site`
         """
@@ -85,6 +87,7 @@ class Search(MethodView):
 
         :param query_args: The request query arguments as python dictionary
         :type query_args: dict
+        :raises UnprocessableEntity: Wrong query/body parameters 
         :return: Pagination object with filtered sites
         :rtype: :class:`flask_sqlalchemy.Pagination`        
         """
@@ -135,7 +138,10 @@ class Site(MethodView):
         :type body_args: dict
         :param site_id: The id of the site to update
         :type site_id: uuid
+        :raises Unauthorized: The server could not verify the user identity
+        :raises Forbidden: The user has not the required privileges
         :raises NotFound: No site with id found
+        :raises UnprocessableEntity: Wrong query/body parameters 
         """
         models.Site.get(site_id).update(**body_args)
 
@@ -153,6 +159,8 @@ class Site(MethodView):
 
         :param site_id: The id of the site to delete
         :type site_id: uuid
+        :raises Unauthorized: The server could not verify the user identity
+        :raises Forbidden: The user has not the required privileges
         :raises NotFound: No site with id found
         """
         models.Site.get(site_id).delete()
@@ -174,6 +182,7 @@ class Flavors(MethodView):
 
         :param query_args: The request query arguments as python dictionary
         :type query_args: dict
+        :raises UnprocessableEntity: Wrong query/body parameters 
         :return: Pagination object with filtered flavors
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
@@ -198,9 +207,10 @@ class Flavors(MethodView):
 
         :param body_args: The request body arguments as python dictionary
         :type body_args: dict
+        :raises Unauthorized: The server could not verify the user identity
         :raises Forbidden: The user is not registered
-        :raises UnprocessableEntity: Request not processable
         :raises Conflict: Created object conflicts a database item
+        :raises UnprocessableEntity: Wrong query/body parameters 
         :return: The flavor created into the database.
         :rtype: :class:`models.Flavor`
         """
@@ -253,7 +263,10 @@ class Flavor(MethodView):
         :type body_args: dict
         :param flavor_id: The id of the flavor to update
         :type flavor_id: uuid
+        :raises Unauthorized: The server could not verify the user identity
+        :raises Forbidden: The user has not the required privileges
         :raises NotFound: No flavor with id found
+        :raises UnprocessableEntity: Wrong query/body parameters 
         """
         models.Flavor.get(id=flavor_id).update(**body_args)
 
@@ -271,6 +284,8 @@ class Flavor(MethodView):
 
         :param flavor_id: The id of the flavor to delete
         :type flavor_id: uuid
+        :raises Unauthorized: The server could not verify the user identity
+        :raises Forbidden: The user has not the required privileges
         :raises NotFound: No flavor with id found
         """
         models.Flavor.get(id=flavor_id).delete()
