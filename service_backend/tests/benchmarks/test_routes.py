@@ -63,6 +63,16 @@ class TestRoot:
         assert response_POST.status_code == 401
 
     @mark.usefixtures('grant_logged', 'mock_docker_registry')
+    @mark.parametrize('token_sub', ["non-registered"], indirect=True)
+    @mark.parametrize('token_iss', ["not-existing"], indirect=True)
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'docker_image': "b1", 'docker_tag': "v1.0"}
+    ])
+    def test_POST_403(self, response_POST):
+        """POST method fails 403 if user not registered."""
+        assert response_POST.status_code == 403
+
+    @mark.usefixtures('grant_logged', 'mock_docker_registry')
     @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
     @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('body', indirect=True,  argvalues=[

@@ -59,6 +59,16 @@ class TestRoot:
         assert response_POST.status_code == 401
 
     @mark.usefixtures('grant_logged')
+    @mark.parametrize('token_sub', ["non-registered"], indirect=True)
+    @mark.parametrize('token_iss', ["not-existing"], indirect=True)
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'name': "s3", 'address': "addr2", 'description': "Text"}
+    ])
+    def test_POST_403(self, response_POST):
+        """POST method fails 403 if user not registered."""
+        assert response_POST.status_code == 403
+
+    @mark.usefixtures('grant_logged')
     @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
     @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
@@ -244,6 +254,27 @@ class TestFlavors:
     def test_POST_401(self, response_POST):
         """POST method fails 401 if not authorized."""
         assert response_POST.status_code == 401
+
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('token_sub', ["non-registered"], indirect=True)
+    @mark.parametrize('token_iss', ["not-existing"], indirect=True)
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'name': "flavorN", 'description': "FlavorN for siteX"}
+    ])
+    def test_POST_403(self, response_POST):
+        """POST method fails 403 if user not registered."""
+        assert response_POST.status_code == 403
+
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('site_rqid', [uuid4()], indirect=True)
+    @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'name': "flavorN", 'description': "FlavorN for siteX"}
+    ])
+    def test_POST_404(self, response_POST):
+        """POST method fails 404 if no id found."""
+        assert response_POST.status_code == 404
 
     @mark.usefixtures('grant_logged')
     @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)

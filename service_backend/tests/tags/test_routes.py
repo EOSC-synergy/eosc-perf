@@ -56,6 +56,16 @@ class TestRoot:
         assert response_POST.status_code == 401
 
     @mark.usefixtures('grant_logged')
+    @mark.parametrize('token_sub', ["non-registered"], indirect=True)
+    @mark.parametrize('token_iss', ["not-existing"], indirect=True)
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'name': "tag4", 'description': "desc_1"}
+    ])
+    def test_POST_403(self, response_POST):
+        """POST method fails 403 if user not registered."""
+        assert response_POST.status_code == 403
+
+    @mark.usefixtures('grant_logged')
     @mark.parametrize('body', indirect=True, argvalues=[
         {'name': "tag1", 'description': "desc_1"},
         {'name': "tag1"}
