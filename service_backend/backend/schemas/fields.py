@@ -51,7 +51,7 @@ class DockerImage(String):
 class DockerTag(String):
     def __init__(self, *args, **kwargs):
         kwargs['description'] = "String with a docker hub container tag"
-        kwargs['example'] = "latest"
+        kwargs['example'] = "1.0.2-gpu"
         super().__init__(*args, **kwargs)
 
 
@@ -102,7 +102,7 @@ class SiteName(String):
 class Address(String):
     def __init__(self, *args, **kwargs):
         kwargs['description'] = "String with place where a site is located"
-        kwargs['example'] = "Karlsruhe Institute of Technology"
+        kwargs['example'] = "76131 Karlsruhe, Germany"
         super().__init__(*args, **kwargs)
 
 
