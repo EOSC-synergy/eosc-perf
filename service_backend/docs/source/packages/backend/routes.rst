@@ -51,11 +51,3 @@ backend.routes.users module
    :members:
    :undoc-members:
    :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: backend.routes
-   :members:
-   :undoc-members:
-   :show-inheritance:
