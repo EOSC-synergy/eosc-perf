@@ -1,51 +1,48 @@
-backend.routes package
+Routes package
 ======================
 
-Submodules
-----------
-
-backend.routes.benchmarks module
---------------------------------
+Benchmarks module
+-----------------
 
 .. automodule:: backend.routes.benchmarks
    :members:
    :undoc-members:
    :show-inheritance:
 
-backend.routes.reports module
------------------------------
+Reports module
+--------------
 
 .. automodule:: backend.routes.reports
    :members:
    :undoc-members:
    :show-inheritance:
 
-backend.routes.results module
------------------------------
+Results module
+--------------
 
 .. automodule:: backend.routes.results
    :members:
    :undoc-members:
    :show-inheritance:
 
-backend.routes.sites module
----------------------------
+Sites module
+------------
 
 .. automodule:: backend.routes.sites
    :members:
    :undoc-members:
    :show-inheritance:
 
-backend.routes.tags module
---------------------------
+Tags module
+-----------
 
 .. automodule:: backend.routes.tags
    :members:
    :undoc-members:
    :show-inheritance:
 
-backend.routes.users module
----------------------------
+Users module
+------------
 
 .. automodule:: backend.routes.users
    :members:

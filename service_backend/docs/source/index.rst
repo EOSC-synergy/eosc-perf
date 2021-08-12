@@ -60,7 +60,10 @@ out of your application when using our endpoints.
   :doc:`Filter results by json values </advanced/json-filters>`
 
 * **Extending EOSC Performance**:
-  :doc:`Modules, Classes and Functions </packages/packages>`
+  :doc:`Modules, Classes and Functions </_backend/backend>`
+
+* **Database inteface with Python**:
+  :doc:`Instantiate multiple models with Factories </_factories/factories/>`
 
 .. toctree::
    :maxdepth: 2
@@ -70,8 +73,8 @@ out of your application when using our endpoints.
 
    /advanced/generic-search
    /advanced/json-filters
-
-   /packages/packages
+   /_backend/backend
+   /_factories/factories
 
 
 Indices and tables
