@@ -6,7 +6,7 @@ from backend.models import models
 from backend.schemas import schemas
 from pytest import mark
 from tests import asserts
-from tests.db_instances import tags
+from tests.db_instances import tags, users
 
 @mark.parametrize('endpoint', ['tags.Root'], indirect=True)
 class TestRoot:
@@ -35,6 +35,8 @@ class TestRoot:
         assert response_GET.status_code == 422
 
     @mark.usefixtures('grant_logged')
+    @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
         {'name': "tag4", 'description': "desc_1"},
         {'name': "tag4"}
@@ -66,6 +68,8 @@ class TestRoot:
         assert response_POST.status_code == 403
 
     @mark.usefixtures('grant_logged')
+    @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
         {'name': "tag1", 'description': "desc_1"},
         {'name': "tag1"}
