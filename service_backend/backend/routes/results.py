@@ -21,7 +21,7 @@ class Root(MethodView):
     @blp.arguments(args.ResultFilter, location='query')
     @blp.response(200, schemas.Results)
     def get(self, query_args):
-        """ (Free) Filters and list results
+        """(Free) Filters and list results
 
         Use this method to get a list of results filtered according to your 
         requirements. The response returns a pagination object with the
