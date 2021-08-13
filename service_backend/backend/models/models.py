@@ -1,6 +1,7 @@
 """Models module package for main models definition."""
+import sqlalchemy as sa
 from flask_smorest import abort
-from sqlalchemy import Column, ForeignKey, Text, UniqueConstraint, or_
+from sqlalchemy import Column, DateTime, ForeignKey, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSON, JSONB
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
@@ -79,7 +80,7 @@ class Benchmark(HasReports, HasCreationDetails, PkModel):
         results = cls.query
         for keyword in terms:
             results = results.filter(
-                or_(
+                sa.or_(
                     Benchmark.docker_image.contains(keyword),
                     Benchmark.docker_tag.contains(keyword),
                     Benchmark.description.contains(keyword)
@@ -122,7 +123,7 @@ class Site(HasReports, HasCreationDetails, PkModel):
         results = cls.query
         for keyword in terms:
             results = results.filter(
-                or_(
+                sa.or_(
                     Site.name.contains(keyword),
                     Site.address.contains(keyword),
                     Site.description.contains(keyword)
@@ -171,6 +172,7 @@ class Result(HasReports, HasTags, HasCreationDetails, PkModel):
     They carry the JSON data output by the ran benchmarks.
     """
     json = Column(JSONB, nullable=False)
+    executed_at = Column(DateTime, nullable=False)
 
     benchmark_id = Column(ForeignKey('benchmark.id'), nullable=False)
     benchmark = relationship(Benchmark, backref=backref(
@@ -212,7 +214,7 @@ class Result(HasReports, HasTags, HasCreationDetails, PkModel):
         results = cls.query
         for keyword in terms:
             results = results.filter(
-                or_(
+                sa.or_(
                     Result.docker_image.contains(keyword),
                     Result.docker_tag.contains(keyword),
                     Result.site_name.contains(keyword),

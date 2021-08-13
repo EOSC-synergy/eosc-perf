@@ -11,7 +11,7 @@ class User(Schema):
     sub = fields.Sub(required=True, dump_only=True)
     iss = fields.Iss(required=True, dump_only=True)
     email = fields.Email(required=True)
-    created_at = fields.DateTime(required=True)
+    created_at = fields.CreationDT(required=True)
 
 
 class Users(Pagination, Schema):
@@ -23,7 +23,7 @@ class Users(Pagination, Schema):
 
 class Report(Schema):
     id = fields.Id(required=True, dump_only=True)
-    upload_date = fields.DateTime(attribute="created_at", required=True)
+    upload_datetime = fields.UploadDT(attribute="created_at", required=True)
     verdict = fields.Boolean(required=True)
     message = fields.Message(required=True)
     resource_type = fields.Resource(required=True)
@@ -148,7 +148,8 @@ class TagEdit(Schema):
 
 class Result(Schema):
     id = fields.Id(required=True, dump_only=True)
-    upload_date = fields.DateTime(attribute="created_at", required=True)
+    upload_datetime = fields.UploadDT(attribute="created_at", required=True)
+    execution_datetime = fields.ExecDT(attribute="executed_at", required=True)
     json = fields.Dict(required=True)
     benchmark = fields.Nested(Benchmark, required=True)
     site = fields.Nested(Site, required=True)

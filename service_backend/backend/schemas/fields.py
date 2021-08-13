@@ -167,3 +167,24 @@ class Message(String):
         kwargs['description'] = "Message included in a report"
         kwargs['example'] = "Result does not match benchmark template"
         super().__init__(*args, **kwargs)
+
+
+class CreationDT(DateTime):
+    def __init__(self, *args, **kwargs):
+        kwargs['description'] = "ISO8601 Datatime of the resource creation"
+        kwargs['example'] = "2021-08-13T06:51:44.060Z"
+        super().__init__(*args, **kwargs)
+
+
+class UploadDT(DateTime):
+    def __init__(self, *args, **kwargs):
+        kwargs['description'] = "ISO8601 Datatime of the resource upload"
+        kwargs['example'] = "2021-08-13T06:51:44.060Z"
+        super().__init__(*args, **kwargs)
+
+
+class ExecDT(DateTime):
+    def __init__(self, *args, **kwargs):
+        kwargs['description'] = "ISO8601 Datatime of benchmark execution start"
+        kwargs['example'] = "2020-05-21T10:31:00.000Z"
+        super().__init__(*args, **kwargs)

@@ -150,11 +150,11 @@ class Root(MethodView):
             verdict=True  # Does not require accept from admin
         )
         return models.Result.create(
-            json=body_args, created_by=user, reports=[report],
-            benchmark=models.Benchmark.get(query_args['benchmark_id']),
-            site=models.Site.get(query_args['site_id']),
-            flavor=models.Flavor.get(query_args['flavor_id']),
-            tags=[models.Tag.get(id) for id in query_args['tags_ids']]
+            benchmark=models.Benchmark.get(query_args.pop('benchmark_id')),
+            site=models.Site.get(query_args.pop('site_id')),
+            flavor=models.Flavor.get(query_args.pop('flavor_id')),
+            tags=[models.Tag.get(id) for id in query_args.pop('tags_ids')],
+            json=body_args, created_by=user, reports=[report], **query_args
         )
 
 

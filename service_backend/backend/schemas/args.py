@@ -60,6 +60,7 @@ class ResultFilter(Pagination, Schema):
 
 
 class ResultContext(Schema):
+    execution_datetime = fields.ExecDT(attribute="executed_at", required=True)
     benchmark_id = fields.Id(required=True)
     site_id = fields.Id(required=True)
     flavor_id = fields.Id(required=True)
@@ -68,4 +69,3 @@ class ResultContext(Schema):
 
 class Search(Pagination, Schema):
     terms = fields.Terms()
-

@@ -58,8 +58,10 @@ def match_report(json, report):
     assert json['id'] == str(report.id)
 
     # Check the report has a creation date
-    assert 'upload_date' in json and type(json['upload_date']) is str
-    assert json['upload_date'] == str(report.created_at).replace(" ", "T")
+    assert 'upload_datetime' in json
+    assert type(json['upload_datetime']) is str
+    upload_datetime = str(report.created_at).replace(" ", "T")
+    assert json['upload_datetime'] == upload_datetime
 
     # Check the report has a verdict
     assert type(json['verdict']) is bool or json['verdict'] is None
@@ -172,8 +174,16 @@ def match_result(json, result):
     assert json['json'] == result.json
 
     # Check the result has an upload date
-    assert 'upload_date' in json and type(json['upload_date']) is str
-    assert json['upload_date'] == str(result.created_at).replace(" ", "T")
+    assert 'upload_datetime' in json
+    assert type(json['upload_datetime']) is str
+    upload_datetime = str(result.created_at).replace(" ", "T")
+    assert json['upload_datetime'] == upload_datetime
+
+    # Check the report has a creation date
+    assert 'execution_datetime' in json
+    assert type(json['execution_datetime']) is str
+    execution_datetime = str(result.executed_at).replace(" ", "T")
+    assert json['execution_datetime'] == execution_datetime
 
     # Check the result has a benchmark
     assert 'benchmark' in json
@@ -228,9 +238,9 @@ def match_query(json, url):
         if 'type' in query_param:
             assert json['type'] == query_param['type'][0]
         if 'upload_before' in query_param:
-            assert json['upload_date'] < query_param['upload_before'][0]
+            assert json['upload_datetime'] < query_param['upload_before'][0]
         if 'upload_after' in query_param:
-            assert json['upload_date'] > query_param['upload_after'][0]
+            assert json['upload_datetime'] > query_param['upload_after'][0]
 
     # Exclusive for /results
     if parsed_url.path == "/results":
@@ -243,13 +253,14 @@ def match_query(json, url):
         if 'flavor_name' in query_param:
             assert json['flavor']['name'] == query_param['flavor_name'][0]
         if 'upload_before' in query_param:
-            assert json['upload_date'] < query_param['upload_before'][0]
+            assert json['upload_datetime'] < query_param['upload_before'][0]
         if 'upload_after' in query_param:
-            assert json['upload_date'] > query_param['upload_after'][0]
+            assert json['upload_datetime'] > query_param['upload_after'][0]
         if 'tag_names' in query_param:
-            assert set(x['name'] for x in json['tags']) == set(query_param['tag_names'])
+            assert set(x['name']
+                       for x in json['tags']) == set(query_param['tag_names'])
         # Add assert for filters
-            # TODO: Assert for filters  
+            # TODO: Assert for filters
 
     # Exclusive for /results/search
     if parsed_url.path == "/results/search":

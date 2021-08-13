@@ -8,6 +8,7 @@ from tests import asserts
 from tests.db_instances import benchmarks, flavors, results, sites, tags, users
 
 post_query = {
+    'execution_datetime': "2020-05-21T10:31:00.000Z",
     'benchmark_id': benchmarks[0]['id'],
     'site_id': sites[0]['id'],
     'flavor_id': flavors[0]['id'],
@@ -109,6 +110,7 @@ class TestRoot:
     @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
     @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('query', indirect=True, argvalues=[
+        {k: post_query[k] for k in post_query.keys() - {'execution_datetime'}},
         {k: post_query[k] for k in post_query.keys() - {'benchmark_id'}},
         {k: post_query[k] for k in post_query.keys() - {'site_id'}},
         {k: post_query[k] for k in post_query.keys() - {'flavor_id'}}
