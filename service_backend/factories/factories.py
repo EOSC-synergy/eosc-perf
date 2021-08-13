@@ -43,7 +43,7 @@ class DBBenchmark(SQLAlchemyModelFactory):
     docker_image = Sequence(lambda n: f"b{n}")
     docker_tag = "latest"
     description = ""
-    json_template = {}
+    json_schema = {}
     created_at = fdt.fuzz()
     created_by = SubFactory(DBUser)
 

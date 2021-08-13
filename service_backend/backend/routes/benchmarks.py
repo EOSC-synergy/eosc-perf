@@ -49,6 +49,8 @@ class Root(MethodView):
         Use this method to create a new benchmarks in the database so it can
         be accessed by the application users. The method returns the complete
         created benchmark (if succeeds).
+
+        Note: Benchmark use JSON Schemas to implement results validation.
         ---
 
         :param body_args: The request body arguments as python dictionary

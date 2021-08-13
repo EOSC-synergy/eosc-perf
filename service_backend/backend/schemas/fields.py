@@ -55,10 +55,43 @@ class DockerTag(String):
         super().__init__(*args, **kwargs)
 
 
-class JsonTemplate(Dict):
+class Json_schema(Dict):
     def __init__(self, *args, **kwargs):
         # kwargs['description'] = description   # Does not work
-        # kwargs['example'] = {},   # TODO: Add valid example
+        kwargs['example'] = {
+            "$id": "https://example.com/benchmark.schema.json",
+            "$schema": "https://json-schema.org/draft/2019-09/schema",
+            "type": "object",
+            "properties": {
+                "start_datetime": {
+                    "description": "The benchmark start datetime.",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "end_datetime": {
+                    "description": "The benchmark end datetime.",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "machine": {
+                    "description": "Execution machine details.",
+                    "type": "object",
+                    "properties": {
+                        "cpus": {
+                            "description": "Number of CPU.",
+                            "type": "integer"
+                        },
+                        "ram": {
+                            "description": "Available RAM in MB.",
+                            "type": "integer"
+                        },
+                    },
+                    "required": ["cpus", "ram"]
+                }
+            },
+            "required": ["start_datetime", "end_datetime", "machine" ]
+
+        }
         super().__init__(*args, **kwargs)
 
 

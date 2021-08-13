@@ -130,6 +130,9 @@ class Root(MethodView):
         Use this method to create a new result in the database so it can
         be accessed by the application users. The method returns the complete
         created result (if succeeds).
+        
+        Note: The uploaded result must pass the benchmark JSON Schema to be
+        accepted, otherwise 422 UnprocessableEntity is produced.
         ---
 
         :param query_args: The request query arguments as python dictionary

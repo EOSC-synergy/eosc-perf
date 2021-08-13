@@ -38,21 +38,21 @@ benchmarks = [{'id': uuid4()} for _ in range(3)]
 benchmarks[0]['docker_image'] = "b0"
 benchmarks[0]['docker_tag'] = "v1.0"
 benchmarks[0]['description'] = "Benchmark 0"
-benchmarks[0]['json_template'] = {'time': ""}
+benchmarks[0]['json_schema'] = {"properties": {"time": {"type": "integer"}}}
 benchmarks[0]['created_by__email'] = users[0]['email']
 benchmarks[0]['creation_report__verdict'] = True
 
 benchmarks[1]['docker_image'] = "b1"
 benchmarks[1]['docker_tag'] = "v1.0"
 benchmarks[1]['description'] = "Benchmark 1"
-benchmarks[1]['json_template'] = {'time': ""}
+benchmarks[0]['json_schema'] = {"properties": {"time": {"type": "integer"}}}
 benchmarks[1]['created_by__email'] = users[0]['email']
 benchmarks[1]['creation_report__verdict'] = True
 
 benchmarks[2]['docker_image'] = "b2"
 benchmarks[2]['docker_tag'] = "v1.0"
 benchmarks[2]['description'] = "Benchmark 2"
-benchmarks[2]['json_template'] = {'time': ""}
+benchmarks[0]['json_schema'] = {"properties": {"time": {"type": "number"}}}
 benchmarks[2]['created_by__email'] = users[0]['email']
 benchmarks[2]['creation_report__verdict'] = None
 

@@ -43,9 +43,9 @@ def match_benchmark(json, benchmark):
     assert 'description' in json and type(json['description']) is str
     assert json['description'] == benchmark.description
 
-    # Check the benchmark has a json_template
-    assert 'json_template' in json and type(json['json_template']) is dict
-    assert json['json_template'] == benchmark.json_template
+    # Check the benchmark has a json_schema
+    assert 'json_schema' in json and type(json['json_schema']) is dict
+    assert json['json_schema'] == benchmark.json_schema
 
     return True
 

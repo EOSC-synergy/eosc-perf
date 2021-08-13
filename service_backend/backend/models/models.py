@@ -1,6 +1,8 @@
 """Models module package for main models definition."""
+import jsonschema
 import sqlalchemy as sa
 from flask_smorest import abort
+from jsonschema.exceptions import SchemaError, ValidationError
 from sqlalchemy import Column, DateTime, ForeignKey, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSON, JSONB
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -33,7 +35,7 @@ class Benchmark(HasReports, HasCreationDetails, PkModel):
     docker_image = Column(Text, nullable=False)
     docker_tag = Column(Text, nullable=False)
     description = Column(Text, default="")
-    json_template = Column(JSON, default={})
+    json_schema = Column(JSON, nullable=False)
 
     @declared_attr
     def __table_args__(cls):
@@ -56,15 +58,18 @@ class Benchmark(HasReports, HasCreationDetails, PkModel):
         )
 
     @classmethod
-    def create(cls, docker_image, docker_tag="latest", **kwargs):
+    def create(cls, docker_image, docker_tag, json_schema, **kwargs):
         if not dockerhub.valid_image(docker_image, docker_tag):
             abort(422, messages={'error': "Unknown docker image"})
-        else:
-            return super().create(
-                docker_image=docker_image,
-                docker_tag=docker_tag,
-                **kwargs
-            )
+        try:
+            jsonschema.Draft7Validator.check_schema(json_schema)
+        except SchemaError as err:
+            abort(422, messages={'error': err.message, 'path': f"{err.path}"})
+
+        return super().create(
+            docker_image=docker_image, docker_tag=docker_tag,
+            json_schema=json_schema, **kwargs
+        )
 
     @classmethod
     def search(cls, terms):
@@ -200,6 +205,15 @@ class Result(HasReports, HasTags, HasCreationDetails, PkModel):
             str: A human-readable representation string of the result.
         """
         return '<{} {}>'.format(self.__class__.__name__, self.id)
+
+    @classmethod
+    def create(cls, benchmark, json, **kwargs):
+        try:
+            jsonschema.validate(json, schema=benchmark.json_schema)
+        except ValidationError as err:
+            abort(422, messages={'error': err.message, 'path': f"{err.path}"})
+
+        return super().create(benchmark=benchmark, json=json, **kwargs)
 
     @classmethod
     def search(cls, terms):

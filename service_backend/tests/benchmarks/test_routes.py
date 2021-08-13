@@ -41,10 +41,9 @@ class TestRoot:
     @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
     @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('body', indirect=True,  argvalues=[
-        {'docker_image': "b1", 'docker_tag': "v2.0"},
-        {'docker_image': "b2", 'docker_tag': "v2.0"},
-        {'docker_image': "b3", 'docker_tag': "v1.0", 'description': "test"},
-        {'docker_image': "b3", 'docker_tag': "v1.0", 'json_template': {'x': 1}}
+        {'docker_image': "b1", 'docker_tag': "v2.0", 'json_schema': {'x': 1}},
+        {'docker_image': "b2", 'docker_tag': "v2.0", 'json_schema': {'x': 1},
+         'description': "This is a long benchmark description"},
     ])
     def test_POST_201(self, response_POST, url, body):
         """POST method succeeded 201."""
@@ -55,7 +54,7 @@ class TestRoot:
         asserts.match_benchmark(response_POST.json, benchmark)
 
     @mark.parametrize('body', indirect=True,  argvalues=[
-        {'docker_image': "b1", 'docker_tag': "v1.0"},
+        {'docker_image': "b1", 'docker_tag': "v2.0", 'json_schema': {'x': 1}},
         {}  # Empty body
     ])
     def test_POST_401(self, response_POST):
@@ -66,7 +65,7 @@ class TestRoot:
     @mark.parametrize('token_sub', ["non-registered"], indirect=True)
     @mark.parametrize('token_iss', ["not-existing"], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
-        {'docker_image': "b1", 'docker_tag': "v1.0"}
+        {'docker_image': "b1", 'docker_tag': "v2.0", 'json_schema': {'x': 1}}
     ])
     def test_POST_403(self, response_POST):
         """POST method fails 403 if user not registered."""
@@ -76,20 +75,25 @@ class TestRoot:
     @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
     @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('body', indirect=True,  argvalues=[
-        {'docker_image': "b1", 'docker_tag': "v1.0"},
-        {'docker_image': "b2", 'docker_tag': "v1.0"}
+        {'docker_image': "b1", 'docker_tag': "v1.0", 'json_schema': {'x': 1}},
+        {'docker_image': "b2", 'docker_tag': "v1.0", 'json_schema': {'x': 1}}
     ])
     @mark.filterwarnings("ignore:.*conflicts.*:sqlalchemy.exc.SAWarning")
     def test_POST_409(self, response_POST):
         """POST method fails 409 if resource already exists."""
         assert response_POST.status_code == 409
 
-    @mark.usefixtures('grant_logged')
+    @mark.usefixtures('grant_logged', 'mock_docker_registry')
     @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
     @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('body', indirect=True,  argvalues=[
-        {'docker_image': "b1"},  # Missing docker_tag
-        {'docker_tag': "t1"},  # Missing docker_image
+        {'docker_image': "_", 'docker_tag': "_", 'json_schema': {'type': 'x'}},
+        {'docker_image': "b1", 'docker_tag': "v1.0"},   # Missing json_schema
+        {'docker_image': "b1", 'json_schema': {'x': 1}}, # Missing docker_tag
+        {'docker_tag': "v1.0", 'json_schema': {'x': 1}}, # Missing docker_image
+        {'docker_image': "b1"},
+        {'docker_tag': "t1"}, 
+        {'json_schema': {'x': 1}},
         {}  # Empty body
     ])
     def test_POST_422(self, response_POST):
@@ -150,7 +154,7 @@ class TestId:
         {'docker_image': "new_name"},
         {'docker_tag': "new_tag"},
         {'description': "new_description"},
-        {'json_template': {"x": 2}}
+        {'json_schema': {"x": 2}}
     ])
     def test_PUT_204(self, body, response_PUT, benchmark):
         """PUT method succeeded 204."""

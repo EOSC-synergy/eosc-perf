@@ -118,7 +118,21 @@ class TestRoot:
     @mark.parametrize('body', indirect=True, argvalues=[
         {'json_field_1': "Content", 'time': 10}
     ])
-    def test_POST_422(self, response_POST):
+    def test_POST_422_bad_query(self, response_POST):
+        """POST method fails 422 if missing required."""
+        assert response_POST.status_code == 422
+
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
+    @mark.parametrize('query', indirect=True, argvalues=[
+        post_query   # Resource can have multiple results
+    ])
+    @mark.parametrize('body', indirect=True, argvalues=[
+        {'time': "10"}, # Time as string
+        {'time': {'hours':1, 'min': 10}}, # Time as object
+    ])
+    def test_POST_422_bad_body(self, response_POST):
         """POST method fails 422 if missing required."""
         assert response_POST.status_code == 422
 

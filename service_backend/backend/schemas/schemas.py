@@ -46,7 +46,7 @@ class Benchmark(Schema):
     docker_image = fields.DockerImage(required=True)
     docker_tag = fields.DockerTag(required=True)
     description = fields.Description(required=True)
-    json_template = fields.JsonTemplate(required=True)
+    json_schema = fields.Json_schema(required=True)
 
 
 class Benchmarks(Pagination, Schema):
@@ -57,14 +57,14 @@ class BenchmarkCreate(Schema):
     docker_image = fields.DockerImage(required=True)
     docker_tag = fields.DockerTag(required=True)
     description = fields.Description()
-    json_template = fields.JsonTemplate()
+    json_schema = fields.Json_schema(required=True)
 
 
 class BenchmarkEdit(Schema):
     docker_image = fields.DockerImage()
     docker_tag = fields.DockerTag()
     description = fields.Description()
-    json_template = fields.JsonTemplate()
+    json_schema = fields.Json_schema()
 
 
 # ---------------------------------------------------------------------
