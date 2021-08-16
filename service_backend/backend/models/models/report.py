@@ -8,18 +8,17 @@ table.
 SQLAlchemy's single-table-inheritance feature is used
 to target different association types.
 """
-from operator import or_
-from sqlalchemy import Boolean, Column, ForeignKey, String, Text, select, exists, Integer, or_
+from sqlalchemy import Boolean, Column, ForeignKey, String, Text, exists, or_
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import backref, column_property, relationship
 
-from .. import PkModel
-from . import utils
+from ..core import PkModel
+from ..utils import HasCreationDate
+from .user import HasCreationUser
 
 
-class Report(utils.HasCreationDetails, PkModel):
+class Report(HasCreationDate, HasCreationUser, PkModel):
     """The Report class represents an automated or an user’s report.
 
     Reports are automated if used to submit new benchmarks or sites, in which

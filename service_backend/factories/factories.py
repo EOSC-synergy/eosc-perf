@@ -1,7 +1,7 @@
 """Factories module to define the main model factories"""
 import uuid
 
-from backend.models import models
+from backend import models
 from factory import (LazyFunction, SelfAttribute, Sequence, SubFactory,
                      post_generation)
 from factory.alchemy import SQLAlchemyModelFactory

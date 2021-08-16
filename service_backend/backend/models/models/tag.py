@@ -11,7 +11,7 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import relationship
 
-from .. import PkModel
+from ..core import PkModel
 
 
 class Tag(PkModel):

@@ -1,6 +1,6 @@
 """Report routes."""
+from backend import models
 from backend.extensions import auth
-from backend.models import models
 from backend.schemas import args, schemas
 from flask.views import MethodView
 from flask_smorest import Blueprint
@@ -73,7 +73,7 @@ class ReportId(MethodView):
         :raises NotFound: No report with id found
         :return: The database report using the described id
         :rtype: :class:`models.Report`
-        """        
+        """
         return models.Report.get(report_id)
 
     @auth.admin_required()
@@ -93,7 +93,7 @@ class ReportId(MethodView):
         :raises Unauthorized: The server could not verify the user identity
         :raises Forbidden: The user has not the required privileges
         :raises NotFound: No report with id found
-        """   
+        """
         models.Report.get(report_id).delete()
 
 

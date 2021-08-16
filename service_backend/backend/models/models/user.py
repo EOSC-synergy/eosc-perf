@@ -6,8 +6,8 @@ from sqlalchemy import Column, ForeignKeyConstraint, Text
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import backref, relationship
 
-from .. import TokenModel
-from . import HasCreationDate
+from ..core import TokenModel
+from ..utils import HasCreationDate
 
 
 class User(HasCreationDate, TokenModel):

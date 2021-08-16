@@ -2,7 +2,7 @@
 from operator import mod
 from uuid import uuid4
 
-from backend.models import models
+from backend import models
 from backend.schemas import schemas
 from pytest import mark
 from tests import asserts

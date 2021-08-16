@@ -1,6 +1,6 @@
 """User routes."""
 from backend.extensions import auth
-from backend.models import models
+from backend import models
 from backend.schemas import args, schemas
 from flaat import tokentools
 from flask import request

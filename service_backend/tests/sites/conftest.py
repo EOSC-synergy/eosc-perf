@@ -1,5 +1,5 @@
 """Defines fixtures available to sites tests."""
-from backend.models import models
+from backend import models
 from flask import url_for
 from pytest import fixture
 
