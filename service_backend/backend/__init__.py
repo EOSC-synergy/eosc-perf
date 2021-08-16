@@ -6,13 +6,13 @@ import marshmallow as ma
 from flask import Flask
 from webargs.flaskparser import FlaskParser
 
-from .routes import benchmarks, reports, results, sites, tags, users
+from . import routes
 from .extensions import api         # Api interface module
+from .extensions import auth        # flaat ext. manage db migrations
 from .extensions import bcrypt      # Encrypt passwords and others
 from .extensions import cache       # Caches responses
 from .extensions import db          # SQLAlchemy instance
 from .extensions import migrate     # Alembic ext. manage db migrations
-from .extensions import auth        # flaat ext. manage db migrations
 
 # Raise ValidationError when unknown fields in query
 FlaskParser.DEFAULT_UNKNOWN_BY_LOCATION["query"] = ma.RAISE
@@ -90,12 +90,12 @@ def register_extensions(app):
 
 def register_blueprints(app):
     """Register Flask blueprints."""
-    api.register_blueprint(benchmarks.blp, url_prefix='/benchmarks')
-    api.register_blueprint(reports.blp, url_prefix='/reports')
-    api.register_blueprint(results.blp, url_prefix='/results')
-    api.register_blueprint(sites.blp, url_prefix='/sites')
-    api.register_blueprint(tags.blp, url_prefix='/tags')
-    api.register_blueprint(users.blp, url_prefix='/users')
+    api.register_blueprint(routes.benchmarks.blp, url_prefix='/benchmarks')
+    api.register_blueprint(routes.reports.blp, url_prefix='/reports')
+    api.register_blueprint(routes.results.blp, url_prefix='/results')
+    api.register_blueprint(routes.sites.blp, url_prefix='/sites')
+    api.register_blueprint(routes.tags.blp, url_prefix='/tags')
+    api.register_blueprint(routes.users.blp, url_prefix='/users')
 
 
 def configure_logger(app):

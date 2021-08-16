@@ -1,6 +1,11 @@
 Routes package
 ======================
 
+.. automodule:: backend.routes
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Benchmarks module
 -----------------
 

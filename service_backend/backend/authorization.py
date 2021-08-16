@@ -4,6 +4,7 @@
 #   #use-introspection-in-resource-server
 
 from functools import wraps
+
 from flaat import Flaat
 from flask import current_app, request
 

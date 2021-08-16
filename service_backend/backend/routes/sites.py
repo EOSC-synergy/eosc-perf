@@ -1,6 +1,6 @@
 """Site routes."""
-from backend.extensions import auth
 from backend import models
+from backend.extensions import auth
 from backend.schemas import args, schemas
 from flaat import tokentools
 from flask import request

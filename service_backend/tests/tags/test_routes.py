@@ -8,6 +8,7 @@ from pytest import mark
 from tests import asserts
 from tests.db_instances import tags, users
 
+
 @mark.parametrize('endpoint', ['tags.Root'], indirect=True)
 class TestRoot:
     """Tests for 'Root' route in blueprint."""

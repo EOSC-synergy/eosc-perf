@@ -4,7 +4,6 @@ from datetime import datetime
 from backend.extensions import db
 from factory.fuzzy import FuzzyNaiveDateTime
 
-
 fdt = FuzzyNaiveDateTime(datetime(2000, 1, 1))
 
 

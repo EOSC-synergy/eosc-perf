@@ -6,8 +6,8 @@ from flask_caching import Cache
 from flask_migrate import Migrate
 from flask_smorest import Api
 from flask_sqlalchemy import SQLAlchemy
-from .authorization import Authorization
 
+from .authorization import Authorization
 
 bcrypt = Bcrypt()
 cache = Cache()
