@@ -2,64 +2,59 @@ Models package
 ======================
 
 .. automodule:: backend.models
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
-Models module
--------------
-
-.. automodule:: backend.models.models
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Utils subpackage
-----------------
-
-.. automodule:: backend.models.utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Utils.utils module
-------------------
-
-.. automodule:: backend.models.utils.utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Utils.dockerhub module
-----------------------
-
-.. automodule:: backend.models.utils.dockerhub
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Utils.reports module
---------------------
-
-.. automodule:: backend.models.utils.reports
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Utils.tags module
+Benchmark class
 -----------------
 
-.. automodule:: backend.models.utils.tags
+.. autoclass:: backend.models.Benchmark
    :members:
    :undoc-members:
    :show-inheritance:
 
-Utils.users module
-------------------
+Flavor class
+-----------------
 
-.. automodule:: backend.models.utils.users
+.. autoclass:: backend.models.Flavor
    :members:
    :undoc-members:
    :show-inheritance:
 
+Report class
+-----------------
 
+.. autoclass:: backend.models.Report
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Result class
+-----------------
+
+.. autoclass:: backend.models.Result
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Site class
+-----------------
+
+.. autoclass:: backend.models.Site
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Tag class
+-----------------
+
+.. autoclass:: backend.models.Tag
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+User class
+-----------------
+
+.. autoclass:: backend.models.User
+   :members:
+   :undoc-members:
+   :show-inheritance:
