@@ -1,16 +1,16 @@
-import { Flavor, Site } from '../../api';
+import { Flavor, Flavors, Site } from '../../api';
 import { useQuery } from 'react-query';
 import { getHelper } from '../../api-helpers';
 import { Card } from 'react-bootstrap';
 import { LoadingOverlay } from '../loadingOverlay';
-import { FlavorEdit } from './flavorEdit';
+import { FlavorEditor } from './flavorEditor';
 import React from 'react';
 
 export function FlavorList(props: { site: Site; token: string }) {
     let { status, isLoading, isError, data, isSuccess, refetch } = useQuery(
         'flavors-' + props.site.id,
         () => {
-            return getHelper<Flavor[]>('/sites/' + props.site.id + '/flavors', props.token);
+            return getHelper<Flavors>('/sites/' + props.site.id + '/flavors', props.token);
         },
         {
             enabled: !!props.token,
@@ -23,8 +23,9 @@ export function FlavorList(props: { site: Site; token: string }) {
         <Card style={{ maxHeight: '16rem' }} className="overflow-auto">
             {isLoading && <LoadingOverlay />}
             {isSuccess &&
-                data!.data.map((flavor: Flavor) => (
-                    <FlavorEdit
+                data &&
+                data.data.items!.map((flavor: Flavor) => (
+                    <FlavorEditor
                         flavor={flavor}
                         token={props.token}
                         key={flavor.id}

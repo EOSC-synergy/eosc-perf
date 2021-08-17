@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Col, Container, ListGroup, Row } from 'react-bootstrap';
-import { Site } from '../../api';
+import { Site, Sites } from '../../api';
 import { useQuery } from 'react-query';
 import { getHelper } from '../../api-helpers';
 import { LoadingOverlay } from '../loadingOverlay';
-import { SiteEdit } from './siteEdit';
+import { SiteEditor } from './siteEditor';
 
 function SiteSelect(props: { site: Site; setActiveSite: (site: Site) => void }) {
     return (
@@ -19,11 +19,11 @@ function SiteSelect(props: { site: Site; setActiveSite: (site: Site) => void }) 
     );
 }
 
-function SiteEditor(props: { token: string }) {
+function SitesEditor(props: { token: string }) {
     let { status, isLoading, isError, data, isSuccess, refetch } = useQuery(
         'sites',
         () => {
-            return getHelper<Site[]>('/sites', props.token);
+            return getHelper<Sites>('/sites', props.token);
         },
         {
             enabled: !!props.token,
@@ -33,15 +33,18 @@ function SiteEditor(props: { token: string }) {
 
     const [activeSite, setActiveSite] = useState<Site | null>(null);
 
+    // TODO: pagination
+
     return (
         <Container>
             <Row>
                 <Col>
                     <ListGroup>
                         {isLoading && <LoadingOverlay />}
-                        {data && data.data.length === 0 && 'No sites found!'}
+                        {isSuccess && data && data.data.items!.length === 0 && 'No sites found!'}
                         {isSuccess &&
-                            data?.data.map((site: Site) => (
+                            data &&
+                            data.data.items!.map((site: Site) => (
                                 <SiteSelect
                                     site={site}
                                     setActiveSite={setActiveSite}
@@ -52,7 +55,7 @@ function SiteEditor(props: { token: string }) {
                 </Col>
                 <Col>
                     {activeSite != null && (
-                        <SiteEdit
+                        <SiteEditor
                             token={props.token}
                             key={activeSite.id}
                             site={activeSite}
@@ -67,7 +70,7 @@ function SiteEditor(props: { token: string }) {
 
 const SiteEditorModule = {
     path: '/site-editor',
-    element: SiteEditor,
+    element: SitesEditor,
     name: 'SiteEditor',
     dropdownName: 'Site editor',
 };

@@ -1,11 +1,11 @@
-import { Flavor } from '../../api';
+import { Flavor, FlavorEdit } from '../../api';
 import React, { useState } from 'react';
 import { useMutation } from 'react-query';
 import { putHelper } from '../../api-helpers';
 import { Button, Form, InputGroup, ListGroup } from 'react-bootstrap';
 import { Check, PencilSquare } from 'react-bootstrap-icons';
 
-export function FlavorEdit(props: { flavor: Flavor; token: string; refetch: () => void }) {
+export function FlavorEditor(props: { flavor: Flavor; token: string; refetch: () => void }) {
     const [name, setName] = useState(props.flavor.name);
     const [desc, setDesc] = useState(props.flavor.description);
 
@@ -20,8 +20,8 @@ export function FlavorEdit(props: { flavor: Flavor; token: string; refetch: () =
     }
 
     const { mutate, isLoading } = useMutation(
-        (data: Flavor) =>
-            putHelper<Flavor>('/sites/flavors/' + props.flavor.id, data, props.token, {
+        (data: FlavorEdit) =>
+            putHelper<FlavorEdit>('/sites/flavors/' + props.flavor.id, data, props.token, {
                 flavor_id: props.flavor.id,
             }),
         {

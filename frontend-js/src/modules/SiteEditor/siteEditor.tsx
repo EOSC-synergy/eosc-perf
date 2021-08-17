@@ -1,4 +1,4 @@
-import { Site } from '../../api';
+import { Site, SiteEdit } from '../../api';
 import { useMutation } from 'react-query';
 import { putHelper } from '../../api-helpers';
 import React, { useState } from 'react';
@@ -6,10 +6,10 @@ import { Button, Form } from 'react-bootstrap';
 import { Description, NetAddress, SiteId, SiteName } from './siteFields';
 import { FlavorList } from './flavorList';
 
-export function SiteEdit(props: { token: string; site: Site; refetch: () => void }) {
+export function SiteEditor(props: { token: string; site: Site; refetch: () => void }) {
     const { mutate, isLoading } = useMutation(
-        (data: Site) =>
-            putHelper<Site>('/sites/' + props.site.id, data, props.token, {
+        (data: SiteEdit) =>
+            putHelper<SiteEdit>('/sites/' + props.site.id, data, props.token, {
                 site_id: props.site.id,
             }),
         {
