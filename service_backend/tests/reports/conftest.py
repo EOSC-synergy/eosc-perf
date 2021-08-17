@@ -55,7 +55,7 @@ def report_id(report):
 @fixture(scope='function')
 def report_verdict(request, report):
     """Sets the value for report verdict."""
-    report.update(verdict=request.param)
+    report.update({'verdict': request.param}, force=True)
 
 
 @fixture(scope='function')

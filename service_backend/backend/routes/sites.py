@@ -2,10 +2,9 @@
 from backend import models
 from backend.extensions import auth
 from backend.schemas import args, schemas
-from flaat import tokentools
-from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint
+from sqlalchemy import or_
 
 blp = Blueprint(
     'sites', __name__, description='Operations on sites'
@@ -60,12 +59,7 @@ class Root(MethodView):
         :return: The site created into the database.
         :rtype: :class:`models.Site`
         """
-        access_token = tokentools.get_access_token_from_request(request)
-        user = models.User.get(token=access_token)
-        return models.Site.create(
-            reports = [models.Report(created_by=user, message="New site")],
-            created_by=user, **body_args
-        )
+        return models.Site.create(body_args)
 
 
 @blp.route('/search')
@@ -93,7 +87,14 @@ class Search(MethodView):
         """
         per_page = query_args.pop('per_page')
         page = query_args.pop('page')
-        search = models.Site.search(query_args['terms'])
+        search = models.Site.query
+        for keyword in query_args['terms']:
+            search = search.filter(
+                or_(
+                    models.Site.name.contains(keyword),
+                    models.Site.address.contains(keyword),
+                    models.Site.description.contains(keyword)
+                ))
         search = search.filter(~models.Site.has_open_reports)
         return search.paginate(page, per_page)
 
@@ -143,7 +144,8 @@ class Site(MethodView):
         :raises NotFound: No site with id found
         :raises UnprocessableEntity: Wrong query/body parameters 
         """
-        models.Site.get(site_id).update(**body_args)
+        # Only admins can access this function so it is safe to set force
+        models.Site.get(site_id).update(body_args, force=True)
 
     @auth.admin_required()
     @blp.doc(operationId='DelSite')
@@ -182,6 +184,8 @@ class Flavors(MethodView):
 
         :param query_args: The request query arguments as python dictionary
         :type query_args: dict
+        :param site_id: The id of the site to query the flavors
+        :type site_id: uuid
         :raises UnprocessableEntity: Wrong query/body parameters 
         :return: Pagination object with filtered flavors
         :rtype: :class:`flask_sqlalchemy.Pagination`
@@ -207,6 +211,8 @@ class Flavors(MethodView):
 
         :param body_args: The request body arguments as python dictionary
         :type body_args: dict
+        :param site_id: The id of the site where to add the flavor
+        :type site_id: uuid
         :raises Unauthorized: The server could not verify the user identity
         :raises Forbidden: The user is not registered
         :raises Conflict: Created object conflicts a database item
@@ -214,13 +220,8 @@ class Flavors(MethodView):
         :return: The flavor created into the database.
         :rtype: :class:`models.Flavor`
         """
-        access_token = tokentools.get_access_token_from_request(request)
-        user = models.User.get(token=access_token)
-        return models.Flavor.create(
-            site_id=models.Site.get(site_id).id,  # Trigger NotFound
-            reports=[models.Report(created_by=user, message="New flavor")],
-            created_by=user, **body_args
-        )
+        site_id = models.Site.get(site_id).id,  # Trigger NotFound
+        return models.Flavor.create(dict(site_id=site_id, **body_args))
 
 
 @blp.route('/flavors/<uuid:flavor_id>')
@@ -268,7 +269,8 @@ class Flavor(MethodView):
         :raises NotFound: No flavor with id found
         :raises UnprocessableEntity: Wrong query/body parameters 
         """
-        models.Flavor.get(id=flavor_id).update(**body_args)
+        # Only admins can access this function so it is safe to set force
+        models.Flavor.get(id=flavor_id).update(body_args, force=True)
 
     @auth.admin_required()
     @blp.doc(operationId='DelFlavor')

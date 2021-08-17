@@ -1,11 +1,12 @@
 """Benchmark routes."""
-from backend import models
+import jsonschema
+from backend import models, utils
 from backend.extensions import auth
 from backend.schemas import args, schemas
-from flaat import tokentools
-from flask import request
 from flask.views import MethodView
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
+from jsonschema.exceptions import SchemaError
+from sqlalchemy import or_
 
 blp = Blueprint(
     'benchmarks', __name__, description='Operations on benchmarks'
@@ -62,12 +63,15 @@ class Root(MethodView):
         :return: The benchmark created into the database.
         :rtype: :class:`models.Benchmark`
         """
-        access_token = tokentools.get_access_token_from_request(request)
-        user = models.User.get(token=access_token)
-        return models.Benchmark.create(
-            reports=[models.Report(created_by=user, message="New benchmark")],
-            created_by=user, **body_args
-        )
+        image, tag = body_args['docker_image'], body_args['docker_tag']
+        json_schema = body_args['json_schema']
+        if not utils.dockerhub.valid_image(image, tag):
+            abort(422, messages={'error': "Unknown docker image"})
+        try:
+            jsonschema.Draft7Validator.check_schema(json_schema)
+        except SchemaError as err:
+            abort(422, messages={'error': err.message, 'path': f"{err.path}"})
+        return models.Benchmark.create(body_args)
 
 
 @blp.route('/search')
@@ -95,7 +99,14 @@ class Search(MethodView):
         """
         per_page = query_args.pop('per_page')
         page = query_args.pop('page')
-        search = models.Benchmark.search(query_args['terms'])
+        search = models.Benchmark.query
+        for keyword in query_args['terms']:
+            search = search.filter(
+                or_(
+                    models.Benchmark.docker_image.contains(keyword),
+                    models.Benchmark.docker_tag.contains(keyword),
+                    models.Benchmark.description.contains(keyword)
+                ))
         search = search.filter(~models.Benchmark.has_open_reports)
         return search.paginate(page, per_page)
 
@@ -145,7 +156,8 @@ class Benchmark(MethodView):
         :raises NotFound: No benchmark with id found
         :raises UnprocessableEntity: Wrong query/body parameters 
         """
-        models.Benchmark.get(benchmark_id).update(**body_args)
+        # Only admins can access this function so it is safe to set force
+        models.Benchmark.get(benchmark_id).update(body_args, force=True)
 
     @auth.admin_required()
     @blp.doc(operationId='DelBenchmark')

@@ -3,7 +3,7 @@ from sqlalchemy import Column, ForeignKey, Text, UniqueConstraint
 from sqlalchemy.ext.declarative import declared_attr
 
 from ..core import PkModel
-from ..utils import HasCreationDate
+from . import HasCreationDate
 from .report import HasReports
 from .user import HasCreationUser
 

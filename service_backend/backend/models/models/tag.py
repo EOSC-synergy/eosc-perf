@@ -6,7 +6,7 @@ shared among all parents.
 See examples/generic_associations/table_per_association at the sqlalchemy
 documentation.
 """
-from sqlalchemy import Column, ForeignKey, Table, Text, or_
+from sqlalchemy import Column, ForeignKey, Table, Text
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import relationship
@@ -33,25 +33,6 @@ class Tag(PkModel):
             str: A human-readable representation string of the tag.
         """
         return '<{} {}>'.format(self.__class__.__name__, self.name)
-
-    @classmethod
-    def search(cls, terms):
-        """Query all tags containing all keywords.
-
-        Args:
-            terms (List[str]): A list of all keywords to match on the search.
-        Returns:
-            List[Tag]: A list containing all matching tags in the database.
-        """
-        results = cls.query
-        for keyword in terms:
-            results = results.filter(
-                or_(
-                    Tag.name.contains(keyword),
-                    Tag.description.contains(keyword)
-                ))
-
-        return results
 
 
 class HasTags(object):

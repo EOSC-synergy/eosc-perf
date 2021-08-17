@@ -3,10 +3,14 @@
 # https://docs.authlib.org/en/latest/specs/rfc7662.html
 #   #use-introspection-in-resource-server
 
+from backend.schemas.fields import Message
 from functools import wraps
 
-from flaat import Flaat
+from flaat import Flaat, tokentools
 from flask import current_app, request
+from flask_smorest import abort
+
+from backend import models
 
 
 class Authorization(Flaat):
@@ -57,6 +61,36 @@ class Authorization(Flaat):
         admin_entitlements = app.config['ADMIN_ENTITLEMENTS']
         self.admin_entitlements = admin_entitlements
 
+    def valid_token(self):
+        """Function to evaluate the validity of the user login"""
+        try:
+            all_info = self._get_all_info_from_request(request)
+            current_app.logger.debug(f"request info: {all_info}")
+            return all_info is not None
+
+        except Exception as e:
+            current_app.logger.error('Error validating user', exc_info=e)
+            return False
+
+    def token_required(self, on_failure=None):
+        """Decorator to enforce a valid login.
+        Optional on_failure is called if no valid user detected.
+        Useful for redirecting to some login page"""
+        def wrapper(view_func):
+            @wraps(view_func)
+            def decorated(*args, **kwargs):
+                if self.valid_token():
+                    current_app.logger.debug("Token accepted")
+                    return self._wrap_async_call(view_func, *args, **kwargs)
+                elif on_failure:
+                    failure = on_failure(self.get_last_error())
+                    return self._return_formatter_wf(failure, 401)
+                else:
+                    alert = f"No valid authentication: {self.get_last_error()}"
+                    abort(401, message=alert)
+            return decorated
+        return wrapper
+
     def valid_user(self):
         """Function to evaluate the validity of the user login"""
         if current_app.config['DISABLE_AUTHENTICATION']:
@@ -64,10 +98,10 @@ class Authorization(Flaat):
             return True
 
         try:
-            all_info = self._get_all_info_from_request(request)
-            current_app.logger.debug(f"request info: {all_info}")
-            return all_info is not None
-
+            access_token = tokentools.get_access_token_from_request(request)
+            user = models.User.get(token=access_token)
+            current_app.logger.debug(f"User info: {user}")
+            return True
         except Exception as e:
             current_app.logger.error('Error validating user', exc_info=e)
             return False
@@ -84,11 +118,10 @@ class Authorization(Flaat):
                     return self._wrap_async_call(view_func, *args, **kwargs)
                 elif on_failure:
                     failure = on_failure(self.get_last_error())
-                    return self._return_formatter_wf(failure, 401)
+                    return self._return_formatter_wf(failure, 403)
                 else:
-                    alert = f"No valid authentication: {self.get_last_error()}"
-                    return self._return_formatter_wf(alert, 401)
-            return decorated
+                    abort(403, messages={'user': "Not registered"})
+            return self.token_required()(decorated)
         return wrapper
 
     def valid_admin(self, match='all'):

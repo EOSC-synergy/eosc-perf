@@ -48,14 +48,10 @@ class DBBenchmark(SQLAlchemyModelFactory):
     created_by = SubFactory(DBUser)
 
     @post_generation
-    def creation_report(self, create, _, **kwargs):
-        if self.reports == []:
-            creation_report = DBReport(
-                association_id=self.report_association_id,
-                created_by__email=self.created_by.email,
-                created_at=self.created_at, **kwargs
-            )
-            self.report_association.reports.append(creation_report)
+    def creation_verdict(self, create, verdict, **kwargs):
+        if verdict != None:
+            self.reports[0].verdict = verdict
+
 
 
 class DBSite(SQLAlchemyModelFactory):
@@ -73,14 +69,9 @@ class DBSite(SQLAlchemyModelFactory):
     created_by = SubFactory(DBUser)
 
     @post_generation
-    def creation_report(self, create, _, **kwargs):
-        if self.reports == []:
-            creation_report = DBReport(
-                association_id=self.report_association_id,
-                created_by__email=self.created_by.email,
-                created_at=self.created_at, **kwargs
-            )
-            self.report_association.reports.append(creation_report)
+    def creation_verdict(self, create, verdict, **kwargs):
+        if verdict != None:
+            self.reports[0].verdict = verdict
 
 
 class DBFlavor(SQLAlchemyModelFactory):
@@ -98,14 +89,9 @@ class DBFlavor(SQLAlchemyModelFactory):
     created_by = SubFactory(DBUser)
 
     @post_generation
-    def creation_report(self, create, _, **kwargs):
-        if self.reports == []:
-            creation_report = DBReport(
-                association_id=self.report_association_id,
-                created_by__email=self.created_by.email,
-                created_at=self.created_at, **kwargs
-            )
-            self.report_association.reports.append(creation_report)
+    def creation_verdict(self, create, verdict, **kwargs):
+        if verdict != None:
+            self.reports[0].verdict = verdict
 
 
 class DBTag(SQLAlchemyModelFactory):
@@ -144,10 +130,10 @@ class DBResult(SQLAlchemyModelFactory):
 
     @post_generation
     def reports(self, create, reports, **kwargs):
-        reports = reports if reports is not None else []
-        for kwargs in reports:
-            report = DBReport(
-                association_id=self.report_association_id,
-                **kwargs
-            )
-            self.report_association.reports.append(report)
+        if reports:
+            for kwargs in reports:
+                report = DBReport(
+                    association_id=self.report_association_id,
+                    **kwargs
+                )
+                self.report_association.reports.append(report)

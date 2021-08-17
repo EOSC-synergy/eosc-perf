@@ -15,14 +15,14 @@ class BaseModel(db.Model):
     __abstract__ = True
 
     @classmethod
-    def create(cls, **kwargs):
+    def create(cls, param):
         """Create a new record and save it the database."""
-        instance = cls(**kwargs)
+        instance = cls(**param)
         return instance.save()
 
-    def update(self, commit=True, **kwargs):
+    def update(self, param, commit=True):
         """Update specific fields of a record."""
-        for attr, value in kwargs.items():
+        for attr, value in param.items():
             setattr(self, attr, value)
         return commit and self.save() or self
 
@@ -63,13 +63,13 @@ class TokenModel(BaseModel):
     __table_args__ = (UniqueConstraint('sub', 'iss'),)
 
     @classmethod
-    def create(cls, token, **kwargs):
+    def create(cls, token, param):
         token_info = tokentools.get_accesstoken_info(token)
-        return super().create(
+        return super().create(dict(
             sub=token_info['body']['sub'],
             iss=token_info['body']['iss'],
-            **kwargs
-        )
+            **param
+        ))
 
     @classmethod
     def get(cls, token):

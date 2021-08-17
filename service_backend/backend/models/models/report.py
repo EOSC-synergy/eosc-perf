@@ -14,7 +14,7 @@ from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import backref, column_property, relationship
 
 from ..core import PkModel
-from ..utils import HasCreationDate
+from . import HasCreationDate
 from .user import HasCreationUser
 
 
@@ -60,9 +60,17 @@ class HasReports(object):
     """
     __abstract__ = True
 
-    def __init__(self, reports=[], **kwargs):
-        """Overwrite create to add reports=[] if not defined."""
-        super().__init__(reports=reports, **kwargs)
+    def __init__(self, *args, reports=None, created_by=None, **kwargs):
+        """If reports is None, a creation_report is added."""
+        if reports == None:
+            creation_report = Report(
+                message=f"New {self.__class__.__name__}",
+                created_by=created_by
+            )
+            reports = [creation_report]
+        kwargs['created_by'] = created_by
+        kwargs['reports'] = reports
+        super().__init__(*args, **kwargs)
 
     @declared_attr
     def report_association_id(cls):

@@ -2,10 +2,9 @@
 from backend import models
 from backend.extensions import auth
 from backend.schemas import args, schemas
-from flaat import tokentools
-from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint
+from sqlalchemy import or_
 
 blp = Blueprint(
     'tags', __name__, description='Operations on tags'
@@ -59,9 +58,7 @@ class Root(MethodView):
         :return: The tag created into the database.
         :rtype: :class:`models.Tag`
         """
-        access_token = tokentools.get_access_token_from_request(request)
-        models.User.get(token=access_token)  # Check user is registered
-        return models.Tag.create(**body_args)
+        return models.Tag.create(body_args)
 
 
 @blp.route('/search')
@@ -88,7 +85,13 @@ class Search(MethodView):
         """
         per_page = query_args.pop('per_page')
         page = query_args.pop('page')
-        search = models.Tag.search(query_args['terms'])
+        search = models.Tag.query
+        for keyword in query_args['terms']:
+            search = search.filter(
+                or_(
+                    models.Tag.name.contains(keyword),
+                    models.Tag.description.contains(keyword)
+                ))
         return search.paginate(page, per_page)
 
 
@@ -137,7 +140,7 @@ class Tag(MethodView):
         :raises NotFound: No tag with id found
         :raises UnprocessableEntity: Wrong query/body parameters 
         """
-        models.Tag.get(tag_id).update(**body_args)
+        models.Tag.get(tag_id).update(body_args)
 
     @auth.admin_required()
     @blp.doc(operationId='DelTag')

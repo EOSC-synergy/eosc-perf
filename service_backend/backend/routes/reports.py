@@ -119,7 +119,8 @@ class Approve(MethodView):
         :raises Forbidden: The user has not the required privileges
         :raises NotFound: No report with id found
         """
-        models.Report.get(report_id).update(verdict=True)
+        # Only admins can access this function so it is safe to set force
+        models.Report.get(report_id).update({'verdict': True}, force=True)
 
 
 @blp.route('/<uuid:report_id>/reject')
@@ -144,4 +145,5 @@ class Reject(MethodView):
         :raises Forbidden: The user has not the required privileges
         :raises NotFound: No report with id found
         """
-        models.Report.get(report_id).update(verdict=False)
+        # Only admins can access this function so it is safe to set force
+        models.Report.get(report_id).update({'verdict': False}, force=True)

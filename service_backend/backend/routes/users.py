@@ -49,7 +49,7 @@ class Root(MethodView):
         """(Admins) Delete one or multiple users
 
         Use this method to delete the users filtered according to your 
-        requirements. To prevent unintencionally delete all users, the
+        requirements. To prevent unintentionally delete all users, the
         method requires of query arguments, otherwise UnprocessableEntity
         exception is raised.
         ---
@@ -97,7 +97,11 @@ class Search(MethodView):
         """
         per_page = query_args.pop('per_page')
         page = query_args.pop('page')
-        search = models.User.search(query_args['terms'])
+        search = models.User.query
+        for keyword in query_args['terms']:
+            search = search.filter(
+                models.User.email.contains(keyword)
+            )
         return search.paginate(page, per_page)
 
 
@@ -142,14 +146,14 @@ class Register(MethodView):
         access_token = tokentools.get_access_token_from_request(request)
         return models.User.get(token=access_token)
 
-    @auth.login_required()
+    @auth.token_required()
     @blp.doc(operationId='RegisterMe')
     @blp.response(201, schemas.User)
     def post(self):
-        """(Users) Registers the logged in user
+        """(OIDC Token) Registers the logged in user
 
         Use this method to register yourself into the application. By using
-        this methiod, you recognise that you have read and undestood our 
+        this method, you recognize that you have read and understood our 
         terms, conditions and privacy policy at: 
         `https://performance.services.fedcloud.eu/privacy_policy`
 
@@ -161,8 +165,14 @@ class Register(MethodView):
         :return: The database user matching the oidc token information 
         :rtype: :class:`models.User`
         """
-        access_token = tokentools.get_access_token_from_request(request)
-        return models.User.create(token=access_token)
+        token = tokentools.get_access_token_from_request(request)
+        user_info = auth.get_info_from_introspection_endpoints(token)
+        if not user_info:
+            abort(500, messages={'introspection endpoint': "No user info"})
+        elif 'email' not in user_info:
+            abort(422, messages={'token': "No scope for email"})
+        else:
+            return models.User.create(token, {'email': user_info['email']})
 
     @auth.login_required()
     @blp.doc(operationId='UpdateMe')
@@ -170,7 +180,7 @@ class Register(MethodView):
     def put(self):
         """(Users) Updates the logged in user info
 
-        Use this method to upldate your user data in the database. The 
+        Use this method to update your user data in the database. The 
         method returns by default 204. You can use GET after to retrieve
         the new status of your data. 
         ---
@@ -178,6 +188,12 @@ class Register(MethodView):
         :raises Unauthorized: The server could not verify your identity
         :raises Forbidden: You are not registered
         """
-        access_token = tokentools.get_access_token_from_request(request)
-        user = models.User.get(token=access_token)
-        user.update(token=access_token)
+        token = tokentools.get_access_token_from_request(request)
+        user_info = auth.get_info_from_introspection_endpoints(token)
+        if not user_info:
+            abort(500, messages={'introspection endpoint': "No user info"})
+        elif 'email' not in user_info:
+            abort(422, messages={'token': "No scope for email"})
+        else:
+            user = models.User.get(token=token)
+            user.update({'email': user_info['email']})

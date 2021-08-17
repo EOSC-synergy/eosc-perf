@@ -4,7 +4,7 @@ from sqlalchemy import Column, Text
 from sqlalchemy.orm import relationship
 
 from ..core import PkModel
-from ..utils import HasCreationDate
+from . import HasCreationDate
 from .report import HasReports
 from .user import HasCreationUser
 
@@ -27,23 +27,3 @@ class Site(HasReports, HasCreationDate, HasCreationUser, PkModel):
         """
         return '<{} {}>'.format(self.__class__.__name__, self.name)
 
-    @classmethod
-    def search(cls, terms):
-        """Query all sites containing all keywords in the columns.
-
-        Args:
-            terms (List[str]): A list of all keywords that need to be matched.
-        Returns:
-            List[Result]: A list containing all matching query sites in the
-            database.
-        """
-        results = cls.query
-        for keyword in terms:
-            results = results.filter(
-                sa.or_(
-                    Site.name.contains(keyword),
-                    Site.address.contains(keyword),
-                    Site.description.contains(keyword)
-                ))
-
-        return results

@@ -2,11 +2,9 @@
 from backend import models
 from backend.extensions import auth
 from backend.schemas import args, schemas
-from flaat import tokentools
-from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
 
 blp = Blueprint(
     'results', __name__, description='Operations on results'
@@ -146,19 +144,14 @@ class Root(MethodView):
         :return: The result created into the database.
         :rtype: :class:`models.Result`
         """
-        access_token = tokentools.get_access_token_from_request(request)
-        user = models.User.get(token=access_token)
-        report = models.Report(
-            created_by=user, message="New result created",
-            verdict=True  # Does not require accept from admin
-        )
-        return models.Result.create(
+        return models.Result.create(dict(
+            json=body_args,
             benchmark=models.Benchmark.get(query_args.pop('benchmark_id')),
-            site=models.Site.get(query_args.pop('site_id')),
+            site=models.Site.get(query_args.pop('site_id')), 
             flavor=models.Flavor.get(query_args.pop('flavor_id')),
             tags=[models.Tag.get(id) for id in query_args.pop('tags_ids')],
-            json=body_args, created_by=user, reports=[report], **query_args
-        )
+            **query_args
+        ))
 
 
 @blp.route('/search')
@@ -187,7 +180,16 @@ class Search(MethodView):
         """
         per_page = query_args.pop('per_page')
         page = query_args.pop('page')
-        search = models.Result.search(query_args['terms'])
+        search = models.Result.query
+        for keyword in query_args['terms']:
+            search = search.filter(
+                or_(
+                    models.Result.docker_image.contains(keyword),
+                    models.Result.docker_tag.contains(keyword),
+                    models.Result.site_name.contains(keyword),
+                    models.Result.flavor_name.contains(keyword),
+                    models.Result.tag_names == keyword
+                ))
         search = search.filter(~models.Result.has_open_reports)
         return search.paginate(page, per_page)
 
@@ -237,18 +239,11 @@ class Result(MethodView):
         :raises NotFound: No result with id found
         :raises UnprocessableEntity: Wrong query/body parameters 
         """
-        access_token = tokentools.get_access_token_from_request(request)
         result = models.Result.get(result_id)
-
-        def is_owner():
-            user = models.User.get(token=access_token)
-            return result.created_by.email == user.email
-        if auth.valid_admin() or is_owner():
-            if 'tags_ids' in body_args:  # Empty list should pass
-                tags = [models.Tag.get(id) for id in body_args['tags_ids']]
-                result.update(tags=tags)
-        else:
-            abort(403)
+        if 'tags_ids' in body_args:
+            tags_ids = body_args.pop('tags_ids')
+            body_args['tags'] = [models.Tag.get(id) for id in tags_ids]
+        result.update(body_args, force=auth.valid_admin())
 
     @auth.admin_required()
     @blp.doc(operationId='DelResult')
@@ -324,11 +319,8 @@ class Report(MethodView):
         :raises NotFound: No result with id found
         :raises UnprocessableEntity: Wrong query/body parameters 
         """
-        access_token = tokentools.get_access_token_from_request(request)
         result = models.Result.get(result_id)
-        report = models.Report(
-            created_by=models.User.get(token=access_token),
-            message=body_args['message']
-        )
-        result.update(reports=result.reports+[report])
+        report = models.Report(message=body_args['message'])
+        # Any user is able to add result reports
+        result.update({'reports': result.reports+[report]}, force=True)
         return report
