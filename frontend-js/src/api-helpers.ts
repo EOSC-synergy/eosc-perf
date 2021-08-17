@@ -50,3 +50,18 @@ export function putHelper<Type>(
     }
     return axios.put<Type>(API_BASE_PATH + endpoint, data, { params: params });
 }
+
+export function patchHelper<Type>(
+    endpoint: string,
+    { data, accessToken, params }: { data?: Type; accessToken?: string; params?: object }
+) {
+    if (accessToken !== undefined) {
+        return axios.patch<Type>(API_BASE_PATH + endpoint, data, {
+            headers: {
+                Authorization: 'Bearer ' + accessToken,
+            },
+            params: params,
+        });
+    }
+    return axios.patch<Type>(API_BASE_PATH + endpoint, data, { params: params });
+}
