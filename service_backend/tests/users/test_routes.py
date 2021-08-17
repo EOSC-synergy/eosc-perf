@@ -154,7 +154,6 @@ class TestAdmin:
         assert response_GET.status_code == 403
 
 
-@mark.usefixtures('mock_token_info')
 @mark.parametrize('endpoint', ['users.Register'], indirect=True)
 class TestSelf:
     """Tests for 'Self' route in blueprint."""
@@ -167,22 +166,23 @@ class TestSelf:
         assert response_GET.status_code == 200
         asserts.match_user(response_GET.json, user)
 
+    @mark.usefixtures('mock_accesstoken')
     @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
     @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     def test_GET_401(self, response_GET):
         """GET method fails 401 if not logged in."""
         assert response_GET.status_code == 401
 
-    @mark.usefixtures('grant_logged')
+    @mark.usefixtures('grant_accesstoken')
     @mark.parametrize('token_sub', ["non_existing"], indirect=True)
-    @mark.parametrize('token_iss', ["egi.com"], indirect=True)
+    @mark.parametrize('token_iss', ["https://aai-dev.egi.eu/oidc"], indirect=True)
     def test_GET_403(self, response_GET):
         """GET method fails 403 if not registered."""
         assert response_GET.status_code == 403
 
-    @mark.usefixtures('grant_logged', 'mock_introspection_info')
+    @mark.usefixtures('grant_accesstoken')
     @mark.parametrize('token_sub', ["new_user"], indirect=True)
-    @mark.parametrize('token_iss', ["egi.com"], indirect=True)
+    @mark.parametrize('token_iss', ["https://aai-dev.egi.eu/oidc"], indirect=True)
     @mark.parametrize('introspection_email', ["user@email.com"], indirect=True)
     def test_POST_201(self, response_POST, user, url):
         """POST method succeeded 201."""
@@ -190,15 +190,13 @@ class TestSelf:
         asserts.match_query(response_POST.json, url)
         asserts.match_user(response_POST.json, user)
 
-    @mark.usefixtures('mock_introspection_info')
-    @mark.parametrize('token_sub', ["new_user"], indirect=True)
-    @mark.parametrize('token_iss', ["egi.com"], indirect=True)
+    @mark.usefixtures('mock_introspection')
     @mark.parametrize('introspection_email', ["user@email.com"], indirect=True)
     def test_POST_401(self, response_POST):
         """POST method fails 401 if not authorized."""
         assert response_POST.status_code == 401
 
-    @mark.usefixtures('grant_logged', 'mock_introspection_info')
+    @mark.usefixtures('grant_accesstoken')
     @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
     @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('introspection_email', ["user@email.com"], indirect=True)
@@ -206,7 +204,7 @@ class TestSelf:
         """POST method fails 409 if resource already exists."""
         assert response_POST.status_code == 409
 
-    @mark.usefixtures('grant_logged', 'mock_introspection_info')
+    @mark.usefixtures('grant_logged', 'grant_accesstoken')
     @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
     @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('introspection_email', ["user@email.com"], indirect=True)
@@ -215,19 +213,16 @@ class TestSelf:
         assert response_PUT.status_code == 204
         assert user.email == introspection_email
 
-    @mark.usefixtures('mock_introspection_info')
-    @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
-    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
+    @mark.usefixtures('mock_introspection')
     @mark.parametrize('introspection_email', ["user@email.com"], indirect=True)
     def test_PUT_401(self, token_sub, token_iss, user, response_PUT):
         """PUT method fails 401 if not authorized."""
         assert response_PUT.status_code == 401
         assert user == models.User.query.get((token_sub, token_iss))
 
-
-    @mark.usefixtures('grant_logged', 'mock_introspection_info')
+    @mark.usefixtures('grant_accesstoken')
     @mark.parametrize('token_sub', ["not-registered"], indirect=True)
-    @mark.parametrize('token_iss', ["egi.com"], indirect=True)
+    @mark.parametrize('token_iss', ["https://aai-dev.egi.eu/oidc"], indirect=True)
     @mark.parametrize('introspection_email', ["user@email.com"], indirect=True)
     def test_PUT_403(self, response_PUT):
         """PUT method fails 403 if not registered."""

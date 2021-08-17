@@ -77,9 +77,9 @@ class TestRoot:
         """POST method fails 401 if not authorized."""
         assert response_POST.status_code == 401
 
-    @mark.usefixtures('grant_logged')
+    @mark.usefixtures('grant_accesstoken')
     @mark.parametrize('token_sub', ["non-registered"], indirect=True)
-    @mark.parametrize('token_iss', ["not-existing"], indirect=True)
+    @mark.parametrize('token_iss', ["https://aai-dev.egi.eu/oidc"], indirect=True)
     @mark.parametrize('query', indirect=True, argvalues=[
         post_query   # Resource can have multiple results
     ])
@@ -218,7 +218,7 @@ class TestResult:
         assert response_PUT.status_code == 401
         assert result == models.Result.query.get(result.id)
 
-    @mark.usefixtures('grant_logged', 'mock_token_info')
+    @mark.usefixtures('grant_logged')
     @mark.parametrize('token_sub', [users[1]['sub']], indirect=True)
     @mark.parametrize('token_iss', [users[1]['iss']], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
@@ -340,9 +340,9 @@ class TestReport:
         """POST method fails 401 if not authorized."""
         assert response_POST.status_code == 401
 
-    @mark.usefixtures('grant_logged')
+    @mark.usefixtures('grant_accesstoken')
     @mark.parametrize('token_sub', ["non-registered"], indirect=True)
-    @mark.parametrize('token_iss', ["not-existing"], indirect=True)
+    @mark.parametrize('token_iss', ["https://aai-dev.egi.eu/oidc"], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
         {'message': "This is an example report"}
     ])

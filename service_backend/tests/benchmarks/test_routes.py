@@ -8,7 +8,6 @@ from tests import asserts
 from tests.db_instances import benchmarks, users
 
 
-@mark.usefixtures('mock_token_info')
 @mark.parametrize('endpoint', ['benchmarks.Root'], indirect=True)
 class TestRoot:
     """Tests for 'Root' route in blueprint."""
@@ -61,9 +60,9 @@ class TestRoot:
         """POST method fails 401 if not authorized."""
         assert response_POST.status_code == 401
 
-    @mark.usefixtures('grant_logged', 'mock_docker_registry')
+    @mark.usefixtures('grant_accesstoken', 'mock_docker_registry')
     @mark.parametrize('token_sub', ["non-registered"], indirect=True)
-    @mark.parametrize('token_iss', ["not-existing"], indirect=True)
+    @mark.parametrize('token_iss', ["https://aai-dev.egi.eu/oidc"], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
         {'docker_image': "b1", 'docker_tag': "v2.0", 'json_schema': {'x': 1}}
     ])
@@ -89,10 +88,10 @@ class TestRoot:
     @mark.parametrize('body', indirect=True,  argvalues=[
         {'docker_image': "_", 'docker_tag': "_", 'json_schema': {'type': 'x'}},
         {'docker_image': "b1", 'docker_tag': "v1.0"},   # Missing json_schema
-        {'docker_image': "b1", 'json_schema': {'x': 1}}, # Missing docker_tag
-        {'docker_tag': "v1.0", 'json_schema': {'x': 1}}, # Missing docker_image
+        {'docker_image': "b1", 'json_schema': {'x': 1}},  # Missing docker_tag
+        {'docker_tag': "v1.0", 'json_schema': {'x': 1}},  # Missing docker_image
         {'docker_image': "b1"},
-        {'docker_tag': "t1"}, 
+        {'docker_tag': "t1"},
         {'json_schema': {'x': 1}},
         {}  # Empty body
     ])

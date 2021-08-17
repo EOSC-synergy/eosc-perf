@@ -58,9 +58,9 @@ class TestRoot:
         """POST method fails 401 if not authorized."""
         assert response_POST.status_code == 401
 
-    @mark.usefixtures('grant_logged')
+    @mark.usefixtures('grant_accesstoken')
     @mark.parametrize('token_sub', ["non-registered"], indirect=True)
-    @mark.parametrize('token_iss', ["not-existing"], indirect=True)
+    @mark.parametrize('token_iss', ["https://aai-dev.egi.eu/oidc"], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
         {'name': "s3", 'address': "addr2", 'description': "Text"}
     ])
@@ -255,9 +255,9 @@ class TestFlavors:
         """POST method fails 401 if not authorized."""
         assert response_POST.status_code == 401
 
-    @mark.usefixtures('grant_logged')
+    @mark.usefixtures('grant_accesstoken')
     @mark.parametrize('token_sub', ["non-registered"], indirect=True)
-    @mark.parametrize('token_iss', ["not-existing"], indirect=True)
+    @mark.parametrize('token_iss', ["https://aai-dev.egi.eu/oidc"], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
         {'name': "flavorN", 'description': "FlavorN for siteX"}
     ])

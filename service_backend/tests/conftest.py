@@ -7,7 +7,7 @@ import os
 from backend import create_app
 from backend.extensions import auth as authentication
 from backend.extensions import db as database
-from backend.models.utils import dockerhub
+from backend.utils import dockerhub
 from factories import factories
 from flaat import tokentools
 from pytest import fixture
@@ -90,14 +90,32 @@ def token_iss(request):
     """Returns the iss to include on the user token."""
     return request.param if hasattr(request, 'param') else None
 
-
+    
 @fixture(scope='function')
-def mock_token_info(monkeypatch, token_sub, token_iss):
+def mock_accesstoken(monkeypatch, token_sub, token_iss):
     """Patch fixture to test function with valid oidc token."""
     monkeypatch.setattr(
         tokentools,
         "get_accesstoken_info",
-        lambda _: {'body': {'sub': token_sub, 'iss': token_iss}}
+        lambda _: {
+            'body': {'sub': token_sub, 'iss': token_iss},
+            'exp': 99999999999
+        }
+    )
+    monkeypatch.setattr(
+        tokentools,
+        "get_access_token_from_request",
+        lambda _: "mocktoken"
+    )
+
+
+@fixture(scope='function')
+def mock_endpoints(monkeypatch):
+    """Patch fixture to edit information from tokenuser endpoints."""
+    monkeypatch.setattr(
+        authentication,
+        "get_info_from_userinfo_endpoints",
+        lambda _: {}
     )
 
 
@@ -108,8 +126,8 @@ def introspection_email(request):
 
 
 @fixture(scope='function')
-def mock_introspection_info(monkeypatch, introspection_email):
-    """Patch fixture to test function with valid oidc token."""
+def mock_introspection(monkeypatch, introspection_email):
+    """Patch function to provide custom introspection information."""
     monkeypatch.setattr(
         authentication,
         "get_info_from_introspection_endpoints",
@@ -118,33 +136,21 @@ def mock_introspection_info(monkeypatch, introspection_email):
 
 
 @fixture(scope='function')
-def grant_logged(monkeypatch, mock_token_info, mock_introspection_info):
+def grant_accesstoken(mock_accesstoken, mock_endpoints, mock_introspection):
+    """Patch fixture to test function with valid oidc token."""
+    pass
+
+
+@fixture(scope='function')
+def grant_logged(monkeypatch, grant_accesstoken):
     """Patch fixture to test function as logged user."""
-    monkeypatch.setattr(
-        authentication,
-        "get_info_from_userinfo_endpoints",
-        lambda _: {}
-    )
-    monkeypatch.setattr(
-        tokentools,
-        "get_timeleft",
-        lambda _: 1000
-    )
-    monkeypatch.setattr(
-        tokentools,
-        "get_access_token_from_request",
-        lambda _: "mocktoken"
-    )
+    monkeypatch.setattr(authentication, "valid_user", lambda: True)
 
 
 @fixture(scope='function')
 def grant_admin(monkeypatch, grant_logged):
     """Patch fixture to test function as admin user."""
-    monkeypatch.setattr(
-        authentication,
-        "get_info_from_userinfo_endpoints",
-        lambda _: {'eduperson_assurance': ["admins"]}
-    )
+    monkeypatch.setattr(authentication, "valid_admin", lambda: True)
 
 
 @fixture(scope='function')
