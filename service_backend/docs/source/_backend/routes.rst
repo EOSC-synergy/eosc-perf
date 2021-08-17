@@ -10,7 +10,6 @@ Benchmarks module
 -----------------
 
 .. automodule:: backend.routes.benchmarks
-   :members:
    :undoc-members:
    :show-inheritance:
 

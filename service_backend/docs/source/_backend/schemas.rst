@@ -22,7 +22,7 @@ Args module
    :undoc-members:
    :show-inheritance:
 
-fields module
+Fields module
 -------------
 
 .. automodule:: backend.schemas.fields

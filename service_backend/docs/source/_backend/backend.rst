@@ -39,3 +39,4 @@ Subpackages
    /_backend/models
    /_backend/routes
    /_backend/schemas
+   /_backend/utils
