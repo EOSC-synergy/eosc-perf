@@ -15,24 +15,37 @@ from ..core import PkModel
 
 
 class Tag(PkModel):
-    """The Tag class represents a user-created label that can be used for
+    """The Tag model represents a user-created label that can be used for
     filtering a list of results.
 
-    These are entirely created by users and may not necessarily be related to
-    any benchmark output data. These may be used to indicate if, for example, a
-    benchmark is used to measure CPU or GPU performance, since some benchmarks
-    may be used to test both.
+    These are entirely created by users and may not necessarily be related
+    to any benchmark output data. These may be used to indicate if, for
+    example, a benchmark is used to measure CPU or GPU performance, since
+    some benchmarks may be used to test both.
     """
+    #: (Text, required) Human readable feature identification
     name = Column(Text, unique=True, nullable=False)
+
+    #: (Text) Useful information to help users to understand the label context
     description = Column(Text, nullable=False, default="")
 
-    def __repr__(self) -> str:
-        """Get a human-readable representation string of the tag.
+    def __init__(self, **properties):
+        """Model initialization"""
+        super().__init__(**properties)
 
-        Returns:
-            str: A human-readable representation string of the tag.
-        """
+    def __repr__(self) -> str:
         return '<{} {}>'.format(self.__class__.__name__, self.name)
+
+
+    def __init__(self, **properties):
+        """Model initialization"""
+        super().__init__(**properties)
+
+    def __repr__(self) -> str:
+        """Human-readable representation string"""
+        return "<{} {}>".format(self.__class__.__name__, self.name)
+
+
 
 
 class HasTags(object):
@@ -41,6 +54,7 @@ class HasTags(object):
 
     @declared_attr
     def tags(cls):
+        """([Tag]) List of associated tags to the model"""
         name = cls.__tablename__
         tag_association = Table(
             f"{name}_tags", cls.metadata,
@@ -55,4 +69,5 @@ class HasTags(object):
 
     @declared_attr
     def tag_names(cls):
+        """([Tag.name], read_only) List of associated tag as only names"""
         return association_proxy('tags', 'name')

@@ -9,14 +9,21 @@ from .user import HasCreationUser
 
 
 class Flavor(HasReports, HasCreationDate, HasCreationUser, PkModel):
-    """The Flavor class represents a flavor of virtual machines available
+    """The Flavor model represents a flavor of virtual machines available
     for usage on a Site.
 
     Flavours can be pre-existing options filled in by administrators or a
     custom configuration by the user.
+
+    **Properties**:
     """
+    #: (Text, required) Text with virtual hardware template identification
     name = Column(Text, nullable=False)
+    
+    #: (Text) Text with useful information for users
     description = Column(Text, nullable=True, default="")
+
+    #: (Site.id, required) Id of the Site the flavor belongs to
     site_id = Column(ForeignKey('site.id'), nullable=False)
 
     @declared_attr
@@ -27,10 +34,10 @@ class Flavor(HasReports, HasCreationDate, HasCreationUser, PkModel):
         ])
         return tuple(mixin_indexes)
 
-    def __repr__(self) -> str:
-        """Get a human-readable representation string of the site flavor.
+    def __init__(self, **properties):
+        """Model initialization"""
+        super().__init__(**properties)
 
-        Returns:
-            str: A human-readable representation string of the site flavor.
-        """
-        return '<{} {}>'.format(self.__class__.__name__, self.name)
+    def __repr__(self) -> str:
+        """Human-readable representation string"""
+        return "<{} {}>".format(self.__class__.__name__, self.name)

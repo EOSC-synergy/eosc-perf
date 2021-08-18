@@ -64,13 +64,8 @@ class Root(MethodView):
         :rtype: :class:`models.Benchmark`
         """
         image, tag = body_args['docker_image'], body_args['docker_tag']
-        json_schema = body_args['json_schema']
         if not utils.dockerhub.valid_image(image, tag):
             abort(422, messages={'error': "Unknown docker image"})
-        try:
-            jsonschema.Draft7Validator.check_schema(json_schema)
-        except SchemaError as err:
-            abort(422, messages={'error': err.message, 'path': f"{err.path}"})
         return models.Benchmark.create(body_args)
 
 

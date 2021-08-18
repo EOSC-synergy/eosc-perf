@@ -3,7 +3,7 @@ Models package
 
 .. automodule:: backend.models
 
-Benchmark class
+Benchmark model
 -----------------
 
 .. autoclass:: backend.models.Benchmark
@@ -12,7 +12,7 @@ Benchmark class
    :undoc-members:
    :show-inheritance:
 
-Flavor class
+Flavor model
 -----------------
 
 .. autoclass:: backend.models.Flavor
@@ -21,7 +21,7 @@ Flavor class
    :undoc-members:
    :show-inheritance:
 
-Report class
+Report model
 -----------------
 
 .. autoclass:: backend.models.Report
@@ -30,7 +30,7 @@ Report class
    :undoc-members:
    :show-inheritance:
 
-Result class
+Result model
 -----------------
 
 .. autoclass:: backend.models.Result
@@ -39,7 +39,7 @@ Result class
    :undoc-members:
    :show-inheritance:
 
-Site class
+Site model
 -----------------
 
 .. autoclass:: backend.models.Site
@@ -48,7 +48,7 @@ Site class
    :undoc-members:
    :show-inheritance:
 
-Tag class
+Tag model
 -----------------
 
 .. autoclass:: backend.models.Tag
@@ -57,7 +57,7 @@ Tag class
    :undoc-members:
    :show-inheritance:
 
-User class
+User model
 -----------------
 
 .. autoclass:: backend.models.User

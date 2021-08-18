@@ -1,4 +1,7 @@
 """Benchmark module"""
+import jsonschema
+from flask_smorest import abort
+from jsonschema.exceptions import SchemaError
 from sqlalchemy import Column, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.declarative import declared_attr
@@ -10,7 +13,8 @@ from .user import HasCreationUser
 
 
 class Benchmark(HasReports, HasCreationDate, HasCreationUser, PkModel):
-    """The benchmark class represents a single type of benchmark that was run.
+    """The benchmark model represents a single type of docker container 
+    designed to run and produce benchmark results from virtual machines.
 
     Benchmarks are tied down to a specific docker image and version to avoid
     confusion and misleading comparisons in case a benchmark container changes
@@ -21,17 +25,19 @@ class Benchmark(HasReports, HasCreationDate, HasCreationUser, PkModel):
 
     Description is optional but offers a valuable text that can help possible
     users to understand the benchmark main features.
+
+    **Properties**:
     """
-    #: Docker image used to run/implement the benchmark
+    #: (Text, required) Docker image used to referenced by the benchmark
     docker_image = Column(Text, nullable=False)
 
-    #: Docker image version/tag used of the benchmark
+    #: (Text, required) Docker image version/tag referenced by the benchmark
     docker_tag = Column(Text, nullable=False)
 
-    #: Schema used to validate benchmark results before upload
+    #: (JSON, required) Schema used to validate benchmark results before upload
     json_schema = Column(JSON, nullable=False)
 
-    #: Short text describing the main benchmark features
+    #: (Text) Short text describing the main benchmark features
     description = Column(Text, default="")
 
     @declared_attr
@@ -42,12 +48,17 @@ class Benchmark(HasReports, HasCreationDate, HasCreationUser, PkModel):
         ])
         return tuple(mixin_indexes)
 
-    def __repr__(self) -> str:
-        """Get a human-readable representation string of the benchmark.
+    def __init__(self, **properties):
+        """Check the included schema is valid."""
+        json_schema = properties['json_schema']
+        try:
+            jsonschema.Draft7Validator.check_schema(json_schema)
+        except SchemaError as err:
+            abort(422, messages={'error': err.message, 'path': f"{err.path}"})
+        super().__init__(**properties)
 
-        Returns:
-            str: A human-readable representation string of the benchmark.
-        """
+    def __repr__(self) -> str:
+        """Human-readable representation string"""
         return "<{} {}:{}>".format(
             self.__class__.__name__,
             self.docker_image,

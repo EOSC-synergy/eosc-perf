@@ -133,7 +133,7 @@ class DBResult(SQLAlchemyModelFactory):
         if reports:
             for kwargs in reports:
                 report = DBReport(
-                    association_id=self.report_association_id,
+                    _association_id=self._report_association_id,
                     **kwargs
                 )
-                self.report_association.reports.append(report)
+                self._report_association.reports.append(report)

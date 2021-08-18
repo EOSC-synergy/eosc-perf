@@ -15,46 +15,63 @@ from .user import HasCreationUser
 
 
 class Result(HasReports, HasTags, HasCreationDate, HasCreationUser, PkModel):
-    """The Result class represents a single benchmark result and its contents.
+    """The Result model represents the results of the execution of a 
+    specific Benchmark on a specific Site and Flavor. 
 
-    They carry the JSON data output by the ran benchmarks.
+    They carry the JSON data output by the executed benchmarks.
+
+    **Properties**:
     """
+    #: (JSON, required) Benchmark execution results
     json = Column(JSONB, nullable=False)
+
+    #: (ISO8601, required) Benchmark execution **START**
     executed_at = Column(DateTime, nullable=False)
 
-    benchmark_id = Column(ForeignKey('benchmark.id'), nullable=False)
+    #: (Benchmark, required) Benchmark used to provide the results
     benchmark = relationship("Benchmark", backref=backref(
-        "results", cascade="all, delete-orphan"
+        "_results", cascade="all, delete-orphan"
     ))
+    _benchmark_id = Column(ForeignKey('benchmark.id'), nullable=False)
+
+    #: (Read_only) Docker image of used benchmark
     docker_image = association_proxy('benchmark', 'docker_image')
+
+    #: (Read_only) Docker tag of used benchmark
     docker_tag = association_proxy('benchmark', 'docker_tag')
 
-    site_id = Column(ForeignKey('site.id'), nullable=False)
+    #: (Site, required) Site where the benchmark was executed
     site = relationship("Site", backref=backref(
-        "results", cascade="all, delete-orphan"
+        "_results", cascade="all, delete-orphan"
     ))
+    _site_id = Column(ForeignKey('site.id'), nullable=False)
+
+    #: (Read_only) Name of the site where the benchmar was executed
     site_name = association_proxy('site', 'name')
 
-    flavor_id = Column(ForeignKey('flavor.id'), nullable=False)
+    #: (Flavor, required) Flavor used to executed the benchmark 
     flavor = relationship("Flavor", backref=backref(
-        "results", cascade="all, delete-orphan"
+        "_results", cascade="all, delete-orphan"
     ))
+    _flavor_id = Column(ForeignKey('flavor.id'), nullable=False)
+
+    #: (Read_only) Name of the flavor used to executed the benchmark 
     flavor_name = association_proxy('flavor', 'name')
 
-    def __init__(self, *args, **kwargs):
-        benchmark = kwargs['benchmark']
-        json = kwargs['json']
+    def __init__(self, **properties):
+        """Validates the result passes the benchmark JSON Schema and sets
+        default reports to empty list.
+        """
+        benchmark = properties['benchmark']
+        json = properties['json']
+        if not 'reports' in properties:
+            properties['reports'] = []
         try:
             jsonschema.validate(json, schema=benchmark.json_schema)
         except ValidationError as err:
             abort(422, messages={'error': err.message, 'path': f"{err.path}"})
-
-        return super().__init__(*args, reports=[], **kwargs)
+        super().__init__(**properties)
 
     def __repr__(self) -> str:
-        """Get a human-readable representation string of the result.
-
-        Returns:
-            str: A human-readable representation string of the result.
-        """
-        return '<{} {}>'.format(self.__class__.__name__, self.id)
+        """Human-readable representation string"""
+        return "<{} {}>".format(self.__class__.__name__, self.id)

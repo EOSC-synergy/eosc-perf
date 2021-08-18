@@ -1,6 +1,4 @@
 """Models module package for main models definition."""
-from backend.extensions import auth
-from flask.helpers import NotFound
 from flask_smorest import abort
 from sqlalchemy import Column, ForeignKeyConstraint, Text
 from sqlalchemy.ext.declarative import declared_attr
@@ -14,25 +12,36 @@ from flask import request
 
 
 class User(HasCreationDate, TokenModel):
-    """A user of the app."""
+    """The User model represents the users of the application. Users are
+    build over a OIDC token model, therefore are identified based on the
+    'Subject' and 'issuer' identifications provided by the OIDC provider.
+
+    Also an email is collected which is expected to match the one provided
+    by the ODIC introspection endpoint.
+
+    **Properties**:
+    """
+    #: (Email) Electronic mail collected from OIDC access token
     email = Column(Text, unique=True, nullable=False)
 
-    def __repr__(self) -> str:
-        """Get a human-readable representation string of the user.
+    def __init__(self, **properties):
+        """Model initialization"""
+        super().__init__(**properties)
 
-        Returns:
-            str: A human-readable representation string of the user.
-        """
-        return "<{} {}>".format(self.__class__.__name__, self.email)
+    def __repr__(self) -> str:
+        """Human-readable representation string"""
+        return "<{} {}>".format(self.__class__.__name__, self.name)
 
 
 class HasCreationUser(object):
-    """Mixin that adds creation details utils."""
+    """Mixin that adds an User as creation details to any model."""
 
-    #: OIDC Subject of the creator user
+    #: (Text) OIDC subject of the user that created the model instance,
+    #: *conflicts with created_by*
     creator_sub = Column(Text, nullable=False)
 
-    #: OIDC Issuer of the creator user
+    #: (Text) OIDC issuer of the user that created the model instance,
+    #: *conflicts with created_by*
     creator_iss = Column(Text, nullable=False)
 
     def __init__(self, *args, created_by=None, **kwargs):
@@ -50,8 +59,9 @@ class HasCreationUser(object):
 
     @declared_attr
     def created_by(cls):
+        """(User class) User that created the model instance"""
         return relationship("User", backref=backref(
-            f'{cls.__name__.lower()}s', cascade="all, delete-orphan"
+            f'_{cls.__name__.lower()}s', cascade="all, delete-orphan"
         ))
 
     def ownership(self):

@@ -46,6 +46,8 @@ class PkModel(BaseModel):
     """Base model class that includes CRUD convenience methods,
     plus adds a 'primary key' column named `id`."""
     __abstract__ = True
+
+    #: (UUID) Primary key with an Unique Identifier for the model instance
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     @classmethod
@@ -58,8 +60,13 @@ class TokenModel(BaseModel):
     """Base model class that includes CRUD convenience methods,
     plus adds 'primary keys' columns for token `sub` and `iss`."""
     __abstract__ = True
+
+    #: (Text) Primary key containing the OIDC subject the model instance 
     sub = Column(Text, primary_key=True, nullable=False)
+
+    #: (Text) Primary key containing the OIDC issuer of the model instance
     iss = Column(Text, primary_key=True, nullable=False)
+
     __table_args__ = (UniqueConstraint('sub', 'iss'),)
 
     @classmethod
