@@ -13,7 +13,7 @@ flask-migrate~=3.0.0
 
 # Schemas
 marshmallow~=3.10.0
-json_schema~=3.2.0
+jsonschema~=3.2.0
 
 # REST GUI 
 flask-smorest~=0.31.3
