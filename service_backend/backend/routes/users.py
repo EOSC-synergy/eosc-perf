@@ -1,4 +1,6 @@
-"""User routes."""
+"""Users URL routes. Collection of controller methods to create and
+operate existing users on the database.
+"""
 from backend import models
 from backend.extensions import auth
 from backend.schemas import args, schemas

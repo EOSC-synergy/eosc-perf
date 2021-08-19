@@ -1,4 +1,6 @@
-"""Tag routes."""
+"""Tag URL routes. Collection of controller methods to create and
+operate existing user tags on the database.
+"""
 from backend import models
 from backend.extensions import auth
 from backend.schemas import args, schemas

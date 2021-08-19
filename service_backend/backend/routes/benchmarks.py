@@ -1,11 +1,11 @@
-"""Benchmark routes."""
-import jsonschema
+"""Benchmark URL routes. Collection of controller methods to create and
+operate existing benchmarks on the database.
+"""
 from backend import models, utils
 from backend.extensions import auth
 from backend.schemas import args, schemas
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from jsonschema.exceptions import SchemaError
 from sqlalchemy import or_
 
 blp = Blueprint(
