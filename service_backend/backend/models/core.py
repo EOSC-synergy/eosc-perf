@@ -16,18 +16,39 @@ class BaseModel(db.Model):
 
     @classmethod
     def create(cls, param):
-        """Create a new record and save it the database."""
+        """Creates a new record and save it the database.
+
+        :param param: Values to set on the model properties
+        :type param: dict
+        :raises Conflict: Database conflict on new instance
+        :return: The new created database model instance
+        :rtype: :class:`BaseModel`
+        """
         instance = cls(**param)
         return instance.save()
 
     def update(self, param, commit=True):
-        """Update specific fields of a record."""
+        """Updates specific fields of a record.
+
+        :param param: Values to set on the model properties
+        :type param: dict
+        :param commit: Commit changes, defaults to True
+        :type commit: bool, optional
+        :return: True, or instance if commit flag is False
+        :rtype: True or :class:`BaseModel`
+        """
         for attr, value in param.items():
             setattr(self, attr, value)
         return commit and self.save() or self
 
     def save(self, commit=True):
-        """Save the record."""
+        """Adds the record to the session.
+
+        :param commit: Commit changes, defaults to True
+        :type commit: bool, optional
+        :return: Saved instance 
+        :rtype: :class:`BaseModel`
+        """
         db.session.add(self)
         if commit:
             try:
@@ -37,7 +58,13 @@ class BaseModel(db.Model):
         return self
 
     def delete(self, commit=True):
-        """Remove the record from the database."""
+        """Adds a record remove request to the session.
+        
+        :param commit: Commit changes, defaults to True
+        :type commit: bool, optional
+        :return: True, or session commit result if commit flag is False
+        :rtype: bool
+        """
         db.session.delete(self)
         return commit and db.session.commit()
 
