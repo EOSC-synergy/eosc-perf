@@ -28,7 +28,7 @@ class Benchmark(HasReports, HasCreationDate, HasCreationUser, PkModel):
 
     **Properties**:
     """
-    #: (Text, required) Docker image used to referenced by the benchmark
+    #: (Text, required) Docker image referenced by the benchmark
     docker_image = Column(Text, nullable=False)
 
     #: (Text, required) Docker image version/tag referenced by the benchmark
