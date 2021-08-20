@@ -2,6 +2,13 @@ EOSC Performance API
 ====================
 
 .. automodule:: backend
+
+.. autofunction:: backend.create_app
+
+Settings module
+---------------
+
+.. automodule:: backend.settings
    :members:
    :undoc-members:
    :show-inheritance:
@@ -10,14 +17,6 @@ Extensions module
 -----------------
 
 .. automodule:: backend.extensions
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Settings module
----------------
-
-.. automodule:: backend.settings
    :members:
    :undoc-members:
    :show-inheritance:
