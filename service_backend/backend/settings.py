@@ -9,7 +9,7 @@ file. In the last case, ensure the application has access to read such files.
 """
 import functools
 
-from environs import Env, EnvError
+from environs import Env
 from marshmallow.validate import OneOf
 
 
@@ -230,6 +230,3 @@ API_SPEC_OPTIONS['components'] = {
         {"url": "/api"}
     ]
 }
-
-# Environment errors evaluation
-# env.seal()
