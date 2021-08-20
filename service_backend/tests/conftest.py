@@ -35,7 +35,6 @@ def session_environment(sql_database):
     # Flask framework environments
     os.environ['SECRET_KEY'] = 'not-so-secret-for-testing'
     # Database environments
-    os.environ['DB_ENGINE'] = 'postgresql'
     os.environ['DB_USER'] = str(sql_database.user)
     os.environ['DB_PASSWORD'] = ""
     os.environ['DB_HOST'] = str(sql_database.host)

@@ -12,7 +12,6 @@ SECRET_KEY=<desired-cookie-encryption-key>
 OIDC_CLIENT_ID=<your-odic-client-secret>
 OIDC_CLIENT_SECRET=<your-odic-client-secret>
 ADMIN_ENTITLEMENTS=<only-used-in-production>
-DB_ENGINE=postgresql
 DB_HOST=localhost
 DB_PORT=5432
 DB_USER=<my-non-super-user>

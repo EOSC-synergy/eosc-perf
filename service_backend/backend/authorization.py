@@ -52,10 +52,10 @@ class Authorization(Flaat):
         self.set_verify_tls(verify_tls)
         
         # Required for using token introspection endpoint:
-        client_id = app.config['EGI_CLIENT_ID']
+        client_id = app.config['OIDC_CLIENT_ID']
         self.set_client_id(client_id)
 
-        client_secret = app.config['EGI_CLIENT_SECRET']
+        client_secret = app.config['OIDC_CLIENT_SECRET']
         self.set_client_secret(client_secret)
 
         admin_entitlements = app.config['ADMIN_ENTITLEMENTS']

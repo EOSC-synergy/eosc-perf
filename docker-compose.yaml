@@ -44,7 +44,6 @@ services:
       OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
       OIDC_CLIENT_SECRET_FILE: /run/secrets/oidc_secret
       ADMIN_ENTITLEMENTS: ${ADMIN_ENTITLEMENTS}
-      DB_ENGINE: postgresql
       DB_HOST: database
       DB_PORT: 5432
       DB_USER: ${DB_USER}
