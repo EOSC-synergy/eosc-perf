@@ -1,4 +1,4 @@
-"""Utils subpackage with mixins and tools to extend models."""
+"""Utils subpackage with tools to extend controller functions."""
 from . import dockerhub
 
 __all__ = [

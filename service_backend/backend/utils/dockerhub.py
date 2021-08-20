@@ -1,11 +1,25 @@
+"""Utils subpackage that contains all the constants, functions or
+classes to interface the application with Docker Hub.
+"""
 import requests
 from requests.exceptions import RequestException
 
 
+#: Url where docker repositories can be queried
 registry_url = "https://registry.hub.docker.com/v2/repositories"
 
 
 def valid_image(image, tag="latest"):
+    """Checks in docker hub the image:tag exists and that it is not
+    private.
+
+    :param image: Container identification to search in Docker Hub repository
+    :type image: string
+    :param tag: Container version to search for, defaults to "latest"
+    :type tag: str, optional
+    :return: True if image:tag exists and public, False otherwise 
+    :rtype: bool
+    """
     try:
         image_req = requests.get(f"{registry_url}/{image}")
         image_meta = image_req.json()

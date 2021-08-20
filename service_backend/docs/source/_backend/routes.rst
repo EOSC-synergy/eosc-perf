@@ -6,7 +6,7 @@ Routes package
    :undoc-members:
    :show-inheritance:
 
-Benchmarks module
+Benchmarks routes
 -----------------
 
 .. automodule:: backend.routes.benchmarks
@@ -14,7 +14,7 @@ Benchmarks module
    :undoc-members:
    :show-inheritance:
 
-Reports module
+Reports routes
 --------------
 
 .. automodule:: backend.routes.reports
@@ -22,7 +22,7 @@ Reports module
    :undoc-members:
    :show-inheritance:
 
-Results module
+Results routes
 --------------
 
 .. automodule:: backend.routes.results
@@ -30,7 +30,7 @@ Results module
    :undoc-members:
    :show-inheritance:
 
-Sites module
+Sites routes
 ------------
 
 .. automodule:: backend.routes.sites
@@ -38,7 +38,7 @@ Sites module
    :undoc-members:
    :show-inheritance:
 
-Tags module
+Tags routes
 -----------
 
 .. automodule:: backend.routes.tags
@@ -46,7 +46,7 @@ Tags module
    :undoc-members:
    :show-inheritance:
 
-Users module
+Users routes
 ------------
 
 .. automodule:: backend.routes.users
