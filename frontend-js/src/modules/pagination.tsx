@@ -28,7 +28,8 @@ export function Paginator(props: {
     navigateTo: (pageIndex: number) => void;
 }) {
     return (
-        <Pagination>
+        /* <nav aria-label="Page navigation" className={props.className}> */
+        <Pagination className="mb-0">
             <Pagination.First
                 disabled={props.pagination.page == 1}
                 onClick={() => props.navigateTo(1)}
@@ -40,8 +41,9 @@ export function Paginator(props: {
             {/* TODO: don't show all pages, only nearby 3-5? */}
             {[...Array(props.pagination.pages).keys()].map((n: number) => (
                 <Pagination.Item
-                    disabled={props.pagination.page == n + 1}
+                    active={props.pagination.page == n + 1}
                     onClick={() => props.navigateTo(n + 1)}
+                    key={n + 1}
                 >
                     {n + 1}
                 </Pagination.Item>
