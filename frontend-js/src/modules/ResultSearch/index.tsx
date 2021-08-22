@@ -5,11 +5,9 @@ import { useQuery } from 'react-query';
 import { ColumnSelectModal } from './columnSelectModal';
 import { JSONPreviewModal } from './JSONPreviewModal';
 import { ResultsPerPageSelection } from './resultsPerPageSelection';
-import { NumberedPagination } from './numberedPagination';
 import { BenchmarkSelection } from './benchmarkSelection';
 import { CardAccordionToggle } from './cardAccordionToggle';
 import { getHelper } from '../../api-helpers';
-import { SelectableResult } from './selectableResult';
 import { ResultTable } from './resultTable';
 import {
     ActionColumn,
@@ -19,27 +17,29 @@ import {
     SiteFlavorColumn,
     TagsColumn,
 } from './column';
+import { Result, Results } from '../../api';
+import { Paginator } from '../pagination';
 
 const qs = require('qs');
 
-type ResultSearchProps = {
+function ResultSearch(props: {
     initialBenchmark: string;
     location: { search: string };
     token: string;
     admin: boolean;
-};
-
-function ResultSearch(props: ResultSearchProps) {
+}) {
     const [benchmark, setBenchmark] = useState(qs.parse(props.location.search).benchmark || '');
 
     const [resultsPerPage, setResultsPerPage] = useState(10);
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(1);
     // json preview modal
     const [showJSONPreview, setShowJSONPreview] = useState(false);
     // column selection modal
     const [showColumnSelection, setShowColumnSelection] = useState(false);
 
-    function displayJSON(result: SelectableResult) {
+    const [selectedResults, setSelectedResults] = useState<Result[]>([]);
+
+    function displayJSON(result: Result) {
         // TODO
     }
 
@@ -60,29 +60,21 @@ function ResultSearch(props: ResultSearchProps) {
     }, [props.token]);
 
     let { status, isLoading, isError, data, isSuccess } = useQuery(
-        'benchmarkSearch',
+        'benchmarkSearch-' + resultsPerPage + '-page-' + page,
         () => {
-            return getHelper<SelectableResult[]>('/results', props.token);
+            return getHelper<Results>('/results', props.token, { per_page: resultsPerPage, page });
         },
         {
             enabled: !!token,
             refetchOnWindowFocus: false, // do not spam queries
-            // add "selected" field to results
-            // TODO: other way than a 'selected' flag to select results?
-            select: (data) => {
-                data.data.map((result) => {
-                    return { ...result, selected: false };
-                });
-                return data;
-            },
         }
     );
 
-    function Search() {
+    function search() {
         // TODO
     }
 
-    function AddFilter() {
+    function addFilter() {
         // TODO
     }
 
@@ -104,10 +96,10 @@ function ResultSearch(props: ResultSearchProps) {
                                 <hr />
                                 {/* TODO: Filters wrapper */}
                                 <ul id="filters" className="list-unstyled d-flex flex-column"></ul>
-                                <Button variant="primary" onSubmit={Search}>
+                                <Button variant="primary" onSubmit={search}>
                                     Search
                                 </Button>
-                                <Button variant="success" onSubmit={AddFilter}>
+                                <Button variant="success" onSubmit={addFilter}>
                                     Add Filter
                                 </Button>
                             </Card.Body>
@@ -186,7 +178,10 @@ function ResultSearch(props: ResultSearchProps) {
             <Container fluid>
                 <Card>
                     <div style={{ display: 'relative' }}>
-                        <ResultTable results={data ? data.data : []} columns={columns} />
+                        {isSuccess && data!.data.total > 0 && (
+                            <ResultTable results={data!.data.items!} columns={columns} />
+                        )}
+                        {isError && 'No results found! :('}
                         {isLoading && <LoadingOverlay />}
                     </div>
                     <div className="m-2 text-center">
@@ -217,14 +212,7 @@ function ResultSearch(props: ResultSearchProps) {
                         currentSelection={resultsPerPage}
                         className="m-2 align-self-center"
                     />
-                    {data && (
-                        <NumberedPagination
-                            pageCount={/*Math.ceil(data?.data.length / resultsPerPage)*/ 5}
-                            currentPage={page}
-                            onChange={setResultsPerPage}
-                            className="m-2 align-self-center"
-                        />
-                    )}
+                    {isSuccess && <Paginator pagination={data!.data} navigateTo={setPage} />}
                 </div>
             </Container>
             <JSONPreviewModal show={showJSONPreview} closeModal={() => setShowJSONPreview(false)} />
