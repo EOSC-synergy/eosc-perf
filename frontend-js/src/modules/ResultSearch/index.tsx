@@ -39,10 +39,6 @@ function ResultSearch(props: {
 
     const [selectedResults, setSelectedResults] = useState<Result[]>([]);
 
-    function displayJSON(result: Result) {
-        // TODO
-    }
-
     const [columns, setColumns] = useState([
         new CheckboxColumn(),
         new BenchmarkColumn(),
@@ -52,20 +48,13 @@ function ResultSearch(props: {
         new ActionColumn(displayJSON, props.admin),
     ]);
 
-    // put token in state
-    const [token, setToken] = useState(props.token);
-    // propagate props to state for token update
-    useEffect(() => {
-        setToken(props.token);
-    }, [props.token]);
-
     let { status, isLoading, isError, data, isSuccess } = useQuery(
-        'benchmarkSearch-' + resultsPerPage + '-page-' + page,
+        'results-' + resultsPerPage + '-page-' + page,
         () => {
             return getHelper<Results>('/results', props.token, { per_page: resultsPerPage, page });
         },
         {
-            enabled: !!token,
+            enabled: !!props.token,
             refetchOnWindowFocus: false, // do not spam queries
         }
     );
@@ -75,6 +64,10 @@ function ResultSearch(props: {
     }
 
     function addFilter() {
+        // TODO
+    }
+
+    function displayJSON(result: Result) {
         // TODO
     }
 
