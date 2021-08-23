@@ -3,7 +3,6 @@
 # https://docs.authlib.org/en/latest/specs/rfc7662.html
 #   #use-introspection-in-resource-server
 
-from backend.schemas.fields import Message
 from functools import wraps
 
 from flaat import Flaat, tokentools
@@ -46,11 +45,11 @@ class Authorization(Flaat):
         #     3: Max
         verbosity = app.config.get('FLAAT_VERBOSITY', 0)
         self.set_verbosity(verbosity)
-        
+
         # TLS verification:
         verify_tls = app.config.get('VERIFY_TLS', False)
         self.set_verify_tls(verify_tls)
-        
+
         # Required for using token introspection endpoint:
         client_id = app.config['OIDC_CLIENT_ID']
         self.set_client_id(client_id)

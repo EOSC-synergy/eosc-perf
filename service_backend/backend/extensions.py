@@ -1,8 +1,7 @@
-"""Extensions module. This module implements the loading of multiple
-flask extensions to extend the basic provided functionality to the API
-requirements.
-
+"""This module implements the loading of multiple flask extensions to
+extend the basic provided functionality to the API requirements.
 For more information about flask and extensions see:
+
 https://flask.palletsprojects.com/en/2.0.x/extensions
 
 Each extension requires of a specific class initialization which is 

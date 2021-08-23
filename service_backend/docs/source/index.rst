@@ -62,7 +62,7 @@ out of your application when using our endpoints.
 * **Extending EOSC Performance**:
   :doc:`Modules, Classes and Functions </_backend/backend>`
 
-* **Database inteface with Python**:
+* **Database interface with Python**:
   :doc:`Instantiate multiple models with Factories </_factories/factories/>`
 
 .. toctree::
