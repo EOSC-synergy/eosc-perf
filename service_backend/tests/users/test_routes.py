@@ -98,8 +98,11 @@ class TestSearch:
     @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True,  argvalues=[
         {'terms': ["sub_1@email.com"]},
+        {'terms[]': ["sub_1@email.com"]},
         {'terms': ["sub", "email.com"]},
-        {'terms': []}
+        {'terms[]': ["sub", "email.com"]},
+        {'terms': []},   # Empty query
+        {'terms[]': []}  # Empty query
     ])
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""

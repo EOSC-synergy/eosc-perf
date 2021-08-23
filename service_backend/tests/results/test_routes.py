@@ -26,9 +26,11 @@ class TestRoot:
         {'site_name': results[0]["site__name"]},
         {'flavor_name': results[0]["flavor__name"]},
         {'tag_names': [tag for tag in results[0]["tags"]]},
+        {'tag_names[]': [tag for tag in results[0]["tags"]]},
         {'upload_before': "3000-01-01"},
         {'upload_after': "1000-01-01"},
         {'filters': ["time < 11", "time > 9"]},
+        {'filters[]': ["time < 11", "time > 9"]},
         {}  # Multiple results
     ])
     def test_GET_200(self, response_GET, url):
@@ -143,10 +145,15 @@ class TestSearch:
 
     @mark.parametrize('query', indirect=True,  argvalues=[
         {'terms': [results[0]["benchmark__docker_image"]]},
+        {'terms[]': [results[0]["benchmark__docker_image"]]},
         {'terms': [results[0]["benchmark__docker_tag"]]},
+        {'terms[]': [results[0]["benchmark__docker_tag"]]},
         {'terms': [results[0]["site__name"], results[0]["flavor__name"]]},
+        {'terms[]': [results[0]["site__name"], results[0]["flavor__name"]]},
         {'terms': [tag for tag in results[0]["tags"]]},
-        {'terms': []}   # Empty terms
+        {'terms[]': [tag for tag in results[0]["tags"]]}, 
+        {'terms': []},    # Empty terms
+        {'terms[]': []}   # Empty terms
     ])
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""

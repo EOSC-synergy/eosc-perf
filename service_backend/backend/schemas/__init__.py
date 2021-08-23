@@ -10,8 +10,9 @@ This objects come into 2 types:
  - Schemas: JSON structures used to operate model instances
  - Arguments: Query arguments to control route method parameters 
 """
-from marshmallow import Schema
+from marshmallow import Schema, pre_load
 from marshmallow.validate import Range
+from werkzeug.datastructures import ImmutableMultiDict
 
 from . import fields
 
@@ -22,6 +23,14 @@ class BaseSchema(Schema):
         """`marshmallow` options object for BaseSchema."""        
         #: Enforce Order in OpenAPI Specification File
         ordered = True
+
+    @pre_load   # Support PHP and axios query framework
+    def process_input(self, data, **kwargs):
+        if hasattr(data, 'data'): # flask_smorest query
+            args = data.data._iter_hashitems()
+            fixed_args = [(x.replace('[]', ''), y) for x,y in args]
+            data.data = ImmutableMultiDict(fixed_args)
+        return data
 
 
 class Pagination(BaseSchema):

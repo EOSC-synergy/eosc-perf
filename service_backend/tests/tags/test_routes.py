@@ -95,8 +95,11 @@ class TestSearch:
 
     @mark.parametrize('query', indirect=True,  argvalues=[
         {'terms': ["tag1"]},
+        {'terms[]': ["tag1"]},
         {'terms': ["tag", " 2"]},
-        {'terms': []}
+        {'terms[]': ["tag", " 2"]},
+        {'terms': []},   # Empty query
+        {'terms[]': []}  # Empty query
     ])
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
