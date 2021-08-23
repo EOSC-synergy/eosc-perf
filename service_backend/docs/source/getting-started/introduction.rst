@@ -5,5 +5,5 @@ Introduction
 Settings
 --------------
 
-See :ref:`configuration settings<config-settings>`.
+See :doc:`configuration settings</_backend/settings>`.
 

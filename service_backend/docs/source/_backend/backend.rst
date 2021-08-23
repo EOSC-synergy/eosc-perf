@@ -6,42 +6,22 @@ EOSC Performance API
 .. autofunction:: backend.create_app
 
 
-.. _config-settings:
-
-Settings module
----------------
-
-.. automodule:: backend.settings
-   :members:
-   :exclude-members: development_defaults
-   :member-order: bysource
-   :undoc-members:
-   :show-inheritance:
-
-Extensions module
------------------
-
-.. automodule:: backend.extensions
-   :members:
-   :member-order: bysource
-   :undoc-members:
-   :show-inheritance:
-
-Authorization module
---------------------
-
-.. automodule:: backend.authorization
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Subpackages
------------
+The EOSC Performance API is composed by the following 
+main components:
 
 .. toctree::
-   :maxdepth: 4
+   :hidden:
 
+   /_backend/settings
+   /_backend/extensions
    /_backend/models
    /_backend/routes
    /_backend/schemas
    /_backend/utils
+
+*  :doc:`/_backend/settings`: Configuration variables from environment
+*  :doc:`/_backend/extensions`: Flask additional components
+*  :doc:`/_backend/models`: Database models and tables used by the API
+*  :doc:`/_backend/routes`: URL routes and controller methods
+*  :doc:`/_backend/schemas`: Defined OpenAPI schemas to interface the API
+*  :doc:`/_backend/utils`: Group of tools to simplify internal components
