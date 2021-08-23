@@ -7,7 +7,7 @@ import React from 'react';
 
 export function BenchmarkReportInfo(props: { report: Report; token: string; refetch: () => void }) {
     let { isLoading, data, isSuccess } = useQuery(
-        'benchmark',
+        'benchmark-' + props.report.resource_id,
         () => {
             return getHelper<Benchmark>('/benchmarks/' + props.report.resource_id);
         },

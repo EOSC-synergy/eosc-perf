@@ -7,7 +7,7 @@ import React from 'react';
 
 export function SiteReportInfo(props: { report: Report; token: string; refetch: () => void }) {
     let { isLoading, data, isSuccess } = useQuery(
-        'site',
+        'site-' + props.report.resource_id,
         () => {
             return getHelper<Site>('/sites/' + props.report.resource_id);
         },

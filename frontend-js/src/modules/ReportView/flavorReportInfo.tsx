@@ -7,7 +7,7 @@ import { ReportInteraction } from './reportInteraction';
 
 export function FlavorReportInfo(props: { report: Report; token: string; refetch: () => void }) {
     let { isLoading, data, isSuccess } = useQuery(
-        'flavor',
+        'flavor-' + props.report.resource_id,
         () => {
             return getHelper<Flavor>('/sites/flavors/' + props.report.resource_id);
         },

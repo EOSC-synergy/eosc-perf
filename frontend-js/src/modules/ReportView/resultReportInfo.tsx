@@ -6,7 +6,7 @@ import React from 'react';
 
 export function ResultReportInfo(props: { report: Report; token: string; refetch: () => void }) {
     let { isLoading, data, isSuccess } = useQuery(
-        'result',
+        'result-' + props.report.resource_id,
         () => {
             return getHelper<Result>('/results/' + props.report.resource_id);
         },
