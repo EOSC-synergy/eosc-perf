@@ -1,29 +1,28 @@
-import React, { FormEvent, useState } from 'react';
+import { useState } from 'react';
+import { Button, Col, Form, Row } from 'react-bootstrap';
 
-type BenchmarkSearchResponse = {};
-
-export function SearchForm() {
+export function SearchForm(props: { setSearchString: (params: string) => void }) {
     const [message, setMessage] = useState('');
 
-    function handleSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        // @ts-ignore
-        setMessage(event.target.query);
-    }
-
     return (
-        <form onSubmit={handleSubmit} className="flexbox">
-            <label htmlFor={'query'} className={'sr-only'}>
-                Query
-            </label>
-            <input
-                type={'text'}
-                name={'query'}
-                className={'form-control'}
-                style={{ flex: '10 1 0' }}
-                placeholder={'Enter your query here, keywords separated by spaces'}
-            />
-            <input type={'submit'} className={'btn btn-info'} name={'submit'} value={'Search'} />
-        </form>
+        <Form>
+            <Form.Group as={Row}>
+                <Form.Label className="sr-only" column>
+                    Query
+                </Form.Label>
+                <Col>
+                    <Form.Control
+                        type="text"
+                        placeholder="Enter your query here, keywords separated by spaces"
+                        onChange={(e) => setMessage(e.target.value)}
+                    />
+                </Col>
+                <Col md="auto">
+                    <Button variant="info" onClick={() => props.setSearchString(message)}>
+                        Search
+                    </Button>
+                </Col>
+            </Form.Group>
+        </Form>
     );
 }

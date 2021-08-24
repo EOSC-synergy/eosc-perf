@@ -1,29 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from 'react-query';
-import axios from 'axios';
 import { SearchForm } from './searchForm';
 import { Table } from './table';
 import { LoadingOverlay } from '../loadingOverlay';
-import { Benchmark } from '../../api';
+import { Benchmarks } from '../../api';
 import { getHelper } from '../../api-helpers';
+import { Paginator } from '../pagination';
 
 function Page(props: { token: string }) {
-    const [resultsPerPage, setResultsPerPage] = useState(10);
+    //const [resultsPerPage, setResultsPerPage] = useState(10);
     const [page, setPage] = useState(0);
 
-    let { status, isLoading, isError, data, isSuccess } = useQuery(
-        'benchmarkSearch',
+    const [searchString, setSearchString] = useState<string>('');
+
+    let { isLoading, isError, data, isSuccess } = useQuery(
+        'benchmarkSearch-page-' + page + searchString,
         () => {
-            return getHelper<Benchmark[]>('/benchmarks', props.token);
+            return getHelper<Benchmarks>('/benchmarks/search', props.token, {
+                // split here so we can add searchString to key to fetch automatically
+                terms: searchString.split(' '),
+            });
         },
         {
             refetchOnWindowFocus: false, // do not spam queries
         }
     );
+
     return (
         <div className="container">
             <h1>Benchmark Search</h1>
-            <SearchForm />
+            <SearchForm setSearchString={setSearchString} />
             <div style={{ position: 'relative' }}>
                 {isLoading && (
                     <>
@@ -31,15 +37,9 @@ function Page(props: { token: string }) {
                     </>
                 )}
                 {isError && <div>Failed to fetch benchmarks!</div>}
-                {isSuccess && (
-                    <Table
-                        results={data!.data.slice(
-                            page * resultsPerPage,
-                            (page + 1) * resultsPerPage
-                        )}
-                    />
-                )}
+                {isSuccess && <Table results={data!.data.items!} />}
             </div>
+            {isSuccess && <Paginator pagination={data!.data} navigateTo={setPage} />}
         </div>
     );
 }

@@ -3,11 +3,7 @@ import { Benchmark } from '../../api';
 
 import modules from '..';
 
-type TableProps = {
-    results: Benchmark[];
-};
-
-export function Table(props: TableProps) {
+export function Table(props: { results?: Benchmark[] }) {
     return (
         <table style={{ width: '100%' }}>
             <thead>
@@ -16,18 +12,18 @@ export function Table(props: TableProps) {
                 </tr>
             </thead>
             <tbody>
-                {props.results.length > 0 ? (
-                    props.results.map((result: Benchmark) => (
-                        <tr>
+                {props.results ? (
+                    props.results.map((benchmark: Benchmark) => (
+                        <tr key={benchmark.id}>
                             <td style={{ borderBottom: '1px solid #ddd' }}>
                                 <a
-                                    href={modules.ResultSearch.path + '?benchmark=' + result.id}
-                                    title={result.docker_image + ':' + result.docker_tag}
+                                    href={modules.ResultSearch.path + '?benchmark=' + benchmark.id}
+                                    title={benchmark.docker_image + ':' + benchmark.docker_tag}
                                 >
-                                    {result.docker_image + ':' + result.docker_tag}
+                                    {benchmark.docker_image + ':' + benchmark.docker_tag}
                                 </a>
                                 <div>
-                                    {result.description}
+                                    {benchmark.description}
                                     <br />
                                 </div>
                             </td>
