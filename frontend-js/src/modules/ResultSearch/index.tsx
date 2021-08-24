@@ -37,8 +37,6 @@ function ResultSearch(props: {
     const [page, setPage] = useState(1);
     // json preview modal
     const [showJSONPreview, setShowJSONPreview] = useState(false);
-    // column selection modal
-    const [showColumnSelection, setShowColumnSelection] = useState(false);
 
     // TODO: use map for performance?
     const [selectedResults, setSelectedResults] = useState<Result[]>([]);
@@ -193,15 +191,6 @@ function ResultSearch(props: {
                             >
                                 <Button
                                     variant="primary"
-                                    onClick={() => {
-                                        setShowColumnSelection(true);
-                                    }}
-                                    className="m-2"
-                                >
-                                    Select Columns
-                                </Button>
-                                <Button
-                                    variant="primary"
                                     onClick={() => {}}
                                     className="m-2"
                                     disabled
@@ -226,11 +215,6 @@ function ResultSearch(props: {
                 closeModal={() => {
                     setShowJSONPreview(false);
                 }}
-            />
-            <ColumnSelectModal
-                show={showColumnSelection}
-                closeModal={(columns: string[]) => setShowColumnSelection(false)}
-                columns={[] /* TODO */}
             />
         </>
     );

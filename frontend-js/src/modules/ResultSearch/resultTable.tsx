@@ -12,6 +12,8 @@ import {
 import { useState } from 'react';
 import { ResultOps } from './resultOps';
 import { Pencil } from 'react-bootstrap-icons';
+import { ColumnSelectModal } from './columnSelectModal';
+import '../../actionable.css';
 
 export function ResultTable(props: {
     results: Result[];
@@ -26,61 +28,75 @@ export function ResultTable(props: {
 
     const [customColumns, setCustomColumns] = useState<string[]>([]);
 
-    return (
-        <Table>
-            <thead>
-                <tr>
-                    {/* checkbox has no label */}
-                    <th />
-                    {benchmarkColumnEnabled && <th>Benchmark</th>}
-                    {siteColumnEnabled && <th>Site</th>}
-                    {siteFlavorColumnEnabled && <th>Site flavor</th>}
-                    {tagsColumnEnabled && <th>Tags</th>}
-                    {/* TODO: hover */}
-                    {customColumns.map((column) => (
-                        <th key={column}>{column}</th>
-                    ))}
-                    <th>Actions</th>
-                </tr>
-            </thead>
+    // column selection modal
+    const [showColumnSelection, setShowColumnSelection] = useState(false);
 
-            <tbody>
-                {props.results.map((result) => (
-                    <tr key={result.id}>
-                        <td>
-                            <CheckboxColumn result={result} ops={props.ops} />
-                        </td>
-                        {benchmarkColumnEnabled && (
-                            <td>
-                                <BenchmarkColumn result={result} />
-                            </td>
-                        )}
-                        {siteColumnEnabled && (
-                            <td>
-                                <SiteColumn result={result} />
-                            </td>
-                        )}
-                        {siteFlavorColumnEnabled && (
-                            <td>
-                                <SiteFlavorColumn result={result} />
-                            </td>
-                        )}
-                        {tagsColumnEnabled && (
-                            <td>
-                                <TagsColumn result={result} />
-                            </td>
-                        )}
+    return (
+        <>
+            <Table>
+                <thead>
+                    <tr>
+                        {/* checkbox has no label */}
+                        <th />
+                        {benchmarkColumnEnabled && <th>Benchmark</th>}
+                        {siteColumnEnabled && <th>Site</th>}
+                        {siteFlavorColumnEnabled && <th>Site flavor</th>}
+                        {tagsColumnEnabled && <th>Tags</th>}
+                        {/* TODO: hover */}
                         {customColumns.map((column) => (
-                            <td key={column}>
-                                <CustomColumn result={result} jsonKey={column} />
-                            </td>
+                            <th key={column}>{column}</th>
                         ))}
-                        <td>
-                            <ActionColumn result={result} ops={props.ops} admin={props.admin} />
-                        </td>
+                        <th>
+                            <a onClick={() => setShowColumnSelection(true)}>
+                                <Pencil className="actionable" />
+                            </a>
+                        </th>
                     </tr>
-                ))}
-            </tbody>
-        </Table>
+                </thead>
+
+                <tbody>
+                    {props.results.map((result) => (
+                        <tr key={result.id}>
+                            <td>
+                                <CheckboxColumn result={result} ops={props.ops} />
+                            </td>
+                            {benchmarkColumnEnabled && (
+                                <td>
+                                    <BenchmarkColumn result={result} />
+                                </td>
+                            )}
+                            {siteColumnEnabled && (
+                                <td>
+                                    <SiteColumn result={result} />
+                                </td>
+                            )}
+                            {siteFlavorColumnEnabled && (
+                                <td>
+                                    <SiteFlavorColumn result={result} />
+                                </td>
+                            )}
+                            {tagsColumnEnabled && (
+                                <td>
+                                    <TagsColumn result={result} />
+                                </td>
+                            )}
+                            {customColumns.map((column) => (
+                                <td key={column}>
+                                    <CustomColumn result={result} jsonKey={column} />
+                                </td>
+                            ))}
+                            <td>
+                                <ActionColumn result={result} ops={props.ops} admin={props.admin} />
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </Table>
+            <ColumnSelectModal
+                show={showColumnSelection}
+                closeModal={() => setShowColumnSelection(false)}
+                columns={[] /* TODO */}
+            />
+        </>
     );
 }
