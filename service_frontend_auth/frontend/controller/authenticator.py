@@ -165,7 +165,7 @@ class Authenticator(MockAuthenticator):
                 email = session['user']['info']['email']
                 name = session['user']['info']['name']
                 admin = self.is_admin()
-                return {"token": token, "email": email, "name": name, admin: admin}
+                return {"token": token, "email": email, "name": name, "admin": admin}
             except KeyError:
                 print("failed")
                 return None
