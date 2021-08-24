@@ -31,7 +31,7 @@ export function Paginator(props: {
         /* <nav aria-label="Page navigation" className={props.className}> */
         <Pagination className="m-1 align-items-center">
             <Pagination.First
-                disabled={props.pagination.page == 1}
+                disabled={props.pagination.pages !== 0 && props.pagination.page == 1}
                 onClick={() => props.navigateTo(1)}
             />
             <Pagination.Prev
@@ -53,7 +53,9 @@ export function Paginator(props: {
                 onClick={() => props.navigateTo(props.pagination.next_num)}
             />
             <Pagination.Last
-                disabled={props.pagination.page == props.pagination.pages}
+                disabled={
+                    props.pagination.pages !== 0 && props.pagination.page == props.pagination.pages
+                }
                 onClick={() => props.navigateTo(props.pagination.pages)}
             />
         </Pagination>
