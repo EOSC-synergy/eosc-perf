@@ -1,24 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { Accordion, Button, Card, Container, Table } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Accordion, Button, Card, Col, Container, Row } from 'react-bootstrap';
 import { LoadingOverlay } from '../loadingOverlay';
 import { useQuery } from 'react-query';
 import { ColumnSelectModal } from './columnSelectModal';
 import { JSONPreviewModal } from './JSONPreviewModal';
 import { ResultsPerPageSelection } from './resultsPerPageSelection';
-import { BenchmarkSelection } from './benchmarkSelection';
 import { CardAccordionToggle } from './cardAccordionToggle';
 import { getHelper } from '../../api-helpers';
 import { ResultTable } from './resultTable';
-import {
-    ActionColumn,
-    BenchmarkColumn,
-    CheckboxColumn,
-    SiteColumn,
-    SiteFlavorColumn,
-    TagsColumn,
-} from './column';
-import { Result, Results } from '../../api';
+import { Benchmark, Result, Results } from '../../api';
 import { Paginator } from '../pagination';
+import { DiagramView } from './diagramView';
 
 const qs = require('qs');
 
@@ -28,7 +20,18 @@ function ResultSearch(props: {
     token: string;
     admin: boolean;
 }) {
-    const [benchmark, setBenchmark] = useState(qs.parse(props.location.search).benchmark || '');
+    const benchmarkId = qs.parse(props.location.search.slice(1)).benchmark || '';
+
+    const benchmark = useQuery(
+        'benchmark-' + benchmarkId,
+        () => {
+            return getHelper<Benchmark>('/benchmarks/' + benchmarkId);
+        },
+        {
+            enabled: benchmarkId.length > 0,
+            refetchOnWindowFocus: false, // do not spam queries
+        }
+    );
 
     const [resultsPerPage, setResultsPerPage] = useState(10);
     const [page, setPage] = useState(1);
@@ -37,24 +40,37 @@ function ResultSearch(props: {
     // column selection modal
     const [showColumnSelection, setShowColumnSelection] = useState(false);
 
+    // TODO: use map for performance?
     const [selectedResults, setSelectedResults] = useState<Result[]>([]);
 
-    const [columns, setColumns] = useState([
-        new CheckboxColumn(),
-        new BenchmarkColumn(),
-        new SiteColumn(),
-        new SiteFlavorColumn(),
-        new TagsColumn(),
-        new ActionColumn(displayJSON, props.admin),
-    ]);
+    // helpers for subelements
+    const resultOps = {
+        select: function (result: Result) {
+            if (!this.isSelected(result)) {
+                setSelectedResults([...selectedResults, result]);
+            }
+        },
+        unselect: function (result: Result) {
+            setSelectedResults(selectedResults.filter((r, i, a) => r.id === result.id));
+        },
+        isSelected: function (result: Result) {
+            return selectedResults.includes(result);
+        },
+        display: function (result: Result) {
+            // TODO!
+        },
+    };
 
-    let { status, isLoading, isError, data, isSuccess } = useQuery(
+    const results = useQuery(
         'results-' + resultsPerPage + '-page-' + page,
         () => {
-            return getHelper<Results>('/results', props.token, { per_page: resultsPerPage, page });
+            return getHelper<Results>('/results', /*props.token,*/ undefined, {
+                per_page: resultsPerPage,
+                page,
+            });
         },
         {
-            enabled: !!props.token,
+            /*enabled: !!props.token,*/
             refetchOnWindowFocus: false, // do not spam queries
         }
     );
@@ -67,154 +83,156 @@ function ResultSearch(props: {
         // TODO
     }
 
-    function displayJSON(result: Result) {
-        // TODO
-    }
-
     // separate accordions to allow each element to be open simultaneously
 
     return (
-        <div className="container-fluid">
-            {/* paddingBottom: 0 to avoid odd gap before results */}
-            <Container style={{ paddingBottom: 0 }}>
+        <>
+            <Container fluid>
                 <h1>Result Search</h1>
-                <Accordion defaultActiveKey="filters">
-                    <Card className="m-2">
-                        <Card.Header>
-                            <CardAccordionToggle eventKey="filters">Filters</CardAccordionToggle>
-                        </Card.Header>
-                        <Accordion.Collapse eventKey="filters">
-                            <Card.Body>
-                                <BenchmarkSelection onChange={setBenchmark} benchmark={benchmark} />
-                                <hr />
-                                {/* TODO: Filters wrapper */}
-                                <ul id="filters" className="list-unstyled d-flex flex-column"></ul>
-                                <Button variant="primary" onSubmit={search}>
-                                    Search
-                                </Button>
-                                <Button variant="success" onSubmit={addFilter}>
-                                    Add Filter
-                                </Button>
-                            </Card.Body>
-                        </Accordion.Collapse>
-                    </Card>
-                </Accordion>
-                <Accordion defaultActiveKey="diagram">
-                    <Card className="m-2">
-                        <Card.Header>
-                            <CardAccordionToggle eventKey="diagram">
-                                Comparison diagram
-                            </CardAccordionToggle>
-                        </Card.Header>
-                        <Accordion.Collapse eventKey="diagram">
-                            <Card.Body>
-                                <div className="form-inline">
-                                    <label htmlFor="diagramDropdown">Select diagram type:</label>
-                                    <select
-                                        name="diagram-choice"
-                                        id="diagramDropdown"
-                                        onChange={() => {} /*search_page.select_diagram_type()*/}
-                                        className="custom-select"
-                                        disabled
-                                    >
-                                        <option value="speedup">Line graph</option>
-                                    </select>
-                                    <span
-                                        className="badge badge-secondary"
-                                        id="diagramDropdownBenchmarkHint"
-                                    >
-                                        Please select a benchmark
-                                    </span>
-                                </div>
-                                <div id="diagramConfiguration-speedup" className="d-none">
-                                    <select
-                                        className="custom-select"
-                                        id="speedupDiagramMode"
-                                        onChange={
-                                            () => {} /*search_page.update_diagram_configuration()*/
-                                        }
-                                    >
-                                        <option id="speedupDiagramMode-simple" value="simple">
-                                            Simple
-                                        </option>
-                                        <option id="speedupDiagramMode-linear" value="linear">
-                                            Linear
-                                        </option>
-                                        <option id="speedupDiagramMode-log" value="log">
-                                            Logarithmic
-                                        </option>
-                                    </select>
-                                    <div className="form-check">
-                                        <input
-                                            className="form-check-input"
-                                            type="checkbox"
-                                            value=""
-                                            id="speedupDiagramGroupedMode"
-                                            onChange={
-                                                () => {} /*search_page.update_diagram_configuration()}*/
+                <Row>
+                    <Col>
+                        <Accordion defaultActiveKey="filters">
+                            <Card className="m-1">
+                                <Card.Header>
+                                    <CardAccordionToggle eventKey="filters">
+                                        Filters
+                                    </CardAccordionToggle>
+                                </Card.Header>
+                                <Accordion.Collapse eventKey="filters">
+                                    <Card.Body>
+                                        Benchmark:{' '}
+                                        {benchmarkId.length > 0 && benchmark.isSuccess && (
+                                            <a
+                                                href={
+                                                    'https://hub.docker.com/repository/docker/' +
+                                                    benchmark.data!.data.docker_image
+                                                }
+                                            >
+                                                {benchmark.data!.data.docker_image +
+                                                    ':' +
+                                                    benchmark.data!.data.docker_tag}
+                                            </a>
+                                        )}
+                                        {(benchmarkId.length == 0 || results.isError) && (
+                                            <div className="text-muted">None</div>
+                                        )}
+                                        {benchmark.isLoading && (
+                                            <div className="text-muted">Loading</div>
+                                        )}
+                                        {/* TODO: Filters wrapper */}
+                                        <ul
+                                            id="filters"
+                                            className="list-unstyled d-flex flex-column"
+                                        ></ul>
+                                        <Button variant="primary" onSubmit={search} disabled>
+                                            Search
+                                        </Button>
+                                        <Button variant="success" onSubmit={addFilter} disabled>
+                                            Add Filter
+                                        </Button>
+                                    </Card.Body>
+                                </Accordion.Collapse>
+                            </Card>
+                        </Accordion>
+                    </Col>
+                    <Col>
+                        <Accordion defaultActiveKey="diagram">
+                            <Card className="m-1">
+                                <Card.Header>
+                                    <CardAccordionToggle eventKey="diagram">
+                                        Comparison diagram
+                                    </CardAccordionToggle>
+                                </Card.Header>
+                                <Accordion.Collapse eventKey="diagram">
+                                    <Card.Body>
+                                        <DiagramView
+                                            results={selectedResults}
+                                            benchmark={
+                                                benchmark.isSuccess
+                                                    ? benchmark.data!.data
+                                                    : undefined
                                             }
                                         />
-                                        <label
-                                            className="form-check-label"
-                                            htmlFor="speedupDiagramGroupedMode"
-                                        >
-                                            Group values by site (only in linear & logarithmic mode)
-                                        </label>
-                                    </div>
-                                </div>
-                                <div id="diagramSection" className="d-flex flex-column lead" />
-                            </Card.Body>
-                        </Accordion.Collapse>
-                    </Card>
-                </Accordion>
-            </Container>
-            <Container fluid>
-                <Card>
+                                    </Card.Body>
+                                </Accordion.Collapse>
+                            </Card>
+                        </Accordion>
+                    </Col>
+                </Row>
+                <Card className="m-1">
                     <div style={{ display: 'relative' }}>
-                        {isSuccess && data!.data.total > 0 && (
-                            <ResultTable results={data!.data.items!} columns={columns} />
+                        {results.isSuccess && results.data!.data.total > 0 && (
+                            <ResultTable
+                                results={results.data!.data.items!}
+                                ops={resultOps}
+                                customColumns={[]}
+                                admin={props.admin}
+                            />
                         )}
-                        {isError && 'No results found! :('}
-                        {isLoading && <LoadingOverlay />}
+                        {results.isError && 'No results found! :('}
+                        {results.isLoading && <LoadingOverlay />}
                     </div>
-                    <div className="m-2 text-center">
-                        <Button
-                            variant="primary"
-                            onClick={() => {} /*search_page.make_column_select_prompt()*/}
-                        >
-                            Select Columns
-                        </Button>
-                        <Button
-                            variant="primary"
-                            onClick={() => {} /*search_page.selection_invert()*/}
-                        >
-                            Invert Selection
-                        </Button>
-                        <Button
-                            variant="primary"
-                            onClick={() => {} /*search_page.selection_all()*/}
-                        >
-                            Select All
-                        </Button>
-                    </div>
+                    {/* fuck flexbox & CSS spacing */}
+                    {results.isSuccess && (
+                        <div className="m-2 d-flex">
+                            <div
+                                className="d-flex justify-content-start"
+                                style={{ flex: 1, marginRight: 'auto' }}
+                            >
+                                <ResultsPerPageSelection
+                                    onChange={setResultsPerPage}
+                                    currentSelection={resultsPerPage}
+                                />
+                            </div>
+                            <div className="d-flex justify-content-center" style={{ flex: 1 }}>
+                                <Paginator pagination={results.data!.data} navigateTo={setPage} />
+                            </div>
+                            <div
+                                className="d-flex justify-content-end"
+                                style={{ flex: 1, marginLeft: 'auto' }}
+                            >
+                                <Button
+                                    variant="primary"
+                                    onClick={() => {
+                                        setShowColumnSelection(true);
+                                    }}
+                                    className="m-2"
+                                >
+                                    Select Columns
+                                </Button>
+                                <Button
+                                    variant="primary"
+                                    onClick={() => {}}
+                                    className="m-2"
+                                    disabled
+                                >
+                                    Invert Selection
+                                </Button>
+                                <Button
+                                    variant="primary"
+                                    onClick={() => {}}
+                                    className="m-2"
+                                    disabled
+                                >
+                                    Select All
+                                </Button>
+                            </div>
+                        </div>
+                    )}
                 </Card>
-
-                <div className="d-flex justify-content-between flex-row-reverse">
-                    <ResultsPerPageSelection
-                        onChange={setResultsPerPage}
-                        currentSelection={resultsPerPage}
-                        className="m-2 align-self-center"
-                    />
-                    {isSuccess && <Paginator pagination={data!.data} navigateTo={setPage} />}
-                </div>
             </Container>
-            <JSONPreviewModal show={showJSONPreview} closeModal={() => setShowJSONPreview(false)} />
+            <JSONPreviewModal
+                show={showJSONPreview}
+                closeModal={() => {
+                    setShowJSONPreview(false);
+                }}
+            />
             <ColumnSelectModal
                 show={showColumnSelection}
-                closeModal={(columns: string[]) => {}}
+                closeModal={(columns: string[]) => setShowColumnSelection(false)}
                 columns={[] /* TODO */}
             />
-        </div>
+        </>
     );
 }
 

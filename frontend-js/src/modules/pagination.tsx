@@ -29,7 +29,7 @@ export function Paginator(props: {
 }) {
     return (
         /* <nav aria-label="Page navigation" className={props.className}> */
-        <Pagination className="mb-0">
+        <Pagination className="m-1 align-items-center">
             <Pagination.First
                 disabled={props.pagination.page == 1}
                 onClick={() => props.navigateTo(1)}
