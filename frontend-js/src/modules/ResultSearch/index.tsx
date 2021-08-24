@@ -66,13 +66,15 @@ function ResultSearch(props: {
     const results = useQuery(
         'results-' + resultsPerPage + '-page-' + page,
         () => {
-            return getHelper<Results>('/results', /*props.token,*/ undefined, {
+            return getHelper<Results>('/results', undefined, {
                 per_page: resultsPerPage,
                 page,
+                docker_image: benchmark.data?.data.docker_image,
+                docker_tag: benchmark.data?.data.docker_tag,
             });
         },
         {
-            /*enabled: !!props.token,*/
+            enabled: benchmarkId.length === 0 || benchmark.isSuccess,
             refetchOnWindowFocus: false, // do not spam queries
         }
     );
