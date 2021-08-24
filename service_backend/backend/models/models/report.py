@@ -61,7 +61,7 @@ class Report(HasCreationDate, HasCreationUser, PkModel):
 
     def __repr__(self):
         """Human-readable representation string"""
-        return "{} {}".format(self.__class__.__name__, self.id)
+        return "{} {}".format(self.__class__.__name__, self.message)
 
 
 class ReportAssociation(PkModel):

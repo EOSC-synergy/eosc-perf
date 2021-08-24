@@ -6,22 +6,22 @@ from factory import (LazyFunction, SelfAttribute, Sequence, SubFactory,
                      post_generation)
 from factory.alchemy import SQLAlchemyModelFactory
 
-from factories import BaseMeta, fdt
+from .core import BaseMeta, fdt
 
 
 class DBUser(SQLAlchemyModelFactory):
-    """User factory."""
+    """User factory. Default kwargs are:"""
     class Meta(BaseMeta):
         model = models.User
         sqlalchemy_get_or_create = ('email',)
 
     sub = Sequence(lambda n: f"user{n}")
-    iss = "egi.com"
+    iss = "https://aai-dev.egi.eu/oidc"
     email = Sequence(lambda n: f"user{n}@example.com")
 
 
 class DBReport(SQLAlchemyModelFactory):
-    """Report factory."""
+    """Report factory. Default kwargs are:"""
     class Meta(BaseMeta):
         model = models.Report
 
@@ -33,7 +33,7 @@ class DBReport(SQLAlchemyModelFactory):
 
 
 class DBBenchmark(SQLAlchemyModelFactory):
-    """Benchmark factory."""
+    """Benchmark factory. Default kwargs are:"""
     class Meta(BaseMeta):
         model = models.Benchmark
         sqlalchemy_get_or_create = ('docker_image', 'docker_tag')
@@ -53,9 +53,8 @@ class DBBenchmark(SQLAlchemyModelFactory):
             self.reports[0].verdict = verdict
 
 
-
 class DBSite(SQLAlchemyModelFactory):
-    """Site factory."""
+    """Site factory. Default kwargs are:"""
     class Meta(BaseMeta):
         model = models.Site
         sqlalchemy_get_or_create = ('name',)
@@ -75,7 +74,7 @@ class DBSite(SQLAlchemyModelFactory):
 
 
 class DBFlavor(SQLAlchemyModelFactory):
-    """Flavor factory."""
+    """Flavor factory. Default kwargs are:"""
     class Meta(BaseMeta):
         model = models.Flavor
         sqlalchemy_get_or_create = ('name', 'site_id')
@@ -95,7 +94,7 @@ class DBFlavor(SQLAlchemyModelFactory):
 
 
 class DBTag(SQLAlchemyModelFactory):
-    """Tag factory."""
+    """Tag factory. Default kwargs are:"""
     class Meta(BaseMeta):
         model = models.Tag
         sqlalchemy_get_or_create = ('name',)
@@ -106,7 +105,7 @@ class DBTag(SQLAlchemyModelFactory):
 
 
 class DBResult(SQLAlchemyModelFactory):
-    """Result factory."""
+    """Result factory. Default kwargs are:"""
     class Meta(BaseMeta):
         model = models.Result
         sqlalchemy_get_or_create = ('id',)

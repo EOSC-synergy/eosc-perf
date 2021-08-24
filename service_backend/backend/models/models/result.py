@@ -74,4 +74,4 @@ class Result(HasReports, HasTags, HasCreationDate, HasCreationUser, PkModel):
 
     def __repr__(self) -> str:
         """Human-readable representation string"""
-        return "<{} {}>".format(self.__class__.__name__, self.id)
+        return "<{} {}>".format(self.__class__.__name__, self.json)

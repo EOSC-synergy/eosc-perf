@@ -4,11 +4,11 @@ See: https://pytest-flask.readthedocs.io/en/latest/features.html
 import logging
 import os
 
+import factories
 from backend import create_app
 from backend.extensions import auth as authentication
 from backend.extensions import db as database
 from backend.utils import dockerhub
-from factories import factories
 from flaat import tokentools
 from pytest import fixture
 from pytest_postgresql.janitor import DatabaseJanitor

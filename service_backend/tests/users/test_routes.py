@@ -12,7 +12,7 @@ class TestRoot:
     @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[
         {'sub': 'sub_0'},
-        {'iss': 'egi.com'},
+        {'iss': 'https://aai-dev.egi.eu/oidc'},
         {'email': "sub_1@email.com"},
         {}  # Multiple results
     ])

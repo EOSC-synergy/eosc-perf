@@ -30,7 +30,7 @@ class User(HasCreationDate, TokenModel):
 
     def __repr__(self) -> str:
         """Human-readable representation string"""
-        return "<{} {}>".format(self.__class__.__name__, self.name)
+        return "<{} {}>".format(self.__class__.__name__, self.email)
 
 
 class HasCreationUser(object):
