@@ -39,7 +39,10 @@ function ResultSearch(props: {
     const [showJSONPreview, setShowJSONPreview] = useState(false);
 
     // TODO: use map for performance?
+    // TODO: maintain sorting
     const [selectedResults, setSelectedResults] = useState<Result[]>([]);
+
+    const [previewResult, setPreviewResult] = useState<Result | null>(null);
 
     // helpers for subelements
     const resultOps = {
@@ -49,13 +52,14 @@ function ResultSearch(props: {
             }
         },
         unselect: function (result: Result) {
-            setSelectedResults(selectedResults.filter((r, i, a) => r.id === result.id));
+            setSelectedResults(selectedResults.filter((r, i, a) => r.id !== result.id));
         },
         isSelected: function (result: Result) {
             return selectedResults.includes(result);
         },
         display: function (result: Result) {
-            // TODO!
+            setPreviewResult(result);
+            setShowJSONPreview(true);
         },
     };
 
@@ -215,6 +219,7 @@ function ResultSearch(props: {
                 closeModal={() => {
                     setShowJSONPreview(false);
                 }}
+                result={previewResult}
             />
         </>
     );

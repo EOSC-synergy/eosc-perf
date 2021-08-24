@@ -1,5 +1,8 @@
-import React from 'react';
 import { Button, Modal } from 'react-bootstrap';
+import { Result } from '../../api';
+import Highlight from 'react-highlight';
+import './railscasts.css';
+import React from 'react';
 
 /*
     TODO: ask if the x in the corner is necessary (also for column select)
@@ -8,20 +11,23 @@ import { Button, Modal } from 'react-bootstrap';
     </button>
  */
 
-export function JSONPreviewModal(props: { show: boolean; closeModal: () => void }) {
+export function JSONPreviewModal(props: {
+    result: Result | null;
+    show: boolean;
+    closeModal: () => void;
+}) {
     return (
         <Modal show={props.show} scrollable={true} size="lg" onHide={props.closeModal}>
             <Modal.Header>
                 <Modal.Title>JSON Data</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <pre>
-                    <code id="jsonPreviewContent" className="json rounded">
-                        {/* TODO: highlight.js & passing data
-                        https://github.com/bvaughn/react-highlight.js https://github.com/bvaughn/react-highlight.js/pull/23
-                        */}
-                    </code>
-                </pre>
+                {props.result !== null && (
+                    <Highlight className="json">
+                        {JSON.stringify(props.result.json, null, 4)}
+                    </Highlight>
+                )}
+                {props.result == null && <div className="text-muted">Loading...</div>}
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={props.closeModal}>
