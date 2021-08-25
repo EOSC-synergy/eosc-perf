@@ -152,6 +152,10 @@ class Report(Schema):
     #: Resource unique identification
     resource_id = fields.Id(required=True)
 
+    #: (User, required, dump_only):
+    #: User object who created the report 
+    created_by = fields.Nested("User", required=True, dump_only=True)
+
 
 class Reports(Pagination, Schema):
 

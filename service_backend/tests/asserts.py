@@ -79,6 +79,10 @@ def match_report(json, report):
     assert 'resource_id' in json and type(json['resource_id']) is str
     assert json['resource_id'] == str(report.resource_id)
 
+    # Check the report has a created_by
+    assert 'created_by' in json # Reports should only be accessible by admins
+    assert match_user(json['created_by'], report.created_by)
+
     return True
 
 
