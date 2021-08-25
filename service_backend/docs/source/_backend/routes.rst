@@ -38,6 +38,14 @@ Sites routes
    :undoc-members:
    :show-inheritance:
 
+Flavor routes
+-----------------
+
+.. automodule:: backend.routes.flavors
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Tags routes
 -----------
 

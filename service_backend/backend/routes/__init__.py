@@ -12,6 +12,7 @@ The flask extension flask_smorest allows to produce a OpenAPI JSON
 specification which can be used by automation tools. For example swagger
 can use such specification to produce an user friendly GUI for the API.
 """
-from . import benchmarks, reports, results, sites, tags, users
+from . import benchmarks, flavors, reports, results, sites, tags, users
 
-__all__ = "benchmarks", "reports", "results", "sites", "tags", "users"
+__all__ = ["benchmarks", "flavors", "reports",
+           "results", "sites", "tags", "users"]

@@ -96,6 +96,7 @@ def register_blueprints(app):
     api.register_blueprint(routes.reports.blp, url_prefix='/reports')
     api.register_blueprint(routes.results.blp, url_prefix='/results')
     api.register_blueprint(routes.sites.blp, url_prefix='/sites')
+    api.register_blueprint(routes.flavors.blp, url_prefix='/flavors')
     api.register_blueprint(routes.tags.blp, url_prefix='/tags')
     api.register_blueprint(routes.users.blp, url_prefix='/users')
 
