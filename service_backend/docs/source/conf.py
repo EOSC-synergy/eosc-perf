@@ -33,6 +33,7 @@ release = '0.0.1'
 # ones.
 extensions = [
     'sphinx.ext.autosectionlabel',
+    'sphinx.ext.graphviz',
     'sphinx.ext.autodoc'
 ]
 
