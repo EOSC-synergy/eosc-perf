@@ -17,9 +17,9 @@ import '../../actionable.css';
 
 export function ResultTable(props: {
     results: Result[];
-    customColumns: string[];
     ops: ResultOps;
     admin: boolean;
+    suggestions?: string[];
 }) {
     const [benchmarkColumnEnabled, setBenchmarkColumnEnabled] = useState(true);
     const [siteColumnEnabled, setSiteColumnEnabled] = useState(true);

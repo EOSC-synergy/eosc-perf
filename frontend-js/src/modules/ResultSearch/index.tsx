@@ -14,6 +14,26 @@ import { DiagramView } from './diagramView';
 
 const qs = require('qs');
 
+function determineNotableKeys(benchmark: Benchmark) {
+    function recurser(key: string, obj: any): string[] {
+        if (key.startsWith('!') && typeof obj[key] !== 'object') {
+            return [key.slice(1)];
+        }
+
+        if (typeof obj === 'object' && obj !== null) {
+            return Object.entries(obj)
+                .map(([k, v], _, __) => recurser(k, v)) // get all interesting children
+                .reduce((acc: string[], arr: string[]) => [...acc, ...arr]) // make one array
+                .map((path: string) => key + '.' + path); // prefix current key
+        }
+        return [];
+    }
+
+    return Object.entries(benchmark.json_template)
+        .map(([k, v], _, __) => recurser(k, v))
+        .reduce((acc: string[], arr: string[]) => [...acc, ...arr]);
+}
+
 function ResultSearch(props: {
     initialBenchmark: string;
     location: { search: string };
@@ -32,6 +52,10 @@ function ResultSearch(props: {
             refetchOnWindowFocus: false, // do not spam queries
         }
     );
+
+    const suggestedFields = benchmark.isSuccess
+        ? determineNotableKeys(benchmark!.data.data)
+        : undefined;
 
     const [resultsPerPage, setResultsPerPage] = useState(10);
     const [page, setPage] = useState(1);
@@ -156,6 +180,7 @@ function ResultSearch(props: {
                                                     ? benchmark.data!.data
                                                     : undefined
                                             }
+                                            suggestions={suggestedFields}
                                         />
                                     </Card.Body>
                                 </Accordion.Collapse>
@@ -169,8 +194,8 @@ function ResultSearch(props: {
                             <ResultTable
                                 results={results.data!.data.items!}
                                 ops={resultOps}
-                                customColumns={[]}
                                 admin={props.admin}
+                                suggestions={suggestedFields}
                             />
                         )}
                         {results.isError && 'No results found! :('}

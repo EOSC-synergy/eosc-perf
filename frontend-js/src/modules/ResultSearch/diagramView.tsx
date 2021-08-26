@@ -4,7 +4,11 @@ import charts from './diagrams';
 import { Route } from 'react-router-dom';
 import React, { useState } from 'react';
 
-export function DiagramView(props: { results: Result[]; benchmark?: Benchmark }) {
+export function DiagramView(props: {
+    results: Result[];
+    benchmark?: Benchmark;
+    suggestions?: string[];
+}) {
     const [selectedDiagram, setSelectedDiagram] = useState(charts.LineChartMeta.id);
 
     return (
