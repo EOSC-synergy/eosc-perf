@@ -16,15 +16,15 @@ export function ActionColumn(props: { result: Result; ops: ResultOps; admin: boo
             >
                 <Hash />
             </Button>
-            <Button variant="warning" onClick={() => {} /* TODO: report button */}>
+            <Button variant="warning" onClick={() => {} /* TODO: report button */} disabled>
                 <Exclamation />
             </Button>
             {props.admin && (
                 <>
-                    <Button variant="secondary" onClick={() => {} /* TODO: mail button */}>
+                    <Button variant="secondary" onClick={() => {} /* TODO: mail button */} disabled>
                         <Envelope />
                     </Button>
-                    <Button variant="danger" onClick={() => {} /* TODO: delete button */}>
+                    <Button variant="danger" onClick={() => {} /* TODO: delete button */} disabled>
                         <Trash />
                     </Button>
                 </>
