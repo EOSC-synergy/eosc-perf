@@ -23,7 +23,7 @@ function SitesEditor(props: { token: string }) {
     let { status, isLoading, isError, data, isSuccess, refetch } = useQuery(
         'sites',
         () => {
-            return getHelper<Sites>('/sites', props.token);
+            return getHelper<Sites>('/sites');
         },
         {
             enabled: !!props.token,

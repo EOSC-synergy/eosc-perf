@@ -14,7 +14,7 @@ function BenchmarkSubmission(props: { token: string }) {
     const [description, setDescription] = useState('');
 
     const { mutate, isLoading } = useMutation(
-        (data: BenchmarkCreate) => postHelper<BenchmarkCreate>('/benchmarks', data, props.token),
+        (data: BenchmarkCreate) => postHelper<BenchmarkCreate>('/benchmarks', data),
         {
             onSuccess: (data) => {},
         }

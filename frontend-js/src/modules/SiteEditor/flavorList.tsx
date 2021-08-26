@@ -10,7 +10,7 @@ export function FlavorList(props: { site: Site; token: string }) {
     let { status, isLoading, isError, data, isSuccess, refetch } = useQuery(
         'flavors-' + props.site.id,
         () => {
-            return getHelper<Flavors>('/sites/' + props.site.id + '/flavors', props.token);
+            return getHelper<Flavors>('/sites/' + props.site.id + '/flavors');
         },
         {
             enabled: !!props.token,

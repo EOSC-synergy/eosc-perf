@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Card, CardColumns, Container, Form, InputGroup, ListGroup } from 'react-bootstrap';
 import { useQuery } from 'react-query';
-import { Benchmarks, Flavors, Site, Sites } from '../../api';
+import { Benchmarks, Flavors, Sites, Tags } from '../../api';
 import { getHelper } from '../../api-helpers';
 
 function FileSelection() {
@@ -21,7 +21,7 @@ function BenchmarkSelection(props: { token: string }) {
     let benchmarks = useQuery(
         'benchmarks',
         () => {
-            return getHelper<Benchmarks>('/benchmarks', props.token);
+            return getHelper<Benchmarks>('/benchmarks');
         },
         {
             enabled: !!props.token,
@@ -175,7 +175,7 @@ function TagSelection(props: { token: string }) {
     let { status, isLoading, isError, data, isSuccess } = useQuery(
         'tagSelect',
         () => {
-            return getHelper<Site[]>('/tags', props.token);
+            return getHelper<Tags>('/tags');
         },
         {
             enabled: !!props.token,
@@ -211,8 +211,8 @@ function TagSelection(props: { token: string }) {
                             {/* TODO: make this look nicer? */}
                             {isSuccess &&
                                 data &&
-                                (data.data.length > 0 ? (
-                                    data.data.map((t) =>
+                                (data.data.items!.length > 0 ? (
+                                    data.data.items!.map((t) =>
                                         selectedTags.indexOf(t.id!) > -1 ? (
                                             <ListGroup.Item onClick={(e) => unselectTag(t.id!)}>
                                                 {t.name}

@@ -13,10 +13,10 @@ function Page(props: { token: string }) {
 
     const [searchString, setSearchString] = useState<string>('');
 
-    let { isLoading, isError, data, isSuccess } = useQuery(
-        'benchmarkSearch-page-' + page + searchString,
+    let benchmarks = useQuery(
+        'benchmarks-page-' + page + '-' + searchString,
         () => {
-            return getHelper<Benchmarks>('/benchmarks/search', props.token, {
+            return getHelper<Benchmarks>('/benchmarks/search', undefined, {
                 // split here so we can add searchString to key to fetch automatically
                 terms: searchString.split(' '),
             });
@@ -31,15 +31,17 @@ function Page(props: { token: string }) {
             <h1>Benchmark Search</h1>
             <SearchForm setSearchString={setSearchString} />
             <div style={{ position: 'relative' }}>
-                {isLoading && (
+                {benchmarks.isLoading && (
                     <>
                         <Table results={[]} /> <LoadingOverlay />
                     </>
                 )}
-                {isError && <div>Failed to fetch benchmarks!</div>}
-                {isSuccess && <Table results={data!.data.items!} />}
+                {benchmarks.isError && <div>Failed to fetch benchmarks!</div>}
+                {benchmarks.isSuccess && <Table results={benchmarks.data.data.items!} />}
             </div>
-            {isSuccess && <Paginator pagination={data!.data} navigateTo={setPage} />}
+            {benchmarks.isSuccess && (
+                <Paginator pagination={benchmarks.data.data} navigateTo={setPage} />
+            )}
         </div>
     );
 }
