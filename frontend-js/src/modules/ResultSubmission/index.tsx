@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Card, CardColumns, Container, Form, InputGroup, ListGroup } from 'react-bootstrap';
 import { useQuery } from 'react-query';
-import axios, { AxiosResponse } from 'axios';
-import { Benchmark, Site } from '../../api';
+import { Benchmarks, Flavor, Flavors, Site, Sites } from '../../api';
 import { getHelper } from '../../api-helpers';
 
 function FileSelection() {
@@ -19,10 +18,10 @@ function FileSelection() {
 }
 
 function BenchmarkSelection(props: { token: string }) {
-    let { status, isLoading, isError, data, isSuccess } = useQuery(
-        'benchmarkSelect',
+    let benchmarks = useQuery(
+        'benchmarks',
         () => {
-            return getHelper<Benchmark[]>('/benchmarks', props.token);
+            return getHelper<Benchmarks>('/benchmarks', props.token);
         },
         {
             enabled: !!props.token,
@@ -37,9 +36,8 @@ function BenchmarkSelection(props: { token: string }) {
                     <Form.Group>
                         <Form.Label htmlFor="benchmark-selection">Select benchmark:</Form.Label>
                         <Form.Control as="select" id="benchmark-selection">
-                            {isSuccess &&
-                                data &&
-                                data.data.map((benchmark) => (
+                            {benchmarks.isSuccess &&
+                                benchmarks.data.data.items!.map((benchmark) => (
                                     <option value={benchmark.id}>
                                         {benchmark.docker_image}:{benchmark.docker_tag}
                                     </option>
@@ -53,10 +51,10 @@ function BenchmarkSelection(props: { token: string }) {
 }
 
 function SiteSelection(props: { token: string }) {
-    let { status, isLoading, isError, data, isSuccess } = useQuery(
-        'siteSelect',
+    let sites = useQuery(
+        'sites',
         () => {
-            return getHelper<Site[]>('/sites', props.token);
+            return getHelper<Sites>('/sites');
         },
         {
             enabled: !!props.token,
@@ -65,6 +63,17 @@ function SiteSelection(props: { token: string }) {
     );
 
     const [selectedSite, setSelectedSite] = useState<string | null>(null);
+
+    let flavors = useQuery(
+        'flavors-' + selectedSite,
+        () => {
+            return getHelper<Flavors>('/sites/' + selectedSite + '/flavors');
+        },
+        {
+            enabled: sites.isSuccess,
+            refetchOnWindowFocus: false,
+        }
+    );
     const [selectedFlavor, setSelectedFlavor] = useState<string | null>(null);
 
     return (
@@ -77,9 +86,12 @@ function SiteSelection(props: { token: string }) {
                         id="site-selection"
                         onChange={(e) => setSelectedSite(e.target.value)}
                     >
-                        {isSuccess &&
-                            data &&
-                            data.data.map((site) => <option value={site.id}>{site.name}</option>)}
+                        {sites.isSuccess &&
+                            sites.data.data.items!.map((site) => (
+                                <option value={site.id} selected={site.id == selectedSite}>
+                                    {site.name}
+                                </option>
+                            ))}
                     </Form.Control>
                 </Form.Group>
                 <Form.Group>
@@ -90,12 +102,12 @@ function SiteSelection(props: { token: string }) {
                         onChange={(e) => setSelectedFlavor(e.target.value)}
                     >
                         {selectedSite &&
-                            data &&
-                            data.data
-                                .find((s) => s.id! === selectedSite)!
-                                .flavors!.map((flavor) => (
-                                    <option value={flavor.name}>{flavor.name} </option>
-                                ))}
+                            flavors.isSuccess &&
+                            flavors.data.data.items!.map((flavor) => (
+                                <option value={flavor.name} selected={flavor.id == selectedFlavor}>
+                                    {flavor.name}
+                                </option>
+                            ))}
                     </Form.Control>
                 </Form.Group>
                 {/* TODO: add site button */}
