@@ -15,7 +15,9 @@ class TestRoot:
 
     @mark.parametrize('query', indirect=True,  argvalues=[
         {'name': "tag1"},  # Query with 1 field
-        {}  # All results
+        {},  # All results
+        {'sort_by': "+name,-description"},
+        {'sort_by': "+id"}
     ])
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
@@ -29,7 +31,8 @@ class TestRoot:
 
 
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'bad_key': "This is a non expected query key"}
+        {'bad_key': "This is a non expected query key"},
+        {'sort_by': "Bad sort command"}
     ])
     def test_GET_422(self, response_GET):
         """GET method fails 422 if bad request body."""
@@ -99,7 +102,9 @@ class TestSearch:
         {'terms': ["tag", " 2"]},
         {'terms[]': ["tag", " 2"]},
         {'terms': []},   # Empty query
-        {'terms[]': []}  # Empty query
+        {'terms[]': []}, # Empty query
+        {'sort_by': "+name,-description"},
+        {'sort_by': "+id"}
     ])
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
@@ -113,7 +118,8 @@ class TestSearch:
 
 
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'bad_key': "This is a non expected query key"}
+        {'bad_key': "This is a non expected query key"},
+        {'sort_by': "Bad sort command"}
     ])
     def test_GET_422(self, response_GET):
         """GET method fails 422 if bad request body."""

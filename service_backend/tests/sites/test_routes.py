@@ -15,7 +15,10 @@ class TestRoot:
     @mark.parametrize('query', indirect=True, argvalues=[
         {'name': 'site1', 'address': "address1"},
         {'address': "address1"},  # Query with 1 field
-        {}  # Multiple results
+        {},  # Multiple results
+        {'sort_by': "+name,-address"},
+        {'sort_by': "+upload_datetime"},
+        {'sort_by': "+id"}
     ])
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
@@ -29,7 +32,8 @@ class TestRoot:
             assert site.has_open_reports == False
 
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'bad_key': "This is a non expected query key"}
+        {'bad_key': "This is a non expected query key"},
+        {'sort_by': "Bad sort command"}
     ])
     def test_GET_422(self, response_GET):
         """GET method fails 422 if bad request body."""
@@ -104,7 +108,10 @@ class TestSearch:
         {'terms': [sites[1]["name"], sites[1]["description"]]},
         {'terms[]': [sites[1]["name"], sites[1]["description"]]},
         {'terms': []},    # Empty terms
-        {'terms[]': []}   # Empty terms
+        {'terms[]': []},  # Empty terms
+        {'sort_by': "+name,-address"},
+        {'sort_by': "+upload_datetime"},
+        {'sort_by': "+id"}
     ])
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
@@ -118,7 +125,8 @@ class TestSearch:
             assert site.has_open_reports == False
 
     @mark.parametrize('query', [
-        {'bad_key': "This is a non expected query key"}
+        {'bad_key': "This is a non expected query key"},
+        {'sort_by': "Bad sort command"}
     ])
     def test_GET_422(self, response_GET):
         """GET method fails 422 if bad request body."""
@@ -216,7 +224,9 @@ class TestFlavors:
     @mark.parametrize('query', indirect=True, argvalues=[
         {'name': 'flavor0'},
         {'name': 'flavor1'},
-        {}  # Multiple results
+        {},  # Multiple results
+        {'sort_by': "+name"},
+        {'sort_by': "+id"}
     ])
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
@@ -230,7 +240,8 @@ class TestFlavors:
             assert flavor.has_open_reports == False
 
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'bad_key': "This is a non expected query key"}
+        {'bad_key': "This is a non expected query key"},
+        {'sort_by': "Bad sort command"}
     ])
     def test_GET_422(self, response_GET):
         """GET method fails 422 if bad request body."""

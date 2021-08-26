@@ -4,6 +4,7 @@ operate existing reports on the database.
 from backend import models
 from backend.extensions import auth
 from backend.schemas import args, schemas
+from backend.utils import queries
 from flask.views import MethodView
 from flask_smorest import Blueprint
 
@@ -20,6 +21,8 @@ class Root(MethodView):
     @blp.doc(operationId='GetReports')
     @blp.arguments(args.ReportFilter, location='query')
     @blp.response(200, schemas.Reports)
+    @queries.to_pagination()
+    @queries.add_sorting(models.Report)
     def get(self, query_args):
         """(Admins) Filters and list  reports
 
@@ -36,20 +39,17 @@ class Root(MethodView):
         :return: Pagination object with filtered reports
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
-        per_page = query_args.pop('per_page')
-        page = query_args.pop('page')
         query = models.Report.query
 
         # Extend query with date filter
         before = query_args.pop('before')
         if before:
-            query = query.filter(models.Report.created_at < before)
+            query = query.filter(models.Report.upload_datetime < before)
         after = query_args.pop('after')
         if after:
-            query = query.filter(models.Report.created_at > after)
+            query = query.filter(models.Report.upload_datetime > after)
 
-        query = query.filter_by(**query_args)
-        return query.paginate(page, per_page)
+        return query.filter_by(**query_args)
 
 
 @blp.route('/<uuid:report_id>')

@@ -57,10 +57,10 @@ def match_report(json, report):
     assert 'id' in json and type(json['id']) is str
     assert json['id'] == str(report.id)
 
-    # Check the report has a creation date
+    # Check the report has a upload date
     assert 'upload_datetime' in json
     assert type(json['upload_datetime']) is str
-    upload_datetime = str(report.created_at).replace(" ", "T")
+    upload_datetime = str(report.upload_datetime).replace(" ", "T")
     assert json['upload_datetime'] == upload_datetime
 
     # Check the report has a verdict
@@ -79,9 +79,9 @@ def match_report(json, report):
     assert 'resource_id' in json and type(json['resource_id']) is str
     assert json['resource_id'] == str(report.resource_id)
 
-    # Check the report has a created_by
-    assert 'created_by' in json # Reports should only be accessible by admins
-    assert match_user(json['created_by'], report.created_by)
+    # Check the report has a uploader
+    assert 'uploader' in json # Reports should only be accessible by admins
+    assert match_user(json['uploader'], report.uploader)
 
     return True
 
@@ -159,9 +159,9 @@ def match_user(json, user):
     assert 'email' in json and type(json['email']) is str
     assert json['email'] == user.email
 
-    # Check the user has creation date
-    assert 'created_at' in json and type(json['created_at']) is str
-    assert json['created_at'] == str(user.created_at).replace(" ", "T")
+    # Check the user has upload date
+    assert 'upload_datetime' in json and type(json['upload_datetime']) is str
+    assert json['upload_datetime'] == str(user.upload_datetime).replace(" ", "T")
 
     return True
 
@@ -180,13 +180,13 @@ def match_result(json, result):
     # Check the result has an upload date
     assert 'upload_datetime' in json
     assert type(json['upload_datetime']) is str
-    upload_datetime = str(result.created_at).replace(" ", "T")
+    upload_datetime = str(result.upload_datetime).replace(" ", "T")
     assert json['upload_datetime'] == upload_datetime
 
-    # Check the report has a creation date
+    # Check the report has a upload date
     assert 'execution_datetime' in json
     assert type(json['execution_datetime']) is str
-    execution_datetime = str(result.executed_at).replace(" ", "T")
+    execution_datetime = str(result.execution_datetime).replace(" ", "T")
     assert json['execution_datetime'] == execution_datetime
 
     # Check the result has a benchmark

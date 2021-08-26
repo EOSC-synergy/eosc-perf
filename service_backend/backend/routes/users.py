@@ -4,6 +4,7 @@ operate existing users on the database.
 from backend import models
 from backend.extensions import auth
 from backend.schemas import args, schemas
+from backend.utils import queries
 from flaat import tokentools
 from flask import request
 from flask.views import MethodView
@@ -22,6 +23,8 @@ class Root(MethodView):
     @blp.doc(operationId='GetUsers')
     @blp.arguments(args.UserFilter, location='query')
     @blp.response(200, schemas.Users)
+    @queries.to_pagination()
+    @queries.add_sorting(models.User)
     def get(self, query_args):
         """(Admins) Filters and list users
 
@@ -38,10 +41,7 @@ class Root(MethodView):
         :return: Pagination object with filtered users
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
-        per_page = query_args.pop('per_page')
-        page = query_args.pop('page')
-        query = models.User.query.filter_by(**query_args)
-        return query.paginate(page, per_page)
+        return models.User.query.filter_by(**query_args)
 
     @auth.admin_required()
     @blp.doc(operationId='DelUsers')
@@ -63,7 +63,7 @@ class Root(MethodView):
         :raises UnprocessableEntity: Wrong query/body parameters 
         :return: Pagination object with filtered users
         :rtype: :class:`flask_sqlalchemy.Pagination`
-        """        
+        """
         if query_args != {}:
             for user in models.User.query.filter_by(**query_args):
                 user.delete()
@@ -79,6 +79,8 @@ class Search(MethodView):
     @blp.doc(operationId='SearchUsers')
     @blp.arguments(args.Search, location='query')
     @blp.response(200, schemas.Users)
+    @queries.to_pagination()
+    @queries.add_sorting(models.User)
     def get(self, query_args):
         """(Admins) Filters and list users
 
@@ -97,14 +99,12 @@ class Search(MethodView):
         :return: Pagination object with filtered users
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
-        per_page = query_args.pop('per_page')
-        page = query_args.pop('page')
         search = models.User.query
         for keyword in query_args['terms']:
             search = search.filter(
                 models.User.email.contains(keyword)
             )
-        return search.paginate(page, per_page)
+        return search
 
 
 @blp.route('/admin')

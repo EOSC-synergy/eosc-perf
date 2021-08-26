@@ -42,13 +42,13 @@ def resource(resource_model, resource_id):
 
 @fixture(scope='function')
 def report(resource):
-    """Returns a first resource report (creation report)."""
+    """Returns a first resource report (upload report)."""
     return resource.reports[0] if resource else None
 
 
 @fixture(scope='function')
 def report_id(report):
-    """Returns a first resource report id (creation report)."""
+    """Returns a first resource report id (upload report)."""
     return report.id if report else None
 
 

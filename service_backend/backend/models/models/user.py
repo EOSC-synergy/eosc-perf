@@ -5,13 +5,13 @@ from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import backref, relationship
 
 from ..core import TokenModel
-from . import HasCreationDate
+from . import HasUploadDatetime
 
 from flaat import tokentools
 from flask import request
 
 
-class User(HasCreationDate, TokenModel):
+class User(HasUploadDatetime, TokenModel):
     """The User model represents the users of the application. Users are
     build over a OIDC token model, therefore are identified based on the
     'Subject' and 'issuer' identifications provided by the OIDC provider.
@@ -33,22 +33,22 @@ class User(HasCreationDate, TokenModel):
         return "<{} {}>".format(self.__class__.__name__, self.email)
 
 
-class HasCreationUser(object):
-    """Mixin that adds an User as creation details to any model."""
+class HasUploader(object):
+    """Mixin that adds an User as upload details to any model."""
 
     #: (Text) OIDC subject of the user that created the model instance,
-    #: *conflicts with created_by*
+    #: *conflicts with uploader*
     creator_sub = Column(Text, nullable=False)
 
     #: (Text) OIDC issuer of the user that created the model instance,
-    #: *conflicts with created_by*
+    #: *conflicts with uploader*
     creator_iss = Column(Text, nullable=False)
 
-    def __init__(self, *args, created_by=None, **kwargs):
-        if not created_by:
+    def __init__(self, *args, uploader=None, **kwargs):
+        if not uploader:
             access_token = tokentools.get_access_token_from_request(request)
-            created_by = User.get(token=access_token)
-        return super().__init__(*args, created_by=created_by, **kwargs)
+            uploader = User.get(token=access_token)
+        return super().__init__(*args, uploader=uploader, **kwargs)
 
     @declared_attr
     def __table_args__(cls):
@@ -58,15 +58,15 @@ class HasCreationUser(object):
         )
 
     @declared_attr
-    def created_by(cls):
-        """(User class) User that created the model instance"""
+    def uploader(cls):
+        """(User class) User that uploaded the model instance"""
         return relationship("User", backref=backref(
             f'_{cls.__name__.lower()}s', cascade="all, delete-orphan"
         ))
 
     def ownership(self):
         access_token = tokentools.get_access_token_from_request(request)
-        return self.created_by == User.get(token=access_token)
+        return self.uploader == User.get(token=access_token)
 
     def update(self, param, force=False, **kwargs):
         if force or self.ownership():

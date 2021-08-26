@@ -14,11 +14,11 @@ from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import backref, column_property, relationship
 
 from ..core import PkModel
-from . import HasCreationDate
-from .user import HasCreationUser
+from . import HasUploadDatetime
+from .user import HasUploader
 
 
-class Report(HasCreationDate, HasCreationUser, PkModel):
+class Report(HasUploadDatetime, HasUploader, PkModel):
     """The Report model represents an automated or an user’s claim regarding
     a resource which should be processed by administrators.
 
@@ -84,20 +84,20 @@ class HasReports(object):
     """Mixin that creates a relationship to the report_association table for
     each parent.
 
-    By default, when a resource that uses reports is generated, a creation
+    By default, when a resource that uses reports is generated, a upload
     report is generated and associated to such resource.
     """
     __abstract__ = True
 
-    def __init__(self, *args, reports=None, created_by=None, **kwargs):
-        """If reports is None, a creation_report is added."""
+    def __init__(self, *args, reports=None, uploader=None, **kwargs):
+        """If reports is None, a upload_report is added."""
         if reports == None:
-            creation_report = Report(
+            upload_report = Report(
                 message=f"New {self.__class__.__name__}",
-                created_by=created_by
+                uploader=uploader
             )
-            reports = [creation_report]
-        kwargs['created_by'] = created_by
+            reports = [upload_report]
+        kwargs['uploader'] = uploader
         kwargs['reports'] = reports
         super().__init__(*args, **kwargs)
 

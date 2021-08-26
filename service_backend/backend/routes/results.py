@@ -4,6 +4,7 @@ operate existing benchmark results on the database.
 from backend import models
 from backend.extensions import auth
 from backend.schemas import args, schemas
+from backend.utils import queries
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy import and_, or_
@@ -20,6 +21,8 @@ class Root(MethodView):
     @blp.doc(operationId='GetResults')
     @blp.arguments(args.ResultFilter, location='query')
     @blp.response(200, schemas.Results)
+    @queries.to_pagination()
+    @queries.add_sorting(models.Result)
     def get(self, query_args):
         """(Free) Filters and list results
 
@@ -65,8 +68,6 @@ class Root(MethodView):
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
         query = models.Result.query  # Create the base query
-        per_page = query_args.pop('per_page')
-        page = query_args.pop('page')
 
         # Extend query with tags
         for tag_name in query_args.pop('tag_names'):
@@ -75,10 +76,10 @@ class Root(MethodView):
         # Extend query with date filter
         before = query_args.pop('before')
         if before:
-            query = query.filter(models.Result.created_at < before)
+            query = query.filter(models.Result.upload_datetime < before)
         after = query_args.pop('after')
         if after:
-            query = query.filter(models.Result.created_at > after)
+            query = query.filter(models.Result.upload_datetime > after)
 
         # Extend query with filters
         parsed_filters = []
@@ -116,8 +117,7 @@ class Root(MethodView):
 
         # Model filter with remaining standard parameters
         query = query.filter(~models.Result.has_open_reports)
-        query = query.filter_by(**query_args)
-        return query.paginate(page, per_page)
+        return query.filter_by(**query_args)
 
     @auth.login_required()
     @blp.doc(operationId='AddResult')
@@ -125,7 +125,7 @@ class Root(MethodView):
     @blp.arguments(schemas.Json)
     @blp.response(201, schemas.Result)
     def post(self, query_args, body_args):
-        """(Users) Creates a new result
+        """(Users) Uploads a new result
 
         Use this method to create a new result in the database so it can
         be accessed by the application users. The method returns the complete
@@ -163,6 +163,8 @@ class Search(MethodView):
     @blp.doc(operationId='SearchResults')
     @blp.arguments(args.Search, location='query')
     @blp.response(200, schemas.Results)
+    @queries.to_pagination()
+    @queries.add_sorting(models.Result)
     def get(self, query_args):
         """(Free) Filters and list results
 
@@ -180,8 +182,6 @@ class Search(MethodView):
         :return: Pagination object with filtered results
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
-        per_page = query_args.pop('per_page')
-        page = query_args.pop('page')
         search = models.Result.query
         for keyword in query_args['terms']:
             search = search.filter(
@@ -192,8 +192,7 @@ class Search(MethodView):
                     models.Result.flavor_name.contains(keyword),
                     models.Result.tag_names == keyword
                 ))
-        search = search.filter(~models.Result.has_open_reports)
-        return search.paginate(page, per_page)
+        return search.filter(~models.Result.has_open_reports)
 
 
 @blp.route('/<uuid:result_id>')
@@ -291,7 +290,7 @@ class Uploader(MethodView):
         :raises Forbidden: The user has not the required privileges
         :raises NotFound: No result with id found
         """
-        return models.Result.get(result_id).created_by
+        return models.Result.get(result_id).uploader
 
 
 @blp.route('/<uuid:result_id>/report')

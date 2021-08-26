@@ -22,7 +22,10 @@ class TestRoot:
         {'resource_type': "flavor"},
         {'upload_before': "3000-01-01"},
         {'upload_after': "2000-01-01"},
-        {}  # Multiple reports
+        {},  # Multiple reports
+        {'sort_by': "+verdict,+message"},
+        {'sort_by': "+upload_datetime"},
+        {'sort_by': "+id"}
     ])
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
@@ -33,6 +36,31 @@ class TestRoot:
             report = models.Report.query.get(item['id'])
             asserts.match_query(item, url)
             asserts.match_report(item, report)
+
+
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {'verdict': "true"}
+    ])
+    def test_GET_401(self, response_GET):
+        """GET method fails 401 if not logged in."""
+        assert response_GET.status_code == 401
+
+    @mark.usefixtures('grant_logged')
+    @mark.parametrize('query', indirect=True, argvalues=[
+        {'verdict': "true"}
+    ])
+    def test_GET_403(self, response_GET):
+        """GET method fails 403 if forbidden."""
+        assert response_GET.status_code == 403
+
+    @mark.usefixtures('grant_admin')
+    @mark.parametrize('query', indirect=True,  argvalues=[
+        {'bad_key': "This is a non expected query key"},
+        {'sort_by': "Bad sort command"}
+    ])
+    def test_GET_422(self, response_GET):
+        """GET method fails 422 if bad request body."""
+        assert response_GET.status_code == 422
 
 
 @mark.parametrize('endpoint', ['reports.ReportId'], indirect=True)

@@ -4,6 +4,7 @@ operate existing user tags on the database.
 from backend import models
 from backend.extensions import auth
 from backend.schemas import args, schemas
+from backend.utils import queries
 from flask.views import MethodView
 from flask_smorest import Blueprint
 from sqlalchemy import or_
@@ -20,6 +21,8 @@ class Root(MethodView):
     @blp.doc(operationId='GetTags')
     @blp.arguments(args.TagFilter, location='query')
     @blp.response(200, schemas.Tags)
+    @queries.to_pagination()
+    @queries.add_sorting(models.Tag)
     def get(self, query_args):
         """(Free) Filters and list tags
 
@@ -34,17 +37,14 @@ class Root(MethodView):
         :return: Pagination object with filtered tags
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
-        per_page = query_args.pop('per_page')
-        page = query_args.pop('page')
-        query = models.Tag.query.filter_by(**query_args)
-        return query.paginate(page, per_page)
+        return models.Tag.query.filter_by(**query_args)
 
     @auth.login_required()
     @blp.doc(operationId='AddTag')
     @blp.arguments(schemas.TagCreate)
     @blp.response(201, schemas.Tag)
     def post(self, body_args):
-        """(Users) Creates a new tag
+        """(Users) Uploads a new tag
 
         Use this method to create a new tags in the database so it can
         be accessed by the application users. The method returns the complete
@@ -69,6 +69,8 @@ class Search(MethodView):
 
     @blp.arguments(args.Search, location='query')
     @blp.response(200, schemas.Tags)
+    @queries.to_pagination()
+    @queries.add_sorting(models.Tag)
     def get(self, query_args):
         """(Free) Filters and list tags
 
@@ -85,8 +87,6 @@ class Search(MethodView):
         :return: Pagination object with filtered tags
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
-        per_page = query_args.pop('per_page')
-        page = query_args.pop('page')
         search = models.Tag.query
         for keyword in query_args['terms']:
             search = search.filter(
@@ -94,7 +94,7 @@ class Search(MethodView):
                     models.Tag.name.contains(keyword),
                     models.Tag.description.contains(keyword)
                 ))
-        return search.paginate(page, per_page)
+        return search
 
 
 @blp.route('/<uuid:tag_id>')

@@ -71,7 +71,7 @@ def db(app):
 
 @fixture(scope='function', autouse=True)
 def session(db):
-    """Creates a new database session for a test."""
+    """Uploads a new database session for a test."""
     db.session.begin(nested=True)  # Rollback app commits
     yield db.session
     db.session.rollback()   # Discard test changes

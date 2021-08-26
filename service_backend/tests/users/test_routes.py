@@ -14,7 +14,10 @@ class TestRoot:
         {'sub': 'sub_0'},
         {'iss': 'https://aai-dev.egi.eu/oidc'},
         {'email': "sub_1@email.com"},
-        {}  # Multiple results
+        {},  # Multiple results
+        {'sort_by': "+iss,-sub"},
+        {'sort_by': "+upload_datetime"},
+        {'sort_by': "+email"}
     ])
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
@@ -43,7 +46,8 @@ class TestRoot:
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'bad_key': "This is a non expected query key"}
+        {'bad_key': "This is a non expected query key"},
+        {'sort_by': "Bad sort command"}
     ])
     def test_GET_422(self, response_GET):
         """GET method fails 422 if bad request body."""
@@ -102,7 +106,10 @@ class TestSearch:
         {'terms': ["sub", "email.com"]},
         {'terms[]': ["sub", "email.com"]},
         {'terms': []},   # Empty query
-        {'terms[]': []}  # Empty query
+        {'terms[]': []},  # Empty query
+        {'sort_by': "+iss,-sub"},
+        {'sort_by': "+upload_datetime"},
+        {'sort_by': "+email"}
     ])
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
@@ -131,7 +138,8 @@ class TestSearch:
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'bad_key': "This is a non expected query key"}
+        {'bad_key': "This is a non expected query key"},
+        {'sort_by': "Bad sort command"}
     ])
     def test_GET_422(self, response_GET):
         """GET method fails 422 if bad request body."""

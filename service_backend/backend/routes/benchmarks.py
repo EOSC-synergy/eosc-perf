@@ -4,6 +4,7 @@ operate existing benchmarks on the database.
 from backend import models, utils
 from backend.extensions import auth
 from backend.schemas import args, schemas
+from backend.utils import queries
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy import or_
@@ -20,6 +21,8 @@ class Root(MethodView):
     @blp.doc(operationId='GetBenchmarks')
     @blp.arguments(args.BenchmarkFilter, location='query')
     @blp.response(200, schemas.Benchmarks)
+    @queries.to_pagination()
+    @queries.add_sorting(models.Benchmark)
     def get(self, query_args):
         """(Free) Filters and list benchmarks
 
@@ -34,18 +37,15 @@ class Root(MethodView):
         :return: Pagination object with filtered benchmarks
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
-        per_page = query_args.pop('per_page')
-        page = query_args.pop('page')
         query = models.Benchmark.query.filter_by(**query_args)
-        query = query.filter(~models.Benchmark.has_open_reports)
-        return query.paginate(page, per_page)
+        return query.filter(~models.Benchmark.has_open_reports)
 
     @auth.login_required()
     @blp.doc(operationId='AddBenchmark')
     @blp.arguments(schemas.BenchmarkCreate)
     @blp.response(201, schemas.Benchmark)
     def post(self, body_args):
-        """(Users) Creates a new benchmark
+        """(Users) Uploads a new benchmark
 
         Use this method to create a new benchmarks in the database so it can
         be accessed by the application users. The method returns the complete
@@ -76,6 +76,8 @@ class Search(MethodView):
     @blp.doc(operationId='SearchBenchmarks')
     @blp.arguments(args.Search, location='query')
     @blp.response(200, schemas.Benchmarks)
+    @queries.to_pagination()
+    @queries.add_sorting(models.Benchmark)
     def get(self, query_args):
         """(Free) Filters and list benchmarks
 
@@ -92,8 +94,6 @@ class Search(MethodView):
         :return: Pagination object with filtered benchmarks
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
-        per_page = query_args.pop('per_page')
-        page = query_args.pop('page')
         search = models.Benchmark.query
         for keyword in query_args['terms']:
             search = search.filter(
@@ -102,8 +102,7 @@ class Search(MethodView):
                     models.Benchmark.docker_tag.contains(keyword),
                     models.Benchmark.description.contains(keyword)
                 ))
-        search = search.filter(~models.Benchmark.has_open_reports)
-        return search.paginate(page, per_page)
+        return search.filter(~models.Benchmark.has_open_reports)
 
 
 @blp.route('/<uuid:benchmark_id>')

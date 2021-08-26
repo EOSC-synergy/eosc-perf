@@ -3,12 +3,12 @@ from sqlalchemy import Column, ForeignKey, Text, UniqueConstraint
 from sqlalchemy.ext.declarative import declared_attr
 
 from ..core import PkModel
-from . import HasCreationDate
+from . import HasUploadDatetime
 from .report import HasReports
-from .user import HasCreationUser
+from .user import HasUploader
 
 
-class Flavor(HasReports, HasCreationDate, HasCreationUser, PkModel):
+class Flavor(HasReports, HasUploadDatetime, HasUploader, PkModel):
     """The Flavor model represents a flavor of virtual machines available
     for usage on a Site.
 
@@ -28,7 +28,7 @@ class Flavor(HasReports, HasCreationDate, HasCreationUser, PkModel):
 
     @declared_attr
     def __table_args__(cls):
-        mixin_indexes = list((HasCreationUser.__table_args__))
+        mixin_indexes = list((HasUploader.__table_args__))
         mixin_indexes.extend([
             UniqueConstraint('site_id', 'name')
         ])

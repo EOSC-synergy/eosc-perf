@@ -4,6 +4,7 @@ operate existing sites on the database.
 from backend import models
 from backend.extensions import auth
 from backend.schemas import args, schemas
+from backend.utils import queries
 from flask.views import MethodView
 from flask_smorest import Blueprint
 from sqlalchemy import or_
@@ -20,6 +21,8 @@ class Root(MethodView):
     @blp.doc(operationId='GetSites')
     @blp.arguments(args.SiteFilter, location='query')
     @blp.response(200, schemas.Sites)
+    @queries.to_pagination()
+    @queries.add_sorting(models.Site)
     def get(self, query_args):
         """(Free) Filters and list sites
         
@@ -34,18 +37,15 @@ class Root(MethodView):
         :return: Pagination object with filtered sites
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
-        per_page = query_args.pop('per_page')
-        page = query_args.pop('page')
         query = models.Site.query.filter_by(**query_args)
-        query = query.filter(~models.Site.has_open_reports)
-        return query.paginate(page, per_page)
+        return query.filter(~models.Site.has_open_reports)
 
     @auth.login_required()
     @blp.doc(operationId='AddSite')
     @blp.arguments(schemas.SiteCreate)
     @blp.response(201, schemas.Site)
     def post(self, body_args):
-        """(Users) Creates a new site
+        """(Users) Uploads a new site
 
         Use this method to create a new site in the database so it can
         be accessed by the application users. The method returns the complete
@@ -71,6 +71,8 @@ class Search(MethodView):
     @blp.doc(operationId='SearchSites')
     @blp.arguments(args.Search, location='query')
     @blp.response(200, schemas.Sites)
+    @queries.to_pagination()
+    @queries.add_sorting(models.Site)
     def get(self, query_args):
         """(Free) Filters and list sites
         
@@ -87,8 +89,6 @@ class Search(MethodView):
         :return: Pagination object with filtered sites
         :rtype: :class:`flask_sqlalchemy.Pagination`        
         """
-        per_page = query_args.pop('per_page')
-        page = query_args.pop('page')
         search = models.Site.query
         for keyword in query_args['terms']:
             search = search.filter(
@@ -97,8 +97,7 @@ class Search(MethodView):
                     models.Site.address.contains(keyword),
                     models.Site.description.contains(keyword)
                 ))
-        search = search.filter(~models.Site.has_open_reports)
-        return search.paginate(page, per_page)
+        return search.filter(~models.Site.has_open_reports)
 
 
 @blp.route('/<uuid:site_id>')
@@ -176,6 +175,8 @@ class Flavors(MethodView):
     @blp.doc(operationId='GetFlavors')
     @blp.arguments(args.FlavorFilter, location='query')
     @blp.response(200, schemas.Flavors)
+    @queries.to_pagination()
+    @queries.add_sorting(models.Flavor)
     def get(self, query_args, site_id):
         """(Free) Filters and list flavors
 
@@ -192,11 +193,8 @@ class Flavors(MethodView):
         :return: Pagination object with filtered flavors
         :rtype: :class:`flask_sqlalchemy.Pagination`
         """
-        per_page = query_args.pop('per_page')
-        page = query_args.pop('page')
         query = models.Flavor.query.filter_by(site_id=site_id, **query_args)
-        query = query.filter(~models.Flavor.has_open_reports)
-        return query.paginate(page, per_page)
+        return query.filter(~models.Flavor.has_open_reports)
 
 
     @auth.login_required()
@@ -204,7 +202,7 @@ class Flavors(MethodView):
     @blp.arguments(schemas.FlavorCreate)
     @blp.response(201, schemas.Flavor)
     def post(self, body_args, site_id):
-        """(Users) Creates a new flavor
+        """(Users) Uploads a new flavor
 
         Use this method to create a new flavors in the database so it can
         be accessed by the application users. The method returns the complete

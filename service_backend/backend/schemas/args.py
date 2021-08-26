@@ -15,12 +15,24 @@ class BenchmarkFilter(Pagination, Schema):
     #: Docker image version/tag referenced by the benchmark
     docker_tag = fields.DockerTag()
 
+    #: (Str):
+    #: Order to return the results separated by coma
+    sort_by = fields.String(
+        description="Order to return the results (coma separated)",
+        example="+docker_image,-docker_tag", missing="+docker_image")
+
 
 class FlavorFilter(Pagination, Schema):
 
     #: (Text):
     #: Text with virtual hardware template identification
     name = fields.FlavorName()
+
+    #: (Str):
+    #: Order to return the results separated by coma
+    sort_by = fields.String(
+        description="Order to return the results (coma separated)",
+        example="+name", missing="+name")
 
 
 class ReportFilter(Pagination, Schema):
@@ -33,13 +45,19 @@ class ReportFilter(Pagination, Schema):
     #:Resource discriminator
     resource_type = fields.Resource()
 
-    #: (ISO8601, attribute="created_at", missing=None):
+    #: (ISO8601, attribute="upload_datetime", missing=None):
     #: Upload datetime of the report before a specific date
     upload_before = fields.UploadBefore(attribute="before", missing=None)
 
-    #: (ISO8601, attribute="created_at", missing=None):
+    #: (ISO8601, attribute="upload_datetime", missing=None):
     #: Upload datetime of the report after a specific date
     upload_after = fields.UploadAfter(attribute="after", missing=None)
+
+    #: (Str):
+    #: Order to return the results separated by coma
+    sort_by = fields.String(
+        description="Order to return the results (coma separated)",
+        example="+upload_datetime", missing="+verdict,+id")
 
     @post_load
     def process_input(self, data, **kwargs):
@@ -70,11 +88,11 @@ class ResultFilter(Pagination, Schema):
     #: List of tag names the returned results should be associated with
     tag_names = fields.TagNames()
 
-    #: (ISO8601, attribute="created_at", missing=None):
+    #: (ISO8601, attribute="upload_datetime", missing=None):
     #: Upload datetime of the report before a specific date
     upload_before = fields.UploadBefore(attribute="before", missing=None)
 
-    #: (ISO8601, attribute="created_at", missing=None):
+    #: (ISO8601, attribute="upload_datetime", missing=None):
     #: Upload datetime of the report after a specific date
     upload_after = fields.UploadAfter(attribute="after", missing=None)
 
@@ -82,12 +100,18 @@ class ResultFilter(Pagination, Schema):
     #: Expression to condition the returned results on JSON field
     filters = fields.Filters()
 
+    #: (Str):
+    #: Order to return the results separated by coma
+    sort_by = fields.String(
+        description="Order to return the results (coma separated)",
+        example="+execution_datetime", missing="+execution_datetime")
+
 
 class ResultContext(Schema):
 
-    #: (ISO8601, required, attribute="executed_at") :
+    #: (ISO8601, required") :
     #: Benchmark execution **START**
-    execution_datetime = fields.ExecDT(required=True, attribute="executed_at")
+    execution_datetime = fields.ExecDT(required=True)
 
     #: (Benchmark.id, required):
     #: Unique Identifier for result associated benchmark
@@ -116,12 +140,24 @@ class SiteFilter(Pagination, Schema):
     #: Place where a site is physically located
     address = fields.Address()
 
+    #: (Str):
+    #: Order to return the results separated by coma
+    sort_by = fields.String(
+        description="Order to return the results (coma separated)",
+        example="+name,+address", missing="+name")
+
 
 class TagFilter(Pagination, Schema):
 
     #: (Text):
     #: Human readable feature identification
     name = fields.TagName()
+
+    #: (Str):
+    #: Order to return the results separated by coma
+    sort_by = fields.String(
+        description="Order to return the results (coma separated)",
+        example="+name", missing="+name")
 
 
 class UserFilter(Pagination, Schema):
@@ -136,6 +172,12 @@ class UserFilter(Pagination, Schema):
 
     #: (Email) Electronic mail collected from OIDC access token
     email = fields.Email()
+
+    #: (Str):
+    #: Order to return the results separated by coma
+    sort_by = fields.String(
+        description="Order to return the results (coma separated)",
+        example="+email", missing="+iss,+sub")
 
 
 class UserDelete(Schema):
@@ -157,3 +199,9 @@ class Search(Pagination, Schema):
     #: ([Text]):
     #: Group of strings to use as general search on model instances
     terms = fields.Terms()
+
+    #: (Str):
+    #: Order to return the results separated by coma
+    sort_by = fields.String(
+        description="Order to return the results (coma separated)",
+        example="+upload_datetime", missing="")

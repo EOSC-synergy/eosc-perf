@@ -16,7 +16,10 @@ class TestRoot:
         {'docker_image': "b1", 'docker_tag': "v1.0"},
         {'docker_image': "b1"},  # Query with 1 field
         {'docker_tag': "v1.0"},  # Query with 1 field
-        {}  # All results
+        {},  # All results
+        {'sort_by': "+docker_image,+docker_tag"},
+        {'sort_by': "+upload_datetime"},
+        {'sort_by': "+id"}
     ])
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
@@ -30,7 +33,8 @@ class TestRoot:
             assert benchmark.has_open_reports == False
 
     @mark.parametrize('query', indirect=True,  argvalues=[
-        {'bad_key': "This is a non expected query key"}
+        {'bad_key': "This is a non expected query key"},
+        {'sort_by': "Bad sort command"}
     ])
     def test_GET_422(self, response_GET):
         """GET method fails 422 if bad request body."""
@@ -110,7 +114,10 @@ class TestSearch:
         {'terms': ["b1", "v1.0"]},
         {'terms[]': ["b1", "v1.0"]},
         {'terms': []},    # Empty query
-        {'terms[]': []}   # Empty query
+        {'terms[]': []},  # Empty query
+        {'sort_by': "+docker_image,+docker_tag"},
+        {'sort_by': "+upload_datetime"},
+        {'sort_by': "+id"}
     ])
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
@@ -124,7 +131,8 @@ class TestSearch:
             assert benchmark.has_open_reports == False
 
     @mark.parametrize('query', indirect=True,  argvalues=[
-        {'bad_key': "This is a non expected query key"}
+        {'bad_key': "This is a non expected query key"},
+        {'sort_by': "Bad sort command"}
     ])
     def test_GET_422(self, response_GET):
         """GET method fails 422 if bad request body."""

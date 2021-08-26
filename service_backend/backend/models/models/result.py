@@ -8,13 +8,13 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import backref, relationship
 
 from ..core import PkModel
-from . import HasCreationDate
+from . import HasUploadDatetime
 from .report import HasReports
 from .tag import HasTags
-from .user import HasCreationUser
+from .user import HasUploader
 
 
-class Result(HasReports, HasTags, HasCreationDate, HasCreationUser, PkModel):
+class Result(HasReports, HasTags, HasUploadDatetime, HasUploader, PkModel):
     """The Result model represents the results of the execution of a 
     specific Benchmark on a specific Site and Flavor. 
 
@@ -26,7 +26,7 @@ class Result(HasReports, HasTags, HasCreationDate, HasCreationUser, PkModel):
     json = Column(JSONB, nullable=False)
 
     #: (ISO8601, required) Benchmark execution **START**
-    executed_at = Column(DateTime, nullable=False)
+    execution_datetime = Column(DateTime, nullable=False)
 
     #: (Benchmark, required) Benchmark used to provide the results
     benchmark = relationship("Benchmark", backref=backref(

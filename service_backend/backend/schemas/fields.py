@@ -202,9 +202,9 @@ class Message(String):
         super().__init__(*args, **kwargs)
 
 
-class CreationDT(DateTime):
+class uploadDT(DateTime):
     def __init__(self, *args, **kwargs):
-        kwargs['description'] = "ISO8601 Datatime of the resource creation"
+        kwargs['description'] = "ISO8601 Datatime of the resource upload"
         kwargs['example'] = "2021-08-13T06:51:44.060Z"
         super().__init__(*args, **kwargs)
 

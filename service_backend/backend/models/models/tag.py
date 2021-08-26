@@ -36,7 +36,6 @@ class Tag(PkModel):
     def __repr__(self) -> str:
         return '<{} {}>'.format(self.__class__.__name__, self.name)
 
-
     def __init__(self, **properties):
         """Model initialization"""
         super().__init__(**properties)
@@ -44,8 +43,6 @@ class Tag(PkModel):
     def __repr__(self) -> str:
         """Human-readable representation string"""
         return "<{} {}>".format(self.__class__.__name__, self.name)
-
-
 
 
 class HasTags(object):

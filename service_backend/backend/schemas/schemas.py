@@ -132,9 +132,9 @@ class Report(Schema):
     #: Primary key with an Unique Identifier for the model instance
     id = fields.Id(required=True, dump_only=True)
 
-    #: (ISO8601, required, attribute="created_at"):
+    #: (ISO8601, required):
     #: Upload datetime of the report
-    upload_datetime = fields.UploadDT(required=True, attribute="created_at")
+    upload_datetime = fields.UploadDT(required=True)
 
     #: (Bool, required):
     #: Contains the status information of the report
@@ -154,7 +154,7 @@ class Report(Schema):
 
     #: (User, required, dump_only):
     #: User object who created the report 
-    created_by = fields.Nested("User", required=True, dump_only=True)
+    uploader = fields.Nested("User", required=True, dump_only=True)
 
 
 class Reports(Pagination, Schema):
@@ -184,13 +184,13 @@ class Result(Schema):
     #: Benchmark execution results
     json = fields.Dict(required=True)
 
-    #: (ISO8601, required, attribute="created_at"):
+    #: (ISO8601, required):
     #: Upload datetime of the report
-    upload_datetime = fields.UploadDT(required=True, attribute="created_at")
+    upload_datetime = fields.UploadDT(required=True)
 
-    #: (ISO8601, required, attribute="executed_at"):
+    #: (ISO8601, required):
     #: Benchmark execution **START**
-    execution_datetime = fields.ExecDT(required=True, attribute="executed_at")
+    execution_datetime = fields.ExecDT(required=True)
 
     #: (Benchmark, required):
     #: Benchmark used to provide the results
@@ -355,8 +355,8 @@ class User(Schema):
     email = fields.Email(required=True)
 
     #: (ISO8601, required):
-    #: Creation datetime of the model instance
-    created_at = fields.CreationDT(required=True)
+    #: upload datetime of the model instance
+    upload_datetime = fields.UploadDT(required=True)
 
 
 class Users(Pagination, Schema):

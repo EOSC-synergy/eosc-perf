@@ -26,10 +26,10 @@ class DBReport(SQLAlchemyModelFactory):
         model = models.Report
 
     id = LazyFunction(uuid.uuid4)
-    created_at = fdt.fuzz()
+    upload_datetime = fdt.fuzz()
     verdict = None
     message = Sequence(lambda n: f"Report message {n}")
-    created_by = SubFactory(DBUser)
+    uploader = SubFactory(DBUser)
 
 
 class DBBenchmark(SQLAlchemyModelFactory):
@@ -39,16 +39,16 @@ class DBBenchmark(SQLAlchemyModelFactory):
         sqlalchemy_get_or_create = ('docker_image', 'docker_tag')
 
     id = LazyFunction(uuid.uuid4)
-    created_at = fdt.fuzz()
+    upload_datetime = fdt.fuzz()
     docker_image = Sequence(lambda n: f"b{n}")
     docker_tag = "latest"
     description = ""
     json_schema = {}
-    created_at = fdt.fuzz()
-    created_by = SubFactory(DBUser)
+    upload_datetime = fdt.fuzz()
+    uploader = SubFactory(DBUser)
 
     @post_generation
-    def creation_verdict(self, create, verdict, **kwargs):
+    def upload_verdict(self, create, verdict, **kwargs):
         if verdict != None:
             self.reports[0].verdict = verdict
 
@@ -60,15 +60,15 @@ class DBSite(SQLAlchemyModelFactory):
         sqlalchemy_get_or_create = ('name',)
 
     id = LazyFunction(uuid.uuid4)
-    created_at = fdt.fuzz()
+    upload_datetime = fdt.fuzz()
     name = Sequence(lambda n: f"site{n}")
     address = Sequence(lambda n: f"address{n}")
     description = "Text"
-    created_at = fdt.fuzz()
-    created_by = SubFactory(DBUser)
+    upload_datetime = fdt.fuzz()
+    uploader = SubFactory(DBUser)
 
     @post_generation
-    def creation_verdict(self, create, verdict, **kwargs):
+    def upload_verdict(self, create, verdict, **kwargs):
         if verdict != None:
             self.reports[0].verdict = verdict
 
@@ -80,15 +80,15 @@ class DBFlavor(SQLAlchemyModelFactory):
         sqlalchemy_get_or_create = ('name', 'site_id')
 
     id = LazyFunction(uuid.uuid4)
-    created_at = fdt.fuzz()
+    upload_datetime = fdt.fuzz()
     name = Sequence(lambda n: f"flavor{n}")
     description = "Text"
     site_id = LazyFunction(lambda: DBSite().id)
-    created_at = fdt.fuzz()
-    created_by = SubFactory(DBUser)
+    upload_datetime = fdt.fuzz()
+    uploader = SubFactory(DBUser)
 
     @post_generation
-    def creation_verdict(self, create, verdict, **kwargs):
+    def upload_verdict(self, create, verdict, **kwargs):
         if verdict != None:
             self.reports[0].verdict = verdict
 
@@ -111,14 +111,14 @@ class DBResult(SQLAlchemyModelFactory):
         sqlalchemy_get_or_create = ('id',)
 
     id = LazyFunction(uuid.uuid4)
-    created_at = fdt.fuzz()
-    executed_at = fdt.fuzz()
+    upload_datetime = fdt.fuzz()
+    execution_datetime = fdt.fuzz()
     json = Sequence(lambda n: {'name': f"report_{n}"})
     benchmark = SubFactory(DBBenchmark)
     site = SubFactory(DBSite)
     flavor = SubFactory(DBFlavor, site_id=SelfAttribute('..site.id'))
-    created_at = fdt.fuzz()
-    created_by = SubFactory(DBUser)
+    upload_datetime = fdt.fuzz()
+    uploader = SubFactory(DBUser)
 
     @post_generation
     def tags(self, create, names, **kwargs):

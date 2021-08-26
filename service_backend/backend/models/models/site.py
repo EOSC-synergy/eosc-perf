@@ -3,12 +3,12 @@ from sqlalchemy import Column, Text
 from sqlalchemy.orm import relationship
 
 from ..core import PkModel
-from . import HasCreationDate
+from . import HasUploadDatetime
 from .report import HasReports
-from .user import HasCreationUser
+from .user import HasUploader
 
 
-class Site(HasReports, HasCreationDate, HasCreationUser, PkModel):
+class Site(HasReports, HasUploadDatetime, HasUploader, PkModel):
     """The Site model represents a location where a benchmark can be executed.
 
     This generally refers to the different virtual machine providers and

@@ -7,12 +7,12 @@ from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.declarative import declared_attr
 
 from ..core import PkModel
-from . import HasCreationDate
+from . import HasUploadDatetime
 from .report import HasReports
-from .user import HasCreationUser
+from .user import HasUploader
 
 
-class Benchmark(HasReports, HasCreationDate, HasCreationUser, PkModel):
+class Benchmark(HasReports, HasUploadDatetime, HasUploader, PkModel):
     """The benchmark model represents a single type of docker container 
     designed to run and produce benchmark results from virtual machines.
 
@@ -42,7 +42,7 @@ class Benchmark(HasReports, HasCreationDate, HasCreationUser, PkModel):
 
     @declared_attr
     def __table_args__(cls):
-        mixin_indexes = list((HasCreationUser.__table_args__))
+        mixin_indexes = list((HasUploader.__table_args__))
         mixin_indexes.extend([
             UniqueConstraint('docker_image', 'docker_tag')
         ])

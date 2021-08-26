@@ -31,7 +31,11 @@ class TestRoot:
         {'upload_after': "1000-01-01"},
         {'filters': ["time < 11", "time > 9"]},
         {'filters[]': ["time < 11", "time > 9"]},
-        {}  # Multiple results
+        {},  # Multiple reports
+        {'sort_by': "+json"},
+        {'sort_by': "+upload_datetime"},
+        {'sort_by': "+execution_datetime"},
+        {'sort_by': "+id"}
     ])
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
@@ -46,8 +50,8 @@ class TestRoot:
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'bad_key': "This is a non expected query key"},
+        {'sort_by': "Bad sort command"},
         {'uploader_email': "sub_1@email.com"}  # GDPR protected
-
     ])
     def test_GET_422(self, response_GET):
         """GET method fails 422 if bad request body."""
@@ -153,7 +157,11 @@ class TestSearch:
         {'terms': [tag for tag in results[0]["tags"]]},
         {'terms[]': [tag for tag in results[0]["tags"]]}, 
         {'terms': []},    # Empty terms
-        {'terms[]': []}   # Empty terms
+        {'terms[]': []},  # Empty terms
+        {'sort_by': "+json"},
+        {'sort_by': "+upload_datetime"},
+        {'sort_by': "+execution_datetime"},
+        {'sort_by': "+id"}
     ])
     def test_GET_200(self, response_GET, url):
         """GET method succeeded 200."""
@@ -167,7 +175,8 @@ class TestSearch:
             assert result.has_open_reports == False
 
     @mark.parametrize('query', [
-        {'bad_key': "This is a non expected query key"}
+        {'bad_key': "This is a non expected query key"},
+        {'sort_by': "Bad sort command"},
     ])
     def test_GET_422(self, response_GET):
         """GET method fails 422 if bad request body."""
@@ -303,7 +312,7 @@ class TestUploader:
     def test_GET_200(self, result, response_GET):
         """GET method succeeded 200."""
         assert response_GET.status_code == 200
-        asserts.match_user(response_GET.json, result.created_by)
+        asserts.match_user(response_GET.json, result.uploader)
 
     def test_GET_401(self, response_GET):
         """GET method fails 401 if not authorized."""
