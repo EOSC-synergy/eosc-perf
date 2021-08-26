@@ -40,7 +40,7 @@ export function ResultReportInfo(props: { report: Report; token: string; refetch
                             className="json rounded"
                             style={{ overflow: 'scroll', maxHeight: '60vh' }}
                         >
-                            {data.data.json}
+                            {JSON.stringify(data.data.json, null, 4)}
                         </code>
                     </pre>
                 </p>
