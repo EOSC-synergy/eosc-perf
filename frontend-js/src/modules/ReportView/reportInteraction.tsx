@@ -1,12 +1,12 @@
 import { Report } from '../../api';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useMutation } from 'react-query';
 import { patchHelper } from '../../api-helpers';
 import { Button } from 'react-bootstrap';
+import { UserContext } from '../../userContext';
 
 export function ReportInteraction(props: {
     report: Report;
-    token: string;
     refetch: () => void;
     approveText?: string;
     rejectText?: string;
@@ -14,9 +14,11 @@ export function ReportInteraction(props: {
     // keep last state so we can reenable one button if the other is pressed
     const [lastState, setLastState] = useState<boolean | undefined>(undefined);
 
+    const auth = useContext(UserContext);
+
     const { mutate: approve, isSuccess: isApproved } = useMutation(
         (data) =>
-            patchHelper('/reports/' + props.report.id + '/approve', { accessToken: props.token }),
+            patchHelper('/reports/' + props.report.id + '/approve', { accessToken: auth.token }),
         {
             onSuccess: () => {
                 props.refetch();
@@ -26,7 +28,7 @@ export function ReportInteraction(props: {
 
     const { mutate: reject, isSuccess: isRejected } = useMutation(
         (data) =>
-            patchHelper('/reports/' + props.report.id + '/reject', { accessToken: props.token }),
+            patchHelper('/reports/' + props.report.id + '/reject', { accessToken: auth.token }),
         {
             onSuccess: () => {
                 props.refetch();

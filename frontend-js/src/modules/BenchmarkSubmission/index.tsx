@@ -1,20 +1,23 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Button, Container, Form } from 'react-bootstrap';
 import { useMutation } from 'react-query';
 import { postHelper } from '../../api-helpers';
 import { BenchmarkCreate } from '../../api';
+import { UserContext } from '../../userContext';
 
 // TODO: do not show invalid on first load
 //       use default state valid?
 
-function BenchmarkSubmission(props: { token: string }) {
+function BenchmarkSubmission() {
     const [dockerName, setDockerName] = useState('');
     const [dockerTag, setDockerTag] = useState('');
     const [template, setTemplate] = useState('');
     const [description, setDescription] = useState('');
 
+    const auth = useContext(UserContext);
+
     const { mutate, isLoading } = useMutation(
-        (data: BenchmarkCreate) => postHelper<BenchmarkCreate>('/benchmarks', data),
+        (data: BenchmarkCreate) => postHelper<BenchmarkCreate>('/benchmarks', data, auth.token),
         {
             onSuccess: (data) => {},
         }

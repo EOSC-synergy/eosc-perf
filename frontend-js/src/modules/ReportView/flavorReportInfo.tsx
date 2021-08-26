@@ -5,14 +5,13 @@ import { getHelper } from '../../api-helpers';
 import { LoadingOverlay } from '../loadingOverlay';
 import { ReportInteraction } from './reportInteraction';
 
-export function FlavorReportInfo(props: { report: Report; token: string; refetch: () => void }) {
+export function FlavorReportInfo(props: { report: Report; refetch: () => void }) {
     let { isLoading, data, isSuccess } = useQuery(
         'flavor-' + props.report.resource_id,
         () => {
             return getHelper<Flavor>('/sites/flavors/' + props.report.resource_id);
         },
         {
-            enabled: !!props.token,
             refetchOnWindowFocus: false, // do not spam queries
         }
     );

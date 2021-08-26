@@ -3,13 +3,14 @@ import { Accordion, Button, Card, Col, Container, Row } from 'react-bootstrap';
 import { LoadingOverlay } from '../loadingOverlay';
 import { useQuery } from 'react-query';
 import { JSONPreviewModal } from './JSONPreviewModal';
-import { ResultsPerPageSelection } from './resultsPerPageSelection';
+import { ResultsPerPageSelection } from '../resultsPerPageSelection';
 import { CardAccordionToggle } from './cardAccordionToggle';
 import { getHelper } from '../../api-helpers';
 import { ResultTable } from './resultTable';
 import { Benchmark, Result, Results } from '../../api';
 import { Paginator } from '../pagination';
 import { DiagramView } from './diagramView';
+import { ReportModal } from './reportModal';
 
 const qs = require('qs');
 
@@ -33,12 +34,7 @@ function determineNotableKeys(benchmark: Benchmark) {
         .reduce((acc: string[], arr: string[]) => [...acc, ...arr]);
 }
 
-function ResultSearch(props: {
-    initialBenchmark: string;
-    location: { search: string };
-    token: string;
-    admin: boolean;
-}) {
+function ResultSearch(props: { initialBenchmark: string; location: { search: string } }) {
     const benchmarkId = qs.parse(props.location.search.slice(1)).benchmark || '';
 
     const benchmark = useQuery(
@@ -61,11 +57,14 @@ function ResultSearch(props: {
     // json preview modal
     const [showJSONPreview, setShowJSONPreview] = useState(false);
 
+    const [showReportModal, setShowReportModal] = useState(false);
+
     // TODO: use map for performance?
     // TODO: maintain sorting
     const [selectedResults, setSelectedResults] = useState<Result[]>([]);
 
     const [previewResult, setPreviewResult] = useState<Result | null>(null);
+    const [reportedResult, setReportedResult] = useState<Result | null>(null);
 
     // helpers for subelements
     const resultOps = {
@@ -83,6 +82,10 @@ function ResultSearch(props: {
         display: function (result: Result) {
             setPreviewResult(result);
             setShowJSONPreview(true);
+        },
+        report: function (result: Result) {
+            setReportedResult(result);
+            setShowReportModal(true);
         },
     };
 
@@ -193,7 +196,6 @@ function ResultSearch(props: {
                             <ResultTable
                                 results={results.data!.data.items!}
                                 ops={resultOps}
-                                admin={props.admin}
                                 suggestions={suggestedFields}
                             />
                         )}
@@ -246,6 +248,13 @@ function ResultSearch(props: {
                     setShowJSONPreview(false);
                 }}
                 result={previewResult}
+            />
+            <ReportModal
+                show={showReportModal}
+                closeModal={() => {
+                    setShowReportModal(false);
+                }}
+                result={reportedResult}
             />
         </>
     );

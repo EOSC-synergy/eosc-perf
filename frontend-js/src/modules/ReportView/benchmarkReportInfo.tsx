@@ -5,14 +5,13 @@ import { LoadingOverlay } from '../loadingOverlay';
 import { ReportInteraction } from './reportInteraction';
 import React from 'react';
 
-export function BenchmarkReportInfo(props: { report: Report; token: string; refetch: () => void }) {
+export function BenchmarkReportInfo(props: { report: Report; refetch: () => void }) {
     let { isLoading, data, isSuccess } = useQuery(
         'benchmark-' + props.report.resource_id,
         () => {
             return getHelper<Benchmark>('/benchmarks/' + props.report.resource_id);
         },
         {
-            enabled: !!props.token,
             refetchOnWindowFocus: false, // do not spam queries
         }
     );

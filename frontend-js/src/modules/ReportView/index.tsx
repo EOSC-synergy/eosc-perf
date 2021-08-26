@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Badge, Container, ListGroup } from 'react-bootstrap';
 import { useQuery } from 'react-query';
 import { getHelper } from '../../api-helpers';
@@ -9,8 +9,9 @@ import { BenchmarkReportInfo } from './benchmarkReportInfo';
 import { ResultReportInfo } from './resultReportInfo';
 import { SiteReportInfo } from './siteReportInfo';
 import { FlavorReportInfo } from './flavorReportInfo';
+import { UserContext } from '../../userContext';
 
-function ReportView(props: { report: Report; token: string; refetch: () => void }) {
+function ReportView(props: { report: Report; refetch: () => void }) {
     let [opened, setOpened] = useState(false);
 
     // TODO: pagination
@@ -40,16 +41,16 @@ function ReportView(props: { report: Report; token: string; refetch: () => void 
                             variant={
                                 props.report.verdict
                                     ? 'success'
-                                    : props.report.verdict == false
-                                    ? 'danger'
-                                    : 'secondary'
+                                    : props.report.verdict === null
+                                    ? 'secondary'
+                                    : 'danger'
                             }
                         >
                             {props.report.verdict
                                 ? 'Approved'
-                                : props.report.verdict == false
-                                ? 'Rejected'
-                                : 'Pending'}
+                                : props.report.verdict === null
+                                ? 'Pending'
+                                : 'Rejected'}
                         </Badge>
                     </small>
                 </div>
@@ -69,14 +70,16 @@ function ReportView(props: { report: Report; token: string; refetch: () => void 
     );
 }
 
-function ReportsView(props: { token: string }) {
+function ReportsView() {
+    const auth = useContext(UserContext);
+
     let { status, isLoading, isError, data, isSuccess, refetch } = useQuery(
         'reports',
         () => {
-            return getHelper<Reports>('/reports', props.token, {});
+            return getHelper<Reports>('/reports', auth.token, {});
         },
         {
-            enabled: !!props.token,
+            enabled: !!auth.token,
             refetchOnWindowFocus: false, // do not spam queries
         }
     );
@@ -88,12 +91,7 @@ function ReportsView(props: { token: string }) {
                 {isSuccess &&
                     data &&
                     data.data.items!.map((report) => (
-                        <ReportView
-                            report={report}
-                            token={props.token}
-                            key={report.id}
-                            refetch={refetch}
-                        />
+                        <ReportView report={report} key={report.id} refetch={refetch} />
                     ))}
             </ListGroup>
         </Container>

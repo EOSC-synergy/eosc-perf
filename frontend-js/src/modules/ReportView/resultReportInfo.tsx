@@ -4,14 +4,13 @@ import { getHelper } from '../../api-helpers';
 import { LoadingOverlay } from '../loadingOverlay';
 import React from 'react';
 
-export function ResultReportInfo(props: { report: Report; token: string; refetch: () => void }) {
+export function ResultReportInfo(props: { report: Report; refetch: () => void }) {
     let { isLoading, data, isSuccess } = useQuery(
         'result-' + props.report.resource_id,
         () => {
             return getHelper<Result>('/results/' + props.report.resource_id);
         },
         {
-            enabled: !!props.token,
             refetchOnWindowFocus: false, // do not spam queries
         }
     );

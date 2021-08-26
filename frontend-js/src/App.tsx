@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import './App.css';
 
 // styling
@@ -19,21 +19,112 @@ import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import axios from 'axios';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import { emptyUser, UserContext, UserInfo } from './userContext';
 
 const queryClient = new QueryClient();
 
-type UserInfo = {
-    token: string;
-    email: string;
-    name: string;
-    admin: boolean;
-};
+/**
+ * Create navbar-dropdown button for a subpage
+ * @param props { reference: reference to module to link to }
+ * @constructor
+ *
+ * Notes: cannot use <NavDropdown.Item> due to <Link>, dropdown-item class added manually
+ */
+function LinkTo(props: {
+    reference: ModuleBase;
+    className?: string;
+    setCurrentTab: (tab: string) => void;
+}) {
+    return (
+        <Link
+            to={props.reference.path}
+            onClick={() => props.setCurrentTab(props.reference.name)}
+            className={props.className ? props.className : 'dropdown-item'}
+        >
+            {props.reference.dropdownName}
+        </Link>
+    );
+}
+
+function NavHeader(props: { setCurrentTab: (tab: string) => void }) {
+    const auth = useContext(UserContext);
+
+    return (
+        <header>
+            <Navbar bg="dark" expand="lg" variant="dark">
+                <Navbar.Brand href={modules.BenchmarkSearch.path}>
+                    {/* TODO: properly link svg react-style */}
+                    <img src="/images/eosc-perf-logo.svg" height="40" alt="EOSC-Performance" />
+                </Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="mr-auto">
+                        <NavDropdown title="Search" id="base-search-dropdown">
+                            <LinkTo
+                                reference={modules.BenchmarkSearch}
+                                setCurrentTab={props.setCurrentTab}
+                            />
+                            <LinkTo
+                                reference={modules.ResultSearch}
+                                setCurrentTab={props.setCurrentTab}
+                            />
+                        </NavDropdown>
+                        <NavDropdown title="Submit" id="base-submit-dropdown">
+                            <LinkTo
+                                reference={modules.ResultSubmission}
+                                setCurrentTab={props.setCurrentTab}
+                            />
+                            <LinkTo
+                                reference={modules.BenchmarkSubmission}
+                                setCurrentTab={props.setCurrentTab}
+                            />
+                        </NavDropdown>
+                        <NavDropdown title="Instructions" id="base-instructions-dropdown">
+                            <LinkTo
+                                reference={modules.CodeGuidelines}
+                                setCurrentTab={props.setCurrentTab}
+                            />
+                        </NavDropdown>
+                        {auth.admin && (
+                            <NavDropdown title="Admin" id="base-admin-dropdown">
+                                <LinkTo
+                                    reference={modules.ReportViewModule}
+                                    setCurrentTab={props.setCurrentTab}
+                                />
+                                <LinkTo
+                                    reference={modules.SiteEditorModule}
+                                    setCurrentTab={props.setCurrentTab}
+                                />
+                            </NavDropdown>
+                        )}
+                        <Nav.Link href="https://appsgrycap.i3m.upv.es:31443/im-dashboard/login">
+                            Infrastructure Manager
+                        </Nav.Link>
+                    </Nav>
+                    <Nav>
+                        <NavDropdown
+                            id="base-login-dropdown"
+                            title={auth.name || 'Not logged in.'}
+                            className="justify-content-end"
+                        >
+                            {auth.token ? (
+                                <NavDropdown.Item href="/auth/logout">Logout</NavDropdown.Item>
+                            ) : (
+                                <NavDropdown.Item href="/auth/login">Login</NavDropdown.Item>
+                            )}
+                        </NavDropdown>
+                    </Nav>
+                </Navbar.Collapse>
+            </Navbar>
+        </header>
+    );
+}
 
 function App() {
     // state
     const [currentTab, setCurrentTab] = useState('BenchmarkSearch');
 
-    const { status, isLoading, isError, data, isSuccess } = useQuery(
+    const whoAmI = useQuery(
         'userInfo',
         () => axios.get<UserInfo>('https://localhost/auth/whoami'),
         {
@@ -41,128 +132,58 @@ function App() {
         }
     );
 
-    // const auth = useAuth();
-
-    /**
-     * Create navbar-dropdown button for a subpage
-     * @param props { reference: reference to module to link to }
-     * @constructor
-     *
-     * Notes: cannot use <NavDropdown.Item> due to <Link>, dropdown-item class added manually
-     */
-    function LinkTo(props: { reference: ModuleBase; className?: string }) {
-        return (
-            <Link
-                to={props.reference.path}
-                onClick={() => setCurrentTab(props.reference.name)}
-                className={props.className ? props.className : 'dropdown-item'}
-            >
-                {props.reference.dropdownName}
-            </Link>
-        );
-    }
-
     return (
-        <Router>
-            <header>
-                <Navbar bg="dark" expand={'lg'} variant={'dark'}>
-                    <Navbar.Brand href={modules.BenchmarkSearch.path}>
-                        <img src="/images/eosc-perf-logo.svg" height="40" alt="EOSC-Performance" />
-                    </Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className={'mr-auto'}>
-                            <NavDropdown title={'Search'} id={'base-search-dropdown'}>
-                                <LinkTo reference={modules.BenchmarkSearch} />
-                                <LinkTo reference={modules.ResultSearch} />
-                            </NavDropdown>
-                            <NavDropdown title={'Submit'} id={'base-submit-dropdown'}>
-                                <LinkTo reference={modules.ResultSubmission} />
-                                <LinkTo reference={modules.BenchmarkSubmission} />
-                            </NavDropdown>
-                            <NavDropdown title={'Instructions'} id={'base-instructions-dropdown'}>
-                                <LinkTo reference={modules.CodeGuidelines} />
-                            </NavDropdown>
-                            {data && data.data.admin && (
-                                <NavDropdown title={'Admin'} id={'base-admin-dropdown'}>
-                                    <LinkTo reference={modules.ReportViewModule} />
-                                    <LinkTo reference={modules.SiteEditorModule} />
-                                </NavDropdown>
-                            )}
-                            <Nav.Link
-                                href={'https://appsgrycap.i3m.upv.es:31443/im-dashboard/login'}
-                            >
-                                Infrastructure Manager
-                            </Nav.Link>
-                        </Nav>
-                        <Nav>
-                            <NavDropdown
-                                id={'base-login-dropdown'}
-                                title={isSuccess ? data?.data.name : 'Not logged in.'}
-                                className="justify-content-end"
-                            >
-                                {isSuccess ? (
-                                    <NavDropdown.Item href={'/auth/logout'}>
-                                        Logout
-                                    </NavDropdown.Item>
-                                ) : (
-                                    <NavDropdown.Item href={'/auth/login'}>Login</NavDropdown.Item>
-                                )}
-                            </NavDropdown>
-                        </Nav>
-                    </Navbar.Collapse>
-                </Navbar>
-            </header>
-            <div className="App">
-                <div className="App-content">
-                    <Switch>
-                        <Route exact path="/">
-                            <Redirect to={modules.BenchmarkSearch.path} />
-                        </Route>
-                        {modules.all.map((module) => (
-                            <Route
-                                path={module.path}
-                                render={(props) => (
-                                    // @ts-ignore
-                                    <module.element
-                                        {...props}
-                                        {...{
-                                            token: data?.data.token,
-                                            admin: data?.data.admin,
-                                        }}
-                                    />
-                                )}
-                                key={module.name}
-                            />
-                        ))}
-                    </Switch>
-                </div>
-            </div>
-            <footer className="footer mt-auto py-3 bg-light">
-                <Container>
-                    <div className="text-center text-md-center">
-                        <ul className="list-unstyled list-inline my-0">
-                            <li className="list-inline-item mx-5">
-                                <LinkTo
-                                    reference={modules.PrivacyPolicyModule}
-                                    className="text-muted"
+        <UserContext.Provider value={whoAmI.isSuccess ? whoAmI.data.data : emptyUser}>
+            <Router>
+                <NavHeader setCurrentTab={setCurrentTab} />
+                <div className="App">
+                    <div className="App-content">
+                        <Switch>
+                            <Route exact path="/">
+                                <Redirect to={modules.BenchmarkSearch.path} />
+                            </Route>
+                            {modules.all.map((module) => (
+                                <Route
+                                    path={module.path}
+                                    render={(props) => (
+                                        // @ts-ignore
+                                        <module.element {...props} />
+                                    )}
+                                    key={module.name}
                                 />
-                            </li>
-                            <li className="list-inline-item mx-5">
-                                <a href="mailto:perf-support@lists.kit.edu" className="text-muted">
-                                    Email Support
-                                </a>
-                            </li>
-                        </ul>
+                            ))}
+                        </Switch>
                     </div>
-                </Container>
-            </footer>
-        </Router>
+                </div>
+                <footer className="footer mt-auto py-3 bg-light">
+                    <Container>
+                        <div className="text-center text-md-center">
+                            <ul className="list-unstyled list-inline my-0">
+                                <li className="list-inline-item mx-5">
+                                    <LinkTo
+                                        reference={modules.PrivacyPolicyModule}
+                                        className="text-muted"
+                                        setCurrentTab={setCurrentTab}
+                                    />
+                                </li>
+                                <li className="list-inline-item mx-5">
+                                    <a
+                                        href="mailto:perf-support@lists.kit.edu"
+                                        className="text-muted"
+                                    >
+                                        Email Support
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </Container>
+                </footer>
+            </Router>
+        </UserContext.Provider>
     );
 }
 
 const hof = (WrappedComponent: any) => {
-    // Its job is to return a react component warpping the baby component
     return (props: {}) => (
         <QueryClientProvider client={queryClient}>
             <WrappedComponent {...props} />

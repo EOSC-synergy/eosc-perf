@@ -7,7 +7,7 @@ import { Benchmarks } from '../../api';
 import { getHelper } from '../../api-helpers';
 import { Paginator } from '../pagination';
 
-function Page(props: { token: string }) {
+function BenchmarkSearch() {
     //const [resultsPerPage, setResultsPerPage] = useState(10);
     const [page, setPage] = useState(0);
 
@@ -48,7 +48,7 @@ function Page(props: { token: string }) {
 
 const BenchmarkSearchModule = {
     path: '/benchmark-search',
-    element: Page,
+    element: BenchmarkSearch,
     name: 'BenchmarkSearch',
     dropdownName: 'Benchmarks',
 };

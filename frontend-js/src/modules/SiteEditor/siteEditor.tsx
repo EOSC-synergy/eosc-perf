@@ -1,15 +1,18 @@
 import { Site, SiteEdit } from '../../api';
 import { useMutation } from 'react-query';
 import { putHelper } from '../../api-helpers';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { Description, NetAddress, SiteId, SiteName } from './siteFields';
 import { FlavorList } from './flavorList';
+import { UserContext } from '../../userContext';
 
-export function SiteEditor(props: { token: string; site: Site; refetch: () => void }) {
+export function SiteEditor(props: { site: Site; refetch: () => void }) {
+    const auth = useContext(UserContext);
+
     const { mutate, isLoading } = useMutation(
         (data: SiteEdit) =>
-            putHelper<SiteEdit>('/sites/' + props.site.id, data, props.token, {
+            putHelper<SiteEdit>('/sites/' + props.site.id, data, auth.token, {
                 site_id: props.site.id,
             }),
         {
@@ -40,7 +43,7 @@ export function SiteEditor(props: { token: string; site: Site; refetch: () => vo
             >
                 Submit
             </Button>
-            <FlavorList site={props.site} token={props.token} />
+            <FlavorList site={props.site} />
         </Form>
     );
 }

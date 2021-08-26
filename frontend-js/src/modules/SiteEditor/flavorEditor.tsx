@@ -1,15 +1,18 @@
 import { Flavor, FlavorEdit } from '../../api';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useMutation } from 'react-query';
 import { putHelper } from '../../api-helpers';
 import { Button, Form, InputGroup, ListGroup } from 'react-bootstrap';
 import { Check, PencilSquare } from 'react-bootstrap-icons';
+import { UserContext } from '../../userContext';
 
-export function FlavorEditor(props: { flavor: Flavor; token: string; refetch: () => void }) {
+export function FlavorEditor(props: { flavor: Flavor; refetch: () => void }) {
     const [name, setName] = useState(props.flavor.name);
     const [desc, setDesc] = useState(props.flavor.description);
 
     const [editing, setEditing] = useState(false);
+
+    const auth = useContext(UserContext);
 
     function updateEditing(editing: boolean) {
         if (editing) {
@@ -21,7 +24,7 @@ export function FlavorEditor(props: { flavor: Flavor; token: string; refetch: ()
 
     const { mutate, isLoading } = useMutation(
         (data: FlavorEdit) =>
-            putHelper<FlavorEdit>('/sites/flavors/' + props.flavor.id, data, props.token, {
+            putHelper<FlavorEdit>('/sites/flavors/' + props.flavor.id, data, auth.token, {
                 flavor_id: props.flavor.id,
             }),
         {

@@ -15,12 +15,7 @@ import { Pencil } from 'react-bootstrap-icons';
 import { ColumnSelectModal } from './columnSelectModal';
 import '../../actionable.css';
 
-export function ResultTable(props: {
-    results: Result[];
-    ops: ResultOps;
-    admin: boolean;
-    suggestions?: string[];
-}) {
+export function ResultTable(props: { results: Result[]; ops: ResultOps; suggestions?: string[] }) {
     const [benchmarkColumnEnabled, setBenchmarkColumnEnabled] = useState(true);
     const [siteColumnEnabled, setSiteColumnEnabled] = useState(true);
     const [siteFlavorColumnEnabled, setSiteFlavorColumnEnabled] = useState(true);
@@ -86,7 +81,7 @@ export function ResultTable(props: {
                                 </td>
                             ))}
                             <td>
-                                <ActionColumn result={result} ops={props.ops} admin={props.admin} />
+                                <ActionColumn result={result} ops={props.ops} />
                             </td>
                         </tr>
                     ))}

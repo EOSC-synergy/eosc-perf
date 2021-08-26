@@ -17,14 +17,13 @@ function FileSelection() {
     );
 }
 
-function BenchmarkSelection(props: { token: string }) {
+function BenchmarkSelection() {
     let benchmarks = useQuery(
         'benchmarks',
         () => {
             return getHelper<Benchmarks>('/benchmarks');
         },
         {
-            enabled: !!props.token,
             refetchOnWindowFocus: false, // do not spam queries
         }
     );
@@ -50,14 +49,13 @@ function BenchmarkSelection(props: { token: string }) {
     );
 }
 
-function SiteSelection(props: { token: string }) {
+function SiteSelection() {
     let sites = useQuery(
         'sites',
         () => {
             return getHelper<Sites>('/sites');
         },
         {
-            enabled: !!props.token,
             refetchOnWindowFocus: false, // do not spam queries
         }
     );
@@ -171,14 +169,13 @@ function SiteSelection(props: { token: string }) {
     );
 }
 
-function TagSelection(props: { token: string }) {
+function TagSelection() {
     let { status, isLoading, isError, data, isSuccess } = useQuery(
         'tagSelect',
         () => {
             return getHelper<Tags>('/tags');
         },
         {
-            enabled: !!props.token,
             refetchOnWindowFocus: false, // do not spam queries
         }
     );
@@ -295,9 +292,9 @@ function ResultSubmission(props: { token: string }) {
             <Form>
                 <CardColumns>
                     <FileSelection />
-                    <BenchmarkSelection token={props.token} />
-                    <SiteSelection token={props.token} />
-                    <TagSelection token={props.token} />
+                    <BenchmarkSelection />
+                    <SiteSelection />
+                    <TagSelection />
                 </CardColumns>
                 <LicenseAgreementCheck />
                 <Button

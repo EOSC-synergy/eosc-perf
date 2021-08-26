@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container } from 'react-bootstrap';
-import template from './template.json';
+import template from './benchmark_template.json';
 
 function CodeGuidelines() {
     return (

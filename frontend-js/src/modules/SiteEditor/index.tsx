@@ -19,14 +19,13 @@ function SiteSelect(props: { site: Site; setActiveSite: (site: Site) => void }) 
     );
 }
 
-function SitesEditor(props: { token: string }) {
+function SitesEditor() {
     let { status, isLoading, isError, data, isSuccess, refetch } = useQuery(
         'sites',
         () => {
             return getHelper<Sites>('/sites');
         },
         {
-            enabled: !!props.token,
             refetchOnWindowFocus: false, // do not spam queries
         }
     );
@@ -55,12 +54,7 @@ function SitesEditor(props: { token: string }) {
                 </Col>
                 <Col>
                     {activeSite != null && (
-                        <SiteEditor
-                            token={props.token}
-                            key={activeSite.id}
-                            site={activeSite}
-                            refetch={refetch}
-                        />
+                        <SiteEditor key={activeSite.id} site={activeSite} refetch={refetch} />
                     )}
                 </Col>
             </Row>
