@@ -131,7 +131,8 @@ def add_demo(token: str, host: str):
         benchmark = attempt_post(token, host + "/benchmarks", expected=201, data=json.dumps({
             "docker_image": "thechristophe/openbench-c-ray",
             "docker_tag": "latest",
-            "description": "Compare cpu perf with multithreaded raytracing"
+            "description": "Compare cpu perf with multithreaded raytracing",
+            "json_template": json.loads(file.read())
         }))
         # "template": file.read()})
 
