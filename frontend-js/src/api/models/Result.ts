@@ -8,11 +8,14 @@ import type { Site } from './Site';
 import type { Tag } from './Tag';
 
 export type Result = {
+    /**
+     * UUID resource unique identification
+     */
+    readonly id: string;
+    upload_date: string;
+    json: any;
     benchmark: Benchmark;
     site: Site;
-    readonly id: string;
-    tags: Array<Tag>;
-    upload_date: string;
     flavor: Flavor;
-    json: any;
+    tags: Array<Tag>;
 }

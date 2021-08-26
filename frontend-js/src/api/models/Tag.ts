@@ -3,7 +3,16 @@
 /* eslint-disable */
 
 export type Tag = {
-    name: string;
-    description: string;
+    /**
+     * UUID resource unique identification
+     */
     readonly id: string;
+    /**
+     * String with short feature identification
+     */
+    name: string;
+    /**
+     * String with an statement about the object
+     */
+    description: string;
 }

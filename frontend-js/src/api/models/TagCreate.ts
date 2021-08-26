@@ -3,6 +3,12 @@
 /* eslint-disable */
 
 export type TagCreate = {
-    description?: string;
+    /**
+     * String with short feature identification
+     */
     name: string;
+    /**
+     * String with an statement about the object
+     */
+    description?: string;
 }
