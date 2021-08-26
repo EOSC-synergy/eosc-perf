@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row } from 'react-bootstrap';
+import { Button, Col, FormControl, InputGroup, ListGroup, Modal, Row } from 'react-bootstrap';
 
 export function ColumnSelectModal(props: {
     show: boolean;

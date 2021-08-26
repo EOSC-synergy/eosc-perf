@@ -1,4 +1,4 @@
-import { Benchmark, Flavor, Report } from '../../api';
+import { Flavor, Report } from '../../api';
 import React from 'react';
 import { useQuery } from 'react-query';
 import { getHelper } from '../../api-helpers';

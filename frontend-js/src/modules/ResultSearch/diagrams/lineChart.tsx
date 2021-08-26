@@ -1,4 +1,4 @@
-import { Benchmark, Result, Site } from '../../../api';
+import { Benchmark, Result } from '../../../api';
 import { useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { Line } from 'react-chartjs-2';

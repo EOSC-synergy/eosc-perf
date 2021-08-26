@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Accordion, Button, Card, Col, Container, Row } from 'react-bootstrap';
 import { LoadingOverlay } from '../loadingOverlay';
 import { useQuery } from 'react-query';
-import { ColumnSelectModal } from './columnSelectModal';
 import { JSONPreviewModal } from './JSONPreviewModal';
 import { ResultsPerPageSelection } from './resultsPerPageSelection';
 import { CardAccordionToggle } from './cardAccordionToggle';

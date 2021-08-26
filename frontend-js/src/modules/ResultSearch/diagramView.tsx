@@ -1,7 +1,6 @@
 import { Benchmark, Result } from '../../api';
 import { Badge, Form } from 'react-bootstrap';
 import charts from './diagrams';
-import { Route } from 'react-router-dom';
 import React, { useState } from 'react';
 
 export function DiagramView(props: {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Container, Form } from 'react-bootstrap';
 import { useMutation } from 'react-query';
-import { postHelper, putHelper } from '../../api-helpers';
+import { postHelper } from '../../api-helpers';
 import { BenchmarkCreate } from '../../api';
 
 // TODO: do not show invalid on first load

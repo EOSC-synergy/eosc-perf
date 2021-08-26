@@ -1,13 +1,13 @@
-import { Form, Table } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
 import { Result } from '../../api';
 import {
-    CheckboxColumn,
+    ActionColumn,
     BenchmarkColumn,
+    CheckboxColumn,
+    CustomColumn,
     SiteColumn,
     SiteFlavorColumn,
     TagsColumn,
-    ActionColumn,
-    CustomColumn,
 } from './columns';
 import { useState } from 'react';
 import { ResultOps } from './resultOps';

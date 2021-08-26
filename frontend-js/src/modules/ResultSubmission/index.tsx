@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Card, CardColumns, Container, Form, InputGroup, ListGroup } from 'react-bootstrap';
 import { useQuery } from 'react-query';
-import { Benchmarks, Flavor, Flavors, Site, Sites } from '../../api';
+import { Benchmarks, Flavors, Site, Sites } from '../../api';
 import { getHelper } from '../../api-helpers';
 
 function FileSelection() {
