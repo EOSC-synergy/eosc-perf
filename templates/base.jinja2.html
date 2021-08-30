@@ -9,6 +9,9 @@
     <script src="/static/js/popper.min.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/utility.js"></script>
+    <!-- EOSC Performance logo -->
+    <link rel="icon" type="image/svg+xml" href="/static/images/eosc-perf-logo.svg" />
+    <link rel="icon" type="image/png" href="/static/images/eosc-perf-logo.png" />
     <!-- Cookie Consent -->
     <link rel="stylesheet" type="text/css" href="/static/css/cookieconsent.min.css" />
     <script src="/static/js/cookieconsent.min.js"></script>
@@ -28,6 +31,16 @@
         })
     });
     </script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MYBL80YDKD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-MYBL80YDKD');
+    </script>
+    <!-- //END of Google Analytics -->
     <title>{% block title %}{% endblock %}</title>
     <script>
         {# this must come before the rest of head, due to dependency order #}
