@@ -1,6 +1,6 @@
 import React from 'react';
 import '../main.css';
-import './loading.css';
+import '../pages/loading.css';
 
 export function LoadingOverlay(props: {}) {
     return (

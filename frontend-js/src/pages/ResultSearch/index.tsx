@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Accordion, Button, Card, Col, Container, Row } from 'react-bootstrap';
-import { LoadingOverlay } from '../loadingOverlay';
+import { LoadingOverlay } from '../../components/loadingOverlay';
 import { useQuery } from 'react-query';
 import { JSONPreviewModal } from './JSONPreviewModal';
-import { ResultsPerPageSelection } from '../resultsPerPageSelection';
+import { ResultsPerPageSelection } from '../../components/resultsPerPageSelection';
 import { CardAccordionToggle } from './cardAccordionToggle';
 import { getHelper } from '../../api-helpers';
 import { ResultTable } from './resultTable';
-import { Benchmark, Result, Results } from '../../api';
-import { Paginator } from '../pagination';
+import { Benchmark, Flavor, Result, Results, Site } from '../../api';
+import { Paginator } from '../../components/pagination';
 import { DiagramView } from './diagramView';
 import { ReportModal } from './reportModal';
 

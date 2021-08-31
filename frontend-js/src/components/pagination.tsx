@@ -23,6 +23,8 @@ export interface Paginatable {
     page?: number;
 }
 
+export type Paginated<Type> = { items: Type[] } & Paginatable;
+
 export function Paginator(props: {
     pagination: Paginatable;
     navigateTo: (pageIndex: number) => void;

@@ -3,7 +3,7 @@ import { Col, Container, ListGroup, Row } from 'react-bootstrap';
 import { Site, Sites } from '../../api';
 import { useQuery } from 'react-query';
 import { getHelper } from '../../api-helpers';
-import { LoadingOverlay } from '../loadingOverlay';
+import { LoadingOverlay } from '../../components/loadingOverlay';
 import { SiteEditor } from './siteEditor';
 
 function SiteSelect(props: { site: Site; setActiveSite: (site: Site) => void }) {

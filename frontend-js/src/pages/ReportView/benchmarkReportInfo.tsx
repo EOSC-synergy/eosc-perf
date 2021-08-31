@@ -1,7 +1,7 @@
 import { Benchmark, Report } from '../../api';
 import { useQuery } from 'react-query';
 import { getHelper } from '../../api-helpers';
-import { LoadingOverlay } from '../loadingOverlay';
+import { LoadingOverlay } from '../../components/loadingOverlay';
 import { ReportInteraction } from './reportInteraction';
 import React from 'react';
 

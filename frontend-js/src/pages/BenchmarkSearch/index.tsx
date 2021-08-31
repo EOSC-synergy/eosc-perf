@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { SearchForm } from './searchForm';
 import { Table } from './table';
-import { LoadingOverlay } from '../loadingOverlay';
+import { LoadingOverlay } from '../../components/loadingOverlay';
 import { Benchmarks } from '../../api';
 import { getHelper } from '../../api-helpers';
-import { Paginator } from '../pagination';
+import { Paginator } from '../../components/pagination';
 
 function BenchmarkSearch() {
     //const [resultsPerPage, setResultsPerPage] = useState(10);
