@@ -8,8 +8,8 @@ import './main.css';
 // app-switching
 import { Redirect } from 'react-router';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
-import modules from './modules'; // All the parent knows is that it has modules ...
-import { ModuleBase } from './modules/module-base';
+import modules from './pages'; // All the parent knows is that it has modules ...
+import { ModuleBase } from './pages/module-base';
 import Switch from 'react-bootstrap/Switch';
 
 // html
