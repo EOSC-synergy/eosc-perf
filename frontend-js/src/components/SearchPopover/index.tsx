@@ -80,10 +80,12 @@ function SimpleSearchPopover<Item extends Identifiable>(props: {
     );
 
     return (
-        <div>
+        <div className="m-1">
             {props.display(props.item)}{' '}
             <OverlayTrigger trigger="click" placement="bottom" overlay={popover} rootClose>
-                <Button variant="success">Select</Button>
+                <Button variant="success" size="sm">
+                    Select
+                </Button>
             </OverlayTrigger>
         </div>
     );
