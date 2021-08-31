@@ -1,277 +1,18 @@
 import React, { useState } from 'react';
-import { Button, Card, CardColumns, Container, Form, InputGroup, ListGroup } from 'react-bootstrap';
-import { useQuery } from 'react-query';
-import { Benchmarks, Flavors, Sites, Tags } from '../../api';
-import { getHelper } from '../../api-helpers';
+import { Button, Card, Container, Form } from 'react-bootstrap';
+import { BenchmarkSelection } from './benchmarkSelection';
+import { SiteSelection } from './siteSelection';
+import { TagSelection } from './tagSelection';
+import { LicenseAgreementCheck } from './licenseAgreementCheck';
 
-function FileSelection() {
+function FileSelection(props: { file?: File; setFile: (file: File) => void }) {
     return (
-        <Card>
-            <Card.Body>
-                <div className="m-2">
-                    <label htmlFor="result_file">Please select result JSON file:</label>
-                    <input type="file" className="form-control-file" id="result_file" name="file" />
-                </div>
-            </Card.Body>
-        </Card>
-    );
-}
-
-function BenchmarkSelection() {
-    let benchmarks = useQuery(
-        'benchmarks',
-        () => {
-            return getHelper<Benchmarks>('/benchmarks');
-        },
-        {
-            refetchOnWindowFocus: false, // do not spam queries
-        }
-    );
-
-    return (
-        <Card>
-            <Card.Body>
-                <div className="m-2">
-                    <Form.Group>
-                        <Form.Label htmlFor="benchmark-selection">Select benchmark:</Form.Label>
-                        <Form.Control as="select" id="benchmark-selection">
-                            {benchmarks.isSuccess &&
-                                benchmarks.data.data.items!.map((benchmark) => (
-                                    <option value={benchmark.id}>
-                                        {benchmark.docker_image}:{benchmark.docker_tag}
-                                    </option>
-                                ))}
-                        </Form.Control>
-                    </Form.Group>
-                </div>
-            </Card.Body>
-        </Card>
-    );
-}
-
-function SiteSelection() {
-    let sites = useQuery(
-        'sites',
-        () => {
-            return getHelper<Sites>('/sites');
-        },
-        {
-            refetchOnWindowFocus: false, // do not spam queries
-        }
-    );
-
-    const [selectedSite, setSelectedSite] = useState<string | null>(null);
-
-    let flavors = useQuery(
-        'flavors-' + selectedSite,
-        () => {
-            return getHelper<Flavors>('/sites/' + selectedSite + '/flavors');
-        },
-        {
-            enabled: sites.isSuccess,
-            refetchOnWindowFocus: false,
-        }
-    );
-    const [selectedFlavor, setSelectedFlavor] = useState<string | null>(null);
-
-    return (
-        <Card>
-            <Card.Body>
-                <Form.Group>
-                    <Form.Label htmlFor="site-selection">Select execution site:</Form.Label>
-                    <Form.Control
-                        as="select"
-                        id="site-selection"
-                        onChange={(e) => setSelectedSite(e.target.value)}
-                    >
-                        {sites.isSuccess &&
-                            sites.data.data.items!.map((site) => (
-                                <option value={site.id} selected={site.id == selectedSite}>
-                                    {site.name}
-                                </option>
-                            ))}
-                    </Form.Control>
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label htmlFor="site-flavor">Select machine flavor:</Form.Label>
-                    <Form.Control
-                        as="select"
-                        id="site-flavor"
-                        onChange={(e) => setSelectedFlavor(e.target.value)}
-                    >
-                        {selectedSite &&
-                            flavors.isSuccess &&
-                            flavors.data.data.items!.map((flavor) => (
-                                <option value={flavor.name} selected={flavor.id == selectedFlavor}>
-                                    {flavor.name}
-                                </option>
-                            ))}
-                    </Form.Control>
-                </Form.Group>
-                {/* TODO: add site button */}
-                {/* <Form.Group>
-                    <label htmlFor="siteFlavorCustom"></label>
-                    <textarea
-                        className="form-control d-none"
-                        id="siteFlavorCustom"
-                        name="siteFlavorCustom"
-                        placeholder="Enter more details about your custom flavor here..."
-                    ></textarea>
-                </Form.Group>;
-                <div id="customSiteInfo" className="d-none">
-                    <div className="m-2">
-                        <label htmlFor="site_name">Site name</label>
-                        <br />
-                        <input
-                            type="text"
-                            id="site_name"
-                            className="form-control"
-                            placeholder="KIT Cluster"
-                            disabled
-                        />
-                    </div>
-                    <div className="m-2">
-                        <label htmlFor="site_address">Site address</label>
-                        <br />
-                        <input
-                            type="text"
-                            id="site_address"
-                            className="form-control"
-                            placeholder="cluster.kit.edu"
-                            disabled
-                        />
-                    </div>
-                    <div className="m-2">
-                        <label htmlFor="site_description">Site description</label>
-                        <br />
-                        <input
-                            type="text"
-                            id="site_description"
-                            className="form-control"
-                            placeholder="Very good"
-                            disabled
-                        />
-                    </div>
-                    <div className="m-2">
-                        <label htmlFor="customSiteFlavor">Machine flavor name:</label>
-                        <br />
-                        <input
-                            type="text"
-                            id="customSiteFlavor"
-                            className="form-control"
-                            placeholder="unknown"
-                            disabled
-                        />
-                    </div>
-                </div> */}
-            </Card.Body>
-        </Card>
-    );
-}
-
-function TagSelection() {
-    let { status, isLoading, isError, data, isSuccess } = useQuery(
-        'tagSelect',
-        () => {
-            return getHelper<Tags>('/tags');
-        },
-        {
-            refetchOnWindowFocus: false, // do not spam queries
-        }
-    );
-
-    const [customTagName, setCustomTagName] = useState('');
-    const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
-    function addCustomTag() {
-        // TODO
-    }
-
-    function selectTag(tag: string) {
-        setSelectedTags([...selectedTags, tag]);
-    }
-
-    function unselectTag(tag: string) {
-        const index = selectedTags.indexOf(tag);
-        if (index > -1) {
-            setSelectedTags(selectedTags.splice(index, 1));
-        }
-    }
-
-    return (
-        <Card>
-            <Card.Body>
-                <Form.Group>
-                    <Form.Label>Select tags:</Form.Label>
-                    <div className="scrollable-dropdown">
-                        <ListGroup>
-                            {/* TODO: make this look nicer? */}
-                            {isSuccess &&
-                                data &&
-                                (data.data.items!.length > 0 ? (
-                                    data.data.items!.map((t) =>
-                                        selectedTags.indexOf(t.id!) > -1 ? (
-                                            <ListGroup.Item onClick={(e) => unselectTag(t.id!)}>
-                                                {t.name}
-                                            </ListGroup.Item>
-                                        ) : (
-                                            <ListGroup.Item onClick={(e) => selectTag(t.id!)}>
-                                                {t.name}
-                                            </ListGroup.Item>
-                                        )
-                                    )
-                                ) : (
-                                    <ListGroup.Item disabled>No tags available.</ListGroup.Item>
-                                ))}
-                        </ListGroup>
-                    </div>
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label htmlFor="custom-tag">Custom tag</Form.Label>
-                    <InputGroup>
-                        <Form.Control
-                            id="custom-tag"
-                            placeholder="tensor"
-                            onChange={(e) => setCustomTagName(e.target.value)}
-                        />
-                        <InputGroup.Append>
-                            <Button
-                                variant="success"
-                                disabled={customTagName.length < 1}
-                                onClick={addCustomTag}
-                            >
-                                Add Tag
-                            </Button>
-                        </InputGroup.Append>
-                    </InputGroup>
-                </Form.Group>
-            </Card.Body>
-        </Card>
-    );
-}
-
-function LicenseAgreementCheck() {
-    return (
-        <label className="checkbox-label">
-            {/* TODO: cannot use Form.Control because it makes the checkbox huge 
-                          what ways around this? */}
-            <input
-                type="checkbox"
-                className="checkbox"
-                onChange={(e) => {
-                    /* TODO */
-                }}
-            />{' '}
-            I have read and accept the {/* TODO: show license modal */}
-            <Button
-                variant="secondary"
-                onClick={() => {
-                    alert('TODO');
-                }}
-            >
-                License agreement
-            </Button>
-        </label>
+        <>
+            <Form.File
+                label="Please select result JSON file"
+                onChange={() => {} /*(e) => props.setFile(e.target.files[0])*/}
+            />
+        </>
     );
 }
 
@@ -281,8 +22,25 @@ function ResultSubmission(props: { token: string }) {
     }
 
     function allFieldsFilled() {
-        // TODO
-        return false;
+        return benchmarkId && siteId && flavorId && licenseAgreementAccepted;
+    }
+
+    const [benchmarkId, setBenchmarkId] = useState<string | undefined>(undefined);
+    const [siteId, setSiteId] = useState<string | undefined>(undefined);
+    const [flavorId, setFlavorId] = useState<string | undefined>();
+    const [tags, setTags] = useState<string[]>([]);
+    const [licenseAgreementAccepted, setLicenseAgreementAccepted] = useState(false);
+    const [file, setFile] = useState<File | undefined>(undefined);
+
+    function addTag(tag: string) {
+        if (tags.includes(tag)) {
+            return;
+        }
+        setTags([...tags, ...[tag]]);
+    }
+
+    function removeTag(tag: string) {
+        setTags(tags.filter((v, i, a) => v !== tag));
     }
 
     return (
@@ -290,20 +48,32 @@ function ResultSubmission(props: { token: string }) {
             <input type="hidden" id="license" value="{{ license }}" />
             <h1>Upload Result</h1>
             <Form>
-                <CardColumns>
-                    <FileSelection />
-                    <BenchmarkSelection />
-                    <SiteSelection />
-                    <TagSelection />
-                </CardColumns>
-                <LicenseAgreementCheck />
-                <Button
-                    variant="success"
-                    className="float-right mr-1"
-                    disabled={!allFieldsFilled()}
-                >
-                    Submit
-                </Button>
+                <Card>
+                    <Card.Body>
+                        <FileSelection file={file} setFile={setFile} />
+                        <BenchmarkSelection benchmark={benchmarkId} setBenchmark={setBenchmarkId} />
+                        <SiteSelection
+                            siteId={siteId}
+                            setSiteId={setSiteId}
+                            flavorId={flavorId}
+                            setFlavorId={setFlavorId}
+                        />
+                        <TagSelection tags={tags} addTag={addTag} removeTag={removeTag} />
+                        <div className="d-flex justify-content-between">
+                            <LicenseAgreementCheck
+                                licenseAgreementAccepted={licenseAgreementAccepted}
+                                setLicenseAgreementAccepted={setLicenseAgreementAccepted}
+                            />
+                            <Button
+                                variant="success"
+                                className="mr-1"
+                                disabled={!allFieldsFilled()}
+                            >
+                                Submit
+                            </Button>
+                        </div>
+                    </Card.Body>
+                </Card>
             </Form>
         </Container>
     );
