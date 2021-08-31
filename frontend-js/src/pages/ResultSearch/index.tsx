@@ -11,8 +11,14 @@ import { Benchmark, Flavor, Result, Results, Site } from '../../api';
 import { Paginator } from '../../components/pagination';
 import { DiagramView } from './diagramView';
 import { ReportModal } from './reportModal';
+import {
+    SiteSearchPopover,
+    BenchmarkSearchPopover,
+    FlavorSearchPopover,
+} from '../../components/SearchPopover';
 
 const qs = require('qs');
+const hash = require('object-hash');
 
 function determineNotableKeys(benchmark: Benchmark) {
     function recurser(key: string, obj: any): string[] {
@@ -35,7 +41,7 @@ function determineNotableKeys(benchmark: Benchmark) {
 }
 
 function ResultSearch(props: { initialBenchmark: string; location: { search: string } }) {
-    const benchmarkId = qs.parse(props.location.search.slice(1)).benchmark || '';
+    /*const benchmarkId = qs.parse(props.location.search.slice(1)).benchmark || '';
 
     const benchmark = useQuery(
         'benchmark-' + benchmarkId,
@@ -46,11 +52,16 @@ function ResultSearch(props: { initialBenchmark: string; location: { search: str
             enabled: benchmarkId.length > 0,
             refetchOnWindowFocus: false, // do not spam queries
         }
-    );
+    );*/
 
-    const suggestedFields = benchmark.isSuccess
+    const [benchmark, setBenchmark] = useState<Benchmark | undefined>(undefined);
+    const [site, setSite] = useState<Site | undefined>(undefined);
+    const [flavor, setFlavor] = useState<Flavor | undefined>(undefined);
+
+    /*const suggestedFields = benchmark.isSuccess
         ? determineNotableKeys(benchmark!.data.data)
-        : undefined;
+        : undefined;*/
+    const suggestedFields = benchmark ? determineNotableKeys(benchmark) : undefined;
 
     const [resultsPerPage, setResultsPerPage] = useState(10);
     const [page, setPage] = useState(1);
@@ -89,18 +100,31 @@ function ResultSearch(props: { initialBenchmark: string; location: { search: str
         },
     };
 
+    // hash used for queryKey to not have to add a dozen strings
     const results = useQuery(
-        'results-' + resultsPerPage + '-page-' + page,
+        'results-' +
+            resultsPerPage +
+            '-' +
+            hash({
+                per_page: resultsPerPage,
+                page,
+                docker_image: benchmark?.docker_image,
+                docker_tag: benchmark?.docker_tag,
+                site_name: site?.name,
+                flavor_name: flavor?.name,
+            }),
         () => {
             return getHelper<Results>('/results', undefined, {
                 per_page: resultsPerPage,
                 page,
-                docker_image: benchmark.data?.data.docker_image,
-                docker_tag: benchmark.data?.data.docker_tag,
+                docker_image: benchmark?.docker_image,
+                docker_tag: benchmark?.docker_tag,
+                site_name: site?.name,
+                flavor_name: flavor?.name,
             });
         },
         {
-            enabled: benchmarkId.length === 0 || benchmark.isSuccess,
+            enabled: true, //benchmarkId.length === 0 || benchmark.isSuccess,
             refetchOnWindowFocus: false, // do not spam queries
         }
     );
@@ -130,25 +154,16 @@ function ResultSearch(props: { initialBenchmark: string; location: { search: str
                                 </Card.Header>
                                 <Accordion.Collapse eventKey="filters">
                                     <Card.Body>
-                                        Benchmark:{' '}
-                                        {benchmarkId.length > 0 && benchmark.isSuccess && (
-                                            <a
-                                                href={
-                                                    'https://hub.docker.com/repository/docker/' +
-                                                    benchmark.data!.data.docker_image
-                                                }
-                                            >
-                                                {benchmark.data!.data.docker_image +
-                                                    ':' +
-                                                    benchmark.data!.data.docker_tag}
-                                            </a>
-                                        )}
-                                        {(benchmarkId.length == 0 || results.isError) && (
-                                            <div className="text-muted">None</div>
-                                        )}
-                                        {benchmark.isLoading && (
-                                            <div className="text-muted">Loading</div>
-                                        )}
+                                        <BenchmarkSearchPopover
+                                            benchmark={benchmark}
+                                            setBenchmark={setBenchmark}
+                                        />
+                                        <SiteSearchPopover site={site} setSite={setSite} />
+                                        <FlavorSearchPopover
+                                            site={site}
+                                            flavor={flavor}
+                                            setFlavor={setFlavor}
+                                        />
                                         {/* TODO: Filters wrapper */}
                                         <ul
                                             id="filters"
@@ -177,11 +192,7 @@ function ResultSearch(props: { initialBenchmark: string; location: { search: str
                                     <Card.Body>
                                         <DiagramView
                                             results={selectedResults}
-                                            benchmark={
-                                                benchmark.isSuccess
-                                                    ? benchmark.data!.data
-                                                    : undefined
-                                            }
+                                            benchmark={benchmark}
                                             suggestions={suggestedFields}
                                         />
                                     </Card.Body>
