@@ -14,7 +14,7 @@ function SimpleSearchPopover<Item extends Identifiable>(props: {
     tableName: string;
     endpoint: string;
     item?: Item;
-    setItem: (item: Item) => void;
+    setItem: (item?: Item) => void;
     display: (item?: Item) => ReactNode;
     displayRow: (item: Item) => ReactNode;
 }) {
@@ -72,6 +72,13 @@ function SimpleSearchPopover<Item extends Identifiable>(props: {
                         </Col>
                     )}
                     <Col md="auto">
+                        <Button
+                            className="m-1"
+                            variant="secondary"
+                            onClick={() => props.setItem(undefined)}
+                        >
+                            Deselect
+                        </Button>
                         <Button className="m-1">+ New</Button>
                     </Col>
                 </Row>
@@ -93,7 +100,7 @@ function SimpleSearchPopover<Item extends Identifiable>(props: {
 
 export function BenchmarkSearchPopover(props: {
     benchmark?: Benchmark;
-    setBenchmark: (benchmark: Benchmark) => void;
+    setBenchmark: (benchmark?: Benchmark) => void;
 }) {
     function display(benchmark?: Benchmark) {
         return (
@@ -143,7 +150,7 @@ export function BenchmarkSearchPopover(props: {
     );
 }
 
-export function SiteSearchPopover(props: { site?: Site; setSite: (site: Site) => void }) {
+export function SiteSearchPopover(props: { site?: Site; setSite: (site?: Site) => void }) {
     function display(site?: Site) {
         return (
             <>
@@ -189,7 +196,7 @@ export function SiteSearchPopover(props: { site?: Site; setSite: (site: Site) =>
 export function FlavorSearchPopover(props: {
     site?: Site;
     flavor?: Flavor;
-    setFlavor: (flavor: Flavor) => void;
+    setFlavor: (flavor?: Flavor) => void;
 }) {
     function display(flavor?: Flavor) {
         return (
