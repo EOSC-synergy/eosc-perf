@@ -200,6 +200,7 @@ class TestSelf:
         assert response_POST.status_code == 201
         asserts.match_query(response_POST.json, url)
         asserts.match_user(response_POST.json, user)
+        asserts.user_welcome(user)
 
     @mark.usefixtures('mock_introspection')
     @mark.parametrize('introspection_email', ["user@email.com"], indirect=True)

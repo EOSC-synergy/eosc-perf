@@ -1,7 +1,7 @@
 """Site URL routes. Collection of controller methods to create and
 operate existing sites on the database.
 """
-from backend import models
+from backend import models, notifications
 from backend.extensions import auth
 from backend.schemas import args, schemas
 from backend.utils import queries
@@ -25,7 +25,7 @@ class Root(MethodView):
     @queries.add_sorting(models.Site)
     def get(self, query_args):
         """(Free) Filters and list sites
-        
+
         Use this method to get a list of sites filtered according to your 
         requirements. The response returns a pagination object with the
         filtered sites (if succeeds).
@@ -61,7 +61,9 @@ class Root(MethodView):
         :return: The site created into the database.
         :rtype: :class:`models.Site`
         """
-        return models.Site.create(body_args)
+        site = models.Site.create(body_args)
+        notifications.report_created(site.reports[0])
+        return site
 
 
 @blp.route('/search')
@@ -75,7 +77,7 @@ class Search(MethodView):
     @queries.add_sorting(models.Site)
     def get(self, query_args):
         """(Free) Filters and list sites
-        
+
         Use this method to get a list of sites based on a general search
         of terms. For example, calling this method with terms=K&terms=T
         returns all sites with 'K' and 'T' on the 'name', 'address', 
@@ -196,7 +198,6 @@ class Flavors(MethodView):
         query = models.Flavor.query.filter_by(site_id=site_id, **query_args)
         return query.filter(~models.Flavor.has_open_reports)
 
-
     @auth.login_required()
     @blp.doc(operationId='AddFlavor')
     @blp.arguments(schemas.FlavorCreate)
@@ -221,4 +222,6 @@ class Flavors(MethodView):
         :rtype: :class:`models.Flavor`
         """
         site_id = models.Site.get(site_id).id,  # Trigger NotFound
-        return models.Flavor.create(dict(site_id=site_id, **body_args))
+        flavor = models.Flavor.create(dict(site_id=site_id, **body_args))
+        notifications.report_created(flavor.reports[0])
+        return flavor

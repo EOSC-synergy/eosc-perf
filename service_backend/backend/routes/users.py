@@ -1,7 +1,7 @@
 """Users URL routes. Collection of controller methods to create and
 operate existing users on the database.
 """
-from backend import models
+from backend import models, notifications
 from backend.extensions import auth
 from backend.schemas import args, schemas
 from backend.utils import queries
@@ -174,7 +174,9 @@ class Register(MethodView):
         elif 'email' not in user_info:
             abort(422, messages={'token': "No scope for email"})
         else:
-            return models.User.create(token, {'email': user_info['email']})
+            user = models.User.create(token, {'email': user_info['email']})
+            notifications.user_welcome(user)
+            return user
 
     @auth.login_required()
     @blp.doc(operationId='UpdateMe')

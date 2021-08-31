@@ -1,7 +1,7 @@
 """Benchmark URL routes. Collection of controller methods to create and
 operate existing benchmarks on the database.
 """
-from backend import models, utils
+from backend import models, notifications, utils
 from backend.extensions import auth
 from backend.schemas import args, schemas
 from backend.utils import queries
@@ -66,7 +66,9 @@ class Root(MethodView):
         image, tag = body_args['docker_image'], body_args['docker_tag']
         if not utils.dockerhub.valid_image(image, tag):
             abort(422, messages={'error': "Unknown docker image"})
-        return models.Benchmark.create(body_args)
+        benchmark = models.Benchmark.create(body_args)
+        notifications.report_created(benchmark.reports[0])
+        return benchmark
 
 
 @blp.route('/search')

@@ -4,7 +4,7 @@ from uuid import uuid4
 from backend import models
 from pytest import mark
 from tests import asserts
-from tests.db_instances import benchmarks, flavors, results, sites
+from tests.db_instances import benchmarks, flavors, results, sites, users
 
 
 @mark.parametrize('endpoint', ['reports.Root'], indirect=True)
@@ -36,7 +36,6 @@ class TestRoot:
             report = models.Report.query.get(item['id'])
             asserts.match_query(item, url)
             asserts.match_report(item, report)
-
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'verdict': "true"}
@@ -131,10 +130,14 @@ class TestApprove:
     """Tests for 'Approve' route in blueprint."""
 
     @mark.usefixtures('grant_admin')
+    @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     def test_PATCH_204(self, report, report_verdict, response_PATCH):
         """PATCH method succeeded 204."""
         assert response_PATCH.status_code == 204
-        assert models.Report.query.get(report.id).verdict is True
+        updated_report = models.Report.query.get(report.id)
+        assert updated_report.verdict is True
+        asserts.report_notification(updated_report)
 
     def test_PATCH_401(self, report, report_verdict, response_PATCH):
         """PATCH method fails 401 if not authorized."""
@@ -169,10 +172,14 @@ class TestReject:
     """Tests for 'Approve' route in blueprint."""
 
     @mark.usefixtures('grant_admin')
+    @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     def test_PATCH_204(self, report, report_verdict, response_PATCH):
         """PATCH method succeeded 204."""
         assert response_PATCH.status_code == 204
-        assert models.Report.query.get(report.id).verdict is False
+        updated_report = models.Report.query.get(report.id)
+        assert updated_report.verdict is False
+        asserts.report_notification(updated_report)
 
     def test_PATCH_401(self, report, report_verdict, response_PATCH):
         """PATCH method fails 401 if not authorized."""
@@ -191,4 +198,3 @@ class TestReject:
         """PATCH method fails 404 if no id found."""
         assert response_PATCH.status_code == 404
         assert models.Report.query.get(report.id).verdict is True
-

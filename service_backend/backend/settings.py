@@ -205,6 +205,25 @@ DISABLE_ADMIN_PROTECTION = bool(
 """
 
 
+# Email and notification configuration.
+MAIL_SUPPORT=str("MAIL_SUPPORT", default="")
+""" Email list for application support. This email receives administration
+notifications such 'reports'.
+"""
+
+MAIL_FROM=str("MAIL_FROM", default="")
+""" Email to display on 'from' from notification emails.
+"""
+
+MAIL_SERVER=str("MAIL_SERVER", default="")
+""" SMTP server where to send the email notification requests.
+"""
+
+MAIL_PORT=int("MAIL_PORT", default=25)
+""" SMTP server port.
+"""
+
+
 # API specs configuration
 BACKEND_URL = str("BACKEND_URL", default="/")
 API_TITLE = 'EOSC Performance API'

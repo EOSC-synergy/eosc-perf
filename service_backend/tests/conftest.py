@@ -44,6 +44,11 @@ def session_environment(sql_database):
     os.environ['OIDC_CLIENT_ID'] = "eosc-perf"
     os.environ['OIDC_CLIENT_SECRET'] = "not-so-secret-for-testing"
     os.environ['ADMIN_ENTITLEMENTS'] = "admins"
+    # Email and notification configuration.
+    os.environ['MAIL_SUPPORT'] = "support@example.com"
+    os.environ['MAIL_SERVER'] = "localhost"
+    os.environ['MAIL_PORT'] = str(5025)
+    os.environ['MAIL_FROM'] = "no-reply@example.com"
 
 
 @fixture(scope="session")
@@ -89,7 +94,7 @@ def token_iss(request):
     """Returns the iss to include on the user token."""
     return request.param if hasattr(request, 'param') else None
 
-    
+
 @fixture(scope='function')
 def mock_accesstoken(monkeypatch, token_sub, token_iss):
     """Patch fixture to test function with valid oidc token."""

@@ -15,6 +15,7 @@ from .extensions import bcrypt      # Encrypt passwords and others
 from .extensions import cache       # Caches responses
 from .extensions import db          # SQLAlchemy instance
 from .extensions import migrate     # Alembic ext. manage db migrations
+from .extensions import mail        # Mail ext. to send notifications
 
 #: Raise ValidationError when unknown fields in query
 FlaskParser.DEFAULT_UNKNOWN_BY_LOCATION["query"] = ma.RAISE
@@ -88,6 +89,7 @@ def register_extensions(app):
     db.init_app(app)
     migrate.init_app(app, db)
     auth.init_app(app)
+    mail.init_app(app)
 
 
 def register_blueprints(app):

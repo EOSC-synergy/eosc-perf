@@ -55,6 +55,7 @@ class TestRoot:
         asserts.match_body(response_POST.json, body)
         benchmark = models.Benchmark.query.get(response_POST.json['id'])
         asserts.match_benchmark(response_POST.json, benchmark)
+        asserts.report_notification(benchmark.reports[0])
 
     @mark.parametrize('body', indirect=True,  argvalues=[
         {'docker_image': "b1", 'docker_tag': "v2.0", 'json_schema': {'x': 1}},

@@ -10,12 +10,12 @@ configurations from the environment.
 """
 from flask_bcrypt import Bcrypt
 from flask_caching import Cache
+from flask_mailman import Mail
 from flask_migrate import Migrate
 from flask_smorest import Api
 from flask_sqlalchemy import SQLAlchemy
 
 from .authorization import Authorization
-
 
 #: Flask extension that provides support for handling oidc Access Tokens
 auth = Authorization()
@@ -34,3 +34,6 @@ db = SQLAlchemy()
 
 #: Flask extension that handles SQLAlchemy database migrations using Alembic
 migrate = Migrate()
+
+#: Flask extension providing simple email sending capabilities
+mail = Mail()

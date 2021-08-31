@@ -18,7 +18,7 @@ services:
     networks:
       - frontend-net
       - backend-net
-      - mail-net
+      - smtp-net
     secrets:
       - cookie_secret
       - oidc_secret
@@ -49,6 +49,10 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
+      MAIL_SUPPORT: ${MAIL_SUPPORT}
+      MAIL_FROM: ${MAIL_FROM}
+      MAIL_SERVER: postfix
+      MAIL_PORT: 25
     volumes:
       - ./service_backend/:/app
     networks:
@@ -94,7 +98,7 @@ services:
       - nginx_api_credentials
     networks:
       - frontend-net
-      - mail-net
+      - smtp-net
     ports:
       - "80:80"
       - "443:443"
@@ -112,26 +116,25 @@ services:
     secrets:
       - nginx_api_credentials
 
-
   postfix:
     image: postfix
     restart: unless-stopped
     container_name: postfix
     build:
       context: service_postfix
-      dockerfile: Dockerfile
     volumes:
       - ./service_certificate/conf:/etc/letsencrypt
+      - ./logs/postfix:/var/log
     env_file: .env
     ports:
       - "25:25"
     networks:
-      - mail-net
+      - smtp-net
 
 networks:
   frontend-net:
   backend-net:
-  mail-net:
+  smtp-net:
 
 volumes:
   postgres:

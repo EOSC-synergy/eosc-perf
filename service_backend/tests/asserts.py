@@ -1,6 +1,8 @@
 """Function asserts for tests"""
 from urllib import parse
 
+from backend.extensions import mail
+
 
 def match_pagination(json, url):
     """Checks the json is a pagination object."""
@@ -80,7 +82,7 @@ def match_report(json, report):
     assert json['resource_id'] == str(report.resource_id)
 
     # Check the report has a uploader
-    assert 'uploader' in json # Reports should only be accessible by admins
+    assert 'uploader' in json  # Reports should only be accessible by admins
     assert match_user(json['uploader'], report.uploader)
 
     return True
@@ -345,6 +347,8 @@ def match_body(json, body):
 
 
 def match_edit(json, body):
+    """Checks the json edit response matches the request body."""
+
     # Check the benchmark matches the request
     if 'benchmark_id' in body:
         assert json['benchmark']['id'] == str(body['benchmark_id'])
@@ -364,3 +368,35 @@ def match_edit(json, body):
         assert json_tags == body_tags
 
     return True
+
+
+def report_notification(report):
+    """Checks a report notification is in the outbox"""
+    mail_outbox = mail.get_connection().mailman.outbox
+    msg_index = find_message(mail_outbox, headers={'Report-ID': report.id})
+    assert msg_index != -1  # Item message found
+    envelope = mail_outbox.pop(msg_index)
+    assert envelope.from_email == "no-reply@example.com"
+    assert report.resource.uploader.email in envelope.to
+    assert "support@example.com" in envelope.cc
+    assert envelope.extra_headers['Report-verdict'] == report.verdict
+
+
+def user_welcome(user):
+    """Checks a user welcome is in the outbox"""
+    mail_outbox = mail.get_connection().mailman.outbox
+    msg_index = find_message(mail_outbox, subject="Thank you for registering")
+    assert msg_index != -1  # Item message found
+    envelope = mail_outbox.pop(msg_index)
+    assert envelope.from_email == "no-reply@example.com"
+    assert user.email in envelope.to
+
+
+def find_message(mail_outbox, headers=None, subject=None):
+    for index, item in enumerate(mail_outbox):
+        if headers and headers.items() <= item.extra_headers.items():
+            return index
+        if subject and subject in item.subject:
+            return index
+
+    raise KeyError("Message not found")

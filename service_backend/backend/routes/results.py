@@ -1,7 +1,7 @@
 """Results URL routes. Collection of controller methods to create and
 operate existing benchmark results on the database.
 """
-from backend import models
+from backend import models, notifications
 from backend.extensions import auth
 from backend.schemas import args, schemas
 from backend.utils import queries
@@ -130,7 +130,7 @@ class Root(MethodView):
         Use this method to create a new result in the database so it can
         be accessed by the application users. The method returns the complete
         created result (if succeeds).
-        
+
         Note: The uploaded result must pass the benchmark JSON Schema to be
         accepted, otherwise 422 UnprocessableEntity is produced.
         ---
@@ -149,7 +149,7 @@ class Root(MethodView):
         return models.Result.create(dict(
             json=body_args,
             benchmark=models.Benchmark.get(query_args.pop('benchmark_id')),
-            site=models.Site.get(query_args.pop('site_id')), 
+            site=models.Site.get(query_args.pop('site_id')),
             flavor=models.Flavor.get(query_args.pop('flavor_id')),
             tags=[models.Tag.get(id) for id in query_args.pop('tags_ids')],
             **query_args
@@ -324,4 +324,5 @@ class Report(MethodView):
         report = models.Report(message=body_args['message'])
         # Any user is able to add result reports
         result.update({'reports': result.reports+[report]}, force=True)
+        notifications.report_created(report)
         return report

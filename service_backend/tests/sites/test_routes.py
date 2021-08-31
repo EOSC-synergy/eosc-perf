@@ -53,6 +53,7 @@ class TestRoot:
         asserts.match_body(response_POST.json, body)
         site = models.Site.query.get(response_POST.json['id'])
         asserts.match_site(response_POST.json, site)
+        asserts.report_notification(site.reports[0])
 
     @mark.parametrize('body', indirect=True, argvalues=[
         {'name': "s3", 'address': "addr2", 'description': "Text"},
@@ -262,6 +263,7 @@ class TestFlavors:
         flavor = models.Flavor.query.get(response_POST.json['id'])
         assert flavor in site.flavors
         asserts.match_flavor(response_POST.json, flavor)
+        asserts.report_notification(flavor.reports[0])
 
     @mark.parametrize('body', indirect=True, argvalues=[
         {'name': "flavor2", 'description': "Flavor2 for siteX"},

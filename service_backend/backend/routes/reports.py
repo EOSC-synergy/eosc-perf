@@ -1,7 +1,7 @@
 """Report URL routes. Collection of controller methods to create and
 operate existing reports on the database.
 """
-from backend import models
+from backend import models, notifications
 from backend.extensions import auth
 from backend.schemas import args, schemas
 from backend.utils import queries
@@ -122,7 +122,9 @@ class Approve(MethodView):
         :raises NotFound: No report with id found
         """
         # Only admins can access this function so it is safe to set force
-        models.Report.get(report_id).update({'verdict': True}, force=True)
+        report = models.Report.get(report_id)
+        report.update({'verdict': True}, force=True)
+        notifications.report_updated(report)
 
 
 @blp.route('/<uuid:report_id>/reject')
@@ -148,4 +150,6 @@ class Reject(MethodView):
         :raises NotFound: No report with id found
         """
         # Only admins can access this function so it is safe to set force
-        models.Report.get(report_id).update({'verdict': False}, force=True)
+        report = models.Report.get(report_id)
+        report.update({'verdict': False}, force=True)
+        notifications.report_updated(report)
