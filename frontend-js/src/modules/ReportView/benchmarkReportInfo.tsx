@@ -28,7 +28,7 @@ export function BenchmarkReportInfo(props: { report: Report; refetch: () => void
                         {/*Uploader: {{ uploader_name }} ({{ uploader_mail }})<br /> */}
                         Description: {data.data.description}
                         <br />
-                        Date: {props.report.created_at}
+                        Date: {props.report.upload_date}
                     </p>
                     <a href={dockerHubLink}>{data.data.docker_image}</a>
                     <br />
