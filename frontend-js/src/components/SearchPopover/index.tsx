@@ -17,6 +17,7 @@ function SimpleSearchPopover<Item extends Identifiable>(props: {
     setItem: (item?: Item) => void;
     display: (item?: Item) => ReactNode;
     displayRow: (item: Item) => ReactNode;
+    submitNew?: () => void;
 }) {
     //const [resultsPerPage, setResultsPerPage] = useState(10);
     const [page, setPage] = useState(0);
@@ -79,7 +80,11 @@ function SimpleSearchPopover<Item extends Identifiable>(props: {
                         >
                             Deselect
                         </Button>
-                        <Button className="m-1">+ New</Button>
+                        {props.submitNew && (
+                            <Button className="m-1" onClick={props.submitNew}>
+                                + New
+                            </Button>
+                        )}
                     </Col>
                 </Row>
             </Popover.Content>
