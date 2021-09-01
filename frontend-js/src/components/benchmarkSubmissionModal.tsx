@@ -118,56 +118,55 @@ export function BenchmarkSubmissionModal(props: { show: boolean; onHide: () => v
                         <Alert variant="danger">{'Error: ' + errorMessage}</Alert>
                     )}
                     <Form>
-                        <div className="m-2">
-                            {/* TODO: side-by-side, with infix : */}
-                            <Form.Group>
-                                <Form.Label htmlFor="docker_name">Docker image name:</Form.Label>
-                                <Form.Control
-                                    name="docker_name"
-                                    id="docker_name"
-                                    placeholder="user/image"
-                                    onChange={(e) => setDockerName(e.target.value)}
-                                    isInvalid={!isDockerNameValid()}
-                                />
-                            </Form.Group>
-                            <Form.Group>
-                                <Form.Control
-                                    name="docker_tag"
-                                    id="docker_tag"
-                                    placeholder="tag"
-                                    onChange={(e) => setDockerTag(e.target.value)}
-                                    isInvalid={!isDockerTagValid()}
-                                />
-                            </Form.Group>
-                        </div>
-                        <div className="m-2">
-                            <Form.Label htmlFor="docker_name">
-                                Benchmark description (optional):
-                            </Form.Label>
+                        {/* TODO: side-by-side, with infix : */}
+                        <Form.Group>
+                            <Form.Label htmlFor="docker_name">Docker image name:</Form.Label>
                             <Form.Control
-                                name="description"
-                                id="description"
-                                placeholder="Enter a description of the new benchmark here."
-                                onChange={(e) => setDescription(e.target.value)}
-                                as="textarea"
+                                name="docker_name"
+                                id="docker_name"
+                                placeholder="user/image"
+                                onChange={(e) => setDockerName(e.target.value)}
+                                isInvalid={!isDockerNameValid()}
                             />
-                        </div>
-                        <div className="m-2">
-                            <Form.Label htmlFor="template">
-                                Benchmark result JSON template (optional,{' '}
-                                {/* TODO: react-router-hash-link */}
-                                <a href="/code-guidelines#json">example here</a>):
-                            </Form.Label>
+                        </Form.Group>
+                        <Form.Group>
                             <Form.Control
-                                name="template"
-                                id="template"
-                                placeholder='{ "required_arg": 5, "!notable_argument": 10 }'
-                                onChange={(e) => setTemplate(e.target.value)}
-                                as="textarea"
-                                isInvalid={!isTemplateValid()}
+                                name="docker_tag"
+                                id="docker_tag"
+                                placeholder="tag"
+                                onChange={(e) => setDockerTag(e.target.value)}
+                                isInvalid={!isDockerTagValid()}
                             />
-                        </div>
-                        <Button variant="success" onClick={onSubmit} disabled={!isFormValid()}>
+                        </Form.Group>
+                        <Form.Label htmlFor="docker_name">
+                            Benchmark description (optional):
+                        </Form.Label>
+                        <Form.Control
+                            name="description"
+                            id="description"
+                            placeholder="Enter a description of the new benchmark here."
+                            onChange={(e) => setDescription(e.target.value)}
+                            as="textarea"
+                        />
+                        <Form.Label htmlFor="template">
+                            Benchmark result JSON template (optional,{' '}
+                            {/* TODO: react-router-hash-link */}
+                            <a href="/code-guidelines#json">example here</a>):
+                        </Form.Label>
+                        <Form.Control
+                            name="template"
+                            id="template"
+                            placeholder='{ "required_arg": 5, "!notable_argument": 10 }'
+                            onChange={(e) => setTemplate(e.target.value)}
+                            as="textarea"
+                            isInvalid={!isTemplateValid()}
+                        />
+                        <Button
+                            variant="success"
+                            onClick={onSubmit}
+                            disabled={!isFormValid()}
+                            className="my-1"
+                        >
                             Submit
                         </Button>
                     </Form>
