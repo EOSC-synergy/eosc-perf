@@ -225,3 +225,39 @@ class Flavors(MethodView):
         flavor = models.Flavor.create(dict(site_id=site_id, **body_args))
         notifications.report_created(flavor.reports[0])
         return flavor
+
+
+@blp.route('/<uuid:site_id>/flavors/search')
+class SearchFlavors(MethodView):
+    """Class defining the search endpoint for flavors"""
+
+    @blp.doc(operationId='SearchFlavor')
+    @blp.arguments(args.Search, location='query')
+    @blp.response(200, schemas.Flavors)
+    @queries.to_pagination()
+    @queries.add_sorting(models.Flavor)
+    def get(self, query_args, site_id):
+        """(Free) Filters and list flavors
+
+        Use this method to get a list of flavors based on a general search
+        of terms. For example, calling this method with terms=K&terms=T
+        returns all flavors with 'K' and 'T' on the 'name', 
+        or 'description' fields. The response returns a pagination object
+        with the filtered flavors (if succeeds).
+        ---
+
+        :param query_args: The request query arguments as python dictionary
+        :type query_args: dict
+        :raises UnprocessableEntity: Wrong query/body parameters 
+        :return: Pagination object with filtered flavors
+        :rtype: :class:`flask_sqlalchemy.Pagination`        
+        """
+        search = models.Flavor.query
+        search = search.filter_by(site_id=site_id)
+        for keyword in query_args['terms']:
+            search = search.filter(
+                or_(
+                    models.Flavor.name.contains(keyword),
+                    models.Flavor.description.contains(keyword)
+                ))
+        return search.filter(~models.Flavor.has_open_reports)

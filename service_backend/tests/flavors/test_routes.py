@@ -10,7 +10,7 @@ from tests.db_instances import flavors, sites, users
 
 @mark.parametrize('endpoint', ['flavors.Flavor'], indirect=True)
 @mark.parametrize('flavor_id', indirect=True, argvalues=[
-    flavors[0]['id'],
+    # flavors[0]['id'], # Used in flavors search
     flavors[1]['id'],
     flavors[2]['id'],
     flavors[3]['id']

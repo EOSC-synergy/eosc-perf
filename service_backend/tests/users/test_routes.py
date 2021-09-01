@@ -13,7 +13,7 @@ class TestRoot:
     @mark.parametrize('query', indirect=True, argvalues=[
         {'sub': 'sub_0'},
         {'iss': 'https://aai-dev.egi.eu/oidc'},
-        {'email': "sub_1@email.com"},
+        {'email': "sub_0@email.com"},
         {},  # Multiple results
         {'sort_by': "+iss,-sub"},
         {'sort_by': "+upload_datetime"},
@@ -30,7 +30,7 @@ class TestRoot:
             asserts.match_user(item, user)
 
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'email': "sub_1@email.com"}
+        {'email': "sub_0@email.com"}
     ])
     def test_GET_401(self, response_GET):
         """GET method fails 401 if not logged in."""
@@ -38,7 +38,7 @@ class TestRoot:
 
     @mark.usefixtures('grant_logged')
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'email': "sub_1@email.com"}
+        {'email': "sub_0@email.com"}
     ])
     def test_GET_403(self, response_GET):
         """GET method fails 403 if forbidden."""
@@ -55,18 +55,18 @@ class TestRoot:
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'sub': 'sub_0'},
-        {'email': "sub_0@email.com"}
+        {'sub': 'sub_1'},
+        {'email': "sub_1@email.com"}
     ])
     def test_DELETE_204(self, query, response_DELETE):
         """DELETE method succeeded 204."""
         assert response_DELETE.status_code == 204
         assert models.User.query.filter_by(**query).all() == []
         # Check delete is cascaded
-        assert models.Benchmark.query.get(benchmarks[0]['id']) == None
-        assert models.Result.query.get(results[0]['id']) == None
-        assert models.Site.query.get(sites[0]['id']) == None
-        assert models.Flavor.query.get(flavors[0]['id']) == None
+        assert models.Benchmark.query.get(benchmarks[2]['id']) == None
+        assert models.Result.query.get(results[2]['id']) == None
+        assert models.Site.query.get(sites[2]['id']) == None
+        assert models.Flavor.query.get(flavors[4]['id']) == None
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'email': "sub_1@email.com"}
@@ -101,8 +101,8 @@ class TestSearch:
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True,  argvalues=[
-        {'terms': ["sub_1@email.com"]},
-        {'terms[]': ["sub_1@email.com"]},
+        {'terms': ["sub_0@email.com"]},
+        {'terms[]': ["sub_0@email.com"]},
         {'terms': ["sub", "email.com"]},
         {'terms[]': ["sub", "email.com"]},
         {'terms': []},   # Empty query
@@ -122,7 +122,7 @@ class TestSearch:
             asserts.match_user(item, user)
 
     @mark.parametrize('query', indirect=True,  argvalues=[
-        {'terms': ["sub_1@email.com"]}
+        {'terms': ["sub_0@email.com"]}
     ])
     def test_GET_401(self, response_GET):
         """GET method fails 401 if not logged in."""
@@ -130,7 +130,7 @@ class TestSearch:
 
     @mark.usefixtures('grant_logged')
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'terms': ["sub_1@email.com"]}
+        {'terms': ["sub_0@email.com"]}
     ])
     def test_GET_403(self, response_GET):
         """GET method fails 403 if forbidden."""

@@ -117,10 +117,10 @@ class TestReport:
 
 @mark.parametrize('endpoint', ['reports.Approve'], indirect=True)
 @mark.parametrize('resource_type_id', indirect=True, argvalues=[
-    ("benchmark", benchmarks[0]['id']),
+    ("benchmark", benchmarks[1]['id']),
     ("result",    results[1]['id']),
-    ("site",      sites[0]['id']),
-    ("flavor",    flavors[0]['id'])
+    ("site",      sites[1]['id']),
+    ("flavor",    flavors[1]['id'])
 ])
 @mark.parametrize('report_verdict', indirect=True, argvalues=[
     None,   # Tests when verdict value is not initialized
@@ -160,10 +160,10 @@ class TestApprove:
 
 @mark.parametrize('endpoint', ['reports.Reject'], indirect=True)
 @mark.parametrize('resource_type_id', indirect=True, argvalues=[
-    ("benchmark", benchmarks[0]['id']),
+    ("benchmark", benchmarks[1]['id']),
     ("result",    results[1]['id']),
-    ("site",      sites[0]['id']),
-    ("flavor",    flavors[0]['id'])
+    ("site",      sites[1]['id']),
+    ("flavor",    flavors[1]['id'])
 ])
 @mark.parametrize('report_verdict', indirect=True, argvalues=[
     True    # Tests when verdict value initialized as True

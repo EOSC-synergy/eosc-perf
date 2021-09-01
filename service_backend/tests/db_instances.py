@@ -53,7 +53,7 @@ benchmarks[2]['docker_image'] = "b2"
 benchmarks[2]['docker_tag'] = "v1.0"
 benchmarks[2]['description'] = "Benchmark 2"
 benchmarks[2]['json_schema'] = {"properties": {"time": {"type": "number"}}}
-benchmarks[2]['uploader__email'] = users[0]['email']
+benchmarks[2]['uploader__email'] = users[1]['email']
 benchmarks[2]['upload_verdict'] = None
 
 
@@ -75,7 +75,7 @@ sites[1]['upload_verdict'] = True
 sites[2]['name'] = "site2"
 sites[2]['address'] = "address2"
 sites[2]['description'] = "Text"
-sites[2]['uploader__email'] = users[0]['email']
+sites[2]['uploader__email'] = users[1]['email']
 sites[2]['upload_verdict'] = None
 
 
@@ -109,12 +109,12 @@ flavors[3]['upload_verdict'] = True
 flavors[4]['name'] = "flavor2"
 flavors[4]['description'] = "Flavor2 site1"
 flavors[4]['site_id'] = sites[1]['id']
-flavors[4]['uploader__email'] = users[0]['email']
+flavors[4]['uploader__email'] = users[1]['email']
 flavors[4]['upload_verdict'] = None 
 
 
 # Result specifications
-results = [{'id': uuid4()} for _ in range(2)]
+results = [{'id': uuid4()} for _ in range(3)]
 
 results[0]['json'] = {'time': 10}
 results[0]['tags'] = [tags[0]['name'], tags[1]['name']]
@@ -140,4 +140,12 @@ results[1]['reports'] = [
     {'message': "Report 4", 'verdict': False}
 ]
 
-
+results[2] = {'id': uuid4(), 'json': {'time': 11}}
+results[2]['tags'] = [tags[0]['name'], tags[2]['name']]
+results[2]['benchmark__docker_image'] = benchmarks[1]['docker_image']
+results[2]['benchmark__docker_tag'] = benchmarks[1]['docker_tag']
+results[2]['site__name'] = sites[1]['name']
+results[2]['flavor__name'] = flavors[2]['name']
+results[2]['uploader__email'] = users[1]['email']
+results[2]['upload_datetime'] = datetime(2020, 1, 1)
+results[2]['reports'] = []

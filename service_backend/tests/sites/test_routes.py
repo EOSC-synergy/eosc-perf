@@ -5,7 +5,7 @@ from backend import models
 from backend.schemas import schemas
 from pytest import mark
 from tests import asserts
-from tests.db_instances import sites, users
+from tests.db_instances import flavors, sites, users
 
 
 @mark.parametrize('endpoint', ['sites.Root'], indirect=True)
@@ -13,8 +13,8 @@ class TestRoot:
     """Tests for 'Root' route in blueprint."""
 
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'name': 'site1', 'address': "address1"},
-        {'address': "address1"},  # Query with 1 field
+        {'name': sites[0]['name'], 'address': sites[0]['address']},
+        {'address': sites[0]['address']},  # Query with 1 field
         {},  # Multiple results
         {'sort_by': "+name,-address"},
         {'sort_by': "+upload_datetime"},
@@ -77,8 +77,7 @@ class TestRoot:
     @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
     @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
-        {'name': sites[0]['name'], 'address': sites[0]['address']},
-        {'name': sites[1]['name'], 'address': sites[1]['address']},
+        {'name': sites[0]['name'], 'address': sites[0]['address']}
     ])
     def test_POST_409(self, response_POST):
         """POST method fails 409 if resource already exists."""
@@ -100,14 +99,14 @@ class TestSearch:
     """Tests for 'Search' route in blueprint."""
 
     @mark.parametrize('query', indirect=True,  argvalues=[
-        {'terms': [sites[1]["name"]]},
-        {'terms[]': [sites[1]["name"]]},
-        {'terms': [sites[1]["address"]]},
-        {'terms[]': [sites[1]["address"]]},
-        {'terms': [sites[1]["description"]]},
-        {'terms[]': [sites[1]["description"]]},
-        {'terms': [sites[1]["name"], sites[1]["description"]]},
-        {'terms[]': [sites[1]["name"], sites[1]["description"]]},
+        {'terms': [sites[0]["name"]]},
+        {'terms[]': [sites[0]["name"]]},
+        {'terms': [sites[0]["address"]]},
+        {'terms[]': [sites[0]["address"]]},
+        {'terms': [sites[0]["description"]]},
+        {'terms[]': [sites[0]["description"]]},
+        {'terms': [sites[0]["name"], sites[0]["description"]]},
+        {'terms[]': [sites[0]["name"], sites[0]["description"]]},
         {'terms': []},    # Empty terms
         {'terms[]': []},  # Empty terms
         {'sort_by': "+name,-address"},
@@ -136,7 +135,7 @@ class TestSearch:
 
 @mark.parametrize('endpoint', ['sites.Site'], indirect=True)
 @mark.parametrize('site_id', indirect=True, argvalues=[
-    sites[0]['id'],
+    sites[1]['id'],
 ])
 class TestSite:
     """Tests for 'Site' route in blueprint."""
@@ -217,14 +216,14 @@ class TestSite:
 
 @mark.parametrize('endpoint', ['sites.Flavors'], indirect=True)
 @mark.parametrize('site_id', indirect=True, argvalues=[
-    sites[1]['id']
+    sites[0]['id']
 ])
 class TestFlavors:
     """Tests for 'Flavors' route in blueprint."""
 
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'name': 'flavor0'},
-        {'name': 'flavor1'},
+        {'name': flavors[0]['name']},
+        {'name': flavors[2]['name']},
         {},  # Multiple results
         {'sort_by': "+name"},
         {'sort_by': "+id"}
@@ -266,7 +265,7 @@ class TestFlavors:
         asserts.report_notification(flavor.reports[0])
 
     @mark.parametrize('body', indirect=True, argvalues=[
-        {'name': "flavor2", 'description': "Flavor2 for siteX"},
+        {'name': "flavorN", 'description': "FlavorN for siteX"},
         {}  # Empty body
     ])
     def test_POST_401(self, response_POST):
@@ -298,7 +297,7 @@ class TestFlavors:
     @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
     @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
-        {'name': "flavor0"},
+        {'name': flavors[0]['name']},
     ])
     def test_POST_409(self, response_POST):
         """POST method fails 409 if resource already exists."""
@@ -312,3 +311,43 @@ class TestFlavors:
     def test_POST_422(self, response_POST):
         """POST method fails 422 if missing required."""
         assert response_POST.status_code == 422
+
+
+@mark.parametrize('endpoint', ['sites.SearchFlavors'], indirect=True)
+@mark.parametrize('site_id', indirect=True, argvalues=[
+    sites[0]['id']
+])
+class TestSearchFlavors:
+    """Tests for 'Search' route in blueprint."""
+
+    @mark.parametrize('query', indirect=True,  argvalues=[
+        {'terms': [flavors[0]["name"]]},
+        {'terms[]': [flavors[0]["name"]]},
+        {'terms': [flavors[0]["description"]]},
+        {'terms[]': [flavors[0]["description"]]},
+        {'terms': [flavors[0]["name"], flavors[0]["description"]]},
+        {'terms[]': [flavors[0]["name"], flavors[0]["description"]]},
+        {'terms': []},    # Empty terms
+        {'terms[]': []},  # Empty terms
+        {'sort_by': "+name"},
+        {'sort_by': "+upload_datetime"},
+        {'sort_by': "+id"}
+    ])
+    def test_GET_200(self, response_GET, url):
+        """GET method succeeded 200."""
+        assert response_GET.status_code == 200
+        asserts.match_pagination(response_GET.json, url)
+        assert response_GET.json['items'] != []
+        for item in response_GET.json['items']:
+            flavor = models.Flavor.query.get(item['id'])
+            asserts.match_query(item, url)
+            asserts.match_flavor(item, flavor)
+            assert flavor.has_open_reports == False
+
+    @mark.parametrize('query', [
+        {'bad_key': "This is a non expected query key"},
+        {'sort_by': "Bad sort command"}
+    ])
+    def test_GET_422(self, response_GET):
+        """GET method fails 422 if bad request body."""
+        assert response_GET.status_code == 422
