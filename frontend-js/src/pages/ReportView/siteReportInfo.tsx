@@ -23,6 +23,8 @@ export function SiteReportInfo(props: { report: Report; refetch: () => void }) {
                 <>
                     New site: {data.data.name}
                     <br />
+                    Address: {data.data.address}
+                    <br />
                     Description: {data.data.description}
                     <br />
                     {/* Uploader: {{ uploader_name }} ({{ uploader_mail }})<br/> */}
