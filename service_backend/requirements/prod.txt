@@ -31,5 +31,9 @@ requests~=2.26.0
 # Caching
 flask-caching~=1.10.1
 
+# Notifications
+flask-mailman~=0.3.0
+blinker~=1.4.0
+
 # Environment variable parsing
 environs~=9.3.2
