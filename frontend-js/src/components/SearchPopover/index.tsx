@@ -8,6 +8,7 @@ import { getHelper } from '../../api-helpers';
 import { Paginated, Paginator } from '../pagination';
 import { Button, Col, OverlayTrigger, Popover, Row } from 'react-bootstrap';
 import { Identifiable } from '../identifiable';
+import { BenchmarkSubmissionModal } from '../benchmarkSubmissionModal';
 
 function SimpleSearchPopover<Item extends Identifiable>(props: {
     queryKeyPrefix: string;
@@ -142,16 +143,25 @@ export function BenchmarkSearchPopover(props: {
         );
     }
 
+    const [showSubmitModal, setShowSubmitModal] = useState(false);
+
     return (
-        <SimpleSearchPopover<Benchmark>
-            queryKeyPrefix="benchmark"
-            tableName="Benchmark"
-            endpoint="/benchmarks/search"
-            item={props.benchmark}
-            setItem={props.setBenchmark}
-            display={display}
-            displayRow={displayRow}
-        />
+        <>
+            <SimpleSearchPopover<Benchmark>
+                queryKeyPrefix="benchmark"
+                tableName="Benchmark"
+                endpoint="/benchmarks/search"
+                item={props.benchmark}
+                setItem={props.setBenchmark}
+                display={display}
+                displayRow={displayRow}
+                submitNew={() => setShowSubmitModal(true)}
+            />
+            <BenchmarkSubmissionModal
+                show={showSubmitModal}
+                onHide={() => setShowSubmitModal(false)}
+            />
+        </>
     );
 }
 
