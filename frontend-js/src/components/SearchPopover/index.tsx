@@ -81,6 +81,7 @@ function SimpleSearchPopover<Item extends Identifiable>(props: {
                         >
                             Deselect
                         </Button>
+                        {/* TODO: hide popover if submit button is pressed */}
                         {props.submitNew && (
                             <Button className="m-1" onClick={props.submitNew}>
                                 + New
