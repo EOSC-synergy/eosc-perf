@@ -65,6 +65,11 @@ class HasTags(object):
         return relationship(Tag, secondary=tag_association)
 
     @declared_attr
-    def tag_names(cls):
+    def tags_ids(cls):
+        """([Tag.id], read_only) List of associated tag as only names"""
+        return association_proxy('tags', 'id')
+
+    @declared_attr
+    def tags_names(cls):
         """([Tag.name], read_only) List of associated tag as only names"""
         return association_proxy('tags', 'name')

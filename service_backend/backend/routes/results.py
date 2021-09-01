@@ -70,8 +70,8 @@ class Root(MethodView):
         query = models.Result.query  # Create the base query
 
         # Extend query with tags
-        for tag_name in query_args.pop('tag_names'):
-            query = query.filter(models.Result.tag_names.in_([tag_name]))
+        for tags_ids in query_args.pop('tags_ids'):
+            query = query.filter(models.Result.tags_ids.in_([tags_ids]))
 
         # Extend query with date filter
         before = query_args.pop('before')

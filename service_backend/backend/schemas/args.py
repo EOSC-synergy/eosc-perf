@@ -68,25 +68,21 @@ class ReportFilter(Pagination, Schema):
 
 class ResultFilter(Pagination, Schema):
 
-    #: (Text):
-    #: Docker image version/tag referenced by the benchmark
-    docker_image = fields.DockerImage()
+    #: (Benchmark.id):
+    #: Unique Identifier for result associated benchmark
+    benchmark_id = fields.Id()
 
-    #: (Text):
-    #: Docker image version/tag referenced by the benchmark
-    docker_tag = fields.DockerTag()
+    #: (Site.id):
+    #: Unique Identifier for result associated site
+    site_id = fields.Id()
 
-    #: (Text):
-    #: Name of the site where the benchmar was executed
-    site_name = fields.SiteName()
+    #: (Flavor.id):
+    #: Unique Identifier for result associated flavor
+    flavor_id = fields.Id()
 
-    #: (Text):
-    #: Text with virtual hardware template identification
-    flavor_name = fields.FlavorName()
-
-    #: ([Tag.name]):
-    #: List of tag names the returned results should be associated with
-    tag_names = fields.TagNames()
+    #: ([Tag.id], required):
+    #: Unique Identifiers for result associated tags
+    tags_ids = fields.Ids()
 
     #: (ISO8601, attribute="upload_datetime", missing=None):
     #: Upload datetime of the report before a specific date

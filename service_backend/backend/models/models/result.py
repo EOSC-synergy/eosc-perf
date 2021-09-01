@@ -32,7 +32,8 @@ class Result(HasReports, HasTags, HasUploadDatetime, HasUploader, PkModel):
     benchmark = relationship("Benchmark", backref=backref(
         "_results", cascade="all, delete-orphan"
     ))
-    _benchmark_id = Column(ForeignKey('benchmark.id'), nullable=False)
+    #: (Conflicts Benchmark) Id of the benchmar used
+    benchmark_id = Column(ForeignKey('benchmark.id'), nullable=False)
 
     #: (Read_only) Docker image of used benchmark
     docker_image = association_proxy('benchmark', 'docker_image')
@@ -44,7 +45,9 @@ class Result(HasReports, HasTags, HasUploadDatetime, HasUploader, PkModel):
     site = relationship("Site", backref=backref(
         "_results", cascade="all, delete-orphan"
     ))
-    _site_id = Column(ForeignKey('site.id'), nullable=False)
+
+    #: (Conflicts Site) Id of the site where the benchmar was executed
+    site_id = Column(ForeignKey('site.id'), nullable=False)
 
     #: (Read_only) Name of the site where the benchmar was executed
     site_name = association_proxy('site', 'name')
@@ -53,7 +56,9 @@ class Result(HasReports, HasTags, HasUploadDatetime, HasUploader, PkModel):
     flavor = relationship("Flavor", backref=backref(
         "_results", cascade="all, delete-orphan"
     ))
-    _flavor_id = Column(ForeignKey('flavor.id'), nullable=False)
+
+    #: (Conflicts Flavor) Id of the flavor used to executed the benchmark
+    flavor_id = Column(ForeignKey('flavor.id'), nullable=False)
 
     #: (Read_only) Name of the flavor used to executed the benchmark 
     flavor_name = association_proxy('flavor', 'name')

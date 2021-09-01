@@ -21,12 +21,11 @@ class TestRoot:
     """Tests for 'Root' route in blueprint."""
 
     @mark.parametrize('query', indirect=True, argvalues=[
-        {'docker_image': results[0]["benchmark__docker_image"]},
-        {'docker_tag': results[0]["benchmark__docker_tag"]},
-        {'site_name': results[0]["site__name"]},
-        {'flavor_name': results[0]["flavor__name"]},
-        {'tag_names': [tag for tag in results[0]["tags"]]},
-        {'tag_names[]': [tag for tag in results[0]["tags"]]},
+        {'benchmark_id': benchmarks[0]['id']},
+        {'site_id': sites[0]['id']},
+        {'flavor_id': flavors[0]['id']},
+        {'tags_ids': [tag['id'] for tag in [tags[0], tags[1]]]},
+        {'tags_ids[]': [tag['id'] for tag in [tags[0], tags[1]]]},
         {'upload_before': "3000-01-01"},
         {'upload_after': "1000-01-01"},
         {'filters': ["time < 11", "time > 9"]},
