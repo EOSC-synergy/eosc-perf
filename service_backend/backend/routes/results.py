@@ -190,7 +190,7 @@ class Search(MethodView):
                     models.Result.docker_tag.contains(keyword),
                     models.Result.site_name.contains(keyword),
                     models.Result.flavor_name.contains(keyword),
-                    models.Result.tag_names == keyword
+                    models.Result.tags_names == keyword
                 ))
         return search.filter(~models.Result.has_open_reports)
 
