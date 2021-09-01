@@ -9,6 +9,8 @@ import { Paginated, Paginator } from '../pagination';
 import { Button, Col, OverlayTrigger, Popover, Row } from 'react-bootstrap';
 import { Identifiable } from '../identifiable';
 import { BenchmarkSubmissionModal } from '../benchmarkSubmissionModal';
+import { SiteSubmissionModal } from '../siteSubmissionModal';
+import { FlavorSubmissionModal } from '../flavorSubmissionModal';
 
 function SimpleSearchPopover<Item extends Identifiable>(props: {
     queryKeyPrefix: string;
@@ -196,16 +198,22 @@ export function SiteSearchPopover(props: { site?: Site; setSite: (site?: Site) =
         );
     }
 
+    const [showSubmitModal, setShowSubmitModal] = useState(false);
+
     return (
-        <SimpleSearchPopover<Site>
-            queryKeyPrefix="site"
-            tableName="Site"
-            endpoint="/sites/search"
-            item={props.site}
-            setItem={props.setSite}
-            display={display}
-            displayRow={displayRow}
-        />
+        <>
+            <SimpleSearchPopover<Site>
+                queryKeyPrefix="site"
+                tableName="Site"
+                endpoint="/sites/search"
+                item={props.site}
+                setItem={props.setSite}
+                display={display}
+                displayRow={displayRow}
+                submitNew={() => setShowSubmitModal(true)}
+            />
+            <SiteSubmissionModal show={showSubmitModal} onHide={() => setShowSubmitModal(false)} />
+        </>
     );
 }
 
@@ -243,18 +251,28 @@ export function FlavorSearchPopover(props: {
         );
     }
 
+    const [showSubmitModal, setShowSubmitModal] = useState(false);
+
     return (
         <>
             {props.site ? (
-                <SimpleSearchPopover<Flavor>
-                    queryKeyPrefix="flavor"
-                    tableName="Flavor"
-                    endpoint={'/sites/' + props.site.id + '/flavors'}
-                    item={props.flavor}
-                    setItem={props.setFlavor}
-                    display={display}
-                    displayRow={displayRow}
-                />
+                <>
+                    <SimpleSearchPopover<Flavor>
+                        queryKeyPrefix="flavor"
+                        tableName="Flavor"
+                        endpoint={'/sites/' + props.site.id + '/flavors'}
+                        item={props.flavor}
+                        setItem={props.setFlavor}
+                        display={display}
+                        displayRow={displayRow}
+                        submitNew={() => setShowSubmitModal(true)}
+                    />
+                    <FlavorSubmissionModal
+                        show={showSubmitModal}
+                        onHide={() => setShowSubmitModal(false)}
+                        site={props.site}
+                    />
+                </>
             ) : (
                 <></>
             )}
