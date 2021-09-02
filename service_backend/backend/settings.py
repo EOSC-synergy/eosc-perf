@@ -206,22 +206,33 @@ DISABLE_ADMIN_PROTECTION = bool(
 
 
 # Email and notification configuration.
-MAIL_SUPPORT=str("MAIL_SUPPORT", default="")
+MAIL_SUPPORT = str("MAIL_SUPPORT", default="")
 """ Email list for application support. This email receives administration
 notifications such 'reports'.
+
+:meta hide-value:
 """
 
-MAIL_FROM=str("MAIL_FROM", default="")
+MAIL_FROM = str("MAIL_FROM", default="")
 """ Email to display on 'from' from notification emails.
+
+:meta hide-value:
 """
 
-MAIL_SERVER=str("MAIL_SERVER", default="")
+MAIL_SERVER = str("MAIL_SERVER", default="")
 """ SMTP server where to send the email notification requests.
+
+:meta hide-value:
 """
 
-MAIL_PORT=int("MAIL_PORT", default=25)
+MAIL_PORT = int("MAIL_PORT", default=25)
 """ SMTP server port.
+
+:meta hide-value:
 """
+
+if MAIL_SERVER == "":  # Mail into console
+    MAIL_BACKEND = 'console'
 
 
 # API specs configuration
