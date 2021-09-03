@@ -119,13 +119,9 @@ function App() {
     // state
     const [currentTab, setCurrentTab] = useState('BenchmarkSearch');
 
-    const whoAmI = useQuery(
-        'userInfo',
-        () => axios.get<UserInfo>('https://localhost/auth/whoami'),
-        {
-            retry: false,
-        }
-    );
+    const whoAmI = useQuery('userInfo', () => axios.get<UserInfo>('/auth/whoami'), {
+        retry: false,
+    });
 
     return (
         <UserContext.Provider value={whoAmI.isSuccess ? whoAmI.data.data : emptyUser}>
