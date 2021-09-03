@@ -95,7 +95,7 @@ export function BenchmarkSubmissionModal(props: { show: boolean; onHide: () => v
             docker_image: dockerName,
             docker_tag: dockerTag,
             description: description_,
-            json_template: template_,
+            json_schema: template_,
         });
     }
 

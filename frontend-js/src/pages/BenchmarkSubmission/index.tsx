@@ -58,7 +58,7 @@ function BenchmarkSubmission() {
             docker_image: dockerName,
             docker_tag: dockerTag,
             description: description_,
-            json_template: template_,
+            json_schema: template_,
         });
     }
 

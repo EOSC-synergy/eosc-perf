@@ -21,6 +21,9 @@ const qs = require('qs');
 const hash = require('object-hash');
 
 function determineNotableKeys(benchmark: Benchmark) {
+    // TODO: new json schema format parsing
+    return [];
+
     function recurser(key: string, obj: any): string[] {
         if (key.startsWith('!') && typeof obj[key] !== 'object') {
             return [key.slice(1)];
@@ -35,7 +38,7 @@ function determineNotableKeys(benchmark: Benchmark) {
         return [];
     }
 
-    return Object.entries(benchmark.json_template)
+    return Object.entries(benchmark.json_schema)
         .map(([k, v], _, __) => recurser(k, v))
         .reduce((acc: string[], arr: string[]) => [...acc, ...arr]);
 }
