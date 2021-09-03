@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Accordion, Button, Card, Col, Container, Row } from 'react-bootstrap';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { useQuery } from 'react-query';
-import { JSONPreviewModal } from './JSONPreviewModal';
+import { JsonPreviewModal } from 'pages/ResultSearch/jsonPreviewModal';
 import { ResultsPerPageSelection } from 'components/resultsPerPageSelection';
 import { CardAccordionToggle } from './cardAccordionToggle';
 import { getHelper } from 'api-helpers';
@@ -253,7 +253,7 @@ function ResultSearch() {
                     )}
                 </Card>
             </Container>
-            <JSONPreviewModal
+            <JsonPreviewModal
                 show={showJSONPreview}
                 closeModal={() => {
                     setShowJSONPreview(false);

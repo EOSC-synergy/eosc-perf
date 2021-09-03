@@ -11,7 +11,7 @@ import React from 'react';
     </button>
  */
 
-export function JSONPreviewModal(props: {
+export function JsonPreviewModal(props: {
     result: Result | null;
     show: boolean;
     closeModal: () => void;
