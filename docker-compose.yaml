@@ -29,8 +29,8 @@ services:
       context: frontend-js
     networks:
       - frontend-net
-    volumes:
-      - ./frontend-js/:/app
+    #volumes:
+    #  - ./frontend-js/:/app
 
   backend_v1:
     container_name: backend_v1
