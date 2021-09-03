@@ -9,12 +9,12 @@ from sqlalchemy.orm import backref, relationship
 
 from ..core import PkModel
 from . import HasUploadDatetime
-from .report import HasReports
+from .claim import HasClaims
 from .tag import HasTags
 from .user import HasUploader
 
 
-class Result(HasReports, HasTags, HasUploadDatetime, HasUploader, PkModel):
+class Result(HasClaims, HasTags, HasUploadDatetime, HasUploader, PkModel):
     """The Result model represents the results of the execution of a 
     specific Benchmark on a specific Site and Flavor. 
 
@@ -52,7 +52,7 @@ class Result(HasReports, HasTags, HasUploadDatetime, HasUploader, PkModel):
     #: (Read_only) Name of the site where the benchmar was executed
     site_name = association_proxy('site', 'name')
 
-    #: (Flavor, required) Flavor used to executed the benchmark 
+    #: (Flavor, required) Flavor used to executed the benchmark
     flavor = relationship("Flavor", backref=backref(
         "_results", cascade="all, delete-orphan"
     ))
@@ -60,7 +60,7 @@ class Result(HasReports, HasTags, HasUploadDatetime, HasUploader, PkModel):
     #: (Conflicts Flavor) Id of the flavor used to executed the benchmark
     flavor_id = Column(ForeignKey('flavor.id'), nullable=False)
 
-    #: (Read_only) Name of the flavor used to executed the benchmark 
+    #: (Read_only) Name of the flavor used to executed the benchmark
     flavor_name = association_proxy('flavor', 'name')
 
     def __init__(self, **properties):
