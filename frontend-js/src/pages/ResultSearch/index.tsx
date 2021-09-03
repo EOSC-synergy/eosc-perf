@@ -142,12 +142,11 @@ function ResultSearch(props: { initialBenchmark: string; location: { search: str
 
     return (
         <>
-            <Container fluid>
-                <h1>Result Search</h1>
+            <Container fluid="xl" className="mt-3">
                 <Row>
                     <Col>
                         <Accordion defaultActiveKey="filters">
-                            <Card className="m-1">
+                            <Card>
                                 <Card.Header>
                                     <CardAccordionToggle eventKey="filters">
                                         Filters
@@ -183,7 +182,7 @@ function ResultSearch(props: { initialBenchmark: string; location: { search: str
                     </Col>
                     <Col>
                         <Accordion defaultActiveKey="diagram">
-                            <Card className="m-1">
+                            <Card>
                                 <Card.Header>
                                     <CardAccordionToggle eventKey="diagram">
                                         Comparison diagram
@@ -202,7 +201,7 @@ function ResultSearch(props: { initialBenchmark: string; location: { search: str
                         </Accordion>
                     </Col>
                 </Row>
-                <Card className="m-1">
+                <Card className="my-2">
                     <div style={{ display: 'relative' }}>
                         {results.isSuccess && results.data!.data.total > 0 && (
                             <ResultTable
