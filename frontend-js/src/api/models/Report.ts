@@ -2,12 +2,17 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { User } from './User';
+
 export type Report = {
     /**
      * UUID resource unique identification
      */
     readonly id: string;
-    upload_date: string;
+    /**
+     * ISO8601 Datatime of the resource upload
+     */
+    upload_datetime: string;
     verdict: boolean;
     /**
      * Message included in a report
@@ -21,6 +26,7 @@ export type Report = {
      * UUID resource unique identification
      */
     resource_id: string;
+    readonly uploader: User;
 }
 
 export namespace Report {

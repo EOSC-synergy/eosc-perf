@@ -12,8 +12,15 @@ export type Result = {
      * UUID resource unique identification
      */
     readonly id: string;
-    upload_date: string;
     json: any;
+    /**
+     * ISO8601 Datatime of the resource upload
+     */
+    upload_datetime: string;
+    /**
+     * ISO8601 Datatime of benchmark execution start
+     */
+    execution_datetime: string;
     benchmark: Benchmark;
     site: Site;
     flavor: Flavor;

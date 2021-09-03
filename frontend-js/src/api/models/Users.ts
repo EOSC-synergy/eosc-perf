@@ -37,5 +37,5 @@ export type Users = {
      * The total number of items matching the query
      */
     readonly total: number;
-    items?: Array<User>;
+    items: Array<User>;
 }

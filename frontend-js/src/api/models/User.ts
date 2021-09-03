@@ -15,5 +15,8 @@ export type User = {
      * Email of user collected by the OIDC token
      */
     email: string;
-    created_at: string;
+    /**
+     * ISO8601 Datatime of the resource upload
+     */
+    upload_datetime: string;
 }

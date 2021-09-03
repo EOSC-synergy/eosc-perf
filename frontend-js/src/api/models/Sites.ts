@@ -37,5 +37,5 @@ export type Sites = {
      * The total number of items matching the query
      */
     readonly total: number;
-    items?: Array<Site>;
+    items: Array<Site>;
 }

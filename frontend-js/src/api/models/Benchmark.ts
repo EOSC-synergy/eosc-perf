@@ -15,9 +15,9 @@ export type Benchmark = {
      * String with a docker hub container tag
      */
     docker_tag: string;
+    json_schema: any;
     /**
      * String with an statement about the object
      */
     description: string;
-    json_template: any;
 }

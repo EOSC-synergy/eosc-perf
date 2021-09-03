@@ -37,5 +37,5 @@ export type Benchmarks = {
      * The total number of items matching the query
      */
     readonly total: number;
-    items?: Array<Benchmark>;
+    items: Array<Benchmark>;
 }

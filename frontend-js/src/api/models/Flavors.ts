@@ -37,5 +37,5 @@ export type Flavors = {
      * The total number of items matching the query
      */
     readonly total: number;
-    items?: Array<Flavor>;
+    items: Array<Flavor>;
 }

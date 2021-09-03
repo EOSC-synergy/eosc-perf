@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import json
 from typing import Optional, Union, List
 
@@ -132,7 +133,8 @@ def add_demo(token: str, host: str):
             "docker_image": "thechristophe/openbench-c-ray",
             "docker_tag": "latest",
             "description": "Compare cpu perf with multithreaded raytracing",
-            "json_template": json.loads(file.read())
+            "json_schema": {}
+            # "json_template": json.loads(file.read())
         }))
         # "template": file.read()})
 
@@ -173,6 +175,7 @@ def add_demo(token: str, host: str):
             "benchmark_id": benchmark["id"],
             "site_id": result_info['site']["id"],
             "flavor_id": result_info['flavor']["id"],
+            "execution_datetime": datetime.datetime.now().isoformat(),
             "tags_ids": []
         }, data=data_raw)
 

@@ -37,5 +37,5 @@ export type Tags = {
      * The total number of items matching the query
      */
     readonly total: number;
-    items?: Array<Tag>;
+    items: Array<Tag>;
 }

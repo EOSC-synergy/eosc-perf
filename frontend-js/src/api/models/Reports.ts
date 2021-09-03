@@ -37,5 +37,5 @@ export type Reports = {
      * The total number of items matching the query
      */
     readonly total: number;
-    items?: Array<Report>;
+    items: Array<Report>;
 }
