@@ -66,7 +66,7 @@ function ResultSearch(props: { initialBenchmark: string; location: { search: str
         : undefined;*/
     const suggestedFields = benchmark ? determineNotableKeys(benchmark) : undefined;
 
-    const [resultsPerPage, setResultsPerPage] = useState(10);
+    const [resultsPerPage, setResultsPerPage] = useState(20);
     const [page, setPage] = useState(1);
     // json preview modal
     const [showJSONPreview, setShowJSONPreview] = useState(false);
