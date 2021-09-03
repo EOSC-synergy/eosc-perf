@@ -7,7 +7,7 @@ export function SearchForm(props: { setSearchString: (params: string) => void })
     return (
         <Form>
             <Form.Group as={Row}>
-                <Form.Label className="sr-only" column>
+                <Form.Label className="visually-hidden" column>
                     Query
                 </Form.Label>
                 <Col>
