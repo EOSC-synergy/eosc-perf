@@ -260,7 +260,7 @@ export function FlavorSearchPopover(props: {
                     <SimpleSearchPopover<Flavor>
                         queryKeyPrefix="flavor"
                         tableName="Flavor"
-                        endpoint={'/sites/' + props.site.id + '/flavors'}
+                        endpoint={'/sites/' + props.site.id + '/flavors/search'}
                         item={props.flavor}
                         setItem={props.setFlavor}
                         display={display}
