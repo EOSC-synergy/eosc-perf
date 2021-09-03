@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Accordion, Button, Card, Col, Container, Row } from 'react-bootstrap';
+import { Accordion, Button, Card, Col, Container, ListGroup, Row } from 'react-bootstrap';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { useQuery } from 'react-query';
 import { JsonPreviewModal } from 'pages/ResultSearch/jsonPreviewModal';
@@ -17,6 +17,9 @@ import {
     SiteSearchPopover,
 } from 'components/SearchPopover';
 import { PageBase } from '../pageBase';
+import { v4 as uuidv4 } from 'uuid';
+import { Filter } from 'pages/ResultSearch/filter';
+import { FilterEdit } from 'pages/ResultSearch/filterEdit';
 
 const hash = require('object-hash');
 
@@ -60,6 +63,37 @@ function ResultSearch() {
     const [benchmark, setBenchmark] = useState<Benchmark | undefined>(undefined);
     const [site, setSite] = useState<Site | undefined>(undefined);
     const [flavor, setFlavor] = useState<Flavor | undefined>(undefined);
+
+    const [filters, setFilters] = useState<Map<string, Filter>>(new Map());
+
+    function addFilter() {
+        const newMap = new Map(filters); // shallow copy
+        const id = uuidv4();
+        newMap.set(id, {
+            id,
+            key: '',
+            mode: '>',
+            value: '',
+        });
+        setFilters(newMap);
+    }
+
+    function setFilter(id: string, key: string, mode: string, value: string) {
+        const newMap = new Map(filters); // shallow copy
+        newMap.set(id, {
+            id,
+            key,
+            mode,
+            value,
+        });
+        setFilters(newMap);
+    }
+
+    function deleteFilter(id: string) {
+        const newMap = new Map(filters); // shallow copy
+        newMap.delete(id);
+        setFilters(newMap);
+    }
 
     /*const suggestedFields = benchmark.isSuccess
         ? determineNotableKeys(benchmark!.data.data)
@@ -122,6 +156,17 @@ function ResultSearch() {
                 benchmark_id: benchmark?.id,
                 site_id: site?.id,
                 flavor_id: site !== undefined ? flavor?.id : undefined,
+                filters: [...filters.keys()]
+                    .map((k) => {
+                        const filter = filters.get(k)!;
+                        if (filter.key.length == 0 || filter.value.length == 0) {
+                            return undefined;
+                        }
+                        return filter.key + ' ' + filter.mode + ' ' + filter.value;
+                    })
+                    .filter((v?: string) => {
+                        return v !== undefined;
+                    }),
             });
         },
         {
@@ -131,10 +176,6 @@ function ResultSearch() {
     );
 
     function search() {
-        // TODO
-    }
-
-    function addFilter() {
         // TODO
     }
 
@@ -164,13 +205,23 @@ function ResultSearch() {
                                             flavor={flavor}
                                             setFlavor={setFlavor}
                                         />
-                                        {/* TODO: Filters wrapper */}
-                                        <ul
-                                            id="filters"
-                                            className="list-unstyled d-flex flex-column"
-                                        ></ul>
-                                        <Button variant="success" onSubmit={addFilter} disabled>
-                                            Add Filter
+                                        <hr />
+                                        <ListGroup variant="flush">
+                                            {[...filters.keys()].map((key) => (
+                                                <ListGroup.Item key={key}>
+                                                    <FilterEdit
+                                                        filter={filters.get(key)!}
+                                                        setFilter={setFilter}
+                                                        deleteFilter={deleteFilter}
+                                                    />
+                                                </ListGroup.Item>
+                                            ))}
+                                        </ListGroup>
+                                        <Button variant="success" onClick={addFilter}>
+                                            Add filter
+                                        </Button>
+                                        <Button onClick={() => results.refetch()}>
+                                            Apply filters
                                         </Button>
                                     </Card.Body>
                                 </Accordion.Collapse>
