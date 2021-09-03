@@ -7,7 +7,7 @@ import './main.css';
 
 // app-switching
 import { Redirect } from 'react-router';
-import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
+import { BrowserRouter as Router, NavLink, Route } from 'react-router-dom';
 import modules from './pages'; // All the parent knows is that it has modules ...
 import { PageBase } from 'pages/pageBase';
 import Switch from 'react-bootstrap/Switch';
@@ -38,13 +38,13 @@ function LinkTo(props: {
     setCurrentTab: (tab: string) => void;
 }) {
     return (
-        <Link
+        <NavLink
             to={props.reference.path}
             onClick={() => props.setCurrentTab(props.reference.name)}
             className={props.className ? props.className : 'dropdown-item'}
         >
             {props.reference.displayName}
-        </Link>
+        </NavLink>
     );
 }
 
