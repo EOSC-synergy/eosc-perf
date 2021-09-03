@@ -169,9 +169,6 @@ function ResultSearch(props: { initialBenchmark: string; location: { search: str
                                             id="filters"
                                             className="list-unstyled d-flex flex-column"
                                         ></ul>
-                                        <Button variant="primary" onSubmit={search} disabled>
-                                            Search
-                                        </Button>
                                         <Button variant="success" onSubmit={addFilter} disabled>
                                             Add Filter
                                         </Button>
