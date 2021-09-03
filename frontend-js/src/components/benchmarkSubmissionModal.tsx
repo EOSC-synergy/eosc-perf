@@ -5,6 +5,7 @@ import { postHelper } from 'api-helpers';
 import { BenchmarkCreate } from 'api';
 import { UserContext } from 'userContext';
 import axios, { AxiosError } from 'axios';
+import pages from 'pages';
 
 // TODO: do not show invalid on first load
 //       use default state valid?
@@ -151,7 +152,7 @@ export function BenchmarkSubmissionModal(props: { show: boolean; onHide: () => v
                         <Form.Label htmlFor="template">
                             Benchmark result JSON template (optional,{' '}
                             {/* TODO: react-router-hash-link */}
-                            <a href="/code-guidelines#json">example here</a>):
+                            <a href={pages.CodeGuidelines.path + '#json'}>example here</a>):
                         </Form.Label>
                         <Form.Control
                             name="template"

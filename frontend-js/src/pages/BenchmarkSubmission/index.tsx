@@ -5,6 +5,7 @@ import { postHelper } from 'api-helpers';
 import { BenchmarkCreate } from 'api';
 import { UserContext } from 'userContext';
 import { PageBase } from '../pageBase';
+import pages from 'pages/index';
 
 // TODO: do not show invalid on first load
 //       use default state valid?
@@ -103,7 +104,7 @@ function BenchmarkSubmission() {
                     <Form.Label htmlFor="template">
                         Benchmark result JSON template (optional,{' '}
                         {/* TODO: react-router-hash-link */}
-                        <a href="/code-guidelines#json">example here</a>):
+                        <a href={pages.CodeGuidelines.path + '#json'}>example here</a>):
                     </Form.Label>
                     <Form.Control
                         name="template"
