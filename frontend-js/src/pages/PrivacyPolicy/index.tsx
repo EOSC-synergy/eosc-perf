@@ -1,4 +1,5 @@
 import { Container } from 'react-bootstrap';
+import { PageBase } from '../pageBase';
 
 function PrivacyPolicy() {
     return (
@@ -105,11 +106,11 @@ function PrivacyPolicy() {
     );
 }
 
-const PrivacyPolicyModule = {
+const PrivacyPolicyModule: PageBase = {
     path: '/privacy-policy',
     element: PrivacyPolicy,
     name: 'PrivacyPolicy',
-    dropdownName: 'Privacy Policy',
+    displayName: 'Privacy Policy',
 };
 
 export default PrivacyPolicyModule;

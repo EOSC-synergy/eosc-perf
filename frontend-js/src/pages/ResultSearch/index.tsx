@@ -16,6 +16,7 @@ import {
     BenchmarkSearchPopover,
     FlavorSearchPopover,
 } from '../../components/SearchPopover';
+import { PageBase } from '../pageBase';
 
 const qs = require('qs');
 const hash = require('object-hash');
@@ -271,11 +272,11 @@ function ResultSearch(props: { initialBenchmark: string; location: { search: str
     );
 }
 
-const ResultSearchModule = {
+const ResultSearchModule: PageBase = {
     path: '/result-search',
     element: ResultSearch,
     name: 'ResultSearch',
-    dropdownName: 'Search',
+    displayName: 'Search',
 };
 
 export default ResultSearchModule;

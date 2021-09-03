@@ -5,6 +5,7 @@ import { useQuery } from 'react-query';
 import { getHelper } from '../../api-helpers';
 import { LoadingOverlay } from '../../components/loadingOverlay';
 import { SiteEditor } from './siteEditor';
+import { PageBase } from '../pageBase';
 
 function SiteSelect(props: { site: Site; setActiveSite: (site: Site) => void }) {
     return (
@@ -62,10 +63,10 @@ function SitesEditor() {
     );
 }
 
-const SiteEditorModule = {
+const SiteEditorModule: PageBase = {
     path: '/site-editor',
     element: SitesEditor,
     name: 'SiteEditor',
-    dropdownName: 'Site editor',
+    displayName: 'Site editor',
 };
 export default SiteEditorModule;

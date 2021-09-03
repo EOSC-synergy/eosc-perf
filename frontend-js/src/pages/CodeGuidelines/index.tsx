@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container } from 'react-bootstrap';
 import template from './benchmark_template.json';
+import { PageBase } from '../pageBase';
 
 function CodeGuidelines() {
     return (
@@ -39,11 +40,11 @@ function CodeGuidelines() {
     );
 }
 
-const CodeGuidelinesModule = {
+const CodeGuidelinesModule: PageBase = {
     path: '/code-guidelines',
     element: CodeGuidelines,
     name: 'CodeGuidelines',
-    dropdownName: 'Code guidelines',
+    displayName: 'Code guidelines',
 };
 
 export default CodeGuidelinesModule;

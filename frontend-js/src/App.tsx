@@ -9,7 +9,7 @@ import './main.css';
 import { Redirect } from 'react-router';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import modules from './pages'; // All the parent knows is that it has modules ...
-import { ModuleBase } from './pages/module-base';
+import { PageBase } from './pages/pageBase';
 import Switch from 'react-bootstrap/Switch';
 
 // html
@@ -31,7 +31,7 @@ const queryClient = new QueryClient();
  * Notes: cannot use <NavDropdown.Item> due to <Link>, dropdown-item class added manually
  */
 function LinkTo(props: {
-    reference: ModuleBase;
+    reference: PageBase;
     className?: string;
     setCurrentTab: (tab: string) => void;
 }) {
@@ -41,7 +41,7 @@ function LinkTo(props: {
             onClick={() => props.setCurrentTab(props.reference.name)}
             className={props.className ? props.className : 'dropdown-item'}
         >
-            {props.reference.dropdownName}
+            {props.reference.displayName}
         </Link>
     );
 }

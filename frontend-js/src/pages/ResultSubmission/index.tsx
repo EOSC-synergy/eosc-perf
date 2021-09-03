@@ -12,6 +12,7 @@ import { useMutation } from 'react-query';
 import { postHelper } from '../../api-helpers';
 import { UserContext } from '../../userContext';
 import { JsonSelection } from './jsonSelection';
+import { PageBase } from '../pageBase';
 
 function ResultSubmission(props: { token: string }) {
     const auth = useContext(UserContext);
@@ -96,11 +97,11 @@ function ResultSubmission(props: { token: string }) {
     );
 }
 
-const ResultSubmissionModule = {
+const ResultSubmissionModule: PageBase = {
     path: '/result-submission',
     element: ResultSubmission,
     name: 'ResultSubmission',
-    dropdownName: 'Result',
+    displayName: 'Result',
 };
 
 export default ResultSubmissionModule;

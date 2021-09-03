@@ -4,6 +4,7 @@ import { useMutation } from 'react-query';
 import { postHelper } from '../../api-helpers';
 import { BenchmarkCreate } from '../../api';
 import { UserContext } from '../../userContext';
+import { PageBase } from '../pageBase';
 
 // TODO: do not show invalid on first load
 //       use default state valid?
@@ -121,11 +122,11 @@ function BenchmarkSubmission() {
     );
 }
 
-const BenchmarkSubmissionModule = {
+const BenchmarkSubmissionModule: PageBase = {
     path: '/benchmark-submission',
     element: BenchmarkSubmission,
     name: 'BenchmarkSubmission',
-    dropdownName: 'Benchmark',
+    displayName: 'Benchmark',
 };
 
 export default BenchmarkSubmissionModule;

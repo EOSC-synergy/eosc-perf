@@ -10,6 +10,7 @@ import { ResultReportInfo } from './resultReportInfo';
 import { SiteReportInfo } from './siteReportInfo';
 import { FlavorReportInfo } from './flavorReportInfo';
 import { UserContext } from '../../userContext';
+import { PageBase } from '../pageBase';
 
 function ReportView(props: { report: Report; refetch: () => void }) {
     let [opened, setOpened] = useState(false);
@@ -98,10 +99,10 @@ function ReportsView() {
     );
 }
 
-const ReportViewModule = {
+const ReportViewModule: PageBase = {
     path: '/view-reports',
     element: ReportsView,
     name: 'ReportsView',
-    dropdownName: 'View reports',
+    displayName: 'View reports',
 };
 export default ReportViewModule;

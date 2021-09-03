@@ -1,6 +1,6 @@
-export interface ModuleBase {
+export interface PageBase {
     path: string;
     element: any;
     name: string;
-    dropdownName: string;
+    displayName: string;
 }
