@@ -28,7 +28,7 @@ export function SiteReportInfo(props: { report: Report; refetch: () => void }) {
                     Description: {data.data.description}
                     <br />
                     {/* Uploader: {{ uploader_name }} ({{ uploader_mail }})<br/> */}
-                    Upload date: {props.report.upload_date}
+                    Upload date: {props.report.upload_datetime}
                     <br />
                     <ReportInteraction {...props} />
                 </>

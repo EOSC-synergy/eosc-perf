@@ -24,7 +24,7 @@ export function ResultReportInfo(props: { report: Report; refetch: () => void })
                     {/* Reported by: {{ reporter_name }} ({{ reporter_mail }})<br /> */}
                     Message: {props.report.message}
                     <br />
-                    Date: {props.report.upload_date}
+                    Date: {props.report.upload_datetime}
                     <br />
                     Site: {data.data.site.name}
                     <br />
