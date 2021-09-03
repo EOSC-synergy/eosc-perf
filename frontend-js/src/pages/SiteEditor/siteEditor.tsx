@@ -10,7 +10,7 @@ import { UserContext } from 'userContext';
 export function SiteEditor(props: { site: Site; refetch: () => void }) {
     const auth = useContext(UserContext);
 
-    const { mutate, isLoading } = useMutation(
+    const { mutate } = useMutation(
         (data: SiteEdit) =>
             putHelper<SiteEdit>('/sites/' + props.site.id, data, auth.token, {
                 site_id: props.site.id,

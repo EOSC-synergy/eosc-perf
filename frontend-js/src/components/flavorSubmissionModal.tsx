@@ -22,7 +22,7 @@ export function FlavorSubmissionModal(props: { show: boolean; onHide: () => void
         (data: FlavorCreate) =>
             postHelper<FlavorCreate>('/sites/' + props.site.id + '/flavors', data, auth.token),
         {
-            onSuccess: (data) => {
+            onSuccess: () => {
                 setShowSuccessToast(true);
                 props.onHide();
             },

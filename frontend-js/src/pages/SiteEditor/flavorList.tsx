@@ -7,7 +7,7 @@ import { FlavorEditor } from './flavorEditor';
 import React from 'react';
 
 export function FlavorList(props: { site: Site }) {
-    let { status, isLoading, isError, data, isSuccess, refetch } = useQuery(
+    let { isLoading, data, isSuccess, refetch } = useQuery(
         'flavors-' + props.site.id,
         () => {
             return getHelper<Flavors>('/sites/' + props.site.id + '/flavors');

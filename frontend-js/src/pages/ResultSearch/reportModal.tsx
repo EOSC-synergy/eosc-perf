@@ -21,7 +21,7 @@ export function ReportModal(props: {
                 result_id: props.result?.id,
             }),
         {
-            onSuccess: (data) => {
+            onSuccess: () => {
                 props.closeModal();
             },
         }

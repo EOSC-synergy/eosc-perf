@@ -17,10 +17,10 @@ function BenchmarkSubmission() {
 
     const auth = useContext(UserContext);
 
-    const { mutate, isLoading } = useMutation(
+    const { mutate } = useMutation(
         (data: BenchmarkCreate) => postHelper<BenchmarkCreate>('/benchmarks', data, auth.token),
         {
-            onSuccess: (data) => {},
+            onSuccess: () => {},
         }
     );
 

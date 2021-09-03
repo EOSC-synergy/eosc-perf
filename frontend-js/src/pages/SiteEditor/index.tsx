@@ -9,7 +9,7 @@ import { PageBase } from '../pageBase';
 
 function SiteSelect(props: { site: Site; setActiveSite: (site: Site) => void }) {
     return (
-        <ListGroup.Item onClick={(e) => props.setActiveSite(props.site)} action>
+        <ListGroup.Item onClick={() => props.setActiveSite(props.site)} action>
             <div className="d-flex w-100 justify-content-between">
                 <h5 className="mb-1">{props.site.name}</h5>
                 <small>{props.site.id}</small>
@@ -21,7 +21,7 @@ function SiteSelect(props: { site: Site; setActiveSite: (site: Site) => void }) 
 }
 
 function SitesEditor() {
-    let { status, isLoading, isError, data, isSuccess, refetch } = useQuery(
+    let { isLoading, data, isSuccess, refetch } = useQuery(
         'sites',
         () => {
             return getHelper<Sites>('/sites');

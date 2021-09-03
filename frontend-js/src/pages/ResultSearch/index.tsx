@@ -18,7 +18,6 @@ import {
 } from 'components/SearchPopover';
 import { PageBase } from '../pageBase';
 
-const qs = require('qs');
 const hash = require('object-hash');
 
 function determineNotableKeys(benchmark: Benchmark) {
@@ -44,7 +43,7 @@ function determineNotableKeys(benchmark: Benchmark) {
         .reduce((acc: string[], arr: string[]) => [...acc, ...arr]);
 }
 
-function ResultSearch(props: { initialBenchmark: string; location: { search: string } }) {
+function ResultSearch() {
     /*const benchmarkId = qs.parse(props.location.search.slice(1)).benchmark || '';
 
     const benchmark = useQuery(
@@ -89,7 +88,7 @@ function ResultSearch(props: { initialBenchmark: string; location: { search: str
             }
         },
         unselect: function (result: Result) {
-            setSelectedResults(selectedResults.filter((r, i, a) => r.id !== result.id));
+            setSelectedResults(selectedResults.filter((r) => r.id !== result.id));
         },
         isSelected: function (result: Result) {
             return selectedResults.includes(result);

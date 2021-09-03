@@ -22,7 +22,7 @@ export function SiteSubmissionModal(props: { show: boolean; onHide: () => void }
     const { mutate } = useMutation(
         (data: SiteCreate) => postHelper<SiteCreate>('/sites', data, auth.token),
         {
-            onSuccess: (data) => {
+            onSuccess: () => {
                 setShowSuccessToast(true);
                 props.onHide();
             },

@@ -34,11 +34,11 @@ export function TagSelection(props: {
                             (tags.data.data.items!.length > 0 ? (
                                 tags.data.data.items!.map((t) =>
                                     props.tags.includes(t.id) ? (
-                                        <ListGroup.Item onClick={(e) => props.removeTag(t.id!)}>
+                                        <ListGroup.Item onClick={() => props.removeTag(t.id!)}>
                                             {t.name}
                                         </ListGroup.Item>
                                     ) : (
-                                        <ListGroup.Item onClick={(e) => props.addTag(t.id!)}>
+                                        <ListGroup.Item onClick={() => props.addTag(t.id!)}>
                                             {t.name}
                                         </ListGroup.Item>
                                     )

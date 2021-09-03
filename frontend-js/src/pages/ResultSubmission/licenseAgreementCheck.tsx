@@ -10,7 +10,7 @@ export function LicenseAgreementCheck(props: {
             type="switch"
             label="I have read and accept the license agreement"
             checked={props.licenseAgreementAccepted}
-            onChange={(e) => props.setLicenseAgreementAccepted(!props.licenseAgreementAccepted)}
+            onChange={() => props.setLicenseAgreementAccepted(!props.licenseAgreementAccepted)}
         />
     );
 }

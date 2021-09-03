@@ -22,13 +22,13 @@ export function FlavorEditor(props: { flavor: Flavor; refetch: () => void }) {
         setEditing(editing);
     }
 
-    const { mutate, isLoading } = useMutation(
+    const { mutate } = useMutation(
         (data: FlavorEdit) =>
             putHelper<FlavorEdit>('/sites/flavors/' + props.flavor.id, data, auth.token, {
                 flavor_id: props.flavor.id,
             }),
         {
-            onSuccess: (data) => {
+            onSuccess: () => {
                 setEditing(false);
                 props.refetch();
             },

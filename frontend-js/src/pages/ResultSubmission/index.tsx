@@ -14,7 +14,7 @@ import { UserContext } from 'userContext';
 import { JsonSelection } from './jsonSelection';
 import { PageBase } from '../pageBase';
 
-function ResultSubmission(props: { token: string }) {
+function ResultSubmission() {
     const auth = useContext(UserContext);
 
     const { mutate } = useMutation((data: Result) =>
@@ -47,7 +47,7 @@ function ResultSubmission(props: { token: string }) {
     }
 
     function removeTag(tag: string) {
-        setTags(tags.filter((v, i, a) => v !== tag));
+        setTags(tags.filter((v) => v !== tag));
     }
 
     function submit() {

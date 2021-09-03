@@ -74,7 +74,7 @@ function ReportView(props: { report: Report; refetch: () => void }) {
 function ReportsView() {
     const auth = useContext(UserContext);
 
-    let { status, isLoading, isError, data, isSuccess, refetch } = useQuery(
+    let { data, isSuccess, refetch } = useQuery(
         'reports',
         () => {
             return getHelper<Reports>('/reports', auth.token, {});

@@ -17,8 +17,7 @@ export function ReportInteraction(props: {
     const auth = useContext(UserContext);
 
     const { mutate: approve, isSuccess: isApproved } = useMutation(
-        (data) =>
-            patchHelper('/reports/' + props.report.id + '/approve', { accessToken: auth.token }),
+        () => patchHelper('/reports/' + props.report.id + '/approve', { accessToken: auth.token }),
         {
             onSuccess: () => {
                 props.refetch();
@@ -27,8 +26,7 @@ export function ReportInteraction(props: {
     );
 
     const { mutate: reject, isSuccess: isRejected } = useMutation(
-        (data) =>
-            patchHelper('/reports/' + props.report.id + '/reject', { accessToken: auth.token }),
+        () => patchHelper('/reports/' + props.report.id + '/reject', { accessToken: auth.token }),
         {
             onSuccess: () => {
                 props.refetch();

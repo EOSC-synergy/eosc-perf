@@ -23,7 +23,7 @@ export function BenchmarkSubmissionModal(props: { show: boolean; onHide: () => v
     const { mutate } = useMutation(
         (data: BenchmarkCreate) => postHelper<BenchmarkCreate>('/benchmarks', data, auth.token),
         {
-            onSuccess: (data) => {
+            onSuccess: () => {
                 setShowSuccessToast(true);
                 props.onHide();
             },
