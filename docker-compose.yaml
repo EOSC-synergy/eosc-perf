@@ -21,6 +21,17 @@ services:
       - cookie_secret
       - oidc_secret
 
+  frontend-app:
+    container_name: frontend-app
+    restart: unless-stopped
+    image: frontend-app
+    build:
+      context: frontend-js
+    networks:
+      - frontend-net
+    volumes:
+      - ./frontend-js/:/app
+
   backend_v1:
     container_name: backend_v1
     restart: unless-stopped
@@ -82,14 +93,14 @@ services:
     image: reverse_proxy
     build:
       context: ./service_rproxy
-      target: production
+      target: development
     depends_on:
       - frontend-auth
       - backend_v1
       - certificate
     env_file: .env
     volumes:
-      - ./frontend-js/build/:/var/www/web/
+      # - ./frontend-js/build/:/var/www/web/
       #  - ./frontend_client/src:/var/www/web/js/
       - ./service_certificate/conf:/etc/letsencrypt
       - ./service_certificate/www:/var/www/certbot/
