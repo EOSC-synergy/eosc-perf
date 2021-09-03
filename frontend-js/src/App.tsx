@@ -21,6 +21,8 @@ import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { emptyUser, UserContext, UserInfo } from 'userContext';
 
+import logo from './images/eosc-perf-logo.svg';
+
 const queryClient = new QueryClient();
 
 /**
@@ -53,8 +55,7 @@ function NavHeader(props: { setCurrentTab: (tab: string) => void }) {
         <header>
             <Navbar bg="dark" expand="lg" variant="dark">
                 <Navbar.Brand href={modules.ResultSearch.path} className="ms-2">
-                    {/* TODO: properly link svg react-style */}
-                    <img src="/images/eosc-perf-logo.svg" height="40" alt="EOSC-Performance" />
+                    <img src={logo} height="40" alt="EOSC-Performance" />
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
