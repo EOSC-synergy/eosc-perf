@@ -111,19 +111,17 @@ function ResultSearch(props: { initialBenchmark: string; location: { search: str
             hash({
                 per_page: resultsPerPage,
                 page,
-                docker_image: benchmark?.docker_image,
-                docker_tag: benchmark?.docker_tag,
-                site_name: site?.name,
-                flavor_name: flavor?.name,
+                benchmark_id: benchmark?.id,
+                site_id: site?.id,
+                flavor_id: flavor?.id,
             }),
         () => {
             return getHelper<Results>('/results', undefined, {
                 per_page: resultsPerPage,
                 page,
-                docker_image: benchmark?.docker_image,
-                docker_tag: benchmark?.docker_tag,
-                site_name: site?.name,
-                flavor_name: flavor?.name,
+                benchmark_id: benchmark?.id,
+                site_id: site?.id,
+                flavor_id: flavor?.id,
             });
         },
         {
