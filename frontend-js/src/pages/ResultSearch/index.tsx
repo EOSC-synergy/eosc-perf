@@ -113,7 +113,7 @@ function ResultSearch() {
                 page,
                 benchmark_id: benchmark?.id,
                 site_id: site?.id,
-                flavor_id: flavor?.id,
+                flavor_id: site !== undefined ? flavor?.id : undefined,
             }),
         () => {
             return getHelper<Results>('/results', undefined, {
@@ -121,7 +121,7 @@ function ResultSearch() {
                 page,
                 benchmark_id: benchmark?.id,
                 site_id: site?.id,
-                flavor_id: flavor?.id,
+                flavor_id: site !== undefined ? flavor?.id : undefined,
             });
         },
         {

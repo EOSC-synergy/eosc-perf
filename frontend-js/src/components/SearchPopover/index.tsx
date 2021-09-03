@@ -226,6 +226,8 @@ export function FlavorSearchPopover(props: {
     flavor?: Flavor;
     setFlavor: (flavor?: Flavor) => void;
 }) {
+    // TODO: reset value if site is undefined?
+
     function display(flavor?: Flavor) {
         return (
             <>
