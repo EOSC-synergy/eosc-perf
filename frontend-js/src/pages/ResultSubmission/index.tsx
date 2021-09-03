@@ -1,35 +1,34 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { TagSelection } from './tagSelection';
 import { LicenseAgreementCheck } from './licenseAgreementCheck';
-import { Benchmark, Flavor, Site } from '../../api';
+import { Benchmark, Flavor, Result, Site } from '../../api';
 import {
     BenchmarkSearchPopover,
     FlavorSearchPopover,
     SiteSearchPopover,
 } from '../../components/SearchPopover';
-
-function FileSelection(props: { file?: File; setFile: (file: File) => void }) {
-    return (
-        <>
-            <Form.Group>
-                <Form.Label>Please select result JSON file</Form.Label>
-                <Form.Control
-                    type="file"
-                    onChange={() => {} /*(e) => props.setFile(e.target.files[0])*/}
-                />
-            </Form.Group>
-        </>
-    );
-}
+import { useMutation } from 'react-query';
+import { postHelper } from '../../api-helpers';
+import { UserContext } from '../../userContext';
+import { JsonSelection } from './jsonSelection';
 
 function ResultSubmission(props: { token: string }) {
-    function onSubmit() {
-        // TODO
-    }
+    const auth = useContext(UserContext);
+
+    const { mutate } = useMutation((data: Result) =>
+        postHelper<Result>('/results', data, auth.token, {
+            // TODO: execution datetime?
+            execution_datetime: '2020-05-21T10:31:00.000Z',
+            benchmark_id: benchmark?.id,
+            site_id: site?.id,
+            flavor_id: flavor?.id,
+            // TODO: tags
+        })
+    );
 
     function allFieldsFilled() {
-        return benchmark && site && flavor && licenseAgreementAccepted;
+        return benchmark && site && flavor && licenseAgreementAccepted && fileContents;
     }
 
     const [benchmark, setBenchmark] = useState<Benchmark | undefined>(undefined);
@@ -37,7 +36,7 @@ function ResultSubmission(props: { token: string }) {
     const [flavor, setFlavor] = useState<Flavor | undefined>(undefined);
     const [tags, setTags] = useState<string[]>([]);
     const [licenseAgreementAccepted, setLicenseAgreementAccepted] = useState(false);
-    const [file, setFile] = useState<File | undefined>(undefined);
+    const [fileContents, setFileContents] = useState<string | undefined>(undefined);
 
     function addTag(tag: string) {
         if (tags.includes(tag)) {
@@ -50,6 +49,13 @@ function ResultSubmission(props: { token: string }) {
         setTags(tags.filter((v, i, a) => v !== tag));
     }
 
+    function submit() {
+        if (!allFieldsFilled()) {
+            return;
+        }
+        mutate(JSON.parse(fileContents!));
+    }
+
     return (
         <Container>
             <input type="hidden" id="license" value="{{ license }}" />
@@ -57,11 +63,13 @@ function ResultSubmission(props: { token: string }) {
             <Form>
                 <Card>
                     <Card.Body>
-                        <FileSelection file={file} setFile={setFile} />
+                        <JsonSelection
+                            fileContents={fileContents}
+                            setFileContents={setFileContents}
+                        />
                         <BenchmarkSearchPopover benchmark={benchmark} setBenchmark={setBenchmark} />
                         <SiteSearchPopover site={site} setSite={setSite} />
                         <FlavorSearchPopover site={site} flavor={flavor} setFlavor={setFlavor} />
-
                         <TagSelection tags={tags} addTag={addTag} removeTag={removeTag} />
                         <Row>
                             <Col>
@@ -75,6 +83,7 @@ function ResultSubmission(props: { token: string }) {
                                     variant="success"
                                     className="me-1"
                                     disabled={!allFieldsFilled()}
+                                    onClick={submit}
                                 >
                                     Submit
                                 </Button>
