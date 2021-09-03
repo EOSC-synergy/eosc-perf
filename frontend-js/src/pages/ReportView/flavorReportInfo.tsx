@@ -9,7 +9,7 @@ export function FlavorReportInfo(props: { report: Report; refetch: () => void })
     let { isLoading, data, isSuccess } = useQuery(
         'flavor-' + props.report.resource_id,
         () => {
-            return getHelper<Flavor>('/sites/flavors/' + props.report.resource_id);
+            return getHelper<Flavor>('/flavors/' + props.report.resource_id);
         },
         {
             refetchOnWindowFocus: false, // do not spam queries
