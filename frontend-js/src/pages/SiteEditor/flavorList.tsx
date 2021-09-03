@@ -1,8 +1,8 @@
-import { Flavor, Flavors, Site } from '../../api';
+import { Flavor, Flavors, Site } from 'api';
 import { useQuery } from 'react-query';
-import { getHelper } from '../../api-helpers';
+import { getHelper } from 'api-helpers';
 import { Card } from 'react-bootstrap';
-import { LoadingOverlay } from '../../components/loadingOverlay';
+import { LoadingOverlay } from 'components/loadingOverlay';
 import { FlavorEditor } from './flavorEditor';
 import React from 'react';
 

@@ -1,9 +1,9 @@
 import React, { useContext, useState } from 'react';
 import { Button, Container, Form } from 'react-bootstrap';
 import { useMutation } from 'react-query';
-import { postHelper } from '../../api-helpers';
-import { BenchmarkCreate } from '../../api';
-import { UserContext } from '../../userContext';
+import { postHelper } from 'api-helpers';
+import { BenchmarkCreate } from 'api';
+import { UserContext } from 'userContext';
 import { PageBase } from '../pageBase';
 
 // TODO: do not show invalid on first load

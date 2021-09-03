@@ -1,8 +1,8 @@
-import { Flavor, Report } from '../../api';
+import { Flavor, Report } from 'api';
 import React from 'react';
 import { useQuery } from 'react-query';
-import { getHelper } from '../../api-helpers';
-import { LoadingOverlay } from '../../components/loadingOverlay';
+import { getHelper } from 'api-helpers';
+import { LoadingOverlay } from 'components/loadingOverlay';
 import { ReportInteraction } from './reportInteraction';
 
 export function FlavorReportInfo(props: { report: Report; refetch: () => void }) {

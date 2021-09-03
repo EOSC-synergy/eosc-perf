@@ -1,4 +1,4 @@
-import { Result } from '../../api';
+import { Result } from 'api';
 
 export interface ResultOps {
     select: (result: Result) => void;

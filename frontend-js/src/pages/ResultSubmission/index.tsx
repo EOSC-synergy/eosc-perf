@@ -2,15 +2,15 @@ import React, { useContext, useState } from 'react';
 import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { TagSelection } from './tagSelection';
 import { LicenseAgreementCheck } from './licenseAgreementCheck';
-import { Benchmark, Flavor, Result, Site } from '../../api';
+import { Benchmark, Flavor, Result, Site } from 'api';
 import {
     BenchmarkSearchPopover,
     FlavorSearchPopover,
     SiteSearchPopover,
-} from '../../components/SearchPopover';
+} from 'components/SearchPopover';
 import { useMutation } from 'react-query';
-import { postHelper } from '../../api-helpers';
-import { UserContext } from '../../userContext';
+import { postHelper } from 'api-helpers';
+import { UserContext } from 'userContext';
 import { JsonSelection } from './jsonSelection';
 import { PageBase } from '../pageBase';
 

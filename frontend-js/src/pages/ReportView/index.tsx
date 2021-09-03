@@ -1,15 +1,15 @@
 import React, { useContext, useState } from 'react';
 import { Badge, Container, ListGroup } from 'react-bootstrap';
 import { useQuery } from 'react-query';
-import { getHelper } from '../../api-helpers';
-import { Report, Reports } from '../../api';
+import { getHelper } from 'api-helpers';
+import { Report, Reports } from 'api';
 
 import '../../actionable.css';
 import { BenchmarkReportInfo } from './benchmarkReportInfo';
 import { ResultReportInfo } from './resultReportInfo';
 import { SiteReportInfo } from './siteReportInfo';
 import { FlavorReportInfo } from './flavorReportInfo';
-import { UserContext } from '../../userContext';
+import { UserContext } from 'userContext';
 import { PageBase } from '../pageBase';
 
 function ReportView(props: { report: Report; refetch: () => void }) {

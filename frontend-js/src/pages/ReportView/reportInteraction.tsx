@@ -1,9 +1,9 @@
-import { Report } from '../../api';
+import { Report } from 'api';
 import React, { useContext, useState } from 'react';
 import { useMutation } from 'react-query';
-import { patchHelper } from '../../api-helpers';
+import { patchHelper } from 'api-helpers';
 import { Button } from 'react-bootstrap';
-import { UserContext } from '../../userContext';
+import { UserContext } from 'userContext';
 
 export function ReportInteraction(props: {
     report: Report;

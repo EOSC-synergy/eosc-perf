@@ -1,4 +1,4 @@
-import { Result } from '../../../api';
+import { Result } from 'api';
 import { fetchSubkey } from '../jsonKeyHelpers';
 
 export function CustomColumn(props: { result: Result; jsonKey: string }) {

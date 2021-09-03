@@ -1,4 +1,4 @@
-import { Result } from '../../../api';
+import { Result } from 'api';
 
 export function TagsColumn(props: { result: Result }) {
     return (

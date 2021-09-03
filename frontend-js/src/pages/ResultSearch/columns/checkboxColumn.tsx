@@ -1,4 +1,4 @@
-import { Result } from '../../../api';
+import { Result } from 'api';
 import { Form } from 'react-bootstrap';
 import { ResultOps } from '../resultOps';
 

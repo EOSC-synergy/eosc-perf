@@ -7,9 +7,9 @@ import './main.css';
 
 // app-switching
 import { Redirect } from 'react-router';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
 import modules from './pages'; // All the parent knows is that it has modules ...
-import { PageBase } from './pages/pageBase';
+import { PageBase } from 'pages/pageBase';
 import Switch from 'react-bootstrap/Switch';
 
 // html
@@ -19,7 +19,7 @@ import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import axios from 'axios';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { emptyUser, UserContext, UserInfo } from './userContext';
+import { emptyUser, UserContext, UserInfo } from 'userContext';
 
 const queryClient = new QueryClient();
 

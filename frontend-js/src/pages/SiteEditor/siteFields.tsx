@@ -1,4 +1,4 @@
-import { Site } from '../../api';
+import { Site } from 'api';
 import { Form } from 'react-bootstrap';
 import React, { useState } from 'react';
 

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { API_BASE_PATH } from './configuration';
+import { API_BASE_PATH } from 'configuration';
 
 const qs = require('qs');
 

@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
-import { getHelper } from '../../api-helpers';
-import { Tags } from '../../api';
+import { getHelper } from 'api-helpers';
+import { Tags } from 'api';
 import React, { useState } from 'react';
 import { Button, Form, InputGroup, ListGroup } from 'react-bootstrap';
 

@@ -1,9 +1,9 @@
 import React, { useContext, useState } from 'react';
 import { Alert, Button, Form, Modal, Toast } from 'react-bootstrap';
 import { useMutation } from 'react-query';
-import { postHelper } from '../api-helpers';
-import { BenchmarkCreate } from '../api';
-import { UserContext } from '../userContext';
+import { postHelper } from 'api-helpers';
+import { BenchmarkCreate } from 'api';
+import { UserContext } from 'userContext';
 import axios, { AxiosError } from 'axios';
 
 // TODO: do not show invalid on first load

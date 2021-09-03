@@ -1,11 +1,11 @@
-import { Site, SiteEdit } from '../../api';
+import { Site, SiteEdit } from 'api';
 import { useMutation } from 'react-query';
-import { putHelper } from '../../api-helpers';
+import { putHelper } from 'api-helpers';
 import React, { useContext, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { Description, NetAddress, SiteId, SiteName } from './siteFields';
 import { FlavorList } from './flavorList';
-import { UserContext } from '../../userContext';
+import { UserContext } from 'userContext';
 
 export function SiteEditor(props: { site: Site; refetch: () => void }) {
     const auth = useContext(UserContext);

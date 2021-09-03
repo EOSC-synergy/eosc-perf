@@ -1,5 +1,5 @@
 import { Button, Modal } from 'react-bootstrap';
-import { Result } from '../../api';
+import { Result } from 'api';
 import Highlight from 'react-highlight';
 import './railscasts.css';
 import React from 'react';

@@ -1,9 +1,9 @@
-import { Result } from '../../../api';
+import { Result } from 'api';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import { ResultOps } from '../resultOps';
 import { Envelope, Exclamation, Hash, Trash } from 'react-bootstrap-icons';
 import { useContext } from 'react';
-import { UserContext } from '../../../userContext';
+import { UserContext } from 'userContext';
 
 export function ActionColumn(props: { result: Result; ops: ResultOps }) {
     // TODO: CSS: figure out why button group taller than it should be

@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 import { Accordion, Button, Card, Col, Container, Row } from 'react-bootstrap';
-import { LoadingOverlay } from '../../components/loadingOverlay';
+import { LoadingOverlay } from 'components/loadingOverlay';
 import { useQuery } from 'react-query';
 import { JSONPreviewModal } from './JSONPreviewModal';
-import { ResultsPerPageSelection } from '../../components/resultsPerPageSelection';
+import { ResultsPerPageSelection } from 'components/resultsPerPageSelection';
 import { CardAccordionToggle } from './cardAccordionToggle';
-import { getHelper } from '../../api-helpers';
+import { getHelper } from 'api-helpers';
 import { ResultTable } from './resultTable';
-import { Benchmark, Flavor, Result, Results, Site } from '../../api';
-import { Paginator } from '../../components/pagination';
+import { Benchmark, Flavor, Result, Results, Site } from 'api';
+import { Paginator } from 'components/pagination';
 import { DiagramView } from './diagramView';
 import { ReportModal } from './reportModal';
 import {
-    SiteSearchPopover,
     BenchmarkSearchPopover,
     FlavorSearchPopover,
-} from '../../components/SearchPopover';
+    SiteSearchPopover,
+} from 'components/SearchPopover';
 import { PageBase } from '../pageBase';
 
 const qs = require('qs');

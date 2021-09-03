@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Col, Container, ListGroup, Row } from 'react-bootstrap';
-import { Site, Sites } from '../../api';
+import { Site, Sites } from 'api';
 import { useQuery } from 'react-query';
-import { getHelper } from '../../api-helpers';
-import { LoadingOverlay } from '../../components/loadingOverlay';
+import { getHelper } from 'api-helpers';
+import { LoadingOverlay } from 'components/loadingOverlay';
 import { SiteEditor } from './siteEditor';
 import { PageBase } from '../pageBase';
 

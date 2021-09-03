@@ -1,10 +1,10 @@
-import { BenchmarkCreate, ReportCreate, Result } from '../../api';
+import { ReportCreate, Result } from 'api';
 import { Button, Form, Modal } from 'react-bootstrap';
 import Highlight from 'react-highlight';
 import React, { useContext, useState } from 'react';
 import { useMutation } from 'react-query';
-import { postHelper } from '../../api-helpers';
-import { UserContext } from '../../userContext';
+import { postHelper } from 'api-helpers';
+import { UserContext } from 'userContext';
 
 export function ReportModal(props: {
     result: Result | null;

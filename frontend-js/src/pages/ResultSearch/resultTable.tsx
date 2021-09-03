@@ -1,5 +1,5 @@
 import { Table } from 'react-bootstrap';
-import { Result } from '../../api';
+import { Result } from 'api';
 import {
     ActionColumn,
     BenchmarkColumn,

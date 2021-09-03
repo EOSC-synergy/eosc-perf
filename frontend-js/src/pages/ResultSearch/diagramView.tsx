@@ -1,4 +1,4 @@
-import { Benchmark, Result } from '../../api';
+import { Benchmark, Result } from 'api';
 import { Badge, Form } from 'react-bootstrap';
 import charts from './diagrams';
 import React, { useState } from 'react';
