@@ -57,15 +57,13 @@ export function TagSelection(props: {
                         placeholder="tensor"
                         onChange={(e) => setCustomTagName(e.target.value)}
                     />
-                    <InputGroup.Append>
-                        <Button
-                            variant="success"
-                            disabled={customTagName.length < 1}
-                            onClick={addCustomTag}
-                        >
-                            Add Tag
-                        </Button>
-                    </InputGroup.Append>
+                    <Button
+                        variant="success"
+                        disabled={customTagName.length < 1}
+                        onClick={addCustomTag}
+                    >
+                        Add Tag
+                    </Button>
                 </InputGroup>
             </Form.Group>
         </>

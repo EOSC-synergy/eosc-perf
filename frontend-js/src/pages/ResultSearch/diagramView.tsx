@@ -29,7 +29,7 @@ export function DiagramView(props: {
                     ))}
                 </Form.Control>
                 {props.benchmark === undefined && (
-                    <Badge variant="danger">Please select a benchmark</Badge>
+                    <Badge bg="danger">Please select a benchmark</Badge>
                 )}
             </Form.Group>
             {props.benchmark !== undefined &&

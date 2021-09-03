@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Card, Container, Form } from 'react-bootstrap';
+import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { TagSelection } from './tagSelection';
 import { LicenseAgreementCheck } from './licenseAgreementCheck';
 import { Benchmark, Flavor, Site } from '../../api';
@@ -12,10 +12,13 @@ import {
 function FileSelection(props: { file?: File; setFile: (file: File) => void }) {
     return (
         <>
-            <Form.File
-                label="Please select result JSON file"
-                onChange={() => {} /*(e) => props.setFile(e.target.files[0])*/}
-            />
+            <Form.Group>
+                <Form.Label>Please select result JSON file</Form.Label>
+                <Form.Control
+                    type="file"
+                    onChange={() => {} /*(e) => props.setFile(e.target.files[0])*/}
+                />
+            </Form.Group>
         </>
     );
 }
@@ -60,19 +63,23 @@ function ResultSubmission(props: { token: string }) {
                         <FlavorSearchPopover site={site} flavor={flavor} setFlavor={setFlavor} />
 
                         <TagSelection tags={tags} addTag={addTag} removeTag={removeTag} />
-                        <div className="d-flex justify-content-between">
-                            <LicenseAgreementCheck
-                                licenseAgreementAccepted={licenseAgreementAccepted}
-                                setLicenseAgreementAccepted={setLicenseAgreementAccepted}
-                            />
-                            <Button
-                                variant="success"
-                                className="mr-1"
-                                disabled={!allFieldsFilled()}
-                            >
-                                Submit
-                            </Button>
-                        </div>
+                        <Row>
+                            <Col>
+                                <LicenseAgreementCheck
+                                    licenseAgreementAccepted={licenseAgreementAccepted}
+                                    setLicenseAgreementAccepted={setLicenseAgreementAccepted}
+                                />
+                            </Col>
+                            <Col md="auto">
+                                <Button
+                                    variant="success"
+                                    className="mr-1"
+                                    disabled={!allFieldsFilled()}
+                                >
+                                    Submit
+                                </Button>
+                            </Col>
+                        </Row>
                     </Card.Body>
                 </Card>
             </Form>

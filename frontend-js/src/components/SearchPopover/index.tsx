@@ -42,8 +42,8 @@ function SimpleSearchPopover<Item extends Identifiable>(props: {
 
     const popover = (
         <Popover id="benchmarkSelect" style={{ maxWidth: '576px', width: 'auto' }}>
-            <Popover.Title as="h3">Benchmark Search</Popover.Title>
-            <Popover.Content>
+            <Popover.Header as="h3">Benchmark Search</Popover.Header>
+            <Popover.Body>
                 <SearchForm setSearchString={setSearchString} />
                 <div style={{ position: 'relative' }}>
                     {items.isLoading && (
@@ -91,7 +91,7 @@ function SimpleSearchPopover<Item extends Identifiable>(props: {
                         )}
                     </Col>
                 </Row>
-            </Popover.Content>
+            </Popover.Body>
         </Popover>
     );
 

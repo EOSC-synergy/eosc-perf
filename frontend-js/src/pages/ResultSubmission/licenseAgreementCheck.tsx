@@ -7,7 +7,7 @@ export function LicenseAgreementCheck(props: {
 }) {
     return (
         <Form.Check
-            type="checkbox"
+            type="switch"
             label="I have read and accept the license agreement"
             checked={props.licenseAgreementAccepted}
             onChange={(e) => props.setLicenseAgreementAccepted(!props.licenseAgreementAccepted)}

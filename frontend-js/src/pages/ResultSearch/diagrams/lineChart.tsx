@@ -154,6 +154,7 @@ function LineChart(props: { results: Result[]; benchmark?: Benchmark }) {
                 </option>
             </Form.Control>
             <Form.Check
+                type="switch"
                 label="Group values by site (only in linear & logarithmic mode)"
                 onChange={(e) => setGrouping(e.target.checked)}
             />

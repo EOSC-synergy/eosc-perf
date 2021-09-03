@@ -38,7 +38,7 @@ function ReportView(props: { report: Report; refetch: () => void }) {
                     {/*<small>{report.uploader}</small>*/}
                     <small>
                         <Badge
-                            variant={
+                            bg={
                                 props.report.verdict
                                     ? 'success'
                                     : props.report.verdict === null

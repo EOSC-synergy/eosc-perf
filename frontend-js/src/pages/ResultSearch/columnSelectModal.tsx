@@ -62,11 +62,9 @@ export function ColumnSelectModal(props: {
                                 aria-label="New Column"
                                 onChange={(e) => setNewColumn(e.target.value)}
                             />
-                            <InputGroup.Append>
-                                <Button variant="outline-success" onClick={AddColumn}>
-                                    +
-                                </Button>
-                            </InputGroup.Append>
+                            <Button variant="outline-success" onClick={AddColumn}>
+                                +
+                            </Button>
                         </InputGroup>
                     </Col>
                 </Row>

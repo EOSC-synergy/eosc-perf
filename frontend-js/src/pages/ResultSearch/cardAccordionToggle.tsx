@@ -1,6 +1,6 @@
 import React, { ReactNode, useState } from 'react';
-import { useAccordionToggle } from 'react-bootstrap';
 import { DropdownArrow } from './dropdownArrow';
+import { useAccordionButton } from 'react-bootstrap';
 
 /**
  * Custom accordion toggle to not provide special highlighting and be similar to old look
@@ -9,7 +9,7 @@ import { DropdownArrow } from './dropdownArrow';
  */
 export function CardAccordionToggle(props: { children: ReactNode; eventKey: string }) {
     const [toggled, setToggled] = useState(true);
-    const decoratedOnClick = useAccordionToggle(props.eventKey, () => {
+    const decoratedOnClick = useAccordionButton(props.eventKey, () => {
         setToggled(!toggled);
     });
 
