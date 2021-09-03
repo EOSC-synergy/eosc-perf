@@ -213,7 +213,10 @@ function ResultSearch(props: { initialBenchmark: string; location: { search: str
                                 suggestions={suggestedFields}
                             />
                         )}
-                        {results.isError && 'No results found! :('}
+                        {results.isSuccess && results.data!.data.total == 0 && (
+                            <div className="text-muted m-2">No results found! :(</div>
+                        )}
+                        {results.isError && 'Error while loading results'}
                         {results.isLoading && <LoadingOverlay />}
                     </div>
                     {/* fuck flexbox & CSS spacing */}
