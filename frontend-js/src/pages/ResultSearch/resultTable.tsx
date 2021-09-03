@@ -90,7 +90,8 @@ export function ResultTable(props: { results: Result[]; ops: ResultOps; suggesti
             <ColumnSelectModal
                 show={showColumnSelection}
                 closeModal={() => setShowColumnSelection(false)}
-                columns={[] /* TODO */}
+                columns={customColumns}
+                setColumns={setCustomColumns}
             />
         </>
     );
