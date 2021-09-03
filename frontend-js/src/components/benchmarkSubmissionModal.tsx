@@ -180,7 +180,7 @@ export function BenchmarkSubmissionModal(props: { show: boolean; onHide: () => v
                     autohide
                 >
                     <Toast.Header>
-                        <strong className="mr-auto">eosc-perf</strong>
+                        <strong className="me-auto">eosc-perf</strong>
                     </Toast.Header>
                     <Toast.Body>Submission successful.</Toast.Body>
                 </Toast>

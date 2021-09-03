@@ -73,7 +73,7 @@ function ResultSubmission(props: { token: string }) {
                             <Col md="auto">
                                 <Button
                                     variant="success"
-                                    className="mr-1"
+                                    className="me-1"
                                     disabled={!allFieldsFilled()}
                                 >
                                     Submit

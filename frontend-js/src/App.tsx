@@ -52,13 +52,13 @@ function NavHeader(props: { setCurrentTab: (tab: string) => void }) {
     return (
         <header>
             <Navbar bg="dark" expand="lg" variant="dark">
-                <Navbar.Brand href={modules.BenchmarkSearch.path}>
+                <Navbar.Brand href={modules.BenchmarkSearch.path} className="ms-2">
                     {/* TODO: properly link svg react-style */}
                     <img src="/images/eosc-perf-logo.svg" height="40" alt="EOSC-Performance" />
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="mr-auto">
+                    <Nav className="me-auto">
                         <NavDropdown title="Search" id="base-search-dropdown">
                             <LinkTo
                                 reference={modules.BenchmarkSearch}
