@@ -1,4 +1,3 @@
-import BenchmarkSearch from './BenchmarkSearch';
 import ResultSearch from './ResultSearch';
 import ResultSubmission from './ResultSubmission';
 import BenchmarkSubmission from './BenchmarkSubmission';
@@ -13,7 +12,6 @@ export default {
         ResultSubmission,
         BenchmarkSubmission,
         CodeGuidelines,
-        BenchmarkSearch,
         PrivacyPolicyModule,
         ReportViewModule,
         SiteEditorModule,
@@ -22,7 +20,6 @@ export default {
     ResultSubmission,
     BenchmarkSubmission,
     CodeGuidelines,
-    BenchmarkSearch,
     PrivacyPolicyModule,
     ReportViewModule,
     SiteEditorModule,

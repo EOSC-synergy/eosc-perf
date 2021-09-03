@@ -278,7 +278,7 @@ const ResultSearchModule = {
     path: '/result-search',
     element: ResultSearch,
     name: 'ResultSearch',
-    dropdownName: 'Results',
+    dropdownName: 'Search',
 };
 
 export default ResultSearchModule;

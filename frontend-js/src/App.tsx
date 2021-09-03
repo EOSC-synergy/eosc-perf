@@ -52,23 +52,18 @@ function NavHeader(props: { setCurrentTab: (tab: string) => void }) {
     return (
         <header>
             <Navbar bg="dark" expand="lg" variant="dark">
-                <Navbar.Brand href={modules.BenchmarkSearch.path} className="ms-2">
+                <Navbar.Brand href={modules.ResultSearch.path} className="ms-2">
                     {/* TODO: properly link svg react-style */}
                     <img src="/images/eosc-perf-logo.svg" height="40" alt="EOSC-Performance" />
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <NavDropdown title="Search" id="base-search-dropdown">
-                            <LinkTo
-                                reference={modules.BenchmarkSearch}
-                                setCurrentTab={props.setCurrentTab}
-                            />
-                            <LinkTo
-                                reference={modules.ResultSearch}
-                                setCurrentTab={props.setCurrentTab}
-                            />
-                        </NavDropdown>
+                        <LinkTo
+                            reference={modules.ResultSearch}
+                            setCurrentTab={props.setCurrentTab}
+                            className="nav-link"
+                        />
                         <NavDropdown title="Submit" id="base-submit-dropdown">
                             <LinkTo
                                 reference={modules.ResultSubmission}
@@ -140,7 +135,7 @@ function App() {
                     <div className="App-content">
                         <Switch>
                             <Route exact path="/">
-                                <Redirect to={modules.BenchmarkSearch.path} />
+                                <Redirect to={modules.ResultSearch.path} />
                             </Route>
                             {modules.all.map((module) => (
                                 <Route
