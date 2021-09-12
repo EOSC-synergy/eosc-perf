@@ -21,7 +21,7 @@ import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { emptyUser, UserContext, UserInfo } from 'userContext';
 
-import logo from './images/eosc-perf-logo.svg';
+import logo from './assets/images/eosc-perf-logo.svg';
 
 const queryClient = new QueryClient();
 
