@@ -129,7 +129,9 @@ def upload_result_submit():
             pass
 
         if len(custom_site_flavor) > 0:
-            flavor = custom_site_flavor
+            flavor = facade.get_site_flavor_by_name(custom_site_name, custom_site_flavor).get_uuid()
+        else:
+            flavor = facade.get_site_flavor_by_name(custom_site_name, "unknown").get_uuid()
 
         site_id = custom_site_name
     else:
