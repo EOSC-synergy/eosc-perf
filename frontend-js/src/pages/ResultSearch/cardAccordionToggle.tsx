@@ -1,5 +1,5 @@
 import React, { ReactNode, useState } from 'react';
-import { useAccordionButton } from 'react-bootstrap';
+import { Col, Row, useAccordionButton } from 'react-bootstrap';
 import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
 
 /**
@@ -15,8 +15,10 @@ export function CardAccordionToggle(props: { children: ReactNode; eventKey: stri
 
     return (
         <div role="button" onClick={decoratedOnClick}>
-            {props.children}
-            {(toggled && <ChevronUp />) || <ChevronDown />}
+            <Row>
+                <Col>{props.children}</Col>
+                <Col md="auto">{(toggled && <ChevronUp />) || <ChevronDown />}</Col>
+            </Row>
         </div>
     );
 }
