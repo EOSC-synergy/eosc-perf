@@ -1,6 +1,6 @@
 import React, { ReactNode, useState } from 'react';
-import { DropdownArrow } from './dropdownArrow';
 import { useAccordionButton } from 'react-bootstrap';
+import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
 
 /**
  * Custom accordion toggle to not provide special highlighting and be similar to old look
@@ -16,7 +16,7 @@ export function CardAccordionToggle(props: { children: ReactNode; eventKey: stri
     return (
         <div role="button" onClick={decoratedOnClick}>
             {props.children}
-            <DropdownArrow toggled={toggled} />
+            {(toggled && <ChevronUp />) || <ChevronDown />}
         </div>
     );
 }
