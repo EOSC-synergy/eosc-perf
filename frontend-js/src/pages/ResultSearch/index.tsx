@@ -250,7 +250,7 @@ function ResultSearch() {
                     </Col>
                 </Row>
                 <Card className="my-2">
-                    <div style={{ display: 'relative' }}>
+                    <div>
                         {results.isSuccess && results.data!.data.total > 0 && (
                             <ResultTable
                                 results={results.data!.data.items!}
@@ -268,7 +268,7 @@ function ResultSearch() {
                     {results.isSuccess && (
                         <div className="m-2 d-flex">
                             <div
-                                className="d-flex justify-content-start"
+                                className="justify-content-start"
                                 style={{ flex: 1, marginRight: 'auto' }}
                             >
                                 <ResultsPerPageSelection
@@ -286,17 +286,12 @@ function ResultSearch() {
                                 <Button
                                     variant="primary"
                                     onClick={() => {}}
-                                    className="m-2"
+                                    className="me-1"
                                     disabled
                                 >
                                     Invert Selection
                                 </Button>
-                                <Button
-                                    variant="primary"
-                                    onClick={() => {}}
-                                    className="m-2"
-                                    disabled
-                                >
+                                <Button variant="primary" onClick={() => {}} disabled>
                                     Select All
                                 </Button>
                             </div>

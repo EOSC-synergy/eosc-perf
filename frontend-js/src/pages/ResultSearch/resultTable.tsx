@@ -28,7 +28,7 @@ export function ResultTable(props: { results: Result[]; ops: ResultOps; suggesti
 
     return (
         <>
-            <Table>
+            <Table className="mb-0">
                 <thead>
                     <tr>
                         {/* checkbox has no label */}

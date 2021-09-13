@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
+import { Col, Form, Row } from 'react-bootstrap';
 
 export function ResultsPerPageSelection(props: {
     onChange: (resultsPerPage: number) => void;
@@ -7,20 +8,22 @@ export function ResultsPerPageSelection(props: {
     const options = [10, 15, 20, 50, 100];
 
     return (
-        <div className="form-inline m-1">
-            <label htmlFor="results_on_page">Results on page:</label>
-            <select
-                id="results_on_page"
-                className={'custom-select'}
-                onChange={(e) => props.onChange(parseInt(e.target.value))}
-                value={props.currentSelection}
-            >
-                {options.map((n: number) => (
-                    <option value={n.toString()} key={n.toString()}>
-                        {n.toString()}
-                    </option>
-                ))}
-            </select>
-        </div>
+        <Form.Group as={Row}>
+            <Form.Label column>Results per page:</Form.Label>
+            <Col>
+                <Form.Select
+                    onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                        props.onChange(parseInt(e.target.value))
+                    }
+                    value={props.currentSelection}
+                >
+                    {options.map((n: number) => (
+                        <option value={n.toString()} key={n.toString()}>
+                            {n.toString()}
+                        </option>
+                    ))}
+                </Form.Select>
+            </Col>
+        </Form.Group>
     );
 }
