@@ -217,12 +217,24 @@ function ResultSearch() {
                                                 </ListGroup.Item>
                                             ))}
                                         </ListGroup>
-                                        <Button variant="success" onClick={addFilter}>
-                                            Add filter
-                                        </Button>
-                                        <Button onClick={() => results.refetch()}>
-                                            Apply filters
-                                        </Button>
+                                        <div className="d-flex">
+                                            <div
+                                                className="justify-content-start"
+                                                style={{ flex: 1, marginRight: 'auto' }}
+                                            >
+                                                <Button variant="success" onClick={addFilter}>
+                                                    Add filter
+                                                </Button>
+                                            </div>
+                                            <div
+                                                className="d-flex justify-content-end"
+                                                style={{ flex: 1, marginLeft: 'auto' }}
+                                            >
+                                                <Button onClick={() => results.refetch()}>
+                                                    Apply filters
+                                                </Button>
+                                            </div>
+                                        </div>
                                     </Card.Body>
                                 </Accordion.Collapse>
                             </Card>
