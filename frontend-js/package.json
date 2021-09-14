@@ -35,12 +35,6 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -56,6 +50,10 @@
   "devDependencies": {
     "@types/react-highlight": "^0.12.3",
     "@types/uuid": "^8.3.1",
+    "@typescript-eslint/eslint-plugin": "^4.31.1",
+    "@typescript-eslint/parser": "^4.31.1",
+    "eslint": "^7.32.0",
+    "eslint-plugin-react": "^7.25.1",
     "openapi-typescript-codegen": "^0.9.3",
     "prettier": "^2.3.1"
   }
