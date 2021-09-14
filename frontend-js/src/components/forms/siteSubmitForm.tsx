@@ -100,7 +100,8 @@ export function SiteSubmitForm(props: {
                         isInvalid={!isNameValid()}
                     />
                 </Form.Group>
-                <Form.Group>
+
+                <Form.Group className="mt-3">
                     <Form.Label>Address</Form.Label>
                     <Form.Control
                         placeholder="https://www.scc.kit.edu/"
@@ -108,17 +109,21 @@ export function SiteSubmitForm(props: {
                         isInvalid={!isAddressValid()}
                     />
                 </Form.Group>
-                <Form.Label>Description (optional):</Form.Label>
-                <Form.Control
-                    placeholder="Add a description here."
-                    onChange={(e) => setDescription(e.target.value)}
-                    as="textarea"
-                />
+
+                <Form.Group className="mt-3">
+                    <Form.Label>Description (optional):</Form.Label>
+                    <Form.Control
+                        placeholder="Add a description here."
+                        onChange={(e) => setDescription(e.target.value)}
+                        as="textarea"
+                    />
+                </Form.Group>
+
                 <Button
                     variant="success"
                     onClick={onSubmit}
                     disabled={!isFormValid()}
-                    className="my-1"
+                    className="mt-1"
                 >
                     Submit
                 </Button>

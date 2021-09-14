@@ -116,47 +116,56 @@ export function BenchmarkSubmitForm(props: {
                 <Alert variant="danger">{'Error: ' + errorMessage}</Alert>
             )}
             <Form>
-                <Form.Label htmlFor="benchmark">Benchmark:</Form.Label>
-                <InputGroup>
-                    <Form.Control
-                        placeholder="user/image"
-                        onChange={(e) => setDockerName(e.target.value)}
-                        isInvalid={!isDockerNameValid()}
-                        aria-label="Docker image name including username"
-                        id="benchmark"
-                    />
-                    <InputGroup.Text>:</InputGroup.Text>
-                    <Form.Control
-                        placeholder="tag"
-                        onChange={(e) => setDockerTag(e.target.value)}
-                        isInvalid={!isDockerTagValid()}
-                        aria-label="Tag or version of the docker image to use"
-                    />
-                </InputGroup>
+                <Form.Group className="mb-3">
+                    <Form.Label htmlFor="benchmark">Benchmark:</Form.Label>
+                    <InputGroup>
+                        <Form.Control
+                            placeholder="user/image"
+                            onChange={(e) => setDockerName(e.target.value)}
+                            isInvalid={!isDockerNameValid()}
+                            aria-label="Docker image name including username"
+                            id="benchmark"
+                        />
+                        <InputGroup.Text>:</InputGroup.Text>
+                        <Form.Control
+                            placeholder="tag"
+                            onChange={(e) => setDockerTag(e.target.value)}
+                            isInvalid={!isDockerTagValid()}
+                            aria-label="Tag or version of the docker image to use"
+                        />
+                    </InputGroup>
+                </Form.Group>
 
-                <Form.Label htmlFor="description">Benchmark description (optional):</Form.Label>
-                <Form.Control
-                    id="description"
-                    placeholder="Enter a description of the new benchmark here."
-                    onChange={(e) => setDescription(e.target.value)}
-                    as="textarea"
-                />
-                <Form.Label htmlFor="template">
-                    Benchmark result JSON template (optional, {/* TODO: react-router-hash-link */}
-                    <a href={pages.CodeGuidelinesModule.path + '#json'}>example here</a>):
-                </Form.Label>
-                <Form.Control
-                    id="template"
-                    placeholder='{ "required_arg": 5, "!notable_argument": 10 }'
-                    onChange={(e) => setTemplate(e.target.value)}
-                    as="textarea"
-                    isInvalid={!isTemplateValid()}
-                />
+                <Form.Group className="mb-3">
+                    <Form.Label htmlFor="description">Benchmark description (optional):</Form.Label>
+                    <Form.Control
+                        id="description"
+                        placeholder="Enter a description of the new benchmark here."
+                        onChange={(e) => setDescription(e.target.value)}
+                        as="textarea"
+                    />
+                </Form.Group>
+
+                <Form.Group>
+                    <Form.Label htmlFor="template">
+                        Benchmark result JSON template (optional,{' '}
+                        {/* TODO: react-router-hash-link */}
+                        <a href={pages.CodeGuidelinesModule.path + '#json'}>example here</a>):
+                    </Form.Label>
+                    <Form.Control
+                        id="template"
+                        placeholder='{ "required_arg": 5, "!notable_argument": 10 }'
+                        onChange={(e) => setTemplate(e.target.value)}
+                        as="textarea"
+                        isInvalid={!isTemplateValid()}
+                    />
+                </Form.Group>
+
                 <Button
                     variant="success"
                     onClick={onSubmit}
                     disabled={!isFormValid()}
-                    className="my-1"
+                    className="mt-1"
                 >
                     Submit
                 </Button>

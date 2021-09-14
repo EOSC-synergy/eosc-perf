@@ -23,7 +23,7 @@ export function TagSelection(props: {
 
     return (
         <>
-            <Form.Group>
+            <Form.Group className="mb-3">
                 <Form.Label>Select tags:</Form.Label>
                 <div className="scrollable-dropdown">
                     <ListGroup>

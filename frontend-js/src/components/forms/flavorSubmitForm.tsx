@@ -89,7 +89,7 @@ export function FlavorSubmitForm(props: {
                 <Alert variant="danger">{'Error: ' + errorMessage}</Alert>
             )}
             <Form>
-                <Form.Group>
+                <Form.Group className="mb-3">
                     <Form.Label>Name:</Form.Label>
                     <Form.Control
                         placeholder="standard-medium"
@@ -97,17 +97,21 @@ export function FlavorSubmitForm(props: {
                         isInvalid={!isNameValid()}
                     />
                 </Form.Group>
-                <Form.Label>Description (optional):</Form.Label>
-                <Form.Control
-                    placeholder="Add a description here."
-                    onChange={(e) => setDescription(e.target.value)}
-                    as="textarea"
-                />
+
+                <Form.Group>
+                    <Form.Label>Description (optional):</Form.Label>
+                    <Form.Control
+                        placeholder="Add a description here."
+                        onChange={(e) => setDescription(e.target.value)}
+                        as="textarea"
+                    />
+                </Form.Group>
+
                 <Button
                     variant="success"
                     onClick={onSubmit}
                     disabled={!isFormValid()}
-                    className="my-1"
+                    className="mt-1"
                 >
                     Submit
                 </Button>

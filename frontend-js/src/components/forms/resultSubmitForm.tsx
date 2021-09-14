@@ -6,7 +6,7 @@ import {
     SiteSearchPopover,
 } from 'components/searchPopover';
 import { TagSelection } from 'pages/ResultSubmission/tagSelection';
-import { Alert, Button, Col, Form, Row } from 'react-bootstrap';
+import { Alert, Button, Col, Form, FormGroup, Row } from 'react-bootstrap';
 import { LicenseAgreementCheck } from 'pages/ResultSubmission/licenseAgreementCheck';
 import { UserContext } from 'userContext';
 import { useMutation } from 'react-query';
@@ -112,13 +112,25 @@ export function ResultSubmitForm(props: {
                 <Alert variant="danger">{'Error: ' + errorMessage}</Alert>
             )}
             <Form>
-                <JsonSelection fileContents={fileContents} setFileContents={setFileContents} />
-                <BenchmarkSearchPopover benchmark={benchmark} setBenchmark={setBenchmark} />
-                <SiteSearchPopover site={site} setSite={setSite} />
-                <FlavorSearchPopover site={site} flavor={flavor} setFlavor={setFlavor} />
-                <TagSelection tags={tags} addTag={addTag} removeTag={removeTag} />
+                <Form.Group className="mb-3">
+                    <JsonSelection fileContents={fileContents} setFileContents={setFileContents} />{' '}
+                </Form.Group>
 
-                <Row className="mt-2 align-items-center">
+                <Form.Group className="mb-3">
+                    <BenchmarkSearchPopover benchmark={benchmark} setBenchmark={setBenchmark} />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                    <SiteSearchPopover site={site} setSite={setSite} />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                    <FlavorSearchPopover site={site} flavor={flavor} setFlavor={setFlavor} />
+                </Form.Group>
+
+                <Form.Group className="mb-1">
+                    <TagSelection tags={tags} addTag={addTag} removeTag={removeTag} />
+                </Form.Group>
+
+                <Row className="align-items-center">
                     <Col>
                         <LicenseAgreementCheck
                             licenseAgreementAccepted={licenseAgreementAccepted}
