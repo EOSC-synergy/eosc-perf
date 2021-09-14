@@ -69,8 +69,15 @@ export function ResultSubmitForm(props: { onSuccess: () => void; onError: () => 
         }
     );
 
-    function allFieldsFilled() {
-        return benchmark && site && flavor && licenseAgreementAccepted && fileContents;
+    function isFormValid() {
+        return (
+            benchmark &&
+            site &&
+            flavor &&
+            licenseAgreementAccepted &&
+            fileContents &&
+            auth.token !== undefined
+        );
     }
 
     function addTag(tag: string) {
@@ -85,7 +92,7 @@ export function ResultSubmitForm(props: { onSuccess: () => void; onError: () => 
     }
 
     function submit() {
-        if (!allFieldsFilled()) {
+        if (!isFormValid()) {
             return;
         }
         mutate(JSON.parse(fileContents!));
@@ -114,7 +121,7 @@ export function ResultSubmitForm(props: { onSuccess: () => void; onError: () => 
                         />
                     </Col>
                     <Col md="auto">
-                        <Button variant="success" disabled={!allFieldsFilled()} onClick={submit}>
+                        <Button variant="success" disabled={!isFormValid()} onClick={submit}>
                             Submit
                         </Button>
                     </Col>
