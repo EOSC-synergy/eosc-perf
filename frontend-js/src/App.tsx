@@ -54,30 +54,34 @@ function NavHeader(props: { setCurrentTab: (tab: string) => void }) {
     return (
         <header>
             <Navbar bg="dark" expand="lg" variant="dark">
-                <Navbar.Brand href={modules.ResultSearch.path} className="ms-2">
+                <Navbar.Brand href={modules.ResultSearchModule.path} className="ms-2">
                     <img src={logo} height="40" alt="EOSC-Performance" />
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
                         <LinkTo
-                            reference={modules.ResultSearch}
+                            reference={modules.ResultSearchModule}
                             setCurrentTab={props.setCurrentTab}
                             className="nav-link"
                         />
                         <NavDropdown title="Submit" id="base-submit-dropdown">
                             <LinkTo
-                                reference={modules.ResultSubmission}
+                                reference={modules.ResultSubmissionModule}
                                 setCurrentTab={props.setCurrentTab}
                             />
                             <LinkTo
-                                reference={modules.BenchmarkSubmission}
+                                reference={modules.BenchmarkSubmissionModule}
+                                setCurrentTab={props.setCurrentTab}
+                            />
+                            <LinkTo
+                                reference={modules.SiteSubmissionModule}
                                 setCurrentTab={props.setCurrentTab}
                             />
                         </NavDropdown>
                         <NavDropdown title="Instructions" id="base-instructions-dropdown">
                             <LinkTo
-                                reference={modules.CodeGuidelines}
+                                reference={modules.CodeGuidelinesModule}
                                 setCurrentTab={props.setCurrentTab}
                             />
                         </NavDropdown>
@@ -132,7 +136,7 @@ function App() {
                     <div className="App-content">
                         <Switch>
                             <Route exact path="/">
-                                <Redirect to={modules.ResultSearch.path} />
+                                <Redirect to={modules.ResultSearchModule.path} />
                             </Route>
                             {modules.all.map((module) => (
                                 <Route

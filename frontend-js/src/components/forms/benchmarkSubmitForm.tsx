@@ -143,7 +143,7 @@ export function BenchmarkSubmitForm(props: { onSuccess: () => void; onError: () 
                 />
                 <Form.Label htmlFor="template">
                     Benchmark result JSON template (optional, {/* TODO: react-router-hash-link */}
-                    <a href={pages.CodeGuidelines.path + '#json'}>example here</a>):
+                    <a href={pages.CodeGuidelinesModule.path + '#json'}>example here</a>):
                 </Form.Label>
                 <Form.Control
                     name="template"
