@@ -8,9 +8,9 @@ import { getHelper } from 'api-helpers';
 import { Paginated, Paginator } from '../pagination';
 import { Button, Col, OverlayTrigger, Popover, Row } from 'react-bootstrap';
 import { Identifiable } from '../identifiable';
-import { BenchmarkSubmissionModal } from '../benchmarkSubmissionModal';
-import { SiteSubmissionModal } from '../siteSubmissionModal';
-import { FlavorSubmissionModal } from '../flavorSubmissionModal';
+import { BenchmarkSubmissionModal } from 'components/submissionModals/benchmarkSubmissionModal';
+import { SiteSubmissionModal } from 'components/submissionModals/siteSubmissionModal';
+import { FlavorSubmissionModal } from 'components/submissionModals/flavorSubmissionModal';
 
 function SimpleSearchPopover<Item extends Identifiable>(props: {
     queryKeyPrefix: string;
