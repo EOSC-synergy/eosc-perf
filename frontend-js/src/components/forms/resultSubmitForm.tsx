@@ -4,7 +4,7 @@ import {
     BenchmarkSearchPopover,
     FlavorSearchPopover,
     SiteSearchPopover,
-} from 'components/SearchPopover';
+} from 'components/searchPopover';
 import { TagSelection } from 'pages/ResultSubmission/tagSelection';
 import { Alert, Button, Col, Form, Row } from 'react-bootstrap';
 import { LicenseAgreementCheck } from 'pages/ResultSubmission/licenseAgreementCheck';

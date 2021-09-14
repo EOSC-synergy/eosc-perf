@@ -15,7 +15,7 @@ import {
     BenchmarkSearchPopover,
     FlavorSearchPopover,
     SiteSearchPopover,
-} from 'components/SearchPopover';
+} from 'components/searchPopover';
 import { PageBase } from '../pageBase';
 import { v4 as uuidv4 } from 'uuid';
 import { Filter } from 'pages/ResultSearch/filter';
