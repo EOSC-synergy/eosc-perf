@@ -1,98 +1,36 @@
-import React, { useContext, useState } from 'react';
-import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
-import { TagSelection } from './tagSelection';
-import { LicenseAgreementCheck } from './licenseAgreementCheck';
-import { Benchmark, Flavor, Result, Site } from 'api';
-import {
-    BenchmarkSearchPopover,
-    FlavorSearchPopover,
-    SiteSearchPopover,
-} from 'components/SearchPopover';
-import { useMutation } from 'react-query';
-import { postHelper } from 'api-helpers';
-import { UserContext } from 'userContext';
-import { JsonSelection } from './jsonSelection';
+import React, { useState } from 'react';
+import { Card, Container, Toast } from 'react-bootstrap';
+import { Result } from 'api';
 import { PageBase } from '../pageBase';
+import { ResultSubmitForm } from 'components/forms/resultSubmitForm';
 
 function ResultSubmission() {
-    const auth = useContext(UserContext);
-
-    const { mutate } = useMutation((data: Result) =>
-        postHelper<Result>('/results', data, auth.token, {
-            // TODO: execution datetime?
-            execution_datetime: '2020-05-21T10:31:00.000Z',
-            benchmark_id: benchmark?.id,
-            site_id: site?.id,
-            flavor_id: flavor?.id,
-            // TODO: tags
-        })
-    );
-
-    function allFieldsFilled() {
-        return benchmark && site && flavor && licenseAgreementAccepted && fileContents;
-    }
-
-    const [benchmark, setBenchmark] = useState<Benchmark | undefined>(undefined);
-    const [site, setSite] = useState<Site | undefined>(undefined);
-    const [flavor, setFlavor] = useState<Flavor | undefined>(undefined);
-    const [tags, setTags] = useState<string[]>([]);
-    const [licenseAgreementAccepted, setLicenseAgreementAccepted] = useState(false);
-    const [fileContents, setFileContents] = useState<string | undefined>(undefined);
-
-    function addTag(tag: string) {
-        if (tags.includes(tag)) {
-            return;
-        }
-        setTags([...tags, ...[tag]]);
-    }
-
-    function removeTag(tag: string) {
-        setTags(tags.filter((v) => v !== tag));
-    }
-
-    function submit() {
-        if (!allFieldsFilled()) {
-            return;
-        }
-        mutate(JSON.parse(fileContents!));
-    }
+    const [showSuccessToast, setShowSuccessToast] = useState(false);
 
     return (
         <Container>
-            <input type="hidden" id="license" value="{{ license }}" />
             <h1>Upload Result</h1>
-            <Form>
-                <Card>
-                    <Card.Body>
-                        <JsonSelection
-                            fileContents={fileContents}
-                            setFileContents={setFileContents}
-                        />
-                        <BenchmarkSearchPopover benchmark={benchmark} setBenchmark={setBenchmark} />
-                        <SiteSearchPopover site={site} setSite={setSite} />
-                        <FlavorSearchPopover site={site} flavor={flavor} setFlavor={setFlavor} />
-                        <TagSelection tags={tags} addTag={addTag} removeTag={removeTag} />
-                        <Row>
-                            <Col>
-                                <LicenseAgreementCheck
-                                    licenseAgreementAccepted={licenseAgreementAccepted}
-                                    setLicenseAgreementAccepted={setLicenseAgreementAccepted}
-                                />
-                            </Col>
-                            <Col md="auto">
-                                <Button
-                                    variant="success"
-                                    className="me-1"
-                                    disabled={!allFieldsFilled()}
-                                    onClick={submit}
-                                >
-                                    Submit
-                                </Button>
-                            </Col>
-                        </Row>
-                    </Card.Body>
-                </Card>
-            </Form>
+            <Card>
+                <Card.Body>
+                    <ResultSubmitForm
+                        onSuccess={() => {
+                            setShowSuccessToast(true);
+                        }}
+                        onError={() => {}}
+                    />
+                </Card.Body>
+            </Card>
+            <Toast
+                show={showSuccessToast}
+                onClose={() => setShowSuccessToast(false)}
+                delay={5000}
+                autohide
+            >
+                <Toast.Header>
+                    <strong className="me-auto">eosc-perf</strong>
+                </Toast.Header>
+                <Toast.Body>Submission successful.</Toast.Body>
+            </Toast>
         </Container>
     );
 }
