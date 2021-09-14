@@ -12,7 +12,7 @@ export function DiagramView(props: {
 
     return (
         <>
-            <Form.Group>
+            <Form.Group className="mb-1">
                 <Form.Label htmlFor="diagramDropdown">Select diagram type:</Form.Label>{' '}
                 {props.benchmark === undefined && (
                     <Badge bg="danger">Please select a benchmark first</Badge>

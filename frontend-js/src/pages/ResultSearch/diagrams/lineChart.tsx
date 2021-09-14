@@ -139,31 +139,36 @@ function LineChart(props: { results: Result[]; benchmark?: Benchmark }): ReactEl
 
     return (
         <>
-            <Form.Select
-                onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                    setMode(parseInt(e.target.value));
-                }}
-            >
-                <option value={Mode.Simple}>Simple</option>
-                <option value={Mode.Linear} disabled={!properties.columnsAreNumbers}>
-                    Linear
-                </option>
-                <option value={Mode.Logarithmic} disabled={!properties.columnsAreNumbers}>
-                    Logarithmic
-                </option>
-            </Form.Select>
-            <Form.Check
-                type="switch"
-                label="Group values by site (only in linear & logarithmic mode)"
-                onChange={(e) => setGrouping(e.target.checked)}
-                disabled={mode !== Mode.Linear && mode !== Mode.Logarithmic}
-            />
+            <Form.Group className="mb-1">
+                <Form.Select
+                    onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                        setMode(parseInt(e.target.value));
+                    }}
+                >
+                    <option value={Mode.Simple}>Simple</option>
+                    <option value={Mode.Linear} disabled={!properties.columnsAreNumbers}>
+                        Linear
+                    </option>
+                    <option value={Mode.Logarithmic} disabled={!properties.columnsAreNumbers}>
+                        Logarithmic
+                    </option>
+                </Form.Select>
+            </Form.Group>
+            <Form.Group className="mb-1">
+                <Form.Check
+                    type="switch"
+                    label="Group values by site (only in linear & logarithmic mode)"
+                    onChange={(e) => setGrouping(e.target.checked)}
+                    disabled={mode !== Mode.Linear && mode !== Mode.Logarithmic}
+                />
+            </Form.Group>
             <Form>
-                <Form.Group>
+                <Form.Group className="mb-1">
                     <Form.Control
                         placeholder="x axis"
                         onChange={(e) => setXAxis(e.target.value)}
                         value="machine.cpu.count"
+                        className="mb-1"
                     />
                     <Form.Control
                         placeholder="y axis"
