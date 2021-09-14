@@ -1,11 +1,11 @@
+import React, { ReactElement } from 'react';
 import { Report, Result } from 'api';
 import { useQuery } from 'react-query';
 import { getHelper } from 'api-helpers';
 import { LoadingOverlay } from 'components/loadingOverlay';
-import React from 'react';
 
-export function ResultReportInfo(props: { report: Report; refetch: () => void }) {
-    let { isLoading, data, isSuccess } = useQuery(
+export function ResultReportInfo(props: { report: Report; refetch: () => void }): ReactElement {
+    const { isLoading, data, isSuccess } = useQuery(
         'result-' + props.report.resource_id,
         () => {
             return getHelper<Result>('/results/' + props.report.resource_id);

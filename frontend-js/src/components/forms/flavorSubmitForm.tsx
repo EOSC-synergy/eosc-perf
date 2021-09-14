@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import { UserContext } from 'userContext';
 import { useMutation } from 'react-query';
 import { FlavorCreate, Site } from 'api';
@@ -13,7 +13,7 @@ export function FlavorSubmitForm(props: {
     site: Site;
     onSuccess: () => void;
     onError: () => void;
-}) {
+}): ReactElement {
     const auth = useContext(UserContext);
 
     const [name, setName] = useState('');
@@ -24,7 +24,7 @@ export function FlavorSubmitForm(props: {
     // clear error message on load
     useEffect(() => {
         setErrorMessage(undefined);
-    });
+    }, []);
 
     const { mutate } = useMutation(
         (data: FlavorCreate) =>

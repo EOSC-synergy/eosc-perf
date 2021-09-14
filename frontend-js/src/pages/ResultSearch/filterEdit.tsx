@@ -1,12 +1,12 @@
+import React, { ChangeEvent, ReactElement, useState } from 'react';
 import { Filter } from 'pages/ResultSearch/filter';
-import React, { ChangeEvent, useState } from 'react';
 import { CloseButton, Col, Form, InputGroup, Row } from 'react-bootstrap';
 
 export function FilterEdit(props: {
     filter: Filter;
     setFilter: (id: string, key: string, mode: string, value: string) => void;
     deleteFilter: (id: string) => void;
-}) {
+}): ReactElement {
     const [key, setKey] = useState(props.filter.key);
     const [mode, setMode] = useState(props.filter.mode);
     const [value, setValue] = useState(props.filter.value);

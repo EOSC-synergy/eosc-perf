@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Accordion, Button, Card, Col, Container, ListGroup, Row } from 'react-bootstrap';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { useQuery } from 'react-query';
@@ -21,12 +21,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { Filter } from 'pages/ResultSearch/filter';
 import { FilterEdit } from 'pages/ResultSearch/filterEdit';
 
-const hash = require('object-hash');
+import hash from 'object-hash';
 
-function determineNotableKeys(benchmark: Benchmark) {
+function determineNotableKeys(benchmark: Benchmark): string[] {
     // TODO: new json schema format parsing
     return [];
 
+    /*
     function recurser(key: string, obj: any): string[] {
         if (key.startsWith('!') && typeof obj[key] !== 'object') {
             return [key.slice(1)];
@@ -44,22 +45,10 @@ function determineNotableKeys(benchmark: Benchmark) {
     return Object.entries(benchmark.json_schema)
         .map(([k, v], _, __) => recurser(k, v))
         .reduce((acc: string[], arr: string[]) => [...acc, ...arr]);
+        */
 }
 
-function ResultSearch() {
-    /*const benchmarkId = qs.parse(props.location.search.slice(1)).benchmark || '';
-
-    const benchmark = useQuery(
-        'benchmark-' + benchmarkId,
-        () => {
-            return getHelper<Benchmark>('/benchmarks/' + benchmarkId);
-        },
-        {
-            enabled: benchmarkId.length > 0,
-            refetchOnWindowFocus: false, // do not spam queries
-        }
-    );*/
-
+function ResultSearch(): ReactElement {
     const [benchmark, setBenchmark] = useState<Benchmark | undefined>(undefined);
     const [site, setSite] = useState<Site | undefined>(undefined);
     const [flavor, setFlavor] = useState<Flavor | undefined>(undefined);
@@ -158,8 +147,11 @@ function ResultSearch() {
                 flavor_id: site !== undefined ? flavor?.id : undefined,
                 filters: [...filters.keys()]
                     .map((k) => {
-                        const filter = filters.get(k)!;
-                        if (filter.key.length == 0 || filter.value.length == 0) {
+                        const filter = filters.get(k);
+                        if (filter === undefined) {
+                            return undefined;
+                        }
+                        if (filter.key.length === 0 || filter.value.length === 0) {
                             return undefined;
                         }
                         return filter.key + ' ' + filter.mode + ' ' + filter.value;
@@ -174,12 +166,6 @@ function ResultSearch() {
             refetchOnWindowFocus: false, // do not spam queries
         }
     );
-
-    function search() {
-        // TODO
-    }
-
-    // separate accordions to allow each element to be open simultaneously
 
     return (
         <>
@@ -263,14 +249,14 @@ function ResultSearch() {
                 </Row>
                 <Card className="my-2">
                     <div>
-                        {results.isSuccess && results.data!.data.total > 0 && (
+                        {results.isSuccess && results.data.data.total > 0 && (
                             <ResultTable
-                                results={results.data!.data.items!}
+                                results={results.data.data.items!}
                                 ops={resultOps}
                                 suggestions={suggestedFields}
                             />
                         )}
-                        {results.isSuccess && results.data!.data.total == 0 && (
+                        {results.isSuccess && results.data.data.total === 0 && (
                             <div className="text-muted m-2">No results found! :(</div>
                         )}
                         {results.isError && 'Error while loading results'}
@@ -289,7 +275,7 @@ function ResultSearch() {
                                 />
                             </div>
                             <div className="d-flex justify-content-center" style={{ flex: 1 }}>
-                                <Paginator pagination={results.data!.data} navigateTo={setPage} />
+                                <Paginator pagination={results.data.data} navigateTo={setPage} />
                             </div>
                             <div
                                 className="d-flex justify-content-end"
@@ -297,13 +283,13 @@ function ResultSearch() {
                             >
                                 <Button
                                     variant="primary"
-                                    onClick={() => {}}
+                                    onClick={() => undefined}
                                     className="me-1"
                                     disabled
                                 >
                                     Invert Selection
                                 </Button>
-                                <Button variant="primary" onClick={() => {}} disabled>
+                                <Button variant="primary" onClick={() => undefined} disabled>
                                     Select All
                                 </Button>
                             </div>

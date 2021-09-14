@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import {
     Button,
     CloseButton,
@@ -15,7 +15,7 @@ export function ColumnSelectModal(props: {
     closeModal: () => void;
     columns: string[];
     setColumns: (columns: string[]) => void;
-}) {
+}): ReactElement {
     const [newColumn, setNewColumn] = useState('');
     const [activeColumns, setActiveColumns] = useState(props.columns);
 

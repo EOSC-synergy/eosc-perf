@@ -1,6 +1,8 @@
 import LineChartMeta from './lineChart';
 
-export default {
+const ChartTypes = {
     all: [LineChartMeta],
     LineChartMeta,
 };
+
+export default ChartTypes;

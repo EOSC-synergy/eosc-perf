@@ -1,10 +1,10 @@
+import React, { ReactElement } from 'react';
 import { Form } from 'react-bootstrap';
-import React from 'react';
 
 export function LicenseAgreementCheck(props: {
     licenseAgreementAccepted: boolean;
     setLicenseAgreementAccepted: (accepted: boolean) => void;
-}) {
+}): ReactElement {
     return (
         <Form.Check
             type="switch"

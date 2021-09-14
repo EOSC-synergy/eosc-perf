@@ -1,8 +1,8 @@
 import { Site } from 'api';
 import { Form } from 'react-bootstrap';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
-export function SiteId(props: { site: Site }) {
+export function SiteId(props: { site: Site }): ReactElement {
     return (
         <Form.Group>
             <Form.Label>Identifier:</Form.Label>
@@ -11,7 +11,7 @@ export function SiteId(props: { site: Site }) {
     );
 }
 
-export function SiteName(props: { site: Site; update: (newName: string) => void }) {
+export function SiteName(props: { site: Site; update: (newName: string) => void }): ReactElement {
     const [name, setName] = useState(props.site.name);
 
     return (
@@ -29,7 +29,10 @@ export function SiteName(props: { site: Site; update: (newName: string) => void 
     );
 }
 
-export function Description(props: { site: Site; update: (description: string) => void }) {
+export function Description(props: {
+    site: Site;
+    update: (description: string) => void;
+}): ReactElement {
     const [description, setDescription] = useState(props.site.description);
 
     return (
@@ -47,7 +50,7 @@ export function Description(props: { site: Site; update: (description: string) =
     );
 }
 
-export function NetAddress(props: { site: Site; update: (address: string) => void }) {
+export function NetAddress(props: { site: Site; update: (address: string) => void }): ReactElement {
     const [address, setAddress] = useState(props.site.address);
 
     return (

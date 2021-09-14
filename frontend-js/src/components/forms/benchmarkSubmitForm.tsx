@@ -1,6 +1,6 @@
 import { Alert, Button, Form } from 'react-bootstrap';
 import pages from 'pages';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import { UserContext } from 'userContext';
 import { useMutation } from 'react-query';
 import { BenchmarkCreate } from 'api';
@@ -10,7 +10,10 @@ import axios, { AxiosError } from 'axios';
 // TODO: do not show invalid on first load
 //       use default state valid?
 
-export function BenchmarkSubmitForm(props: { onSuccess: () => void; onError: () => void }) {
+export function BenchmarkSubmitForm(props: {
+    onSuccess: () => void;
+    onError: () => void;
+}): ReactElement {
     const auth = useContext(UserContext);
 
     const [dockerName, setDockerName] = useState('');
@@ -23,7 +26,7 @@ export function BenchmarkSubmitForm(props: { onSuccess: () => void; onError: () 
     // clear error message on load
     useEffect(() => {
         setErrorMessage(undefined);
-    });
+    }, []);
 
     const { mutate } = useMutation(
         (data: BenchmarkCreate) => postHelper<BenchmarkCreate>('/benchmarks', data, auth.token),
@@ -62,7 +65,7 @@ export function BenchmarkSubmitForm(props: { onSuccess: () => void; onError: () 
 
     function isDockerNameValid() {
         // match pattern (...)/(...)
-        return dockerName.match(/[^\/]+\/[^\/]+/);
+        return dockerName.match(/[^/]+\/[^/]+/);
     }
 
     function isDockerTagValid() {
@@ -70,7 +73,7 @@ export function BenchmarkSubmitForm(props: { onSuccess: () => void; onError: () 
     }
 
     function isTemplateValid() {
-        if (template.length == 0) {
+        if (template.length === 0) {
             return true;
         }
         try {

@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactElement, ReactNode, useState } from 'react';
 import { useQuery } from 'react-query';
 import { SearchForm } from './searchForm';
 import { Table } from './table';
@@ -21,13 +21,13 @@ function SimpleSearchPopover<Item extends Identifiable>(props: {
     display: (item?: Item) => ReactNode;
     displayRow: (item: Item) => ReactNode;
     submitNew?: () => void;
-}) {
+}): ReactElement {
     //const [resultsPerPage, setResultsPerPage] = useState(10);
     const [page, setPage] = useState(0);
 
     const [searchString, setSearchString] = useState<string>('');
 
-    let items = useQuery(
+    const items = useQuery(
         props.queryKeyPrefix + '-page-' + page + '-' + searchString,
         () => {
             return getHelper<Paginated<Item>>(props.endpoint, undefined, {
@@ -49,7 +49,7 @@ function SimpleSearchPopover<Item extends Identifiable>(props: {
                     {items.isLoading && (
                         <>
                             <Table<Item>
-                                setItem={() => {}}
+                                setItem={() => undefined}
                                 items={[]}
                                 tableName={props.tableName}
                                 displayItem={() => {
@@ -62,7 +62,7 @@ function SimpleSearchPopover<Item extends Identifiable>(props: {
                     {items.isError && <div>Failed to fetch benchmarks!</div>}
                     {items.isSuccess && (
                         <Table<Item>
-                            items={items.data.data.items!}
+                            items={items.data.data.items}
                             setItem={props.setItem}
                             tableName={props.tableName}
                             displayItem={props.displayRow}
@@ -114,7 +114,7 @@ function SimpleSearchPopover<Item extends Identifiable>(props: {
 export function BenchmarkSearchPopover(props: {
     benchmark?: Benchmark;
     setBenchmark: (benchmark?: Benchmark) => void;
-}) {
+}): ReactElement {
     function display(benchmark?: Benchmark) {
         return (
             <>
@@ -136,8 +136,8 @@ export function BenchmarkSearchPopover(props: {
         return (
             <>
                 <a
-                    title={benchmark.docker_image + ':' + benchmark.docker_tag}
                     href="#"
+                    title={benchmark.docker_image + ':' + benchmark.docker_tag}
                     onClick={() => props.setBenchmark(benchmark)}
                 >
                     {benchmark.docker_image + ':' + benchmark.docker_tag}
@@ -172,7 +172,10 @@ export function BenchmarkSearchPopover(props: {
     );
 }
 
-export function SiteSearchPopover(props: { site?: Site; setSite: (site?: Site) => void }) {
+export function SiteSearchPopover(props: {
+    site?: Site;
+    setSite: (site?: Site) => void;
+}): ReactElement {
     function display(site?: Site) {
         return (
             <>
@@ -225,7 +228,7 @@ export function FlavorSearchPopover(props: {
     site?: Site;
     flavor?: Flavor;
     setFlavor: (flavor?: Flavor) => void;
-}) {
+}): ReactElement {
     // TODO: reset value if site is undefined?
 
     function display(flavor?: Flavor) {

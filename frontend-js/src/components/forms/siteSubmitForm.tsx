@@ -1,5 +1,5 @@
 import { Alert, Button, Form } from 'react-bootstrap';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import { UserContext } from 'userContext';
 import { useMutation } from 'react-query';
 import { SiteCreate } from 'api';
@@ -9,7 +9,10 @@ import axios, { AxiosError } from 'axios';
 // TODO: do not show invalid on first load
 //       use default state valid?
 
-export function SiteSubmitForm(props: { onSuccess: () => void; onError: () => void }) {
+export function SiteSubmitForm(props: {
+    onSuccess: () => void;
+    onError: () => void;
+}): ReactElement {
     const auth = useContext(UserContext);
 
     const [name, setName] = useState('');
@@ -20,7 +23,7 @@ export function SiteSubmitForm(props: { onSuccess: () => void; onError: () => vo
 
     useEffect(() => {
         setErrorMessage(undefined);
-    });
+    }, []);
 
     const { mutate } = useMutation(
         (data: SiteCreate) => postHelper<SiteCreate>('/sites', data, auth.token),

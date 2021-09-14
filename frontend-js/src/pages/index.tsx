@@ -7,7 +7,7 @@ import ReportViewModule from './ReportView';
 import SiteEditorModule from './SiteEditor';
 import SiteSubmissionModule from 'pages/SiteSubmit';
 
-export default {
+const modules = {
     all: [
         ResultSearchModule,
         ResultSubmissionModule,
@@ -27,3 +27,5 @@ export default {
     ReportViewModule,
     SiteEditorModule,
 };
+
+export default modules;

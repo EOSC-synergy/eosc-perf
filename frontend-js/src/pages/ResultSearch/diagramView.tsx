@@ -1,13 +1,13 @@
+import React, { ReactElement, useState } from 'react';
 import { Benchmark, Result } from 'api';
 import { Badge, Form } from 'react-bootstrap';
 import charts from './diagrams';
-import React, { useState } from 'react';
 
 export function DiagramView(props: {
     results: Result[];
     benchmark?: Benchmark;
     suggestions?: string[];
-}) {
+}): ReactElement {
     const [selectedDiagram, setSelectedDiagram] = useState(charts.LineChartMeta.id);
 
     return (
@@ -35,8 +35,7 @@ export function DiagramView(props: {
             {props.benchmark !== undefined &&
                 charts.all.map((chart) => (
                     <div key={chart.id}>
-                        {chart.id == selectedDiagram && (
-                            // @ts-ignore
+                        {chart.id === selectedDiagram && (
                             <chart.element results={props.results} benchmark={props.benchmark} />
                         )}
                     </div>

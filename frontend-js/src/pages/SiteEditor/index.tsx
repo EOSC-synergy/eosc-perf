@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Col, Container, ListGroup, Row } from 'react-bootstrap';
 import { Site, Sites } from 'api';
 import { useQuery } from 'react-query';
@@ -7,7 +7,7 @@ import { LoadingOverlay } from 'components/loadingOverlay';
 import { SiteEditor } from './siteEditor';
 import { PageBase } from '../pageBase';
 
-function SiteSelect(props: { site: Site; setActiveSite: (site: Site) => void }) {
+function SiteSelect(props: { site: Site; setActiveSite: (site: Site) => void }): ReactElement {
     return (
         <ListGroup.Item onClick={() => props.setActiveSite(props.site)} action>
             <div className="d-flex w-100 justify-content-between">
@@ -20,8 +20,8 @@ function SiteSelect(props: { site: Site; setActiveSite: (site: Site) => void }) 
     );
 }
 
-function SitesEditor() {
-    let { isLoading, data, isSuccess, refetch } = useQuery(
+function SitesEditor(): ReactElement {
+    const { isLoading, data, isSuccess, refetch } = useQuery(
         'sites',
         () => {
             return getHelper<Sites>('/sites');
@@ -41,10 +41,10 @@ function SitesEditor() {
                 <Col>
                     <ListGroup>
                         {isLoading && <LoadingOverlay />}
-                        {isSuccess && data && data.data.items!.length === 0 && 'No sites found!'}
+                        {isSuccess && data && data.data.items.length === 0 && 'No sites found!'}
                         {isSuccess &&
                             data &&
-                            data.data.items!.map((site: Site) => (
+                            data.data.items.map((site: Site) => (
                                 <SiteSelect
                                     site={site}
                                     setActiveSite={setActiveSite}

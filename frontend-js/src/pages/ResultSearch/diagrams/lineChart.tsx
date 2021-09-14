@@ -1,5 +1,5 @@
+import React, { ReactElement, useState } from 'react';
 import { Benchmark, Result } from 'api';
-import { useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { Line } from 'react-chartjs-2';
 import { fetchSubkey, getSubkeyName } from '../jsonKeyHelpers';
@@ -30,7 +30,7 @@ const BACKGROUND_COLORS = [
     'rgba(201, 203, 207, 0.5)', // gray
 ];
 
-function LineChart(props: { results: Result[]; benchmark?: Benchmark }) {
+function LineChart(props: { results: Result[]; benchmark?: Benchmark }): ReactElement {
     const [mode, setMode] = useState(Mode.Simple);
 
     const [grouping, setGrouping] = useState(false);
@@ -44,7 +44,7 @@ function LineChart(props: { results: Result[]; benchmark?: Benchmark }) {
 
         // test if sites are the same all across and if it's an integer range
         if (results.length !== 0) {
-            let siteId = results[0].site.id;
+            const siteId = results[0].site.id;
             for (const result of results) {
                 sameSite = sameSite && result.site.id === siteId;
                 columnsAreNumbers =
@@ -64,30 +64,30 @@ function LineChart(props: { results: Result[]; benchmark?: Benchmark }) {
     const properties = analyzeData(props.results);
 
     function processInput(results: Result[]) {
-        let labels = []; // labels below graph
-        let dataPoints = [];
+        const labels = []; // labels below graph
+        const dataPoints = [];
 
         // grouping-by-site behaviour
         // Linear and Logarithmic mode require numeric x / column values
-        if (grouping && (mode === Mode.Linear || mode == Mode.Logarithmic)) {
-            let datasets = new Map<
+        if (grouping && (mode === Mode.Linear || mode === Mode.Logarithmic)) {
+            const datasets = new Map<
                 string,
                 { siteName: string; data: { x: number; y: number }[] }
             >();
-            let labelSet = new Set<number>();
+            const labelSet = new Set<number>();
 
             for (const result of results) {
-                const x = fetchSubkey(result.json, xAxis);
-                const y = fetchSubkey(result.json, yAxis);
+                const x = fetchSubkey(result.json, xAxis) as number;
+                const y = fetchSubkey(result.json, yAxis) as number;
                 if (datasets.get(result.site.id) === undefined) {
                     datasets.set(result.site.id, { siteName: result.site.name, data: [] });
                 }
-                datasets.get(result.site.id)!.data.push({ x, y });
+                datasets.get(result.site.id)?.data.push({ x, y });
                 dataPoints.push({ x, y });
                 labelSet.add(x);
             }
 
-            let data: Object[] = [];
+            const data: Record<string, unknown>[] = [];
             let colorIndex = 0;
             datasets.forEach(function (dataMeta, site, _) {
                 data.push({
@@ -109,8 +109,8 @@ function LineChart(props: { results: Result[]; benchmark?: Benchmark }) {
 
         // default behaviour
         for (const result of results) {
-            const x = fetchSubkey(result.json, xAxis);
-            const y = fetchSubkey(result.json, yAxis);
+            const x = fetchSubkey(result.json, xAxis) as number | string;
+            const y = fetchSubkey(result.json, yAxis) as number | string;
             if (x === undefined || y === undefined) {
                 continue;
             }
@@ -211,7 +211,14 @@ function LineChart(props: { results: Result[]; benchmark?: Benchmark }) {
                         },
                         tooltips: {
                             callbacks: {
-                                title: function (tooltipItem: any, _: any) {
+                                title: function (
+                                    tooltipItem: {
+                                        label: string;
+                                        xLabel: string;
+                                        yLabel: string;
+                                    }[],
+                                    _: unknown
+                                ) {
                                     return (
                                         tooltipItem[0].yLabel + ' (' + tooltipItem[0].label + ')'
                                     );

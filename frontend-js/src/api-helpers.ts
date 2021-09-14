@@ -1,13 +1,17 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { API_BASE_PATH } from 'configuration';
 
-const qs = require('qs');
+import qs from 'qs';
 
 const defaultOptions = {
-    paramsSerializer: (params: any) => qs.stringify(params, { arrayFormat: 'repeat' }),
+    paramsSerializer: (params: unknown) => qs.stringify(params, { arrayFormat: 'repeat' }),
 };
 
-export function getHelper<Type>(endpoint: string, accessToken?: string, params?: object) {
+export function getHelper<Type>(
+    endpoint: string,
+    accessToken?: string,
+    params?: Record<string, unknown>
+): Promise<AxiosResponse<Type>> {
     return axios.get<Type>(API_BASE_PATH + endpoint, {
         headers:
             accessToken !== undefined
@@ -24,8 +28,8 @@ export function postHelper<Type>(
     endpoint: string,
     data: Type,
     accessToken?: string,
-    params?: object
-) {
+    params?: Record<string, unknown>
+): Promise<AxiosResponse<Type>> {
     return axios.post<Type>(API_BASE_PATH + endpoint, data, {
         headers:
             accessToken !== undefined
@@ -42,8 +46,8 @@ export function putHelper<Type>(
     endpoint: string,
     data: Type,
     accessToken?: string,
-    params?: object
-) {
+    params?: Record<string, unknown>
+): Promise<AxiosResponse<Type>> {
     return axios.put<Type>(API_BASE_PATH + endpoint, data, {
         headers:
             accessToken !== undefined
@@ -58,8 +62,12 @@ export function putHelper<Type>(
 
 export function patchHelper<Type>(
     endpoint: string,
-    { data, accessToken, params }: { data?: Type; accessToken?: string; params?: object }
-) {
+    {
+        data,
+        accessToken,
+        params,
+    }: { data?: Type; accessToken?: string; params?: Record<string, unknown> }
+): Promise<AxiosResponse<Type>> {
     return axios.patch<Type>(API_BASE_PATH + endpoint, data, {
         headers:
             accessToken !== undefined

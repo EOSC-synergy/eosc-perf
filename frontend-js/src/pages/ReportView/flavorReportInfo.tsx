@@ -1,12 +1,12 @@
 import { Flavor, Report } from 'api';
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { useQuery } from 'react-query';
 import { getHelper } from 'api-helpers';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { ReportInteraction } from './reportInteraction';
 
-export function FlavorReportInfo(props: { report: Report; refetch: () => void }) {
-    let { isLoading, data, isSuccess } = useQuery(
+export function FlavorReportInfo(props: { report: Report; refetch: () => void }): ReactElement {
+    const { isLoading, data, isSuccess } = useQuery(
         'flavor-' + props.report.resource_id,
         () => {
             return getHelper<Flavor>('/flavors/' + props.report.resource_id);

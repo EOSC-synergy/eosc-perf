@@ -4,10 +4,10 @@ import { getHelper } from 'api-helpers';
 import { Card } from 'react-bootstrap';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { FlavorEditor } from './flavorEditor';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-export function FlavorList(props: { site: Site }) {
-    let { isLoading, data, isSuccess, refetch } = useQuery(
+export function FlavorList(props: { site: Site }): ReactElement {
+    const { isLoading, data, isSuccess, refetch } = useQuery(
         'flavors-' + props.site.id,
         () => {
             return getHelper<Flavors>('/sites/' + props.site.id + '/flavors');
@@ -23,7 +23,7 @@ export function FlavorList(props: { site: Site }) {
             {isLoading && <LoadingOverlay />}
             {isSuccess &&
                 data &&
-                data.data.items!.map((flavor: Flavor) => (
+                data.data.items.map((flavor: Flavor) => (
                     <FlavorEditor flavor={flavor} key={flavor.id} refetch={refetch} />
                 ))}
         </Card>

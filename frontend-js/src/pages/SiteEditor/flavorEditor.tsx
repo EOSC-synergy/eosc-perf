@@ -1,12 +1,12 @@
 import { Flavor, FlavorEdit } from 'api';
-import React, { useContext, useState } from 'react';
+import React, { ReactElement, useContext, useState } from 'react';
 import { useMutation } from 'react-query';
 import { putHelper } from 'api-helpers';
 import { Button, Form, InputGroup, ListGroup } from 'react-bootstrap';
 import { Check, PencilSquare } from 'react-bootstrap-icons';
 import { UserContext } from 'userContext';
 
-export function FlavorEditor(props: { flavor: Flavor; refetch: () => void }) {
+export function FlavorEditor(props: { flavor: Flavor; refetch: () => void }): ReactElement {
     const [name, setName] = useState(props.flavor.name);
     const [desc, setDesc] = useState(props.flavor.description);
 

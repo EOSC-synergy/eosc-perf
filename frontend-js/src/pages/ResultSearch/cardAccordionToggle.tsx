@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactElement, ReactNode, useState } from 'react';
 import { Col, Row, useAccordionButton } from 'react-bootstrap';
 import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
 
@@ -7,7 +7,10 @@ import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
  * @param props { children: JSX child elements, eventKey: accordion event key}
  * @constructor
  */
-export function CardAccordionToggle(props: { children: ReactNode; eventKey: string }) {
+export function CardAccordionToggle(props: {
+    children: ReactNode;
+    eventKey: string;
+}): ReactElement {
     const [toggled, setToggled] = useState(true);
     const decoratedOnClick = useAccordionButton(props.eventKey, () => {
         setToggled(!toggled);

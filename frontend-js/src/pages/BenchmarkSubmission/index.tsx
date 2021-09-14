@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Card, Container, Toast } from 'react-bootstrap';
 import { PageBase } from '../pageBase';
 import { BenchmarkSubmitForm } from 'components/forms/benchmarkSubmitForm';
 
-function BenchmarkSubmission() {
+function BenchmarkSubmission(): ReactElement {
     const [showSuccessToast, setShowSuccessToast] = useState(false);
 
     return (
@@ -15,7 +15,7 @@ function BenchmarkSubmission() {
                         onSuccess={() => {
                             setShowSuccessToast(true);
                         }}
-                        onError={() => {}}
+                        onError={() => undefined}
                     />
                 </Card.Body>
             </Card>

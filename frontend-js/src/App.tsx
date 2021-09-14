@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { ReactElement, useContext, useState } from 'react';
 import './App.css';
 
 // styling
@@ -141,10 +141,7 @@ function App() {
                             {modules.all.map((module) => (
                                 <Route
                                     path={module.path}
-                                    render={(props) => (
-                                        // @ts-ignore
-                                        <module.element {...props} />
-                                    )}
+                                    render={(props) => <module.element />}
                                     key={module.name}
                                 />
                             ))}
@@ -179,12 +176,14 @@ function App() {
     );
 }
 
-const hof = (WrappedComponent: any) => {
-    return (props: {}) => (
-        <QueryClientProvider client={queryClient}>
-            <WrappedComponent {...props} />
-            <ReactQueryDevtools />
-        </QueryClientProvider>
-    );
+const hof = (WrappedComponent: (props: Record<string, unknown>) => ReactElement) => {
+    return function WrappedApp(props: Record<string, unknown>) {
+        return (
+            <QueryClientProvider client={queryClient}>
+                <WrappedComponent {...props} />
+                <ReactQueryDevtools />
+            </QueryClientProvider>
+        );
+    };
 };
 export default hof(App);

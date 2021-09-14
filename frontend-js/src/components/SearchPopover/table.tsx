@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 import { Identifiable } from '../identifiable';
 
 export function Table<Item extends Identifiable>(props: {
@@ -6,7 +6,7 @@ export function Table<Item extends Identifiable>(props: {
     setItem: (benchmark: Item) => void;
     tableName: string;
     displayItem: (item: Item) => ReactNode;
-}) {
+}): ReactElement {
     return (
         <table style={{ width: '100%' }}>
             <thead>

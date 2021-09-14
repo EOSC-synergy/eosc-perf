@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { Container } from 'react-bootstrap';
 import template from './benchmark_template.json';
 import { PageBase } from '../pageBase';
 
-function CodeGuidelines() {
+function CodeGuidelines(): ReactElement {
     return (
         <Container>
             <h1>Code Guidelines</h1>

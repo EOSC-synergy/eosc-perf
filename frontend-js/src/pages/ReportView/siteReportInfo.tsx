@@ -1,12 +1,12 @@
+import React, { ReactElement } from 'react';
 import { Report, Site } from 'api';
 import { useQuery } from 'react-query';
 import { getHelper } from 'api-helpers';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { ReportInteraction } from './reportInteraction';
-import React from 'react';
 
-export function SiteReportInfo(props: { report: Report; refetch: () => void }) {
-    let { isLoading, data, isSuccess } = useQuery(
+export function SiteReportInfo(props: { report: Report; refetch: () => void }): ReactElement {
+    const { isLoading, data, isSuccess } = useQuery(
         'site-' + props.report.resource_id,
         () => {
             return getHelper<Site>('/sites/' + props.report.resource_id);

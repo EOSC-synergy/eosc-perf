@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { ReactElement, useContext, useState } from 'react';
 import { Badge, Container, ListGroup } from 'react-bootstrap';
 import { useQuery } from 'react-query';
 import { getHelper } from 'api-helpers';
@@ -13,7 +13,7 @@ import { UserContext } from 'userContext';
 import { PageBase } from '../pageBase';
 
 function ReportView(props: { report: Report; refetch: () => void }) {
-    let [opened, setOpened] = useState(false);
+    const [opened, setOpened] = useState(false);
 
     // TODO: pagination
 
@@ -59,22 +59,22 @@ function ReportView(props: { report: Report; refetch: () => void }) {
             {opened && (
                 <>
                     <hr />
-                    {props.report.resource_type == 'site' && <SiteReportInfo {...props} />}
-                    {props.report.resource_type == 'flavor' && <FlavorReportInfo {...props} />}
-                    {props.report.resource_type == 'benchmark' && (
+                    {props.report.resource_type === 'site' && <SiteReportInfo {...props} />}
+                    {props.report.resource_type === 'flavor' && <FlavorReportInfo {...props} />}
+                    {props.report.resource_type === 'benchmark' && (
                         <BenchmarkReportInfo {...props} />
                     )}
-                    {props.report.resource_type == 'result' && <ResultReportInfo {...props} />}
+                    {props.report.resource_type === 'result' && <ResultReportInfo {...props} />}
                 </>
             )}
         </ListGroup.Item>
     );
 }
 
-function ReportsView() {
+function ReportsView(): ReactElement {
     const auth = useContext(UserContext);
 
-    let { data, isSuccess, refetch } = useQuery(
+    const { data, isSuccess, refetch } = useQuery(
         'reports',
         () => {
             return getHelper<Reports>('/reports', auth.token, {});
@@ -91,7 +91,7 @@ function ReportsView() {
             <ListGroup>
                 {isSuccess &&
                     data &&
-                    data.data.items!.map((report) => (
+                    data.data.items.map((report) => (
                         <ReportView report={report} key={report.id} refetch={refetch} />
                     ))}
             </ListGroup>

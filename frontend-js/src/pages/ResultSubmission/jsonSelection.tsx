@@ -1,10 +1,10 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, ReactElement, useState } from 'react';
 import { Form, ProgressBar } from 'react-bootstrap';
 
 export function JsonSelection(props: {
     fileContents?: string;
     setFileContents: (file?: string) => void;
-}) {
+}): ReactElement {
     const [progress, setProgress] = useState(100.0);
 
     function loadFile(file?: File) {

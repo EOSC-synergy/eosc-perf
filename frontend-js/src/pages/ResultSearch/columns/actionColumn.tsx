@@ -1,11 +1,11 @@
+import React, { ReactElement, useContext } from 'react';
 import { Result } from 'api';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import { ResultOps } from '../resultOps';
 import { Envelope, Exclamation, Hash, Trash } from 'react-bootstrap-icons';
-import { useContext } from 'react';
 import { UserContext } from 'userContext';
 
-export function ActionColumn(props: { result: Result; ops: ResultOps }) {
+export function ActionColumn(props: { result: Result; ops: ResultOps }): ReactElement {
     // TODO: CSS: figure out why button group taller than it should be
 
     const auth = useContext(UserContext);
@@ -30,10 +30,18 @@ export function ActionColumn(props: { result: Result; ops: ResultOps }) {
             </Button>
             {auth.admin && (
                 <>
-                    <Button variant="secondary" onClick={() => {} /* TODO: mail button */} disabled>
+                    <Button
+                        variant="secondary"
+                        onClick={() => undefined /* TODO: mail button */}
+                        disabled
+                    >
                         <Envelope />
                     </Button>
-                    <Button variant="danger" onClick={() => {} /* TODO: delete button */} disabled>
+                    <Button
+                        variant="danger"
+                        onClick={() => undefined /* TODO: delete button */}
+                        disabled
+                    >
                         <Trash />
                     </Button>
                 </>

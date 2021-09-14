@@ -1,8 +1,8 @@
+import React, { ReactElement } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { Result } from 'api';
 import Highlight from 'react-highlight';
 import './railscasts.css';
-import React from 'react';
 
 /*
     TODO: ask if the x in the corner is necessary (also for column select)
@@ -15,7 +15,7 @@ export function JsonPreviewModal(props: {
     result: Result | null;
     show: boolean;
     closeModal: () => void;
-}) {
+}): ReactElement {
     return (
         <Modal show={props.show} scrollable={true} size="lg" onHide={props.closeModal}>
             <Modal.Header>

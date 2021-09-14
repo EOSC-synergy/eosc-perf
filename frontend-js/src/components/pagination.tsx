@@ -1,8 +1,9 @@
+import React, { ReactElement } from 'react';
+import { Pagination } from 'react-bootstrap';
+
 /**
  * Page navigation based on flask pagination
  */
-
-import { Pagination } from 'react-bootstrap';
 
 export interface Paginatable {
     // index of next page
@@ -28,12 +29,12 @@ export type Paginated<Type> = { items: Type[] } & Paginatable;
 export function Paginator(props: {
     pagination: Paginatable;
     navigateTo: (pageIndex: number) => void;
-}) {
+}): ReactElement {
     return (
         /* <nav aria-label="Page navigation" className={props.className}> */
         <Pagination className="align-items-center mb-0">
             <Pagination.First
-                disabled={props.pagination.pages !== 0 && props.pagination.page == 1}
+                disabled={props.pagination.pages !== 0 && props.pagination.page === 1}
                 onClick={() => props.navigateTo(1)}
             />
             <Pagination.Prev
@@ -43,7 +44,7 @@ export function Paginator(props: {
             {/* TODO: don't show all pages, only nearby 3-5? */}
             {[...Array(props.pagination.pages).keys()].map((n: number) => (
                 <Pagination.Item
-                    active={props.pagination.page == n + 1}
+                    active={props.pagination.page === n + 1}
                     onClick={() => props.navigateTo(n + 1)}
                     key={n + 1}
                 >
@@ -56,7 +57,7 @@ export function Paginator(props: {
             />
             <Pagination.Last
                 disabled={
-                    props.pagination.pages !== 0 && props.pagination.page == props.pagination.pages
+                    props.pagination.pages !== 0 && props.pagination.page === props.pagination.pages
                 }
                 onClick={() => props.navigateTo(props.pagination.pages)}
             />

@@ -1,5 +1,5 @@
+import React, { ReactElement, useContext, useState } from 'react';
 import { Report } from 'api';
-import React, { useContext, useState } from 'react';
 import { useMutation } from 'react-query';
 import { patchHelper } from 'api-helpers';
 import { Button } from 'react-bootstrap';
@@ -10,8 +10,8 @@ export function ReportInteraction(props: {
     refetch: () => void;
     approveText?: string;
     rejectText?: string;
-}) {
-    // keep last state so we can reenable one button if the other is pressed
+}): ReactElement {
+    // keep last state so we can re-enable one button if the other is pressed
     const [lastState, setLastState] = useState<boolean | undefined>(undefined);
 
     const auth = useContext(UserContext);

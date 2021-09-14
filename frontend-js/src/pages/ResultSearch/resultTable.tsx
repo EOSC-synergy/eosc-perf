@@ -1,3 +1,4 @@
+import React, { ReactElement, useState } from 'react';
 import { Table } from 'react-bootstrap';
 import { Result } from 'api';
 import {
@@ -9,13 +10,16 @@ import {
     SiteFlavorColumn,
     TagsColumn,
 } from './columns';
-import { useState } from 'react';
 import { ResultOps } from './resultOps';
 import { Pencil } from 'react-bootstrap-icons';
 import { ColumnSelectModal } from './columnSelectModal';
 import '../../actionable.css';
 
-export function ResultTable(props: { results: Result[]; ops: ResultOps; suggestions?: string[] }) {
+export function ResultTable(props: {
+    results: Result[];
+    ops: ResultOps;
+    suggestions?: string[];
+}): ReactElement {
     const [benchmarkColumnEnabled, setBenchmarkColumnEnabled] = useState(true);
     const [siteColumnEnabled, setSiteColumnEnabled] = useState(true);
     const [siteFlavorColumnEnabled, setSiteFlavorColumnEnabled] = useState(true);
@@ -42,7 +46,7 @@ export function ResultTable(props: { results: Result[]; ops: ResultOps; suggesti
                             <th key={column}>{column}</th>
                         ))}
                         <th>
-                            <a onClick={() => setShowColumnSelection(true)}>
+                            <a href="#" onClick={() => setShowColumnSelection(true)}>
                                 <Pencil className="actionable" />
                             </a>
                         </th>

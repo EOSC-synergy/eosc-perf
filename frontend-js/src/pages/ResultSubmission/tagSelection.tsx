@@ -1,15 +1,15 @@
+import React, { ReactElement, useState } from 'react';
 import { useQuery } from 'react-query';
 import { getHelper } from 'api-helpers';
 import { Tags } from 'api';
-import React, { useState } from 'react';
 import { Button, Form, InputGroup, ListGroup } from 'react-bootstrap';
 
 export function TagSelection(props: {
     tags: string[];
     addTag: (tag: string) => void;
     removeTag: (tag: string) => void;
-}) {
-    let tags = useQuery(
+}): ReactElement {
+    const tags = useQuery(
         'tags',
         () => {
             return getHelper<Tags>('/tags');
@@ -21,8 +21,6 @@ export function TagSelection(props: {
 
     const [customTagName, setCustomTagName] = useState('');
 
-    function addCustomTag() {}
-
     return (
         <>
             <Form.Group>
@@ -31,14 +29,14 @@ export function TagSelection(props: {
                     <ListGroup>
                         {/* TODO: make this look nicer? */}
                         {tags.isSuccess &&
-                            (tags.data.data.items!.length > 0 ? (
-                                tags.data.data.items!.map((t) =>
+                            (tags.data.data.items.length > 0 ? (
+                                tags.data.data.items.map((t) =>
                                     props.tags.includes(t.id) ? (
-                                        <ListGroup.Item onClick={() => props.removeTag(t.id!)}>
+                                        <ListGroup.Item onClick={() => props.removeTag(t.id)}>
                                             {t.name}
                                         </ListGroup.Item>
                                     ) : (
-                                        <ListGroup.Item onClick={() => props.addTag(t.id!)}>
+                                        <ListGroup.Item onClick={() => props.addTag(t.id)}>
                                             {t.name}
                                         </ListGroup.Item>
                                     )
@@ -59,8 +57,8 @@ export function TagSelection(props: {
                     />
                     <Button
                         variant="success"
-                        disabled={customTagName.length < 1}
-                        onClick={addCustomTag}
+                        disabled={true /*customTagName.length < 1*/}
+                        onClick={() => undefined}
                     >
                         Add Tag
                     </Button>

@@ -1,22 +1,19 @@
-import React, { useContext, useState } from 'react';
-import { Alert, Button, Form, Modal, Toast } from 'react-bootstrap';
-import { useMutation } from 'react-query';
-import { postHelper } from 'api-helpers';
-import { BenchmarkCreate } from 'api';
-import { UserContext } from 'userContext';
-import axios, { AxiosError } from 'axios';
-import pages from 'pages';
+import React, { ReactElement, useState } from 'react';
+import { Modal, Toast } from 'react-bootstrap';
 import { BenchmarkSubmitForm } from 'components/forms/benchmarkSubmitForm';
 
 // TODO: do not show invalid on first load
 //       use default state valid?
 
-export function BenchmarkSubmissionModal(props: { show: boolean; onHide: () => void }) {
+export function BenchmarkSubmissionModal(props: {
+    show: boolean;
+    onHide: () => void;
+}): ReactElement {
     const [showSuccessToast, setShowSuccessToast] = useState(false);
 
     return (
         <>
-            <Modal size="lg" show={props.show} onHide={props.onHide} onExited={() => {}}>
+            <Modal size="lg" show={props.show} onHide={props.onHide}>
                 <Modal.Header closeButton>Add Benchmark</Modal.Header>
                 <Modal.Body>
                     <BenchmarkSubmitForm
@@ -24,7 +21,7 @@ export function BenchmarkSubmissionModal(props: { show: boolean; onHide: () => v
                             props.onHide();
                             setShowSuccessToast(true);
                         }}
-                        onError={() => {}}
+                        onError={() => undefined}
                     />
                 </Modal.Body>
             </Modal>

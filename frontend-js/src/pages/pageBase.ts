@@ -1,6 +1,8 @@
+import { ReactElement } from 'react';
+
 export interface PageBase {
     path: string;
-    element: any;
+    element: () => ReactElement;
     name: string;
     displayName: string;
 }

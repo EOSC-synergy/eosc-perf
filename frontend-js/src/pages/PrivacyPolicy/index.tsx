@@ -1,7 +1,8 @@
+import React, { ReactElement } from 'react';
 import { Container } from 'react-bootstrap';
 import { PageBase } from '../pageBase';
 
-function PrivacyPolicy() {
+function PrivacyPolicy(): ReactElement {
     return (
         <Container>
             <h1>Privacy Policy</h1>

@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 
-export function SearchForm(props: { setSearchString: (params: string) => void }) {
+export function SearchForm(props: { setSearchString: (params: string) => void }): ReactElement {
     const [message, setMessage] = useState('');
 
     return (

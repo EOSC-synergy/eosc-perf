@@ -1,3 +1,4 @@
+import React, { ReactElement, useContext, useState } from 'react';
 import { JsonSelection } from 'pages/ResultSubmission/jsonSelection';
 import {
     BenchmarkSearchPopover,
@@ -5,16 +6,18 @@ import {
     SiteSearchPopover,
 } from 'components/SearchPopover';
 import { TagSelection } from 'pages/ResultSubmission/tagSelection';
-import { Alert, Button, Card, Col, Form, Row } from 'react-bootstrap';
+import { Alert, Button, Col, Form, Row } from 'react-bootstrap';
 import { LicenseAgreementCheck } from 'pages/ResultSubmission/licenseAgreementCheck';
-import React, { useContext, useState } from 'react';
 import { UserContext } from 'userContext';
 import { useMutation } from 'react-query';
 import { Benchmark, Flavor, Result, Site } from 'api';
 import { postHelper } from 'api-helpers';
 import axios, { AxiosError } from 'axios';
 
-export function ResultSubmitForm(props: { onSuccess: () => void; onError: () => void }) {
+export function ResultSubmitForm(props: {
+    onSuccess: () => void;
+    onError: () => void;
+}): ReactElement {
     const auth = useContext(UserContext);
 
     const [benchmark, setBenchmark] = useState<Benchmark | undefined>(undefined);
@@ -95,7 +98,9 @@ export function ResultSubmitForm(props: { onSuccess: () => void; onError: () => 
         if (!isFormValid()) {
             return;
         }
-        mutate(JSON.parse(fileContents!));
+        if (fileContents !== undefined) {
+            mutate(JSON.parse(fileContents));
+        }
     }
 
     return (

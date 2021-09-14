@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Card, Container, Toast } from 'react-bootstrap';
-import { Result } from 'api';
 import { PageBase } from '../pageBase';
 import { ResultSubmitForm } from 'components/forms/resultSubmitForm';
 
-function ResultSubmission() {
+function ResultSubmission(): ReactElement {
     const [showSuccessToast, setShowSuccessToast] = useState(false);
 
     return (
@@ -16,7 +15,7 @@ function ResultSubmission() {
                         onSuccess={() => {
                             setShowSuccessToast(true);
                         }}
-                        onError={() => {}}
+                        onError={() => undefined}
                     />
                 </Card.Body>
             </Card>

@@ -1,12 +1,12 @@
+import React, { ReactElement } from 'react';
 import { Benchmark, Report } from 'api';
 import { useQuery } from 'react-query';
 import { getHelper } from 'api-helpers';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { ReportInteraction } from './reportInteraction';
-import React from 'react';
 
-export function BenchmarkReportInfo(props: { report: Report; refetch: () => void }) {
-    let { isLoading, data, isSuccess } = useQuery(
+export function BenchmarkReportInfo(props: { report: Report; refetch: () => void }): ReactElement {
+    const { isLoading, data, isSuccess } = useQuery(
         'benchmark-' + props.report.resource_id,
         () => {
             return getHelper<Benchmark>('/benchmarks/' + props.report.resource_id);
