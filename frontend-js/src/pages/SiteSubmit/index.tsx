@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { Container, Toast } from 'react-bootstrap';
 import { PageBase } from '../pageBase';
-import { BenchmarkSubmitForm } from 'components/forms/benchmarkSubmitForm';
+import { SiteSubmitForm } from 'components/forms/siteSubmitForm';
 
-function BenchmarkSubmission() {
+function SiteSubmission() {
     const [showSuccessToast, setShowSuccessToast] = useState(false);
 
     return (
         <Container>
-            <h1>Add Benchmark</h1>
-            <BenchmarkSubmitForm
+            <h1>Add Site</h1>
+            <SiteSubmitForm
                 onSuccess={() => {
                     setShowSuccessToast(true);
                 }}
@@ -30,11 +30,11 @@ function BenchmarkSubmission() {
     );
 }
 
-const BenchmarkSubmissionModule: PageBase = {
-    path: '/benchmark-submission',
-    element: BenchmarkSubmission,
-    name: 'BenchmarkSubmission',
-    displayName: 'Benchmark',
+const SiteSubmissionModule: PageBase = {
+    path: '/site-submission',
+    element: SiteSubmission,
+    name: 'SiteSubmission',
+    displayName: 'Site',
 };
 
-export default BenchmarkSubmissionModule;
+export default SiteSubmissionModule;
