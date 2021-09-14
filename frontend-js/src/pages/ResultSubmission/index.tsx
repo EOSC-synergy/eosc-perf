@@ -10,7 +10,7 @@ function ResultSubmission() {
     return (
         <Container>
             <h1>Upload Result</h1>
-            <Card>
+            <Card className="mb-2">
                 <Card.Body>
                     <ResultSubmitForm
                         onSuccess={() => {

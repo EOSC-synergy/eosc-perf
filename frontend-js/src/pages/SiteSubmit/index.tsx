@@ -9,7 +9,7 @@ function SiteSubmission() {
     return (
         <Container>
             <h1>Add Site</h1>
-            <Card>
+            <Card className="mb-2">
                 <Card.Body>
                     <SiteSubmitForm
                         onSuccess={() => {

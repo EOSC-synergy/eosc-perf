@@ -9,7 +9,7 @@ function BenchmarkSubmission() {
     return (
         <Container>
             <h1>Add Benchmark</h1>
-            <Card>
+            <Card className="mb-2">
                 <Card.Body>
                     <BenchmarkSubmitForm
                         onSuccess={() => {
