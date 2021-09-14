@@ -96,7 +96,7 @@ function SimpleSearchPopover<Item extends Identifiable>(props: {
     );
 
     return (
-        <div className="m-1">
+        <div className="my-1">
             <Row>
                 <Col>{props.display(props.item)} </Col>
                 <Col md="auto">
