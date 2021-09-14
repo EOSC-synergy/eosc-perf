@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Toast } from 'react-bootstrap';
+import { Card, Container, Toast } from 'react-bootstrap';
 import { PageBase } from '../pageBase';
 import { SiteSubmitForm } from 'components/forms/siteSubmitForm';
 
@@ -9,12 +9,16 @@ function SiteSubmission() {
     return (
         <Container>
             <h1>Add Site</h1>
-            <SiteSubmitForm
-                onSuccess={() => {
-                    setShowSuccessToast(true);
-                }}
-                onError={() => {}}
-            />
+            <Card>
+                <Card.Body>
+                    <SiteSubmitForm
+                        onSuccess={() => {
+                            setShowSuccessToast(true);
+                        }}
+                        onError={() => {}}
+                    />
+                </Card.Body>
+            </Card>
             <Toast
                 show={showSuccessToast}
                 onClose={() => setShowSuccessToast(false)}

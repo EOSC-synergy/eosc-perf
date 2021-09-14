@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Toast } from 'react-bootstrap';
+import { Card, Container, Toast } from 'react-bootstrap';
 import { PageBase } from '../pageBase';
 import { BenchmarkSubmitForm } from 'components/forms/benchmarkSubmitForm';
 
@@ -9,12 +9,16 @@ function BenchmarkSubmission() {
     return (
         <Container>
             <h1>Add Benchmark</h1>
-            <BenchmarkSubmitForm
-                onSuccess={() => {
-                    setShowSuccessToast(true);
-                }}
-                onError={() => {}}
-            />
+            <Card>
+                <Card.Body>
+                    <BenchmarkSubmitForm
+                        onSuccess={() => {
+                            setShowSuccessToast(true);
+                        }}
+                        onError={() => {}}
+                    />
+                </Card.Body>
+            </Card>
             <Toast
                 show={showSuccessToast}
                 onClose={() => setShowSuccessToast(false)}
