@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ChangeEvent, ReactElement, useState } from 'react';
 import { Benchmark, Result } from 'api';
 import { Badge, Form } from 'react-bootstrap';
 import charts from './diagrams';
@@ -17,9 +17,8 @@ export function DiagramView(props: {
                 {props.benchmark === undefined && (
                     <Badge bg="danger">Please select a benchmark first</Badge>
                 )}
-                <Form.Control
-                    as="select"
-                    onChange={(e) => {
+                <Form.Select
+                    onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                         setSelectedDiagram(e.target.value);
                     }}
                     className="custom-select"
@@ -30,7 +29,7 @@ export function DiagramView(props: {
                             {chart.name}
                         </option>
                     ))}
-                </Form.Control>
+                </Form.Select>
             </Form.Group>
             {props.benchmark !== undefined &&
                 charts.all.map((chart) => (

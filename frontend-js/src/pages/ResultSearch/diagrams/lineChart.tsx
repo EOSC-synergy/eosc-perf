@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ChangeEvent, ReactElement, useState } from 'react';
 import { Benchmark, Result } from 'api';
 import { Form } from 'react-bootstrap';
 import { Line } from 'react-chartjs-2';
@@ -139,9 +139,8 @@ function LineChart(props: { results: Result[]; benchmark?: Benchmark }): ReactEl
 
     return (
         <>
-            <Form.Control
-                as="select"
-                onChange={(e) => {
+            <Form.Select
+                onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                     setMode(parseInt(e.target.value));
                 }}
             >
@@ -152,7 +151,7 @@ function LineChart(props: { results: Result[]; benchmark?: Benchmark }): ReactEl
                 <option value={Mode.Logarithmic} disabled={!properties.columnsAreNumbers}>
                     Logarithmic
                 </option>
-            </Form.Control>
+            </Form.Select>
             <Form.Check
                 type="switch"
                 label="Group values by site (only in linear & logarithmic mode)"
