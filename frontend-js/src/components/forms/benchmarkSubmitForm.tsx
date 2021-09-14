@@ -1,4 +1,4 @@
-import { Alert, Button, Form } from 'react-bootstrap';
+import { Alert, Button, Form, InputGroup } from 'react-bootstrap';
 import pages from 'pages';
 import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import { UserContext } from 'userContext';
@@ -116,29 +116,26 @@ export function BenchmarkSubmitForm(props: {
                 <Alert variant="danger">{'Error: ' + errorMessage}</Alert>
             )}
             <Form>
-                {/* TODO: side-by-side, with infix : */}
-                <Form.Group>
-                    <Form.Label htmlFor="docker_name">Docker image name:</Form.Label>
+                <Form.Label htmlFor="benchmark">Benchmark:</Form.Label>
+                <InputGroup>
                     <Form.Control
-                        name="docker_name"
-                        id="docker_name"
                         placeholder="user/image"
                         onChange={(e) => setDockerName(e.target.value)}
                         isInvalid={!isDockerNameValid()}
+                        aria-label="Docker image name including username"
+                        id="benchmark"
                     />
-                </Form.Group>
-                <Form.Group>
+                    <InputGroup.Text>:</InputGroup.Text>
                     <Form.Control
-                        name="docker_tag"
-                        id="docker_tag"
                         placeholder="tag"
                         onChange={(e) => setDockerTag(e.target.value)}
                         isInvalid={!isDockerTagValid()}
+                        aria-label="Tag or version of the docker image to use"
                     />
-                </Form.Group>
-                <Form.Label htmlFor="docker_name">Benchmark description (optional):</Form.Label>
+                </InputGroup>
+
+                <Form.Label htmlFor="description">Benchmark description (optional):</Form.Label>
                 <Form.Control
-                    name="description"
                     id="description"
                     placeholder="Enter a description of the new benchmark here."
                     onChange={(e) => setDescription(e.target.value)}
@@ -149,7 +146,6 @@ export function BenchmarkSubmitForm(props: {
                     <a href={pages.CodeGuidelinesModule.path + '#json'}>example here</a>):
                 </Form.Label>
                 <Form.Control
-                    name="template"
                     id="template"
                     placeholder='{ "required_arg": 5, "!notable_argument": 10 }'
                     onChange={(e) => setTemplate(e.target.value)}
