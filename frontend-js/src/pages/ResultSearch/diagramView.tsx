@@ -13,7 +13,10 @@ export function DiagramView(props: {
     return (
         <>
             <Form.Group>
-                <label htmlFor="diagramDropdown">Select diagram type:</label>
+                <Form.Label htmlFor="diagramDropdown">Select diagram type:</Form.Label>{' '}
+                {props.benchmark === undefined && (
+                    <Badge bg="danger">Please select a benchmark first</Badge>
+                )}
                 <Form.Control
                     as="select"
                     onChange={(e) => {
@@ -28,9 +31,6 @@ export function DiagramView(props: {
                         </option>
                     ))}
                 </Form.Control>
-                {props.benchmark === undefined && (
-                    <Badge bg="danger">Please select a benchmark</Badge>
-                )}
             </Form.Group>
             {props.benchmark !== undefined &&
                 charts.all.map((chart) => (
