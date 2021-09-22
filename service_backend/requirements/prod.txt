@@ -16,7 +16,7 @@ marshmallow~=3.10.0
 jsonschema~=3.2.0
 
 # REST GUI 
-flask-smorest~=0.31.3
+flask-smorest~=0.34.0
 
 # Deployment in production
 gevent~=21.1.2

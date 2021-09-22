@@ -7,5 +7,35 @@ layers. API and any other functionality such database or authentication
 are handled by independent libraries and extension.
 """
 from .app import create_app
+import flask.blueprints
+
+
+class MyBlueprintSetupState(flask.blueprints.BlueprintSetupState):
+    def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
+        """Monkey patch to allow ':' in route for custom methods.
+        """
+        if self.url_prefix is not None:
+            if rule:
+                rule = self.url_prefix + rule
+            else:
+                rule = self.url_prefix
+        options.setdefault("subdomain", self.subdomain)
+        if endpoint is None:
+            endpoint = _endpoint_from_view_func(view_func)  # type: ignore
+        defaults = self.url_defaults
+        if "defaults" in options:
+            defaults = dict(defaults, **options.pop("defaults"))
+
+        self.app.add_url_rule(
+            rule,
+            f"{self.name_prefix}.{self.name}.{endpoint}".lstrip("."),
+            view_func,
+            defaults=defaults,
+            **options,
+        )
+
+
+flask.blueprints.BlueprintSetupState = MyBlueprintSetupState
+
 
 all = ["create_app"]

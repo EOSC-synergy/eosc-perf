@@ -8,13 +8,12 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import backref, relationship
 
 from ..core import PkModel
-from . import HasUploadDatetime
-from .claim import HasClaims
+from .reports import HasClaims
 from .tag import HasTags
 from .user import HasUploader
 
 
-class Result(HasClaims, HasTags, HasUploadDatetime, HasUploader, PkModel):
+class Result(HasClaims, HasTags, HasUploader, PkModel):
     """The Result model represents the results of the execution of a 
     specific Benchmark on a specific Site and Flavor. 
 
@@ -28,53 +27,50 @@ class Result(HasClaims, HasTags, HasUploadDatetime, HasUploader, PkModel):
     #: (ISO8601, required) Benchmark execution **START**
     execution_datetime = Column(DateTime, nullable=False)
 
+    #: (Conflicts Benchmark) Id of the benchmar used
+    benchmark_id = Column(ForeignKey('benchmark.id'), nullable=False)
+
     #: (Benchmark, required) Benchmark used to provide the results
     benchmark = relationship("Benchmark", backref=backref(
         "_results", cascade="all, delete-orphan"
     ))
-    #: (Conflicts Benchmark) Id of the benchmar used
-    benchmark_id = Column(ForeignKey('benchmark.id'), nullable=False)
-
-    #: (Read_only) Docker image of used benchmark
     docker_image = association_proxy('benchmark', 'docker_image')
-
-    #: (Read_only) Docker tag of used benchmark
     docker_tag = association_proxy('benchmark', 'docker_tag')
 
-    #: (Site, required) Site where the benchmark was executed
-    site = relationship("Site", backref=backref(
-        "_results", cascade="all, delete-orphan"
-    ))
-
-    #: (Conflicts Site) Id of the site where the benchmar was executed
-    site_id = Column(ForeignKey('site.id'), nullable=False)
-
-    #: (Read_only) Name of the site where the benchmar was executed
-    site_name = association_proxy('site', 'name')
+    #: (Conflicts Flavor) Id of the flavor used to executed the benchmark
+    flavor_id = Column(ForeignKey('flavor.id'), nullable=False)
 
     #: (Flavor, required) Flavor used to executed the benchmark
     flavor = relationship("Flavor", backref=backref(
         "_results", cascade="all, delete-orphan"
     ))
-
-    #: (Conflicts Flavor) Id of the flavor used to executed the benchmark
-    flavor_id = Column(ForeignKey('flavor.id'), nullable=False)
-
-    #: (Read_only) Name of the flavor used to executed the benchmark
     flavor_name = association_proxy('flavor', 'name')
 
-    def __init__(self, **properties):
+    #: (Collected from flavor) Id of the site where the benchmar was executed
+    site_id = Column(ForeignKey('site.id'), nullable=False)
+
+    #: (Collected from flavor) Site where the benchmark was executed
+    site = relationship("Site", backref=backref(
+        "_results", cascade="all, delete-orphan"
+    ))
+    site_name = association_proxy('site', 'name')
+    site_address = association_proxy('site', 'address')
+
+    def __init__(self, site=None, site_id=None, **properties):
         """Validates the result passes the benchmark JSON Schema and sets
         default reports to empty list.
         """
-        benchmark = properties['benchmark']
-        json = properties['json']
-        if not 'reports' in properties:
-            properties['reports'] = []
+        benchmark, json = properties['benchmark'], properties['json']
         try:
             jsonschema.validate(json, schema=benchmark.json_schema)
         except ValidationError as err:
             abort(422, messages={'error': err.message, 'path': f"{err.path}"})
+
+        if site or site_id:
+            raise KeyError("Site is collected from flavor")
+        properties['site'] = properties['flavor'].site
+        properties['site_id'] = properties['flavor'].site_id
+
         super().__init__(**properties)
 
     def __repr__(self) -> str:

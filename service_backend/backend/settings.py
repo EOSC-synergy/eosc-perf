@@ -178,19 +178,6 @@ ADMIN_ENTITLEMENTS = str("ADMIN_ENTITLEMENTS", default="")
 :meta hide-value:
 """
 
-DISABLE_AUTHENTICATION = bool(
-    "DISABLE_AUTHENTICATION", default=False, dev_default=True
-)
-"""| User methods can be accessed with non valid access tokens.
-| **Warning**: Users information is collected using OIDC.
-| OIDC configuration is still needed in order to create new valid users.
-
-| When ENV is set to `production`, the default value stands to: "False".
-| When ENV is set to `development`, the default value stands to: "True".
-
-:meta hide-value:
-"""
-
 DISABLE_ADMIN_PROTECTION = bool(
     "DISABLE_ADMIN_PROTECTION", default=False, dev_default=True
 )

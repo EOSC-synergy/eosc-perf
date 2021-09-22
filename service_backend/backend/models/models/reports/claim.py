@@ -19,13 +19,12 @@ from sqlalchemy import Column, ForeignKey, Text
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import relationship
 
-from ..core import PkModel
-from . import HasUploadDatetime
-from .user import HasUploader
-from .report import HasReports
+from ...core import PkModel, SoftDelete
+from ..user import HasUploader
+from .submit import NeedsApprove
 
 
-class Claim(HasReports, HasUploadDatetime, HasUploader, PkModel):
+class Claim(NeedsApprove, HasUploader, PkModel):
     """The Claim model represents an user’s claim regarding a resource 
     which should be processed by administrators.
 
@@ -39,6 +38,9 @@ class Claim(HasReports, HasUploadDatetime, HasUploader, PkModel):
     #: (Text) Information created by user to describe the issue
     message = Column(Text, nullable=False)
 
+    #: (Resource) Resource the claim is linked to
+    resource = NotImplementedError()  # Implemented at HasClaims
+
     def __init__(self, **properties):
         """Model initialization"""
         super().__init__(**properties)
@@ -47,20 +49,39 @@ class Claim(HasReports, HasUploadDatetime, HasUploader, PkModel):
         """Human-readable representation string"""
         return "{} {}".format(self.__class__.__name__, self.message)
 
+    def delete(self):
+        """Deletes the claim report and restores the resource."""
+        if self.resource.claims == []:
+            self.resource.undelete()
+        return super().delete()
 
-class HasClaims(object):
-    """HasClaims mixin, creates a new Claim class for each parent.
+
+class HasClaims(SoftDelete):
+    """HasClaims mixin, creates a new Claim class for each resource.
     """
+    __abstract__ = True
 
     @declared_attr
-    def _claim_association_class(cls):
+    def Claim(cls):
         table_specs = dict(
             __tablename__=f"{cls.__tablename__}_claim",
-            parent_id=Column(ForeignKey(f"{cls.__tablename__}.id")),
-            parent=relationship(cls)
+            resource_id=Column(ForeignKey(f"{cls.__tablename__}.id")),
+            resource=relationship(cls)
         )
         return type(f"{cls.__name__}Claim", (Claim,), table_specs)
 
     @declared_attr
     def claims(cls):
-        return relationship(cls._claim_association_class)
+        return relationship(cls.Claim)
+
+    def claim(self, message):
+        """Creates a pending claim related to the resource and soft
+        deletes the resource.
+
+        :param message: Message to include in the claim
+        :type message: str
+        """
+        claim = self.Claim(message=message, resource=self)
+        self.claims.append(claim)
+        self.delete()
+        return claim

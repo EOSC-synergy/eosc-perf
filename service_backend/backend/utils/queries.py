@@ -13,7 +13,7 @@ def to_pagination():
         @functools.wraps(func)
         def decorator(*args, **kwargs):
             """Converts the query into a pagination object."""
-            query_args = args[1]
+            query_args = args[0]
             per_page = query_args.pop('per_page')
             page = query_args.pop('page')
             query = func(*args, **kwargs)
@@ -38,11 +38,12 @@ def add_sorting(model):
             - '+' return an ascending sort object
             - '-' return a descending sort object
             """
-            query_args = args[1]
+            query_args = args[0]
             sort_by = query_args.pop('sort_by')
             sort_by = sort_by if sort_by != None else ""
             query = func(*args, **kwargs)
-            sorting = [parse_sort(model, x) for x in sort_by.split(',') if x != ""]
+            sorting = [parse_sort(model, x)
+                       for x in sort_by.split(',') if x != ""]
             return query.order_by(*sorting)
         return decorator
     return decorator_add_sorting
@@ -67,3 +68,26 @@ def parse_sort(model, control_field):
             'KeyError': f"Unknown order operator '{operator}'",
             'hint': "Use '+'(asc) or '-'(desc) before sort field"
         })
+
+
+def add_datefilter(model):
+    """Decorator to add date filter to the request.
+
+    :return: Decorated function
+    :rtype: fun
+    """
+    def decorator_add_datefilter(func):
+        @functools.wraps(func)
+        def decorator(*args, **kwargs):
+            """Extends the returned function query with time filters."""
+            query_args = args[0]
+            before = query_args.pop('upload_before', None)
+            after = query_args.pop('upload_after', None)
+            query = func(*args, **kwargs)
+            if before:
+                query = query.filter(model.upload_datetime < before)
+            if after:
+                query = query.filter(model.upload_datetime > after)
+            return query
+        return decorator
+    return decorator_add_datefilter

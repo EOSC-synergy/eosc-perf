@@ -1,106 +1,238 @@
 """Flavor URL routes. Collection of controller methods to 
 operate existing flavors on the database.
 """
-from backend import models
-from backend.extensions import auth
-from backend.schemas import schemas
-from flask.views import MethodView
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
+from sqlalchemy.exc import IntegrityError
+
+from .. import models, notifications
+from ..extensions import auth, db
+from ..schemas import schemas
 
 blp = Blueprint(
     'flavors', __name__, description='Operations on sites'
 )
 
-@blp.route('/<uuid:flavor_id>')
-class Flavor(MethodView):
-    """Class defining the specific flavor endpoint"""
-
-    @blp.response(200, schemas.Flavor)
-    @blp.doc(operationId='GetFlavor')
-    def get(self, flavor_id):
-        """(Free) Retrieves flavor details
-
-        Use this method to retrieve a specific flavor from the database.
-        ---
-
-        If no flavor exists with the indicated id, then 404 NotFound
-        exception is raised.
-
-        :param flavor_id: The id of the flavor to retrieve
-        :type flavor_id: uuid
-        :raises NotFound: No flavor with id found
-        :return: The database flavor using the described id
-        :rtype: :class:`models.Flavor`
-        """
-        return models.Flavor.get(id=flavor_id)
-
-    @auth.admin_required()
-    @blp.doc(operationId='EditFlavor')
-    @blp.arguments(schemas.FlavorEdit)
-    @blp.response(204)
-    def put(self, body_args, flavor_id):
-        """(Admins) Updates an existing flavor
-
-        Use this method to update a specific flavor from the database.
-        ---
-
-        If no flavor exists with the indicated id, then 404 NotFound
-        exception is raised.
-
-        :param body_args: The request body arguments as python dictionary
-        :type body_args: dict
-        :param flavor_id: The id of the flavor to update
-        :type flavor_id: uuid
-        :raises Unauthorized: The server could not verify the user identity
-        :raises Forbidden: The user has not the required privileges
-        :raises NotFound: No flavor with id found
-        :raises UnprocessableEntity: Wrong query/body parameters 
-        """
-        # Only admins can access this function so it is safe to set force
-        models.Flavor.get(id=flavor_id).update(body_args, force=True)
-
-    @auth.admin_required()
-    @blp.doc(operationId='DelFlavor')
-    @blp.response(204)
-    def delete(self, flavor_id):
-        """(Admins) Deletes an existing flavor
-
-        Use this method to delete a specific flavor from the database.
-        ---
-
-        If no flavor exists with the indicated id, then 404 NotFound
-        exception is raised.
-
-        :param flavor_id: The id of the flavor to delete
-        :type flavor_id: uuid
-        :raises Unauthorized: The server could not verify the user identity
-        :raises Forbidden: The user has not the required privileges
-        :raises NotFound: No flavor with id found
-        """
-        models.Flavor.get(id=flavor_id).delete()
+collection_url = ""
+resource_url = "/<uuid:id>"
 
 
-@blp.route('/<uuid:flavor_id>/site')
-class Site(MethodView):
-    """Class defining the specific flavor site endpoint"""
+@blp.route(resource_url, methods=["GET"])
+@blp.doc(operationId='GetFlavor')
+@blp.response(200, schemas.Flavor)
+def get(*args, **kwargs):
+    """(Free) Retrieves flavor details
 
-    @blp.response(200, schemas.Site)
-    @blp.doc(operationId='GetFlavorSite')
-    def get(self, flavor_id):
-        """(Free) Retrieves flavor site details
+    Use this method to retrieve a specific flavor from the database.
+    """
+    return __get(*args, **kwargs)
 
-        Use this method to retrieve the site information from a
-        specific flavor in the database.
-        ---
 
-        If no flavor exists with the indicated id, then 404 NotFound
-        exception is raised.
+def __get(id):
+    """Returns the id matching flavor.
 
-        :param flavor_id: The id of the flavor which contains the site
-        :type flavor_id: uuid
-        :raises NotFound: No flavor with id found
-        :return: The database site which contains the described flavor_id
-        :rtype: :class:`models.Site`
-        """
-        flavor = models.Flavor.get(id=flavor_id)
-        return models.Site.get(id=flavor.site_id)
+    If no flavor exists with the indicated id, then 404 NotFound
+    exception is raised.
+
+    :param id: The id of the flavor to retrieve
+    :type id: uuid
+    :raises NotFound: No flavor with id found
+    :return: The database flavor using the described id
+    :rtype: :class:`models.Flavor`
+    """
+    flavor = models.Flavor.read(id)
+    if flavor == None:
+        error_msg = f"Record {id} not found in the database"
+        abort(404, messages={'error': error_msg})
+    else:
+        return flavor
+
+
+@blp.route(resource_url, methods=["PUT"])
+@blp.doc(operationId='UpdateFlavor')
+@auth.admin_required()
+@blp.arguments(schemas.Flavor)
+@blp.response(204)
+def update(*args, **kwargs):
+    """(Admins) Updates an existing flavor
+
+    Use this method to update a specific flavor from the database.
+    """
+    return __update(*args, **kwargs)
+
+
+def __update(body_args, id):
+    """Updates a flavor specific fields.
+
+    If no flavor exists with the indicated id, then 404 NotFound
+    exception is raised.
+
+    :param body_args: The request body arguments as python dictionary
+    :type body_args: dict
+    :param id: The id of the flavor to update
+    :type id: uuid
+    :raises Unauthorized: The server could not verify the user identity
+    :raises Forbidden: The user has not the required privileges
+    :raises NotFound: No flavor with id found
+    :raises UnprocessableEntity: Wrong query/body parameters 
+    """
+    flavor = models.Flavor.read(id)
+    if flavor == None:
+        error_msg = f"Record {id} not found in the database"
+        abort(404, messages={'error': error_msg})
+
+    flavor.update(body_args, force=True)  # Only admins reach here
+
+    try:  # Transaction execution
+        db.session.commit()
+    except IntegrityError:
+        error_msg = f"Changes conflict submitted/existing flavor"
+        abort(409, messages={'error': error_msg})
+
+
+@blp.route(resource_url, methods=["DELETE"])
+@blp.doc(operationId='DeleteFlavor')
+@auth.admin_required()
+@blp.response(204)
+def delete(*args, **kwargs):
+    """(Admins) Deletes an existing flavor
+
+    Use this method to delete a specific flavor from the database.
+    """
+    return __delete(*args, **kwargs)
+
+
+def __delete(id):
+    """Deletes the id matching flavor.
+
+    If no flavor exists with the indicated id, then 404 NotFound
+    exception is raised.
+
+    :param id: The id of the flavor to delete
+    :type id: uuid
+    :raises Unauthorized: The server could not verify the user identity
+    :raises Forbidden: The user has not the required privileges
+    :raises NotFound: No flavor with id found
+    """
+    flavor = models.Flavor.read(id)
+    if flavor == None:
+        error_msg = f"Record {id} not found in the database"
+        abort(404, messages={'error': error_msg})
+
+    flavor.delete()
+
+    try:  # Transaction execution
+        db.session.commit()
+    except IntegrityError:
+        error_msg = f"Conflict deleting {id}"
+        abort(409, messages={'error': error_msg})
+
+
+@blp.route(resource_url + ":approve", methods=["POST"])
+@blp.doc(operationId='ApproveFlavor')
+@auth.admin_required()
+@blp.response(204)
+def approve(*args, **kwargs):
+    """(Admins) Approves a flavor to include it on default list methods
+
+    Use this method to approve an specific flavor submitted by an user.
+    It is a custom method, as side effect, it removes the submit report
+    associated as it is no longer needed.
+    """
+    return __approve(*args, **kwargs)
+
+
+def __approve(id):
+    """Approves a flavor to include it on default list methods.
+
+    :param id: The id of the flavor to approve
+    :type id: uuid
+    :raises Unauthorized: The server could not verify the user identity
+    :raises Forbidden: The user has not the required privileges
+    :raises NotFound: No flavor with id found
+    """
+    flavor = __get(id)
+
+    try:  # Approve flavor
+        flavor.approve()
+    except RuntimeError:
+        error_msg = f"Flavor {id} was already approved"
+        abort(422, messages={'error': error_msg})
+
+    try:  # Transaction execution
+        db.session.commit()
+    except IntegrityError:
+        error_msg = f"Conflict deleting {id}"
+        abort(409, messages={'error': error_msg})
+
+    notifications.resource_approved(flavor)
+
+
+@blp.route(resource_url + ":reject", methods=["POST"])
+@blp.doc(operationId='RejectFlavor')
+@auth.admin_required()
+@blp.response(204)
+def reject(*args, **kwargs):
+    """(Admins) Rejects a flavor to safe delete it.
+
+    Use this method instead of DELETE as it raises 422 in case the
+    resource was already approved.
+
+    Use this method to reject an specific flavor submitted by an user.
+    It is a custom method, as side effect, it removes the submit report
+    associated as it is no longer needed.
+    """
+    return __reject(*args, **kwargs)
+
+
+def __reject(id):
+    """Rejects a flavor to safe delete it.
+
+    :param id: The id of the flavor to reject
+    :type id: uuid
+    :raises Unauthorized: The server could not verify the user identity
+    :raises Forbidden: The user has not the required privileges
+    :raises NotFound: No flavor with id found
+    """
+    flavor = __get(id)
+
+    try:  # Reject flavor
+        flavor.reject()
+    except RuntimeError:
+        error_msg = f"Flavor {id} was already approved"
+        abort(422, messages={'error': error_msg})
+
+    try:  # Transaction execution
+        db.session.commit()
+    except IntegrityError:
+        error_msg = f"Conflict deleting {id}"
+        abort(409, messages={'error': error_msg})
+
+    notifications.resource_rejected(flavor)
+
+
+@blp.route(resource_url + '/site', methods=["GET"])
+@blp.response(200, schemas.Site)
+@blp.doc(operationId='GetFlavorSite')
+def site(*args, **kwargs):
+    """(Free) Retrieves flavor site details
+
+    Use this method to retrieve the site information from a
+    specific flavor in the database.
+    """
+    return __site(*args, **kwargs)
+
+
+def __site(id):
+    """Returns the flavor site.
+
+    If no flavor exists with the indicated id, then 404 NotFound
+    exception is raised.
+
+    :param id: The id of the flavor which contains the site
+    :type id: uuid
+    :raises NotFound: No flavor with id found
+    :return: The database site which contains the described id
+    :rtype: :class:`models.Site`
+    """
+    flavor = __get(id)
+    return models.Site.read(flavor.site_id)

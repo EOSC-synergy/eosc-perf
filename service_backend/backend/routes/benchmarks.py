@@ -1,176 +1,326 @@
 """Benchmark URL routes. Collection of controller methods to create and
 operate existing benchmarks on the database.
 """
-from backend import models, notifications, utils
-from backend.extensions import auth
-from backend.schemas import args, schemas
-from backend.utils import queries
-from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy import or_
+from sqlalchemy.exc import IntegrityError
+
+from .. import models, notifications, utils
+from ..extensions import auth, db
+from ..schemas import args, schemas
+from ..utils import queries
 
 blp = Blueprint(
     'benchmarks', __name__, description='Operations on benchmarks'
 )
 
+collection_url = ""
+resource_url = "/<uuid:id>"
 
-@blp.route('')
-class Root(MethodView):
-    """Class defining the main endpoint methods for benchmarks"""
 
-    @blp.doc(operationId='GetBenchmarks')
-    @blp.arguments(args.BenchmarkFilter, location='query')
-    @blp.response(200, schemas.Benchmarks)
-    @queries.to_pagination()
-    @queries.add_sorting(models.Benchmark)
-    def get(self, query_args):
-        """(Free) Filters and list benchmarks
+@blp.route(collection_url, methods=["GET"])
+@blp.doc(operationId='ListBenchmarks')
+@blp.arguments(args.BenchmarkFilter, location='query')
+@blp.response(200, schemas.Benchmarks)
+@queries.to_pagination()
+@queries.add_sorting(models.Benchmark)
+@queries.add_datefilter(models.Benchmark)
+def list(*args, **kwargs):
+    """(Free) Filters and list benchmarks
 
-        Use this method to get a list of benchmarks filtered according to your 
-        requirements. The response returns a pagination object with the
-        filtered benchmarks (if succeeds).
-        ---
+    Use this method to get a list of benchmarks filtered according to your
+    requirements. The response returns a pagination object with the
+    filtered benchmarks (if succeeds).
+    """
+    return __list(*args, **kwargs)
 
-        :param query_args: The request query arguments as python dictionary
-        :type query_args: dict
-        :raises UnprocessableEntity: Wrong query/body parameters 
-        :return: Pagination object with filtered benchmarks
-        :rtype: :class:`flask_sqlalchemy.Pagination`
-        """
-        query = models.Benchmark.query.filter_by(**query_args)
-        return query.filter(~models.Benchmark.has_open_reports)
 
-    @auth.login_required()
-    @blp.doc(operationId='AddBenchmark')
-    @blp.arguments(schemas.BenchmarkCreate)
-    @blp.response(201, schemas.Benchmark)
-    def post(self, body_args):
-        """(Users) Uploads a new benchmark
+def __list(query_args):
+    """Returns a list of filtered benchmarks.
 
-        Use this method to create a new benchmarks in the database so it can
-        be accessed by the application users. The method returns the complete
-        created benchmark (if succeeds).
+    :param query_args: The request query arguments as python dictionary
+    :type query_args: dict
+    :raises UnprocessableEntity: Wrong query/body parameters
+    :return: Pagination object with filtered benchmarks
+    :rtype: :class:`flask_sqlalchemy.Pagination`
+    """
+    query = models.Benchmark.query
+    return query.filter_by(**query_args)
 
-        Note: Benchmark use JSON Schemas to implement results validation.
-        ---
 
-        :param body_args: The request body arguments as python dictionary
-        :type body_args: dict
-        :raises Unauthorized: The server could not verify the user identity
-        :raises Forbidden: The user is not registered
-        :raises UnprocessableEntity: Wrong query/body parameters 
-        :raises Conflict: Created object conflicts a database item
-        :return: The benchmark created into the database.
-        :rtype: :class:`models.Benchmark`
-        """
-        image, tag = body_args['docker_image'], body_args['docker_tag']
-        if not utils.dockerhub.valid_image(image, tag):
-            abort(422, messages={'error': "Unknown docker image"})
-        benchmark = models.Benchmark.create(body_args)
-        notifications.report_created(benchmark.reports[0])
+@blp.route(collection_url, methods=["POST"])
+@blp.doc(operationId='CreateBenchmark')
+@auth.login_required()
+@blp.arguments(schemas.Benchmark)
+@blp.response(201, schemas.Benchmark)
+def create(*args, **kwargs):
+    """(Users) Uploads a new benchmark
+
+    Use this method to create a new benchmarks in the database so it can
+    be accessed by the application users. The method returns the complete
+    created benchmark (if succeeds).
+
+    Note: Benchmark use JSON Schemas to implement results validation.
+    """
+    return __create(*args, **kwargs)
+
+
+def __create(body_args):
+    """Creates a new benchmark in the database.
+
+    :param body_args: The request body arguments as python dictionary
+    :type body_args: dict
+    :raises Unauthorized: The server could not verify the user identity
+    :raises Forbidden: The user is not registered
+    :raises UnprocessableEntity: Wrong query/body parameters
+    :raises Conflict: Created object conflicts a database item
+    :return: The benchmark created into the database.
+    :rtype: :class:`models.Benchmark`
+    """
+    image, tag = body_args['docker_image'], body_args['docker_tag']
+    if not utils.dockerhub.valid_image(image, tag):
+        error_msg = f"Image {image}:{tag} not found in dockerhub"
+        abort(422, messages={'error': error_msg})
+
+    benchmark = models.Benchmark.create(body_args)
+
+    try:  # Transaction execution
+        db.session.commit()
+    except IntegrityError:
+        error_msg = f"Benchmark {image}:{tag} already submitted/exists"
+        abort(409, messages={'error': error_msg})
+
+    notifications.resource_submitted(benchmark)
+    return benchmark
+
+
+@blp.route(collection_url + ":search", methods=["GET"])
+@blp.doc(operationId='SearchBenchmarks')
+@blp.arguments(args.BenchmarkSearch, location='query')
+@blp.response(200, schemas.Benchmarks)
+@queries.to_pagination()
+@queries.add_sorting(models.Benchmark)
+@queries.add_datefilter(models.Benchmark)
+def search(*args, **kwargs):
+    """(Free) Filters and list benchmarks
+
+    Use this method to get a list of benchmarks based on a general search
+    of terms. For example, calling this method with terms=v1&terms=0
+    returns all benchmarks with 'v1' and '0' on the 'docker_image',
+    'docker_tag' or 'description' fields. The response returns a
+    pagination object with the filtered benchmarks (if succeeds).
+    """
+    return __search(*args, **kwargs)
+
+
+def __search(query_args):
+    """Filters and list benchmarks using generic terms.
+
+    Use this method to get a list of benchmarks based on a general search
+    of terms. For example, calling this method with terms=v1&terms=0
+    returns all benchmarks with 'v1' and '0' on the 'docker_image',
+    'docker_tag' or 'description' fields. The response returns a
+    pagination object with the filtered benchmarks (if succeeds).
+    ---
+
+    :param query_args: The request query arguments as python dictionary
+    :type query_args: dict
+    :raises UnprocessableEntity: Wrong query/body parameters
+    :return: Pagination object with filtered benchmarks
+    :rtype: :class:`flask_sqlalchemy.Pagination`
+    """
+    search = models.Benchmark.query
+    for keyword in query_args.pop('terms'):
+        search = search.filter(
+            or_(
+                models.Benchmark.docker_image.contains(keyword),
+                models.Benchmark.docker_tag.contains(keyword),
+                models.Benchmark.description.contains(keyword)
+            ))
+    return search.filter_by(**query_args)
+
+
+@blp.route(resource_url, methods=["GET"])
+@blp.doc(operationId='GetBenchmark')
+@blp.response(200, schemas.Benchmark)
+def get(*args, **kwargs):
+    """(Free) Retrieves benchmark details
+
+    Use this method to retrieve a specific benchmark from the database.
+    """
+    return __get(*args, **kwargs)
+
+
+def __get(id):
+    """Returns the id matching benchmark.
+
+    If no benchmark exists with the indicated id, then 404 NotFound
+    exception is raised.
+
+    :param id: The id of the benchmark to retrieve
+    :type id: uuid
+    :raises NotFound: No benchmark with id found
+    :return: The database benchmark using the described id
+    :rtype: :class:`models.Benchmark`
+    """
+    benchmark = models.Benchmark.read(id)
+    if benchmark == None:
+        error_msg = f"Benchmark {id} not found in the database"
+        abort(404, messages={'error': error_msg})
+    else:
         return benchmark
 
 
-@blp.route('/search')
-class Search(MethodView):
-    """Class defining the search endpoint for benchmarks"""
+@blp.route(resource_url, methods=["PUT"])
+@blp.doc(operationId='UpdateBenchmark')
+@auth.admin_required()
+@blp.arguments(schemas.Benchmark)
+@blp.response(204)
+def update(*args, **kwargs):
+    """ (Admins) Implements JSON Put for benchmarks
 
-    @blp.doc(operationId='SearchBenchmarks')
-    @blp.arguments(args.Search, location='query')
-    @blp.response(200, schemas.Benchmarks)
-    @queries.to_pagination()
-    @queries.add_sorting(models.Benchmark)
-    def get(self, query_args):
-        """(Free) Filters and list benchmarks
-
-        Use this method to get a list of benchmarks based on a general search
-        of terms. For example, calling this method with terms=v1&terms=0
-        returns all benchmarks with 'v1' and '0' on the 'docker_image',
-        'docker_tag' or 'description' fields. The response returns a
-        pagination object with the filtered benchmarks (if succeeds).
-        ---
-
-        :param query_args: The request query arguments as python dictionary
-        :type query_args: dict
-        :raises UnprocessableEntity: Wrong query/body parameters 
-        :return: Pagination object with filtered benchmarks
-        :rtype: :class:`flask_sqlalchemy.Pagination`
-        """
-        search = models.Benchmark.query
-        for keyword in query_args['terms']:
-            search = search.filter(
-                or_(
-                    models.Benchmark.docker_image.contains(keyword),
-                    models.Benchmark.docker_tag.contains(keyword),
-                    models.Benchmark.description.contains(keyword)
-                ))
-        return search.filter(~models.Benchmark.has_open_reports)
+    Use this method to update a specific benchmark from the database.
+    """
+    return __update(*args, **kwargs)
 
 
-@blp.route('/<uuid:benchmark_id>')
-class Benchmark(MethodView):
-    """Class defining the specific benchmark endpoint"""
+def __update(body_args, id):
+    """Updates a benchmark specific fields.
 
-    @blp.doc(operationId='GetBenchmark')
-    @blp.response(200, schemas.Benchmark)
-    def get(self, benchmark_id):
-        """(Free) Retrieves benchmark details
+    If no benchmark exists with the indicated id, then 404 NotFound
+    exception is raised.
 
-        Use this method to retrieve a specific benchmark from the database.
-        ---
+    :param body_args: The request body arguments as python dictionary
+    :type body_args: dict
+    :param id: The id of the benchmark to update
+    :type id: uuid
+    :raises Unauthorized: The server could not verify the user identity
+    :raises Forbidden: The user has not the required privileges
+    :raises NotFound: No benchmark with id found
+    :raises UnprocessableEntity: Wrong query/body parameters
+    """
+    benchmark = __get(id)
+    benchmark.update(body_args, force=True)  # Only admins reach here
 
-        If no benchmark exists with the indicated id, then 404 NotFound
-        exception is raised.
+    try:  # Transaction execution
+        db.session.commit()
+    except IntegrityError:
+        error_msg = f"Changes conflict submitted/existing benchmark"
+        abort(409, messages={'error': error_msg})
 
-        :param benchmark_id: The id of the benchmark to retrieve
-        :type benchmark_id: uuid
-        :raises NotFound: No benchmark with id found
-        :return: The database benchmark using the described id
-        :rtype: :class:`models.Benchmark`
-        """
-        return models.Benchmark.get(benchmark_id)
 
-    @auth.admin_required()
-    @blp.doc(operationId='EditBenchmark')
-    @blp.arguments(schemas.BenchmarkEdit)
-    @blp.response(204)
-    def put(self, body_args, benchmark_id):
-        """(Admins) Updates an existing benchmark
+@blp.route(resource_url, methods=["DELETE"])
+@blp.doc(operationId='DeleteBenchmark')
+@auth.admin_required()
+@blp.response(204)
+def delete(*args, **kwargs):
+    """(Admins) Deletes an existing benchmark
 
-        Use this method to update a specific benchmark from the database.
-        ---
+    Use this method to delete a specific benchmark from the database.
+    """
+    return __delete(*args, **kwargs)
 
-        If no benchmark exists with the indicated id, then 404 NotFound
-        exception is raised.
 
-        :param body_args: The request body arguments as python dictionary
-        :type body_args: dict
-        :param benchmark_id: The id of the benchmark to update
-        :type benchmark_id: uuid
-        :raises Unauthorized: The server could not verify the user identity
-        :raises Forbidden: The user has not the required privileges
-        :raises NotFound: No benchmark with id found
-        :raises UnprocessableEntity: Wrong query/body parameters 
-        """
-        # Only admins can access this function so it is safe to set force
-        models.Benchmark.get(benchmark_id).update(body_args, force=True)
+def __delete(id):
+    """Deletes the id matching benchmark.
 
-    @auth.admin_required()
-    @blp.doc(operationId='DelBenchmark')
-    @blp.response(204)
-    def delete(self, benchmark_id):
-        """(Admins) Deletes an existing benchmark
+    If no benchmark exists with the indicated id, then 404 NotFound
+    exception is raised.
 
-        Use this method to delete a specific benchmark from the database.
-        ---
+    :param id: The id of the benchmark to delete
+    :type id: uuid
+    :raises Unauthorized: The server could not verify the user identity
+    :raises Forbidden: The user has not the required privileges
+    :raises NotFound: No benchmark with id found
+    """
+    benchmark = __get(id)
+    benchmark.delete()
 
-        If no benchmark exists with the indicated id, then 404 NotFound
-        exception is raised.
+    try:  # Transaction execution
+        db.session.commit()
+    except IntegrityError:
+        error_msg = f"Conflict deleting {id}"
+        abort(409, messages={'error': error_msg})
 
-        :param benchmark_id: The id of the benchmark to delete
-        :type benchmark_id: uuid
-        :raises Unauthorized: The server could not verify the user identity
-        :raises Forbidden: The user has not the required privileges
-        :raises NotFound: No benchmark with id found
-        """
-        models.Benchmark.get(benchmark_id).delete()
+
+@blp.route(resource_url + ":approve", methods=["POST"])
+@blp.doc(operationId='ApproveBenchmark')
+@auth.admin_required()
+@blp.response(204)
+def approve(*args, **kwargs):
+    """(Admins) Approves a benchmark to include it on default list methods
+
+    Use this method to approve an specific benchmark submitted by an user.
+    It is a custom method, as side effect, it removes the submit report
+    associated as it is no longer needed.
+    """
+    return __approve(*args, **kwargs)
+
+
+def __approve(id):
+    """Approves a benchmark to include it on default list methods.
+
+    :param id: The id of the benchmark to approve
+    :type id: uuid
+    :raises Unauthorized: The server could not verify the user identity
+    :raises Forbidden: The user has not the required privileges
+    :raises NotFound: No benchmark with id found
+    """
+    benchmark = __get(id)
+
+    try:  # Approve benchmark
+        benchmark.approve()
+    except RuntimeError:
+        error_msg = f"Benchmark {id} was already approved"
+        abort(422, messages={'error': error_msg})
+
+    try:  # Transaction execution
+        db.session.commit()
+    except IntegrityError:
+        error_msg = f"Conflict deleting {id}"
+        abort(409, messages={'error': error_msg})
+
+    notifications.resource_approved(benchmark)
+
+
+@blp.route(resource_url + ":reject", methods=["POST"])
+@blp.doc(operationId='RejectBenchmark')
+@auth.admin_required()
+@blp.response(204)
+def reject(*args, **kwargs):
+    """(Admins) Rejects a benchmark to safe delete it.
+
+    Use this method instead of DELETE as it raises 422 in case the
+    resource was already approved.
+
+    Use this method to reject an specific benchmark submitted by an user.
+    It is a custom method, as side effect, it removes the submit report
+    associated as it is no longer needed.
+    """
+    return __reject(*args, **kwargs)
+
+
+def __reject(id):
+    """Rejects a benchmark to safe delete it.
+
+    :param id: The id of the benchmark to reject
+    :type id: uuid
+    :raises Unauthorized: The server could not verify the user identity
+    :raises Forbidden: The user has not the required privileges
+    :raises NotFound: No benchmark with id found
+    """
+    benchmark = __get(id)
+
+    try:  # Reject benchmark
+        benchmark.reject()
+    except RuntimeError:
+        error_msg = f"Benchmark {id} was already approved"
+        abort(422, messages={'error': error_msg})
+
+    try:  # Transaction execution
+        db.session.commit()
+    except IntegrityError:
+        error_msg = f"Conflict deleting {id}"
+        abort(409, messages={'error': error_msg})
+
+    notifications.resource_rejected(benchmark)
