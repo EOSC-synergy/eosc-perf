@@ -20,7 +20,7 @@ class TestList:
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'benchmark_id': benchmarks[0]['id']},
-        {'site_id': sites[0]['id']},
+        {'site_id': flavors[0]['site__id']},
         {'flavor_id': flavors[0]['id']},
         {'tags_ids': [tag['id'] for tag in [tags[0], tags[1]]]},
         {'tags_ids[]': [tag['id'] for tag in [tags[0], tags[1]]]},
@@ -390,6 +390,7 @@ class TestListClaims:
         assert response_GET.json['items'] != []
         for item in response_GET.json['items']:
             asserts.match_query(item, url)
+            item.pop('uploader')
             assert models.Result.Claim.query.filter_by(**item)
 
     @mark.usefixtures('grant_admin')
@@ -406,7 +407,8 @@ class TestListClaims:
         assert response_GET.json['items'] != []
         for item in response_GET.json['items']:
             asserts.match_query(item, url)
-            assert models.Result.Claim.query.filter_by(**item)
+            item.pop('uploader')
+            assert models.Result.Claim.query.filter_by(**item).first()
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'upload_before': "3000-01-01"}

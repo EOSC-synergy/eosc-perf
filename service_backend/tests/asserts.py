@@ -53,38 +53,53 @@ def match_benchmark(json, benchmark):
     return True
 
 
-def match_report(json, report):
-    """Checks the json db_instances matches the report object."""
+def match_submit(json):
+    """Checks the json db_instances matches the submit object."""
 
     # Check the report has an id
-    assert 'id' in json and type(json['id']) is str
-    assert json['id'] == str(report.id)
+    assert not 'id' in json
 
     # Check the report has a upload date
     assert 'upload_datetime' in json
     assert type(json['upload_datetime']) is str
-    upload_datetime = str(report.upload_datetime).replace(" ", "T")
-    assert json['upload_datetime'] == upload_datetime
-
-    # Check the report has a verdict
-    assert type(json['verdict']) is bool or json['verdict'] is None
-    assert json['verdict'] == report.verdict
-
-    # Check the report has a message
-    assert 'message' in json and type(json['message']) is str
-    assert json['message'] == report.message
 
     # Check the report has a resource_type
     assert 'resource_type' in json and type(json['resource_type']) is str
-    assert json['resource_type'] == report.resource_type
 
     # Check the report has a resource_id
     assert 'resource_id' in json and type(json['resource_id']) is str
-    assert json['resource_id'] == str(report.resource_id)
+
+    return True
+
+
+def match_claim(json, claim):
+    """Checks the json db_instances matches the claim object."""
+
+    # Check the report has an id
+    assert 'id' in json and type(json['id']) is str
+    assert json['id'] == str(claim.id)
+
+    # Check the report has a upload date
+    assert 'upload_datetime' in json
+    assert type(json['upload_datetime']) is str
+    upload_datetime = str(claim.upload_datetime).replace(" ", "T")
+    assert json['upload_datetime'] == upload_datetime
+
+    # Check the report has a message
+    assert 'message' in json and type(json['message']) is str
+    assert json['message'] == claim.message
+
+    # Check the report has a resource_type
+    assert 'resource_type' in json and type(json['resource_type']) is str
+    assert json['resource_type'] == claim.resource_type
+
+    # Check the report has a resource_id
+    assert 'resource_id' in json and type(json['resource_id']) is str
+    assert json['resource_id'] == str(claim.resource_id)
 
     # Check the report has a uploader
     assert 'uploader' in json  # Reports should only be accessible by admins
-    assert match_user(json['uploader'], report.uploader)
+    assert match_user(json['uploader'], claim.uploader)
 
     return True
 
@@ -233,16 +248,16 @@ def match_query(json, url):
             ])
 
     # Exclusive for /reports
-    if parsed_url.path == "/reports":
-        if 'verdict' in query_param:
-            if query_param['verdict'][0] == "true":
-                assert json['verdict'] == True
-            if query_param['verdict'][0] == "false":
-                assert json['verdict'] == False
-            if query_param['verdict'][0] == "null":
-                assert json['verdict'] == None
-        if 'type' in query_param:
-            assert json['type'] == query_param['type'][0]
+    if parsed_url.path == "/reports/submits":
+        if 'resource_type' in query_param:
+            assert json['resource_type'] == query_param['resource_type'][0]
+        if 'upload_before' in query_param:
+            assert json['upload_datetime'] < query_param['upload_before'][0]
+        if 'upload_after' in query_param:
+            assert json['upload_datetime'] > query_param['upload_after'][0]
+
+    # Exclusive for /reports
+    if parsed_url.path == "/reports/claims":
         if 'upload_before' in query_param:
             assert json['upload_datetime'] < query_param['upload_before'][0]
         if 'upload_after' in query_param:

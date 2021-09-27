@@ -98,37 +98,37 @@ flavors = [{'id': uuid4()} for _ in range(5)]
 
 flavors[0]['name'] = "flavor0"
 flavors[0]['description'] = "Flavor0 site0"
-flavors[0]['site_id'] = sites[0]['id']
+flavors[0]['site__id'] = sites[0]['id']
 flavors[0]['uploader__email'] = users[0]['email']
 flavors[0]['status'] = "approved"
 
 flavors[1]['name'] = "flavor1"
 flavors[1]['description'] = "Flavor1 site0"
-flavors[1]['site_id'] = sites[0]['id']
+flavors[1]['site__id'] = sites[0]['id']
 flavors[1]['uploader__email'] = users[0]['email']
 flavors[1]['status'] = "approved"
 
 flavors[2]['name'] = "flavor0"
 flavors[2]['description'] = "Flavor0 site1"
-flavors[2]['site_id'] = sites[1]['id']
+flavors[2]['site__id'] = sites[1]['id']
 flavors[2]['uploader__email'] = users[0]['email']
 flavors[2]['status'] = "approved"
 
 flavors[3]['name'] = "flavor1"
 flavors[3]['description'] = "Flavor1 site1"
-flavors[3]['site_id'] = sites[1]['id']
+flavors[3]['site__id'] = sites[1]['id']
 flavors[3]['uploader__email'] = users[0]['email']
 flavors[3]['status'] = "approved"
 
 flavors[4]['name'] = "flavor2"
 flavors[4]['description'] = "Flavor2 site1"
-flavors[4]['site_id'] = sites[1]['id']
+flavors[4]['site__id'] = sites[1]['id']
 flavors[4]['uploader__email'] = users[1]['email']
 flavors[4]['status'] = "on_review"
 
 
 # Result specifications
-results = [{'id': uuid4()} for _ in range(4)]
+results = [{'id': uuid4()} for _ in range(5)]
 
 results[0]['json'] = {'time': 10}
 results[0]['tags'] = [tag for tag in tags[0:2]]
@@ -156,3 +156,9 @@ results[3]['flavor__id'] = flavors[0]['id']
 results[3]['uploader__email'] = users[0]['email']
 results[3]['upload_datetime'] = datetime(2020, 1, 1)
 results[3]['claims'] = ["Claim 1", "Claim 2"]
+
+results[4]['json'] = {'time': 11}
+results[4]['benchmark__id'] = benchmarks[0]['id']
+results[4]['flavor__id'] = flavors[0]['id']
+results[4]['uploader__email'] = users[0]['email']
+results[4]['upload_datetime'] = datetime(2020, 1, 1)

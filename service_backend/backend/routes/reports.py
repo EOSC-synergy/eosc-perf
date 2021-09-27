@@ -85,14 +85,11 @@ def __list_claims(query_args):
     return query.filter_by(**query_args)
 
 
-@blp.route(result_claims_url + ':approve', methods=['POST'])
+@blp.route(result_claim_url + ':approve', methods=['POST'])
 @blp.doc(operationId='ApproveClaim')
 @auth.admin_required()
-@blp.arguments(args.ClaimFilter, location='query')
+@blp.arguments(args.Schema(), location='query', as_kwargs=True)
 @blp.response(204)
-@queries.to_pagination()
-@queries.add_sorting(models.Result.Claim)
-@queries.add_datefilter(models.Result.Claim)
 def approve_claim(*args, **kwargs):
     """(Admin) Accepts an existing submit
 
@@ -122,7 +119,7 @@ def __approve_claim(id):
         abort(404, messages={'error': error_msg})
 
     try:  # Approve claim resource
-        claim.resource.approve()
+        claim.approve()
     except RuntimeError:
         error_msg = f"Resource {id} was already approved"
         abort(422, messages={'error': error_msg})
@@ -136,14 +133,11 @@ def __approve_claim(id):
     notifications.resource_approved(claim)
 
 
-@blp.route(result_claims_url + ':reject', methods=['POST'])
+@blp.route(result_claim_url + ':reject', methods=['POST'])
 @blp.doc(operationId='RejectClaim')
 @auth.admin_required()
-@blp.arguments(args.ClaimFilter, location='query')
+@blp.arguments(args.Schema(), location='query', as_kwargs=True)
 @blp.response(204)
-@queries.to_pagination()
-@queries.add_sorting(models.Claim)
-@queries.add_datefilter(models.Claim)
 def reject_claim(*args, **kwargs):
     """(Admin) Refuses an existing claim
 
@@ -173,7 +167,7 @@ def __reject_claim(id):
         abort(404, messages={'error': error_msg})
 
     try:  # Reject claim resource
-        claim.resource.reject()
+        claim.reject()
     except RuntimeError:
         error_msg = f"Resource {id} was already approved"
         abort(422, messages={'error': error_msg})

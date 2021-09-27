@@ -78,7 +78,7 @@ class DBFlavor(SQLAlchemyModelFactory):
     upload_datetime = fdt.fuzz()
     name = Sequence(lambda n: f"flavor{n}")
     description = "Text"
-    site_id = LazyFunction(uuid.uuid4)
+    site = SubFactory(DBSite)
     upload_datetime = fdt.fuzz()
     uploader = SubFactory(DBUser)
 
