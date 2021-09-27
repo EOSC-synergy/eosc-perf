@@ -1,13 +1,13 @@
 import React, { ReactElement, useContext, useState } from 'react';
-import { JsonSelection } from 'pages/ResultSubmission/jsonSelection';
+import { JsonSelection } from 'components/jsonSelection';
 import {
     BenchmarkSearchPopover,
     FlavorSearchPopover,
     SiteSearchPopover,
 } from 'components/searchPopover';
-import { TagSelection } from 'pages/ResultSubmission/tagSelection';
+import { TagSelection } from 'components/tagSelection';
 import { Alert, Button, Col, Form, FormGroup, Row } from 'react-bootstrap';
-import { LicenseAgreementCheck } from 'pages/ResultSubmission/licenseAgreementCheck';
+import { LicenseAgreementCheck } from 'components/licenseAgreementCheck';
 import { UserContext } from 'userContext';
 import { useMutation } from 'react-query';
 import { Benchmark, Flavor, Result, Site } from 'api';
@@ -37,7 +37,7 @@ export function ResultSubmitForm(props: {
                 benchmark_id: benchmark?.id,
                 site_id: site?.id,
                 flavor_id: flavor?.id,
-                // TODO: tags
+                tags_ids: tags,
             }),
         {
             onSuccess: () => {
