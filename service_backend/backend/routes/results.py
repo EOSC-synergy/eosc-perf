@@ -381,7 +381,7 @@ def __update_tags(body_args, id):
 @blp.response(200, schemas.Claims)
 @queries.to_pagination()
 @queries.add_sorting(models.Result.Claim)
-@queries.add_datefilter(models.Claim)
+@queries.add_datefilter(models.Result.Claim)
 def list_claims(*args, **kwargs):
     """(Owner or Admins) Returns the result claims.
 

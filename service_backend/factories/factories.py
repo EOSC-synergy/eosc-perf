@@ -124,3 +124,14 @@ class DBResult(SQLAlchemyModelFactory):
         for spec in specs:
             tag = DBTag(**{**spec, **kwargs})
             self.tags.append(tag)
+
+    @post_generation
+    def claims(self, create, messages, **kwargs):
+        if messages:
+            for msg in messages:
+                self.claims.append(self.Claim(
+                    message=msg,
+                    uploader=DBUser(),
+                    resource=self
+                ))
+            self.delete

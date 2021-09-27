@@ -165,11 +165,6 @@ def match_user(json, user):
     assert 'email' in json and type(json['email']) is str
     assert json['email'] == user.email
 
-    # Check the user has upload date
-    assert 'upload_datetime' in json and type(json['upload_datetime']) is str
-    assert json['upload_datetime'] == str(
-        user.upload_datetime).replace(" ", "T")
-
     return True
 
 
