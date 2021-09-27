@@ -142,6 +142,7 @@ def __search(query_args):
 
 @blp.route(resource_url, methods=["GET"])
 @blp.doc(operationId='GetBenchmark')
+@blp.arguments(args.Schema(), location='query', as_kwargs=True)
 @blp.response(200, schemas.Benchmark)
 def get(*args, **kwargs):
     """(Free) Retrieves benchmark details
@@ -199,6 +200,11 @@ def __update(body_args, id):
     :raises NotFound: No benchmark with id found
     :raises UnprocessableEntity: Wrong query/body parameters
     """
+    image, tag = body_args['docker_image'], body_args['docker_tag']
+    if not utils.dockerhub.valid_image(image, tag):
+        error_msg = f"Image {image}:{tag} not found in dockerhub"
+        abort(422, messages={'error': error_msg})
+
     benchmark = __get(id)
     benchmark.update(body_args, force=True)  # Only admins reach here
 
@@ -212,6 +218,7 @@ def __update(body_args, id):
 @blp.route(resource_url, methods=["DELETE"])
 @blp.doc(operationId='DeleteBenchmark')
 @auth.admin_required()
+@blp.arguments(args.Schema(), location='query', as_kwargs=True)
 @blp.response(204)
 def delete(*args, **kwargs):
     """(Admins) Deletes an existing benchmark
@@ -246,6 +253,7 @@ def __delete(id):
 @blp.route(resource_url + ":approve", methods=["POST"])
 @blp.doc(operationId='ApproveBenchmark')
 @auth.admin_required()
+@blp.arguments(args.Schema(), location='query', as_kwargs=True)
 @blp.response(204)
 def approve(*args, **kwargs):
     """(Admins) Approves a benchmark to include it on default list methods
@@ -286,13 +294,13 @@ def __approve(id):
 @blp.route(resource_url + ":reject", methods=["POST"])
 @blp.doc(operationId='RejectBenchmark')
 @auth.admin_required()
+@blp.arguments(args.Schema(), location='query', as_kwargs=True)
 @blp.response(204)
 def reject(*args, **kwargs):
     """(Admins) Rejects a benchmark to safe delete it.
-
+    
     Use this method instead of DELETE as it raises 422 in case the
     resource was already approved.
-
     Use this method to reject an specific benchmark submitted by an user.
     It is a custom method, as side effect, it removes the submit report
     associated as it is no longer needed.
@@ -302,7 +310,6 @@ def reject(*args, **kwargs):
 
 def __reject(id):
     """Rejects a benchmark to safe delete it.
-
     :param id: The id of the benchmark to reject
     :type id: uuid
     :raises Unauthorized: The server could not verify the user identity

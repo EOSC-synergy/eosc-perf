@@ -62,8 +62,7 @@ class HasUploader(object):
     def __init__(self, **properties):
         super().__init__(**properties)
         if self.uploader == None:
-            tokeninfo = auth.current_tokeninfo()
-            self.uploader = User.read((tokeninfo['sub'], tokeninfo['iss']))
+            self.uploader = User.current_user()
 
     @declared_attr
     def __table_args__(cls):

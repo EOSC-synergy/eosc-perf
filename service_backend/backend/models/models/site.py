@@ -23,7 +23,10 @@ class Site(NeedsApprove, HasUploader, PkModel):
     description = Column(Text, nullable=True)
 
     #: ([Flavor], read_only) List of flavors available at the site
-    flavors = relationship("Flavor", cascade="all, delete-orphan")
+    flavors = relationship(
+        "Flavor", back_populates="site",
+        cascade="all, delete-orphan",
+        )
 
     def __init__(self, **properties):
         """Model initialization"""

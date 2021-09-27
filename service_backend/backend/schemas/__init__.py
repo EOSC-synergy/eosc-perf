@@ -12,7 +12,7 @@ This objects come into 2 types:
 """
 from uuid import uuid4
 
-from marshmallow import Schema, fields, pre_load
+from marshmallow import Schema, fields, pre_load, post_dump
 from marshmallow.validate import OneOf, Range
 from werkzeug.datastructures import ImmutableMultiDict
 
@@ -33,6 +33,13 @@ class BaseSchema(Schema):
             fixed_args = [(x.replace('[]', ''), y) for x, y in args]
             data.data = ImmutableMultiDict(fixed_args)
         return data
+
+    @post_dump
+    def remove_skip_values(self, data, **kwargs):
+        return {
+            key: value for key, value in data.items()
+            if value != None
+        }
 
 
 class Pagination(Schema):
@@ -72,13 +79,13 @@ class Pagination(Schema):
     #: The number of items to be displayed on a page.
     per_page = fields.Integer(
         description="The number of items to be displayed on a page",
-        validate=Range(min=1, max=100), missing=100)
+        validate=Range(min=1, max=100), load_default=100)
 
     #: (Int, required, dump_only):
     #: The return page number (1 indexed).
     page = fields.Integer(
         description="The return page number (1 indexed)",
-        validate=Range(min=1), missing=1)
+        validate=Range(min=1), load_default=1)
 
     #: (Int, required, dump_only):
     #: The total number of items matching the query.
@@ -104,7 +111,7 @@ class Status(Schema):
     status = fields.String(
         description="Resource current state",
         validate=OneOf(list(ResourceStatus.__members__)),
-        missing=ResourceStatus.approved.name
+        load_default=ResourceStatus.approved.name
     )
 
 
@@ -119,14 +126,14 @@ class Search(Schema):
         ),
         description="List of terms (string subsets)",
         example=["search_term 1", "search_term 2"],
-        missing=[]
+        load_default=[]
     )
 
     #: (Str):
     #: Order to return the results separated by coma
     sort_by = fields.String(
         description="Order to return the results (coma separated)",
-        example="+upload_datetime", missing="")
+        example="+upload_datetime", load_default="")
 
 
 class UploadDatetime(Schema):

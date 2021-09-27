@@ -199,7 +199,8 @@ class Benchmark(Id, UploadDatetime, Schema):
     #: Short text describing the main benchmark features
     description = fields.String(
         description="String with an statement about the object",
-        example="This is a simple description example"
+        example="This is a simple description example",
+        load_default=None,
     )
 
 

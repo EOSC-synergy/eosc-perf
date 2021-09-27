@@ -37,7 +37,7 @@ class UserFilter(Pagination, Schema):
     # TODO: Try fields.DelimitedList
     sort_by = fields.String(
         description="Order to return the results (coma separated)",
-        example="+registration_datetime", missing="+iss,+sub"
+        example="+registration_datetime", load_default="+iss,+sub"
     )
 
 
@@ -64,7 +64,7 @@ class SubmitFilter(Pagination, UploadFilter, Schema):
     #: Order to return the results separated by coma
     sort_by = fields.String(
         description="Order to return the results (coma separated)",
-        example="+resource_type", missing="+resource_type"
+        example="+resource_type", load_default="+resource_type"
     )
 
 
@@ -74,7 +74,7 @@ class ClaimFilter(Pagination, UploadFilter, Schema):
     #: Order to return the results separated by coma
     sort_by = fields.String(
         description="Order to return the results (coma separated)",
-        example="+upload_datetime", missing="+upload_datetime"
+        example="+upload_datetime", load_default="+upload_datetime"
     )
 
 
@@ -91,7 +91,7 @@ class TagFilter(Pagination, Schema):
     #: Order to return the results separated by coma
     sort_by = fields.String(
         description="Order to return the results (coma separated)",
-        example="+name", missing="+name"
+        example="+name", load_default="+name"
     )
 
 
@@ -119,7 +119,7 @@ class BenchmarkFilter(Pagination, UploadFilter, Status, Schema):
     #: Order to return the results separated by coma
     sort_by = fields.String(
         description="Order to return the results (coma separated)",
-        example="+docker_image,-docker_tag", missing="+docker_image"
+        example="+docker_image,-docker_tag", load_default="+docker_image"
     )
 
 
@@ -147,7 +147,7 @@ class SiteFilter(Pagination, UploadFilter, Status, Schema):
     #: Order to return the results separated by coma
     sort_by = fields.String(
         description="Order to return the results (coma separated)",
-        example="+name,+address", missing="+name"
+        example="+name,+address", load_default="+name"
     )
 
 
@@ -168,7 +168,7 @@ class FlavorFilter(Pagination, UploadFilter, Status, Schema):
     #: Order to return the results separated by coma
     sort_by = fields.String(
         description="Order to return the results (coma separated)",
-        example="+name", missing="+name"
+        example="+name", load_default="+name"
     )
 
 
@@ -232,14 +232,14 @@ class ResultFilter(Pagination, UploadFilter, Schema):
             example="machine.cpu.count > 4", required=True,
         ),
         description="List of filter conditions (space separated)",
-        example=["cpu.count > 4", "cpu.count < 80"], missing=[]
+        example=["cpu.count > 4", "cpu.count < 80"], load_default=[]
     )
 
     #: (Str):
     #: Order to return the results separated by coma
     sort_by = fields.String(
         description="Order to return the results (coma separated)",
-        example="+execution_datetime", missing="+execution_datetime"
+        example="+execution_datetime", load_default="+execution_datetime"
     )
 
 
@@ -274,7 +274,7 @@ class ResultContext(Schema):
             example=str(uuid4()), required=True,
         ),
         description="UUID tags unique identifications",
-        example=[str(uuid4()) for _ in range(2)], missing=[],
+        example=[str(uuid4()) for _ in range(2)], load_default=[],
     )
 
 

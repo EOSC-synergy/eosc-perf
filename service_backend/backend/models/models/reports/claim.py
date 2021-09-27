@@ -66,13 +66,13 @@ class HasClaims(SoftDelete):
         table_specs = dict(
             __tablename__=f"{cls.__tablename__}_claim",
             resource_id=Column(ForeignKey(f"{cls.__tablename__}.id")),
-            resource=relationship(cls)
+            resource=relationship(cls, back_populates="claims")
         )
         return type(f"{cls.__name__}Claim", (Claim,), table_specs)
 
     @declared_attr
     def claims(cls):
-        return relationship(cls.Claim)
+        return relationship(cls.Claim, back_populates="resource")
 
     def claim(self, message):
         """Creates a pending claim related to the resource and soft

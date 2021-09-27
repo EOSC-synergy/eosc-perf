@@ -3,7 +3,7 @@ classes to interface the application with Docker Hub.
 """
 import requests
 from requests.exceptions import RequestException
-
+from json import JSONDecodeError
 
 #: Url where docker repositories can be queried
 registry_url = "https://registry.hub.docker.com/v2/repositories"
@@ -33,4 +33,7 @@ def valid_image(image, tag="latest"):
         return tag in (result['name'] for result in tags_meta['results'])
 
     except RequestException:
+        return False
+
+    except JSONDecodeError:
         return False

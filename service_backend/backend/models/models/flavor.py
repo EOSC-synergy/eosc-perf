@@ -27,7 +27,7 @@ class Flavor(NeedsApprove, HasUploader, PkModel):
     site_id = Column(ForeignKey('site.id'), nullable=False)
 
     #: (Site, required) Id of the Site the flavor belongs to
-    site = relationship("Site")
+    site = relationship("Site", back_populates="flavors")
 
     @declared_attr
     def __table_args__(cls):

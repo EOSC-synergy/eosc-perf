@@ -22,10 +22,10 @@ def email_updated(user):
 
 
 def resource_submitted(resource):
-    submit_report = resource.submit_report
+    resource_type = resource.submit_report.resource_type
     return EmailMessage(
-        subject=f"New {submit_report.resource_type} submitted: {resource.id}",
-        headers={'Resource-ID': resource.id, 'Report-ID': submit_report.id},
+        subject=f"New {resource_type} resource submitted: {resource.id}",
+        headers={'Resource-ID': f"{resource.id}"},
         from_email=current_app.config['MAIL_FROM'],
         to=[resource.uploader.email],
         cc=[current_app.config['MAIL_SUPPORT']],
@@ -34,42 +34,39 @@ def resource_submitted(resource):
         review the data to accept it into our system.
         
         resource: {resource.id}
-        submit_report: {submit_report.id} 
         """,
     ).send()
 
 
-def resource_approved(submit):
+def resource_approved(resource):
     return EmailMessage(
-        subject=f"Resource approved: {submit.resource.id}",
-        headers={'Resource-ID': submit.resource.id},
+        subject=f"Resource approved: {resource.id}",
+        headers={'Resource-ID': f"{resource.id}"},
         from_email=current_app.config['MAIL_FROM'],
-        to=[submit.resource.uploader.email],
+        to=[resource.uploader.email],
         cc=[current_app.config['MAIL_SUPPORT']],
         body=f"""
         Your resource was approved by our administrators. Now it will be
         displayed by default methods in our system.
         
-        resource: {submit.resource.id}
-        submit: {submit.id}
+        resource: {resource.id}
         """,
     ).send()
 
 
-def resource_rejected(submit):
+def resource_rejected(resource):
     return EmailMessage(
-        subject=f"Resource rejected: {submit.resource.id}",
-        headers={'Resource-ID': submit.resource.id},
+        subject=f"Resource rejected: {resource.id}",
+        headers={'Resource-ID': f"{resource.id}"},
         from_email=current_app.config['MAIL_FROM'],
-        to=[submit.resource.uploader.email],
+        to=[resource.uploader.email],
         cc=[current_app.config['MAIL_SUPPORT']],
         body=f"""
         Your resource was rejected by our administrators. Please check the 
         submitted information and do not hesitate to contact 
         {current_app.config['MAIL_SUPPORT']} for more details.
         
-        resource: {submit.resource.id}
-        submit: {submit.id}
+        resource: {resource.id}
         """,
     ).send()
 
@@ -77,7 +74,7 @@ def resource_rejected(submit):
 def result_claimed(result, claim):
     return EmailMessage(
         subject=f"Claim submitted on result: {result.id}",
-        headers={'Result-ID': result.id, 'Claim-ID': claim.id},
+        headers={'Result-ID': f"{result.id}", 'Claim-ID': f"{claim.id}"},
         from_email=current_app.config['MAIL_FROM'],
         to=[result.uploader.email],
         cc=[current_app.config['MAIL_SUPPORT']],

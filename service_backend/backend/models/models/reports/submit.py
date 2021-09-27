@@ -96,7 +96,7 @@ class NeedsApprove(HasUploader):
     def submit_report(cls):
         """(Report) Submit report related to the model instance"""
         return relationship(
-            cls._submit_report_class, cascade="all",
+            cls._submit_report_class, cascade="all, delete",
             backref=backref("resource", uselist=False),
         )
 
@@ -106,7 +106,9 @@ class NeedsApprove(HasUploader):
             raise RuntimeError("Resource already approved")
         else:
             self.submit_report.delete()
+            self.submit_report = None
             self.status = ResourceStatus.approved
+            
 
     def reject(self):
         """Removes the element and submit report."""
@@ -114,4 +116,5 @@ class NeedsApprove(HasUploader):
             raise RuntimeError("Resource already approved")
         else:
             # self.submit_report.delete() # Cascades
+            # self.submit_report = None
             self.delete()
