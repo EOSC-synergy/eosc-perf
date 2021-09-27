@@ -8,6 +8,7 @@ from .. import models, notifications
 from ..extensions import auth, db
 from ..schemas import args, schemas
 from ..utils import queries
+from . import results as results_routes
 
 blp = Blueprint(
     'users', __name__, description='Operations on users'
@@ -261,6 +262,7 @@ def try_admin():
 
 @blp.route(resource_url + "/results", methods=["GET"])
 @blp.doc(operationId='ListUserResults')
+@auth.login_required()
 @blp.arguments(args.ResultFilter, location='query')
 @blp.response(200, schemas.Results)
 @queries.to_pagination()
@@ -283,12 +285,13 @@ def __results(query_args):
     :raises Forbidden: You don't have the administrator rights
     """
     user = __get()
-    query = models.Result.query.with_deleted()
-    return query.filter_by(uploader=user, **query_args)
+    query = results_routes.__list(query_args)
+    return query.with_deleted().filter_by(uploader=user)
 
 
 @blp.route(resource_url + "/claims", methods=["GET"])
 @blp.doc(operationId='ListUserClaims')
+@auth.login_required()
 @blp.arguments(args.ClaimFilter, location='query')
 @blp.response(200, schemas.Claims)
 @queries.to_pagination()
