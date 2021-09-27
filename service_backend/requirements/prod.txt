@@ -12,7 +12,7 @@ psycopg2-binary~=2.8.6
 flask-migrate~=3.0.0
 
 # Schemas
-marshmallow~=3.10.0
+marshmallow~=3.13.0
 jsonschema~=3.2.0
 
 # REST GUI 
