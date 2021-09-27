@@ -119,8 +119,8 @@ class DBResult(SQLAlchemyModelFactory):
     uploader = SubFactory(DBUser)
 
     @post_generation
-    def tags(self, create, ids, **kwargs):
-        ids = ids if ids is not None else []
-        for id in ids:
-            tag = DBTag(id=id, **kwargs)
+    def tags(self, create, specs, **kwargs):
+        specs = specs if specs is not None else []
+        for spec in specs:
+            tag = DBTag(**{**spec, **kwargs})
             self.tags.append(tag)

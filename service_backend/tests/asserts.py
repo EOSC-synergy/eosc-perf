@@ -42,8 +42,9 @@ def match_benchmark(json, benchmark):
     assert json['docker_tag'] == benchmark.docker_tag
 
     # Check the benchmark has a description
-    assert 'description' in json and type(json['description']) is str
-    assert json['description'] == benchmark.description
+    if 'description' in json:
+        assert type(json['description']) is str
+        assert json['description'] == benchmark.description
 
     # Check the benchmark has a json_schema
     assert 'json_schema' in json and type(json['json_schema']) is dict
@@ -104,8 +105,9 @@ def match_site(json, site):
     assert json['address'] == site.address
 
     # Check the site has description
-    assert 'description' in json and type(json['description']) is str
-    assert json['description'] == site.description
+    if 'description' in json:
+        assert type(json['description']) is str
+        assert json['description'] == site.description
 
     return True
 
@@ -122,8 +124,9 @@ def match_flavor(json, flavor):
     assert json['name'] == flavor.name
 
     # Check the flavor has description
-    assert 'description' in json and type(json['description']) is str
-    assert json['description'] == flavor.description
+    if 'description' in json:
+        assert type(json['description']) is str
+        assert json['description'] == flavor.description
 
     return True
 
@@ -140,8 +143,9 @@ def match_tag(json, tag):
     assert json['name'] == tag.name
 
     # Check the tag has a description
-    assert 'description' in json and type(json['description']) is str
-    assert json['description'] == tag.description
+    if 'description' in json:
+        assert type(json['description']) is str
+        assert json['description'] == tag.description
 
     return True
 
@@ -163,7 +167,8 @@ def match_user(json, user):
 
     # Check the user has upload date
     assert 'upload_datetime' in json and type(json['upload_datetime']) is str
-    assert json['upload_datetime'] == str(user.upload_datetime).replace(" ", "T")
+    assert json['upload_datetime'] == str(
+        user.upload_datetime).replace(" ", "T")
 
     return True
 
@@ -370,33 +375,38 @@ def match_edit(json, body):
     return True
 
 
-def report_notification(report):
+def submit_notification(report):
     """Checks a report notification is in the outbox"""
     mail_outbox = mail.get_connection().mailman.outbox
-    msg_index = find_message(mail_outbox, headers={'Report-ID': report.id})
-    assert msg_index != -1  # Item message found
-    envelope = mail_outbox.pop(msg_index)
+
+    def filter(item):
+        headers = {'Resource-ID': str(report.resource.id)}
+        chk1 = headers.items() <= item.extra_headers.items()
+        chk2 = "submitted" in item.subject
+        return chk1 and chk2
+
+    envelope = pop_notification(mail_outbox, filter)
     assert envelope.from_email == "no-reply@example.com"
     assert report.resource.uploader.email in envelope.to
     assert "support@example.com" in envelope.cc
-    assert envelope.extra_headers['Report-verdict'] == report.verdict
 
 
 def user_welcome(user):
     """Checks a user welcome is in the outbox"""
     mail_outbox = mail.get_connection().mailman.outbox
-    msg_index = find_message(mail_outbox, subject="Thank you for registering")
-    assert msg_index != -1  # Item message found
-    envelope = mail_outbox.pop(msg_index)
+
+    def filter(item):
+        chk1 = "Thank you for registering" in item.subject
+        return chk1
+
+    envelope = pop_notification(mail_outbox, filter)
     assert envelope.from_email == "no-reply@example.com"
     assert user.email in envelope.to
+    assert envelope.cc == []
 
 
-def find_message(mail_outbox, headers=None, subject=None):
+def pop_notification(mail_outbox, filter):
     for index, item in enumerate(mail_outbox):
-        if headers and headers.items() <= item.extra_headers.items():
-            return index
-        if subject and subject in item.subject:
-            return index
-
+        if filter(item):
+            return mail_outbox.pop(index)
     raise KeyError("Message not found")
