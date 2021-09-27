@@ -8,9 +8,8 @@ from tests import asserts
 from tests.db_instances import benchmarks, users
 
 
-@mark.parametrize('endpoint', ['benchmarks.Root'], indirect=True)
-class TestRoot:
-    """Tests for 'Root' route in blueprint."""
+@mark.parametrize('endpoint', ['benchmarks.list'], indirect=True)
+class TestList:
 
     @mark.parametrize('query', indirect=True,  argvalues=[
         {'docker_image': "b1", 'docker_tag': "v1.0"},
@@ -30,7 +29,7 @@ class TestRoot:
             benchmark = models.Benchmark.query.get(item['id'])
             asserts.match_query(item, url)
             asserts.match_benchmark(item, benchmark)
-            assert benchmark.has_open_reports == False
+            assert benchmark.status.name == "approved"
 
     @mark.parametrize('query', indirect=True,  argvalues=[
         {'bad_key': "This is a non expected query key"},
@@ -39,6 +38,10 @@ class TestRoot:
     def test_GET_422(self, response_GET):
         """GET method fails 422 if bad request body."""
         assert response_GET.status_code == 422
+
+
+@mark.parametrize('endpoint', ['benchmarks.create'], indirect=True)
+class TestCreate:
 
     @mark.usefixtures('grant_logged', 'mock_docker_registry')
     @mark.parametrize('token_sub', [users[0]['sub']], indirect=True)
@@ -55,7 +58,7 @@ class TestRoot:
         asserts.match_body(response_POST.json, body)
         benchmark = models.Benchmark.query.get(response_POST.json['id'])
         asserts.match_benchmark(response_POST.json, benchmark)
-        asserts.report_notification(benchmark.reports[0])
+        asserts.submit_notification(benchmark.submit_report)
 
     @mark.parametrize('body', indirect=True,  argvalues=[
         {'docker_image': "b1", 'docker_tag': "v2.0", 'json_schema': {'x': 1}},
@@ -105,9 +108,8 @@ class TestRoot:
         assert response_POST.status_code == 422
 
 
-@mark.parametrize('endpoint', ['benchmarks.Search'], indirect=True)
+@mark.parametrize('endpoint', ['benchmarks.search'], indirect=True)
 class TestSearch:
-    """Tests for 'Search' route in blueprint."""
 
     @mark.parametrize('query', indirect=True,  argvalues=[
         {'terms': ["b1"]},
@@ -129,7 +131,7 @@ class TestSearch:
             benchmark = models.Benchmark.query.get(item['id'])
             asserts.match_query(item, url)
             asserts.match_benchmark(item, benchmark)
-            assert benchmark.has_open_reports == False
+            assert benchmark.status.name == "approved"
 
     @mark.parametrize('query', indirect=True,  argvalues=[
         {'bad_key': "This is a non expected query key"},
@@ -140,14 +142,13 @@ class TestSearch:
         assert response_GET.status_code == 422
 
 
-@mark.parametrize('endpoint', ['benchmarks.Benchmark'], indirect=True)
+@mark.parametrize('endpoint', ['benchmarks.get'], indirect=True)
 @mark.parametrize('benchmark_id', indirect=True, argvalues=[
     benchmarks[0]['id'],
     benchmarks[1]['id'],
     benchmarks[2]['id']
 ])
-class TestId:
-    """Tests for 'Id' route in blueprint."""
+class TestGet:
 
     def test_GET_200(self, benchmark, response_GET):
         """GET method succeeded 200."""
@@ -159,13 +160,19 @@ class TestId:
         """GET method fails 404 if no id found."""
         assert response_GET.status_code == 404
 
-    @mark.usefixtures('grant_admin')
+
+@mark.parametrize('endpoint', ['benchmarks.update'], indirect=True)
+@mark.parametrize('benchmark_id', indirect=True, argvalues=[
+    benchmarks[0]['id'],
+    benchmarks[1]['id'],
+    benchmarks[2]['id']
+])
+class TestUpdate:
+
+    @mark.usefixtures('grant_admin', 'mock_docker_registry')
     @mark.parametrize('body', indirect=True,  argvalues=[
-        {'docker_image': "new_name", 'docker_tag': "v1.0"},
-        {'docker_image': "new_name"},
-        {'docker_tag': "new_tag"},
-        {'description': "new_description"},
-        {'json_schema': {"x": 2}}
+        {'docker_image': "new_name", 'docker_tag': "v1.0",
+         'json_schema': {"x": 2}},
     ])
     def test_PUT_204(self, body, response_PUT, benchmark):
         """PUT method succeeded 204."""
@@ -181,10 +188,11 @@ class TestId:
         assert response_PUT.status_code == 401
         assert benchmark == models.Benchmark.query.get(benchmark.id)
 
-    @mark.usefixtures('grant_admin')
+    @mark.usefixtures('grant_admin', 'mock_docker_registry')
     @mark.parametrize('request_id', [uuid4()], indirect=True)
     @mark.parametrize('body', indirect=True,  argvalues=[
-        {'docker_tag': "new_tag"}
+        {'docker_image': "new_name", 'docker_tag': "v1.0",
+         'json_schema': {"x": 2}},
     ])
     def test_PUT_404(self, benchmark, response_PUT):
         """PUT method fails 404 if no id found."""
@@ -199,6 +207,15 @@ class TestId:
         """PUT method fails 422 if bad request body."""
         assert response_PUT.status_code == 422
         assert benchmark == models.Benchmark.query.get(benchmark.id)
+
+
+@mark.parametrize('endpoint', ['benchmarks.delete'], indirect=True)
+@mark.parametrize('benchmark_id', indirect=True, argvalues=[
+    benchmarks[0]['id'],
+    benchmarks[1]['id'],
+    benchmarks[2]['id']
+])
+class TestDelete:
 
     @mark.usefixtures('grant_admin')
     def test_DELETE_204(self, benchmark, response_DELETE):
@@ -223,3 +240,65 @@ class TestId:
         """DELETE method fails 404 if no id found."""
         assert response_DELETE.status_code == 404
         assert models.Benchmark.query.get(benchmark.id) is not None
+
+
+@mark.parametrize('endpoint', ['benchmarks.approve'], indirect=True)
+@mark.parametrize('benchmark_id', indirect=True, argvalues=[
+    benchmarks[3]['id'],
+])
+class TestApprove:
+
+    @mark.usefixtures('grant_admin')
+    def test_204(self, response_POST, benchmark):
+        """POST method succeeded 200."""
+        assert response_POST.status_code == 204
+        assert benchmark.status.name == "approved"
+
+    def test_401(self, response_POST, benchmark):
+        """POST method fails 401 if not authorized."""
+        assert response_POST.status_code == 401
+        assert benchmark.status.name == "on_review"
+
+    @mark.usefixtures('grant_logged')
+    def test_403(self, response_POST, benchmark):
+        """POST method fails 403 if method forbidden."""
+        assert response_POST.status_code == 403
+        assert benchmark.status.name == "on_review"
+
+    @mark.usefixtures('grant_admin')
+    @mark.parametrize('request_id', [uuid4()], indirect=True)
+    def test_404(self, response_POST, benchmark):
+        """POST method fails 404 if no id found."""
+        assert response_POST.status_code == 404
+        assert benchmark.status.name == "on_review"
+
+
+@mark.parametrize('endpoint', ['benchmarks.reject'], indirect=True)
+@mark.parametrize('benchmark_id', indirect=True, argvalues=[
+    benchmarks[4]['id'],
+])
+class TestReject:
+
+    @mark.usefixtures('grant_admin')
+    def test_204(self, response_POST, benchmark):
+        """POST method succeeded 200."""
+        assert response_POST.status_code == 204
+        assert benchmark == None
+
+    def test_401(self, response_POST, benchmark):
+        """POST method fails 401 if not authorized."""
+        assert response_POST.status_code == 401
+        assert benchmark.status.name == "on_review"
+
+    @mark.usefixtures('grant_logged')
+    def test_403(self, response_POST, benchmark):
+        """POST method fails 403 if method forbidden."""
+        assert response_POST.status_code == 403
+        assert benchmark.status.name == "on_review"
+
+    @mark.usefixtures('grant_admin')
+    @mark.parametrize('request_id', [uuid4()], indirect=True)
+    def test_404(self, response_POST, benchmark):
+        """POST method fails 404 if no id found."""
+        assert response_POST.status_code == 404
+        assert benchmark.status.name == "on_review"

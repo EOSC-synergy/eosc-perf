@@ -33,7 +33,7 @@ tags[3]['description'] = "Description tag 3"
 
 
 # Benchmark specifications
-benchmarks = [{'id': uuid4()} for _ in range(3)]
+benchmarks = [{'id': uuid4()} for _ in range(5)]
 
 benchmarks[0]['docker_image'] = "b0"
 benchmarks[0]['docker_tag'] = "v1.0"
@@ -55,6 +55,20 @@ benchmarks[2]['description'] = "Benchmark 2"
 benchmarks[2]['json_schema'] = {"properties": {"time": {"type": "number"}}}
 benchmarks[2]['uploader__email'] = users[1]['email']
 benchmarks[2]['status'] = "on_review"
+
+benchmarks[3]['docker_image'] = "x1"
+benchmarks[3]['docker_tag'] = "v1.0"
+benchmarks[3]['description'] = "Benchmark in review"
+benchmarks[3]['json_schema'] = {"properties": {"time": {"type": "number"}}}
+benchmarks[3]['uploader__email'] = users[1]['email']
+benchmarks[3]['status'] = "on_review"
+
+benchmarks[4]['docker_image'] = "x2"
+benchmarks[4]['docker_tag'] = "v1.0"
+benchmarks[4]['description'] = "Benchmark in review"
+benchmarks[4]['json_schema'] = {"properties": {"time": {"type": "number"}}}
+benchmarks[4]['uploader__email'] = users[1]['email']
+benchmarks[4]['status'] = "on_review"
 
 
 # Site specifications
