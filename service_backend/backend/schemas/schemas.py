@@ -109,7 +109,7 @@ class Claims(Pagination, Schema):
 # ---------------------------------------------------------------------
 # Definition of Tag schemas
 
-class Tag(Id, Schema):
+class CreateTag(Schema):
 
     #: (Text, required):
     #: Human readable feature identification
@@ -124,6 +124,10 @@ class Tag(Id, Schema):
         description="String with an statement about the object",
         example="This is a simple description example",
     )
+
+
+class Tag(Id, CreateTag):
+    pass
 
 
 class Tags(Pagination, Schema):
@@ -143,7 +147,7 @@ class TagsIds(Schema):
 # ---------------------------------------------------------------------
 # Definition of benchmark schemas
 
-class Benchmark(Id, UploadDatetime, Schema):
+class CreateBenchmark(Schema):
 
     #: (Text, required):
     #: Docker image referenced by the benchmark
@@ -208,6 +212,10 @@ class Benchmark(Id, UploadDatetime, Schema):
     )
 
 
+class Benchmark(Id, UploadDatetime, CreateBenchmark):
+    pass
+
+
 class Benchmarks(Pagination, Schema):
 
     #: ([Benchmark], required):
@@ -218,7 +226,7 @@ class Benchmarks(Pagination, Schema):
 # ---------------------------------------------------------------------
 # Definition of Site schemas
 
-class Site(Id, UploadDatetime, Schema):
+class CreateSite(Schema):
 
     #: (Text, required):
     #: Human readable institution identification
@@ -242,6 +250,10 @@ class Site(Id, UploadDatetime, Schema):
     )
 
 
+class Site(Id, UploadDatetime, CreateSite):
+    pass
+
+
 class Sites(Pagination, Schema):
 
     #: ([Site], required):
@@ -252,7 +264,7 @@ class Sites(Pagination, Schema):
 # ---------------------------------------------------------------------
 # Definition of Flavor schemas
 
-class Flavor(Id, UploadDatetime, Schema):
+class CreateFlavor(Schema):
 
     #: (Text, required):
     #: Text with virtual hardware template identification
@@ -267,6 +279,10 @@ class Flavor(Id, UploadDatetime, Schema):
         description="String with an statement about the object",
         example="This is a simple description example",
     )
+
+
+class Flavor(Id, UploadDatetime, CreateFlavor):
+    pass
 
 
 class Flavors(Pagination, Schema):

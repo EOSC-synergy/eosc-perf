@@ -51,7 +51,7 @@ def __list(query_args):
 @blp.route(collection_url, methods=["POST"])
 @blp.doc(operationId='CreateBenchmark')
 @auth.login_required()
-@blp.arguments(schemas.Benchmark)
+@blp.arguments(schemas.CreateBenchmark)
 @blp.response(201, schemas.Benchmark)
 def create(*args, **kwargs):
     """(Users) Uploads a new benchmark

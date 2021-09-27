@@ -50,7 +50,7 @@ def __list(query_args):
 @blp.route(collection_url, methods=["POST"])
 @blp.doc(operationId='CreateTag')
 @auth.login_required()
-@blp.arguments(schemas.Tag)
+@blp.arguments(schemas.CreateTag)
 @blp.response(201, schemas.Tag)
 def create(*args, **kwargs):
     """(Users) Uploads a new tag

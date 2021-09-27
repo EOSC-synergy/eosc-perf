@@ -100,7 +100,7 @@ class Id(Schema):
     #: Primary key with an Unique Identifier for the model instance
     id = fields.UUID(
         description="UUID resource unique identification",
-        example=str(uuid4()), required=True, dump_only=True,
+        example=str(uuid4()), required=True,
     )
 
 

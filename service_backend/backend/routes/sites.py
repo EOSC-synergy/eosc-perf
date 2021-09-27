@@ -51,7 +51,7 @@ def __list(query_args):
 @blp.route(collection_url, methods=['POST'])
 @auth.login_required()
 @blp.doc(operationId='CreateSite')
-@blp.arguments(schemas.Site)
+@blp.arguments(schemas.CreateSite)
 @blp.response(201, schemas.Site)
 def create(*args, **kwargs):
     """(Users) Uploads a new site
@@ -347,7 +347,7 @@ def __list_flavors(query_args, id):
 @blp.route(resource_url + '/flavors', methods=['POST'])
 @auth.login_required()
 @blp.doc(operationId='AddFlavor')
-@blp.arguments(schemas.Flavor)
+@blp.arguments(schemas.CreateFlavor)
 @blp.response(201, schemas.Flavor)
 def create_flavor(*args, **kwargs):
     """(Users) Uploads a new flavor
