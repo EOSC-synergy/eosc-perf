@@ -78,7 +78,7 @@ class Submits(Pagination, Schema):
     items = fields.Nested(Submit, required=True, many=True)
 
 
-class Claim(Id, UploadDatetime, Schema):
+class CreateClaim(Schema):
 
     #: (String, required):
     #: Claim text describing the resource issue
@@ -87,6 +87,8 @@ class Claim(Id, UploadDatetime, Schema):
         example="The resource uses negative time", required=True
     )
 
+
+class Claim(Id, UploadDatetime, CreateClaim):
     #: (UUID, required):
     #: Resource unique identification
     resource_id = fields.UUID(

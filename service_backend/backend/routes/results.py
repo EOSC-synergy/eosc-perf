@@ -296,7 +296,7 @@ def __delete(id):
 @blp.route(resource_url + ":claim", methods=["POST"])
 @blp.doc(operationId='ClaimReport')
 @auth.login_required()
-@blp.arguments(schemas.Claim)
+@blp.arguments(schemas.CreateClaim)
 @blp.response(201, schemas.Claim)
 def claim(*args, **kwargs):
     """(Users) Reports a result
