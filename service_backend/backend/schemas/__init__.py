@@ -49,49 +49,57 @@ class Pagination(Schema):
     #: True if a next page exists.
     has_next = fields.Boolean(
         description="True if a next page exists",
-        required=True, dump_only=True)
+        required=True, dump_only=True
+    )
 
     #: (Bool, required, dump_only):
     #: True if a previous page exists.
     has_prev = fields.Boolean(
         description="True if a previous page exists",
-        required=True, dump_only=True)
+        required=True, dump_only=True
+    )
 
     #: (Int, required, dump_only):
     #: Number of the next page.
     next_num = fields.Integer(
         description="Number of the next page",
-        required=True, dump_only=True)
+        required=True, dump_only=True
+    )
 
     #: (Int, required, dump_only):
     #: Number of the previous page.
     prev_num = fields.Integer(
         description="Number of the previous page",
-        required=True, dump_only=True)
+        required=True, dump_only=True
+    )
 
     #: (Int, required, dump_only):
     #: The total number of pages
     pages = fields.Integer(
         description="The total number of pages",
-        required=True, dump_only=True)
+        required=True, dump_only=True
+    )
 
     #: (Int, required, dump_only):
     #: The number of items to be displayed on a page.
     per_page = fields.Integer(
         description="The number of items to be displayed on a page",
-        validate=Range(min=1, max=100), load_default=100)
+        validate=Range(min=1, max=100), required=True,
+    )
 
     #: (Int, required, dump_only):
     #: The return page number (1 indexed).
     page = fields.Integer(
         description="The return page number (1 indexed)",
-        validate=Range(min=1), load_default=1)
+        validate=Range(min=1), required=True,
+    )
 
     #: (Int, required, dump_only):
     #: The total number of items matching the query.
     total = fields.Integer(
         description="The total number of items matching the query",
-        required=True, dump_only=True)
+        required=True, dump_only=True
+    )
 
 
 class Id(Schema):

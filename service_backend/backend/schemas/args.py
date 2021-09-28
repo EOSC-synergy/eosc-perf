@@ -2,10 +2,27 @@
 from uuid import uuid4
 
 from marshmallow import fields
-from marshmallow.validate import OneOf
+from marshmallow.validate import OneOf, Range
 
 from . import BaseSchema as Schema
-from . import Pagination, Search, Status, UploadFilter
+from . import Search, Status, UploadFilter
+
+
+class Pagination(Schema):
+
+    #: (Int, required, dump_only):
+    #: The number of items to be displayed on a page.
+    per_page = fields.Integer(
+        description="The number of items to be displayed on a page",
+        validate=Range(min=1, max=100), load_default=100
+    )
+
+    #: (Int, required, dump_only):
+    #: The return page number (1 indexed).
+    page = fields.Integer(
+        description="The return page number (1 indexed)",
+        validate=Range(min=1), load_default=1
+    )
 
 
 class UserFilter(Pagination, Schema):
