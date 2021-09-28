@@ -89,6 +89,15 @@ class CreateClaim(Schema):
 
 
 class Claim(Id, UploadDatetime, CreateClaim):
+
+    #: (UUID, required):
+    #: Resource unique identification
+    resource_type = fields.String(
+        description="Resource type discriminator",
+        example="result", required=True, dump_default="result",
+        validate=OneOf(["result"]),
+    )
+
     #: (UUID, required):
     #: Resource unique identification
     resource_id = fields.UUID(

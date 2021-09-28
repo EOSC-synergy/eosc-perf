@@ -69,6 +69,7 @@ class TestListClaims:
         for item in response_GET.json['items']:
             asserts.match_query(item, url)
             item.pop('uploader')
+            item.pop('resource_type')
             assert models.Result.Claim.query.filter_by(**item).first()
 
     @mark.parametrize('query', indirect=True, argvalues=[
