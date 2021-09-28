@@ -1,5 +1,4 @@
 """Functional tests using pytest-flask."""
-from operator import mod
 from uuid import uuid4
 
 from backend import models
@@ -65,7 +64,7 @@ class TestCreate:
 
     @mark.usefixtures('grant_accesstoken')
     @mark.parametrize('token_sub', ["non-registered"], indirect=True)
-    @mark.parametrize('token_iss', ["https://aai-dev.egi.eu/oidc"], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
         {'name': "tag4", 'description': "desc_1"}
     ])

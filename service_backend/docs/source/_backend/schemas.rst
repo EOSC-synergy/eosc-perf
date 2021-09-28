@@ -6,7 +6,7 @@ Schemas package
    :member-order: bysource
    :show-inheritance:
 
-Benchmark schemas 
+Benchmark schemas
 -----------------
 
 .. autoclass:: backend.schemas.schemas.Benchmark
@@ -37,7 +37,7 @@ Benchmark arguments
    :member-order: bysource
    :show-inheritance:
 
-Flavor schemas 
+Flavor schemas
 -----------------
 
 .. autoclass:: backend.schemas.schemas.Flavor
@@ -68,7 +68,7 @@ Flavor arguments
    :member-order: bysource
    :show-inheritance:
 
-Report schemas 
+Report schemas
 -----------------
 
 .. autoclass:: backend.schemas.schemas.Report
@@ -94,7 +94,7 @@ Report arguments
    :member-order: bysource
    :show-inheritance:
 
-Result schemas 
+Result schemas
 -----------------
 
 .. autoclass:: backend.schemas.schemas.Result
@@ -125,7 +125,7 @@ Result arguments
    :member-order: bysource
    :show-inheritance:
 
-Site schemas 
+Site schemas
 -----------------
 
 .. autoclass:: backend.schemas.schemas.Site
@@ -156,7 +156,7 @@ Site arguments
    :member-order: bysource
    :show-inheritance:
 
-Tag schemas 
+Tag schemas
 -----------------
 
 .. autoclass:: backend.schemas.schemas.Tag
@@ -192,7 +192,7 @@ Tag arguments
    :member-order: bysource
    :show-inheritance:
 
-User schemas 
+User schemas
 -----------------
 
 .. autoclass:: backend.schemas.schemas.User

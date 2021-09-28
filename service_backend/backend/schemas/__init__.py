@@ -4,11 +4,11 @@ library for converting complex datatypes, such as objects, to and from
 native Python datatypes.
 
 Combined with the flask extension flask_smorest, it allows to generate
-the OpenAPI specification schemas based on python class objects. 
+the OpenAPI specification schemas based on python class objects.
 
 This objects come into 2 types:
  - Schemas: JSON structures used to operate model instances
- - Arguments: Query arguments to control route method parameters 
+ - Arguments: Query arguments to control route method parameters
 """
 from uuid import uuid4
 
@@ -38,7 +38,7 @@ class BaseSchema(Schema):
     def remove_skip_values(self, data, **kwargs):
         return {
             key: value for key, value in data.items()
-            if value != None
+            if value is not None
         }
 
 

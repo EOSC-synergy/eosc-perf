@@ -61,7 +61,7 @@ class HasUploader(object):
 
     def __init__(self, **properties):
         super().__init__(**properties)
-        if self.uploader == None:
+        if self.uploader is None:
             self.uploader = User.current_user()
 
     @declared_attr

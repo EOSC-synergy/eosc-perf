@@ -57,7 +57,7 @@ def match_submit(json):
     """Checks the json db_instances matches the submit object."""
 
     # Check the report has an id
-    assert not 'id' in json
+    assert 'id' not in json
 
     # Check the report has a upload date
     assert 'upload_datetime' in json
@@ -266,20 +266,26 @@ def match_query(json, url):
     # Exclusive for /results
     if parsed_url.path == "/results":
         if 'docker_image' in query_param:
-            assert json['benchmark']['docker_image'] == query_param['docker_image'][0]
+            assert json['benchmark']['docker_image']\
+                == query_param['docker_image'][0]
         if 'docker_tag' in query_param:
-            assert json['benchmark']['docker_tag'] == query_param['docker_tag'][0]
+            assert json['benchmark']['docker_tag']\
+                == query_param['docker_tag'][0]
         if 'site_name' in query_param:
-            assert json['site']['name'] == query_param['site_name'][0]
+            assert json['site']['name']\
+                == query_param['site_name'][0]
         if 'flavor_name' in query_param:
-            assert json['flavor']['name'] == query_param['flavor_name'][0]
+            assert json['flavor']['name']\
+                == query_param['flavor_name'][0]
         if 'upload_before' in query_param:
-            assert json['upload_datetime'] < query_param['upload_before'][0]
+            assert json['upload_datetime']\
+                < query_param['upload_before'][0]
         if 'upload_after' in query_param:
-            assert json['upload_datetime'] > query_param['upload_after'][0]
+            assert json['upload_datetime']\
+                > query_param['upload_after'][0]
         if 'tag_names' in query_param:
-            assert set(x['name']
-                       for x in json['tags']) == set(query_param['tag_names'])
+            assert set(x['name'] for x in json['tags'])\
+                == set(query_param['tag_names'])
         # Add assert for filters
             # TODO: Assert for filters
 

@@ -14,8 +14,8 @@ from .user import HasUploader
 
 
 class Result(HasClaims, HasTags, HasUploader, PkModel):
-    """The Result model represents the results of the execution of a 
-    specific Benchmark on a specific Site and Flavor. 
+    """The Result model represents the results of the execution of a
+    specific Benchmark on a specific Site and Flavor.
 
     They carry the JSON data output by the executed benchmarks.
 

@@ -17,7 +17,7 @@ def valid_image(image, tag="latest"):
     :type image: string
     :param tag: Container version to search for, defaults to "latest"
     :type tag: str, optional
-    :return: True if image:tag exists and public, False otherwise 
+    :return: True if image:tag exists and public, False otherwise
     :rtype: bool
     """
     try:

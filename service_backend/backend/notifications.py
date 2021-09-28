@@ -32,7 +32,7 @@ def resource_submitted(resource):
         body=f"""
         Your resource was successfully submitted, our administrators now will
         review the data to accept it into our system.
-        
+
         resource: {resource.id}
         """,
     ).send()
@@ -48,7 +48,7 @@ def resource_approved(resource):
         body=f"""
         Your resource was approved by our administrators. Now it will be
         displayed by default methods in our system.
-        
+
         resource: {resource.id}
         """,
     ).send()
@@ -62,10 +62,10 @@ def resource_rejected(resource):
         to=[resource.uploader.email],
         cc=[current_app.config['MAIL_SUPPORT']],
         body=f"""
-        Your resource was rejected by our administrators. Please check the 
-        submitted information and do not hesitate to contact 
+        Your resource was rejected by our administrators. Please check the
+        submitted information and do not hesitate to contact
         {current_app.config['MAIL_SUPPORT']} for more details.
-        
+
         resource: {resource.id}
         """,
     ).send()
@@ -82,10 +82,10 @@ def result_claimed(result, claim):
         Your resource was claimed by a community users. It will be temporary
         hidden from our list of results and reviewed by our administrators
 
-        If the claim is valid the result might be permanently deleted. 
-        
+        If the claim is valid the result might be permanently deleted.
+
         result: {result.id}
-        claim: {claim.id} 
+        claim: {claim.id}
         """,
     ).send()
 
@@ -99,7 +99,7 @@ def result_restored(result):
         cc=[current_app.config['MAIL_SUPPORT']],
         body=f"""
         Your result was restored.
-        
+
         result: {result.id}
         """,
     ).send()

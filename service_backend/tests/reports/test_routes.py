@@ -1,11 +1,7 @@
 """Functional tests using pytest-flask."""
-from uuid import uuid4
-
 from backend import models
-from flask import url_for
-from pytest import fixture, mark
+from pytest import mark
 from tests import asserts
-from tests.db_instances import benchmarks, flavors, results, sites, users
 
 
 @mark.parametrize('endpoint', ['reports.list_submits'], indirect=True)

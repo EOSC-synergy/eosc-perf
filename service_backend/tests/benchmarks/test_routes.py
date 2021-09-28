@@ -61,7 +61,8 @@ class TestCreate:
         asserts.submit_notification(benchmark.submit_report)
 
     @mark.parametrize('body', indirect=True,  argvalues=[
-        {'docker_image': "b1", 'docker_tag': "v2.0", 'json_schema': {'x': 1}},
+        {'docker_image': "b1", 'docker_tag': "v2.0",
+         'json_schema': {'x': 1}},
         {}  # Empty body
     ])
     def test_401(self, response_POST):
@@ -70,7 +71,7 @@ class TestCreate:
 
     @mark.usefixtures('grant_accesstoken', 'mock_docker_registry')
     @mark.parametrize('token_sub', ["non-registered"], indirect=True)
-    @mark.parametrize('token_iss', ["https://aai-dev.egi.eu/oidc"], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
         {'docker_image': "b1", 'docker_tag': "v2.0", 'json_schema': {'x': 1}}
     ])
@@ -97,7 +98,7 @@ class TestCreate:
         {'docker_image': "_", 'docker_tag': "_", 'json_schema': {'type': 'x'}},
         {'docker_image': "b1", 'docker_tag': "v1.0"},   # Missing json_schema
         {'docker_image': "b1", 'json_schema': {'x': 1}},  # Missing docker_tag
-        {'docker_tag': "v1.0", 'json_schema': {'x': 1}},  # Missing docker_image
+        {'docker_tag': "v1.0", 'json_schema': {'x': 1}},  # Missing docker_im
         {'docker_image': "b1"},
         {'docker_tag': "t1"},
         {'json_schema': {'x': 1}},
@@ -283,7 +284,7 @@ class TestReject:
     def test_204(self, response_POST, benchmark):
         """POST method succeeded 200."""
         assert response_POST.status_code == 204
-        assert benchmark == None
+        assert benchmark is None
 
     def test_401(self, response_POST, benchmark):
         """POST method fails 401 if not authorized."""

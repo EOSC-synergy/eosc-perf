@@ -1,4 +1,4 @@
-"""Application module where to define the flask application and 
+"""Application module where to define the flask application and
 extensions to build the backend package.
 """
 import logging

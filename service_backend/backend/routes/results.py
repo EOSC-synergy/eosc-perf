@@ -28,7 +28,7 @@ resource_url = "/<uuid:id>"
 def list(*args, **kwargs):
     """(Free) Filters and list results
 
-    Use this method to get a list of results filtered according to your 
+    Use this method to get a list of results filtered according to your
     requirements. The response returns a pagination object with the
     filtered results (if succeeds).
 
@@ -38,18 +38,18 @@ def list(*args, **kwargs):
 
     There are five filter operators:
 
-     - **Equals (==)**: Return results where path value is exact to the 
+     - **Equals (==)**: Return results where path value is exact to the
        query value. For example *filters=cpu.count == 5*
-     - **Greater than (>)**: Return results where path value strictly 
+     - **Greater than (>)**: Return results where path value strictly
        greater than the query value. For example *filters=cpu.count > 5*
-     - **Less than (<)**: Return results where path value strictly lower 
+     - **Less than (<)**: Return results where path value strictly lower
        than the query value. For example *filters=cpu.count < 5*
      - **Greater or equal (>=)**: Return results where path value is equal
        or greater than the query value. For example *filters=cpu.count >= 5*
      - **Less or equal (<=)**: Return results where path value is equal or
        lower than the query value. For example *filters=cpu.count <= 5*
 
-    Note that in the provided examples the filter is not URL-encoded as 
+    Note that in the provided examples the filter is not URL-encoded as
     most libraries do it automatically, however there might be exception.
     In such cases, use the url encoding guide at:
     https://datatracker.ietf.org/doc/html/rfc3986#section-2.1
@@ -60,12 +60,12 @@ def list(*args, **kwargs):
 def __list(query_args):
     """Returns a list of filtered results.
 
-    Note the URL-encoding is only needed when accessing the function as 
-    HTTP request. The python call handles the filters only as strings. 
+    Note the URL-encoding is only needed when accessing the function as
+    HTTP request. The python call handles the filters only as strings.
 
     :param query_args: The request query arguments as python dictionary
     :type query_args: dict
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     :return: Pagination object with filtered results
     :rtype: :class:`flask_sqlalchemy.Pagination`
     """
@@ -151,14 +151,14 @@ def __create(query_args, body_args):
     :raises Unauthorized: The server could not verify the user identity
     :raises Forbidden: The user is not registered
     :raises NotFound: One or more query items do not exist in the database
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     :raises Conflict: Created object conflicts a database item
     :return: The result created into the database.
     :rtype: :class:`models.Result`
     """
     def get(model, id):
         item = model.read(id)
-        if item == None:
+        if item is None:
             error_msg = f"{item.__class__.__name__} {id} not in database"
             abort(404, messages={'error': error_msg})
         elif hasattr(item, "status") and item.status.name != "approved":
@@ -177,7 +177,7 @@ def __create(query_args, body_args):
     try:  # Transaction execution
         db.session.commit()
     except IntegrityError:
-        error_msg = f"Integrity error"
+        error_msg = "Integrity error"
         abort(409, messages={'error': error_msg})
 
     return result
@@ -196,7 +196,7 @@ def search(*args, **kwargs):
     Use this method to get a list of results based on a general search
     of terms. For example, calling this method with terms=v1&terms=0
     returns all results with 'v1' and '0' on the 'docker_image',
-    'docker_tag', 'site_name', 'flavor_name' fields or 'tags'. 
+    'docker_tag', 'site_name', 'flavor_name' fields or 'tags'.
     The response returns a pagination object with the filtered results
     (if succeeds).
     """
@@ -208,7 +208,7 @@ def __search(query_args):
 
     :param query_args: The request query arguments as python dictionary
     :type query_args: dict
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     :return: Pagination object with filtered results
     :rtype: :class:`flask_sqlalchemy.Pagination`
     """
@@ -252,7 +252,7 @@ def __get(id):
     :rtype: :class:`models.Result`
     """
     result = models.Result.read(id, with_deleted=True)
-    if result == None:
+    if result is None:
         error_msg = f"Result {id} not found in the database"
         abort(404, messages={'error': error_msg})
     else:
@@ -304,7 +304,7 @@ def claim(*args, **kwargs):
     Use this method to create a report for a specific result so the
     administrators are aware of issues. The reported result is hidden
     from generic responses until the issue is corrected and approved
-    by the administrators. 
+    by the administrators.
     """
     return __claim(*args, **kwargs)
 
@@ -313,14 +313,14 @@ def __claim(body_args, id):
     """Creates a claim linked to the report
 
     If no result exists with the indicated id, then 404 NotFound
-    exception is raised.        
+    exception is raised.
 
     :param id: The id of the result created by the returned user
     :type id: uuid
     :raises Unauthorized: The server could not verify the user identity
     :raises Forbidden: The user is not registered
     :raises NotFound: No result with id found
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     """
     result = __get(id)
     claim = result.claim(message=body_args['message'])
@@ -354,7 +354,7 @@ def __update_tags(body_args, id):
     :raises Unauthorized: The server could not verify the user identity
     :raises Forbidden: The user has not the required privileges
     :raises NotFound: No result with id found
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     """
     result = __get(id)
 
@@ -430,7 +430,7 @@ def __get_uploader(id):
     """Returns the uploader of the id matching result.
 
     If no result exists with the indicated id, then 404 NotFound
-    exception is raised.        
+    exception is raised.
 
     :param id: The id of the result created by the returned user
     :type id: uuid

@@ -5,7 +5,7 @@ from backend import models
 from backend.schemas import schemas
 from pytest import mark
 from tests import asserts
-from tests.db_instances import flavors, sites, users
+from tests.db_instances import flavors
 
 
 @mark.parametrize('endpoint', ['flavors.get'], indirect=True)
@@ -35,7 +35,7 @@ class TestGet:
     flavors[2]['id'],
     flavors[3]['id']
 ])
-class TestGet:
+class TestUpdate:
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('body', indirect=True, argvalues=[
@@ -154,7 +154,7 @@ class TestReject:
     def test_204(self, response_POST, flavor):
         """POST method succeeded 200."""
         assert response_POST.status_code == 204
-        assert flavor == None
+        assert flavor is None
 
     def test_401(self, response_POST, flavor):
         """POST method fails 401 if not authorized."""

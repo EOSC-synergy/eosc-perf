@@ -1,4 +1,4 @@
-"""Flavor URL routes. Collection of controller methods to 
+"""Flavor URL routes. Collection of controller methods to
 operate existing flavors on the database.
 """
 from flask_smorest import Blueprint, abort
@@ -40,7 +40,7 @@ def __get(id):
     :rtype: :class:`models.Flavor`
     """
     flavor = models.Flavor.read(id)
-    if flavor == None:
+    if flavor is None:
         error_msg = f"Record {id} not found in the database"
         abort(404, messages={'error': error_msg})
     else:
@@ -73,10 +73,10 @@ def __update(body_args, id):
     :raises Unauthorized: The server could not verify the user identity
     :raises Forbidden: The user has not the required privileges
     :raises NotFound: No flavor with id found
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     """
     flavor = models.Flavor.read(id)
-    if flavor == None:
+    if flavor is None:
         error_msg = f"Record {id} not found in the database"
         abort(404, messages={'error': error_msg})
 
@@ -85,7 +85,7 @@ def __update(body_args, id):
     try:  # Transaction execution
         db.session.commit()
     except IntegrityError:
-        error_msg = f"Changes conflict submitted/existing flavor"
+        error_msg = "Changes conflict submitted/existing flavor"
         abort(409, messages={'error': error_msg})
 
 
@@ -114,7 +114,7 @@ def __delete(id):
     :raises NotFound: No flavor with id found
     """
     flavor = models.Flavor.read(id)
-    if flavor == None:
+    if flavor is None:
         error_msg = f"Record {id} not found in the database"
         abort(404, messages={'error': error_msg})
 

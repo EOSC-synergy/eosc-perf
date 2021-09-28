@@ -4,9 +4,9 @@ For more information about flask and extensions see:
 
 https://flask.palletsprojects.com/en/2.0.x/extensions
 
-Each extension requires of a specific class initialization which is 
+Each extension requires of a specific class initialization which is
 lately initialized in the application factory using the settings and
-configurations from the environment. 
+configurations from the environment.
 """
 from flask_bcrypt import Bcrypt
 from flask_caching import Cache

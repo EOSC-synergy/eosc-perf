@@ -1,7 +1,6 @@
 """Report URL routes. Collection of controller methods to create and
 operate existing reports on the database.
 """
-from backend.models.models.reports import claim
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import IntegrityError
 
@@ -30,7 +29,7 @@ result_claim_url = result_claims_url + '/<uuid:id>'
 def list_submits(*args, **kwargs):
     """(Admins) Filters and list  submits
 
-    Use this method to get a list of submits filtered according to your 
+    Use this method to get a list of submits filtered according to your
     requirements. The response returns a pagination object with the
     filtered submits (if succeeds).
     """
@@ -44,7 +43,7 @@ def __list_submits(query_args):
     :type query_args: dict
     :raises Unauthorized: The server could not verify the user identity
     :raises Forbidden: The user has not the required privileges
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     :return: Pagination object with filtered submits
     :rtype: :class:`flask_sqlalchemy.Pagination`
     """
@@ -63,7 +62,7 @@ def __list_submits(query_args):
 def list_claims(*args, **kwargs):
     """(Admins) Filters and lists claims
 
-    Use this method to get a list of claims filtered according to your 
+    Use this method to get a list of claims filtered according to your
     requirements. The response returns a pagination object with the
     filtered claims (if succeeds).
     """
@@ -77,7 +76,7 @@ def __list_claims(query_args):
     :type query_args: dict
     :raises Unauthorized: The server could not verify the user identity
     :raises Forbidden: The user has not the required privileges
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     :return: Pagination object with filtered claims
     :rtype: :class:`flask_sqlalchemy.Pagination`
     """
@@ -114,7 +113,7 @@ def __approve_claim(id):
     :raises UnprocessableEntity: Resource already approved
     """
     claim = models.Result.Claim.read(id)
-    if claim == None:
+    if claim is None:
         error_msg = f"Claim {id} not found in the database"
         abort(404, messages={'error': error_msg})
 
@@ -162,7 +161,7 @@ def __reject_claim(id):
     :raises UnprocessableEntity: Resource already approved
     """
     claim = models.Result.Claim.read(id)
-    if claim == None:
+    if claim is None:
         error_msg = f"Claim {id} not found in the database"
         abort(404, messages={'error': error_msg})
 

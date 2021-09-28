@@ -43,7 +43,7 @@ class TestList:
             result = models.Result.query.get(item['id'])
             asserts.match_query(item, url)
             asserts.match_result(item, result)
-            assert result.deleted == False
+            assert not result.deleted
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'bad_key': "This is a non expected query key"},
@@ -86,7 +86,7 @@ class TestCreate:
 
     @mark.usefixtures('grant_accesstoken')
     @mark.parametrize('token_sub', ["non-registered"], indirect=True)
-    @mark.parametrize('token_iss', ["https://aai-dev.egi.eu/oidc"], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('query', indirect=True, argvalues=[
         post_query   # Resource can have multiple results
     ])
@@ -170,7 +170,7 @@ class TestSearch:
             result = models.Result.query.get(item['id'])
             asserts.match_query(item, url)
             asserts.match_result(item, result)
-            assert result.deleted == False
+            assert not result.deleted
 
     @mark.parametrize('query', [
         {'bad_key': "This is a non expected query key"},
@@ -267,7 +267,7 @@ class TestClaim:
 
     @mark.usefixtures('grant_accesstoken')
     @mark.parametrize('token_sub', ["non-registered"], indirect=True)
-    @mark.parametrize('token_iss', ["https://aai-dev.egi.eu/oidc"], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
         {'message': "This is an example report"}
     ])

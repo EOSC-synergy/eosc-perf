@@ -6,7 +6,7 @@ Database factories
 All exported models are based on :class:`factories.core.BaseMeta`:
 
 .. autoclass:: factories.core.BaseMeta
-   :members: 
+   :members:
    :member-order: bysource
 
 The following chapters represent the expected usable factories with

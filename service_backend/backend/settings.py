@@ -2,7 +2,7 @@
 from the system environment and files the configuration to use
 when deploying an application instance.
 
-For local development, it is recommended to use a .env file 
+For local development, it is recommended to use a .env file
 containing the environment variables definitions. Sensible information
 can be loaded directly from the environment or from a configuration/secret
 file. In the last case, ensure the application has access to read such files.
@@ -56,7 +56,7 @@ str = development_defaults(env.str)
 
 # Secret key for security and cookie encryption
 SECRET_KEY = str("SECRET_KEY", dev_default="not-so-secret")
-"""| Secret key to use on flask configuration. 
+"""| Secret key to use on flask configuration.
 
 | When ENV is set to `production`, a configuration value is required.
 | When ENV is `development`, the default value stands to: "not-so-secret".
@@ -140,7 +140,7 @@ BCRYPT_LOG_ROUNDS = int("BCRYPT_LOG_ROUNDS", default=12)
 
 # Authorization configuration.
 OIDC_CLIENT_ID = str("OIDC_CLIENT_ID", dev_default="not-defined")
-"""| OIDC Client Identifier valid at the Authorization Server. 
+"""| OIDC Client Identifier valid at the Authorization Server.
 | See https://openid.net/specs/openid-connect-core-1_0.html
 
 | When ENV is set to `production`, a configuration value is required.

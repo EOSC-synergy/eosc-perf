@@ -6,7 +6,7 @@ EOSC Performance API
 .. autofunction:: backend.create_app
 
 
-The EOSC Performance API is composed by the following 
+The EOSC Performance API is composed by the following
 main components:
 
 .. toctree::

@@ -9,6 +9,8 @@ are handled by independent libraries and extension.
 from .app import create_app
 import flask.blueprints
 
+__all__ = ["create_app"]
+
 
 class MyBlueprintSetupState(flask.blueprints.BlueprintSetupState):
     def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
@@ -21,7 +23,7 @@ class MyBlueprintSetupState(flask.blueprints.BlueprintSetupState):
                 rule = self.url_prefix
         options.setdefault("subdomain", self.subdomain)
         if endpoint is None:
-            endpoint = _endpoint_from_view_func(view_func)  # type: ignore
+            raise RuntimeError("Undefined Endpoint")
         defaults = self.url_defaults
         if "defaults" in options:
             defaults = dict(defaults, **options.pop("defaults"))
@@ -36,6 +38,3 @@ class MyBlueprintSetupState(flask.blueprints.BlueprintSetupState):
 
 
 flask.blueprints.BlueprintSetupState = MyBlueprintSetupState
-
-
-all = ["create_app"]

@@ -12,7 +12,7 @@ from .user import HasUploader
 
 
 class Benchmark(NeedsApprove, HasUploader, PkModel):
-    """The benchmark model represents a single type of docker container 
+    """The benchmark model represents a single type of docker container
     designed to run and produce benchmark results from virtual machines.
 
     Benchmarks are tied down to a specific docker image and version to avoid

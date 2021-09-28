@@ -28,7 +28,7 @@ resource_url = "/<uuid:id>"
 def list(*args, **kwargs):
     """(Free) Filters and list sites
 
-    Use this method to get a list of sites filtered according to your 
+    Use this method to get a list of sites filtered according to your
     requirements. The response returns a pagination object with the
     filtered sites (if succeeds).
     """
@@ -40,7 +40,7 @@ def __list(query_args):
 
     :param query_args: The request query arguments as python dictionary
     :type query_args: dict
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     :return: Pagination object with filtered sites
     :rtype: :class:`flask_sqlalchemy.Pagination`
     """
@@ -71,7 +71,7 @@ def __create(body_args):
     :raises Unauthorized: The server could not verify the user identity
     :raises Forbidden: The user is not registered
     :raises Conflict: Created object conflicts a database item
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     :return: The site created into the database.
     :rtype: :class:`models.Site`
     """
@@ -99,7 +99,7 @@ def search(*args, **kwargs):
 
     Use this method to get a list of sites based on a general search
     of terms. For example, calling this method with terms=K&terms=T
-    returns all sites with 'K' and 'T' on the 'name', 'address', 
+    returns all sites with 'K' and 'T' on the 'name', 'address',
     or 'description' fields. The response returns a pagination object
     with the filtered sites (if succeeds).
     """
@@ -111,9 +111,9 @@ def __search(query_args):
 
     :param query_args: The request query arguments as python dictionary
     :type query_args: dict
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     :return: Pagination object with filtered sites
-    :rtype: :class:`flask_sqlalchemy.Pagination`        
+    :rtype: :class:`flask_sqlalchemy.Pagination`
     """
     search = models.Site.query
     for keyword in query_args.pop('terms'):
@@ -150,7 +150,7 @@ def __get(id):
     :rtype: :class:`models.Site`
     """
     site = models.Site.read(id)
-    if site == None:
+    if site is None:
         error_msg = f"Record {id} not found in the database"
         abort(404, messages={'error': error_msg})
     else:
@@ -183,7 +183,7 @@ def __update(body_args, id):
     :raises Unauthorized: The server could not verify the user identity
     :raises Forbidden: The user has not the required privileges
     :raises NotFound: No site with id found
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     """
     site = __get(id)
     site.update(body_args, force=True)  # Only admins reach here
@@ -191,7 +191,7 @@ def __update(body_args, id):
     try:  # Transaction execution
         db.session.commit()
     except IntegrityError:
-        error_msg = f"Changes conflict submitted/existing site"
+        error_msg = "Changes conflict submitted/existing site"
         abort(409, messages={'error': error_msg})
 
 
@@ -321,7 +321,7 @@ def __reject(id):
 def list_flavors(*args, **kwargs):
     """(Free) Filters and list flavors
 
-    Use this method to get a list of flavors filtered according to your 
+    Use this method to get a list of flavors filtered according to your
     requirements. The response returns a pagination object with the
     filtered flavors (if succeeds).
     """
@@ -335,7 +335,7 @@ def __list_flavors(query_args, id):
     :type query_args: dict
     :param id: The id of the site to query the flavors
     :type id: uuid
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     :return: Pagination object with filtered flavors
     :rtype: :class:`flask_sqlalchemy.Pagination`
     """
@@ -369,7 +369,7 @@ def __create_flavor(body_args, id):
     :raises Unauthorized: The server could not verify the user identity
     :raises Forbidden: The user is not registered
     :raises Conflict: Created object conflicts a database item
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     :return: The flavor created into the database.
     :rtype: :class:`models.Flavor`
     """

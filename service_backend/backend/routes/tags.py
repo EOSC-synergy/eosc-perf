@@ -27,7 +27,7 @@ resource_url = "/<uuid:id>"
 def list(*args, **kwargs):
     """(Free) Filters and list tags
 
-    Use this method to get a list of tags filtered according to your 
+    Use this method to get a list of tags filtered according to your
     requirements. The response returns a pagination object with the
     filtered tags (if succeeds).
     """
@@ -39,7 +39,7 @@ def __list(query_args):
 
     :param query_args: The request query arguments as python dictionary
     :type query_args: dict
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     :return: Pagination object with filtered tags
     :rtype: :class:`flask_sqlalchemy.Pagination`
     """
@@ -70,7 +70,7 @@ def __create(body_args):
     :raises Unauthorized: The server could not verify the user identity
     :raises Forbidden: The user is not registered
     :raises Conflict: Created object conflicts a database item
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     :return: The tag created into the database.
     :rtype: :class:`models.Tag`
     """
@@ -108,7 +108,7 @@ def __search(query_args):
 
     :param query_args: The request query arguments as python dictionary
     :type query_args: dict
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     :return: Pagination object with filtered tags
     :rtype: :class:`flask_sqlalchemy.Pagination`
     """
@@ -146,7 +146,7 @@ def __get(id):
     :rtype: :class:`models.Tag`
     """
     tag = models.Tag.read(id)
-    if tag == None:
+    if tag is None:
         error_msg = f"Record {id} not found in the database"
         abort(404, messages={'error': error_msg})
     else:
@@ -179,7 +179,7 @@ def __update(body_args, id):
     :raises Unauthorized: The server could not verify the user identity
     :raises Forbidden: The user has not the required privileges
     :raises NotFound: No tag with id found
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     """
     tag = __get(id)
     tag.update(body_args)  # Only admins reach here
@@ -187,7 +187,7 @@ def __update(body_args, id):
     try:  # Transaction execution
         db.session.commit()
     except IntegrityError:
-        error_msg = f"Changes conflict submitted/existing tag"
+        error_msg = "Changes conflict submitted/existing tag"
         abort(409, messages={'error': error_msg})
 
 

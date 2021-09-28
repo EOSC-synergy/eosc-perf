@@ -58,7 +58,7 @@ class TestRegister:
 
     @mark.usefixtures('grant_accesstoken')
     @mark.parametrize('token_sub', ["new_user"], indirect=True)
-    @mark.parametrize('token_iss', ["https://aai-dev.egi.eu/oidc"], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('introspection_email', ["user@email.com"], indirect=True)
     def test_201(self, response_POST, user, url):
         """POST method succeeded 201."""
@@ -95,10 +95,10 @@ class TestRemove:
         assert response_POST.status_code == 204
         assert models.User.query.filter_by(**query).all() == []
         # Check the deletion is cascaded
-        assert models.Benchmark.query.get(benchmarks[2]['id']) == None
-        assert models.Result.query.get(results[2]['id']) == None
-        assert models.Site.query.get(sites[2]['id']) == None
-        assert models.Flavor.query.get(flavors[4]['id']) == None
+        assert models.Benchmark.query.get(benchmarks[2]['id']) is None
+        assert models.Result.query.get(results[2]['id']) is None
+        assert models.Site.query.get(sites[2]['id']) is None
+        assert models.Flavor.query.get(flavors[4]['id']) is None
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'email': "sub_1@email.com"}
@@ -197,7 +197,7 @@ class TestGet:
 
     @mark.usefixtures('grant_accesstoken')
     @mark.parametrize('token_sub', ["non_existing"], indirect=True)
-    @mark.parametrize('token_iss', ["https://aai-dev.egi.eu/oidc"], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     def test_403(self, response_GET):
         """GET method fails 403 if not registered."""
         assert response_GET.status_code == 403
@@ -224,7 +224,7 @@ class TestUpdate:
 
     @mark.usefixtures('grant_accesstoken')
     @mark.parametrize('token_sub', ["not-registered"], indirect=True)
-    @mark.parametrize('token_iss', ["https://aai-dev.egi.eu/oidc"], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('introspection_email', ["user@email.com"], indirect=True)
     def test_403(self, response_POST):
         """POST method fails 403 if not registered."""
@@ -281,7 +281,7 @@ class TestResults:
             result = models.Result.query.get(item['id'])
             asserts.match_query(item, url)
             asserts.match_result(item, result)
-            assert result.deleted == False
+            assert not result.deleted
             assert result.uploader == user
 
     def test_401(self, response_GET):
@@ -290,7 +290,7 @@ class TestResults:
 
     @mark.usefixtures('grant_accesstoken')
     @mark.parametrize('token_sub', ["non_existing"], indirect=True)
-    @mark.parametrize('token_iss', ["https://aai-dev.egi.eu/oidc"], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     def test_403(self, response_GET):
         """GET method fails 403 if not registered."""
         assert response_GET.status_code == 403

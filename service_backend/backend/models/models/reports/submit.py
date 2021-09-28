@@ -5,7 +5,7 @@ contains a "discriminator" column which determines what type of
 parent object associates to each particular row in the association
 table.
 
-SQLAlchemy's single-table-inheritance feature is used to target 
+SQLAlchemy's single-table-inheritance feature is used to target
 different association types.
 """
 import enum
@@ -21,10 +21,10 @@ from ...core import PkModel
 
 
 class Submit(PkModel):
-    """The Submit model represents an automated request for review. 
-    For example the creation of items which need to be approved before 
+    """The Submit model represents an automated request for review.
+    For example the creation of items which need to be approved before
     activated in the database or the notification that a new claim is
-    created.  
+    created.
 
     **Properties**:
     """
@@ -108,7 +108,6 @@ class NeedsApprove(HasUploader):
             self.submit_report.delete()
             self.submit_report = None
             self.status = ResourceStatus.approved
-            
 
     def reject(self):
         """Removes the element and submit report."""

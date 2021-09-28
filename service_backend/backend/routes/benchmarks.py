@@ -165,7 +165,7 @@ def __get(id):
     :rtype: :class:`models.Benchmark`
     """
     benchmark = models.Benchmark.read(id)
-    if benchmark == None:
+    if benchmark is None:
         error_msg = f"Benchmark {id} not found in the database"
         abort(404, messages={'error': error_msg})
     else:
@@ -211,7 +211,7 @@ def __update(body_args, id):
     try:  # Transaction execution
         db.session.commit()
     except IntegrityError:
-        error_msg = f"Changes conflict submitted/existing benchmark"
+        error_msg = "Changes conflict submitted/existing benchmark"
         abort(409, messages={'error': error_msg})
 
 
@@ -298,7 +298,7 @@ def __approve(id):
 @blp.response(204)
 def reject(*args, **kwargs):
     """(Admins) Rejects a benchmark to safe delete it.
-    
+
     Use this method instead of DELETE as it raises 422 in case the
     resource was already approved.
     Use this method to reject an specific benchmark submitted by an user.

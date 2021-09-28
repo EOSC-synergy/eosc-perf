@@ -30,7 +30,7 @@ resource_url = "/self"
 def list(*args, **kwargs):
     """(Admins) Filters and list users
 
-    Use this method to get a list of users filtered according to your 
+    Use this method to get a list of users filtered according to your
     requirements. The response returns a pagination object with the
     filtered users (if succeeds).
     """
@@ -44,7 +44,7 @@ def __list(query_args):
     :type query_args: dict
     :raises Unauthorized: The server could not verify the user identity
     :raises Forbidden: The user has not the required privileges
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     :return: Pagination object with filtered users
     :rtype: :class:`flask_sqlalchemy.Pagination`
     """
@@ -60,8 +60,8 @@ def register(*args, **kwargs):
     """(OIDC Token) Registers the logged in user
 
     Use this method to register yourself into the application. By using
-    this method, you recognize that you have read and understood our 
-    terms, conditions and privacy policy at: 
+    this method, you recognize that you have read and understood our
+    terms, conditions and privacy policy at:
     `https://performance.services.fedcloud.eu/privacy_policy`
 
     The method will return your stored information.
@@ -90,7 +90,7 @@ def __register():
     try:  # Transaction execution
         db.session.commit()
     except IntegrityError:
-        error_msg = f"User already submitted/exists"
+        error_msg = "User already submitted/exists"
         abort(409, messages={'error': error_msg})
 
     notifications.user_welcome(user)
@@ -105,7 +105,7 @@ def __register():
 def remove(*args, **kwargs):
     """(Admins) Removes one or multiple users
 
-    Use this method to delete the users filtered according to your 
+    Use this method to delete the users filtered according to your
     requirements. To prevent unintentionally delete all users, the
     method requires of query arguments, otherwise UnprocessableEntity
     exception is raised.
@@ -120,7 +120,7 @@ def __remove(query_args):
     :type query_args: dict
     :raises Unauthorized: The server could not verify the user identity
     :raises Forbidden: The user has not the required privileges
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     :return: Pagination object with filtered users
     :rtype: :class:`flask_sqlalchemy.Pagination`
     """
@@ -133,7 +133,7 @@ def __remove(query_args):
     try:  # Transaction execution
         db.session.commit()
     except IntegrityError:
-        error_msg = f"Conflict deleting users"
+        error_msg = "Conflict deleting users"
         abort(409, messages={'error': error_msg})
 
 
@@ -149,7 +149,7 @@ def search(*args, **kwargs):
     """(Admins) Filters and list users
 
     Use this method to get a list of users based on a general search
-    of terms. For example, calling this method with 
+    of terms. For example, calling this method with
     terms=@hotmail&terms=de returns all users with 'hotmail' and 'de'
     on the 'email'. The response returns a pagination object with the
     filtered users (if succeeds).
@@ -164,7 +164,7 @@ def __search(query_args):
     :type query_args: dict
     :raises Unauthorized: The server could not verify the user identity
     :raises Forbidden: The user has not the required privileges
-    :raises UnprocessableEntity: Wrong query/body parameters 
+    :raises UnprocessableEntity: Wrong query/body parameters
     :return: Pagination object with filtered users
     :rtype: :class:`flask_sqlalchemy.Pagination`
     """
@@ -193,12 +193,12 @@ def __get():
 
     :raises Unauthorized: The server could not verify your identity
     :raises Forbidden: You are not registered
-    :return: The database user matching the oidc token information 
+    :return: The database user matching the oidc token information
     :rtype: :class:`models.User`
     """
     user = models.User.current_user()
-    if user == None:
-        error_msg = f"User not registered"
+    if user is None:
+        error_msg = "User not registered"
         abort(404, messages={'error': error_msg})
     else:
         return user
@@ -211,9 +211,9 @@ def __get():
 def update(*args, **kwargs):
     """(Users) Updates the logged in user info
 
-    Use this method to update your user data in the database. The method 
+    Use this method to update your user data in the database. The method
     returns by default 204, use a GET method to retrieve the new status
-    of your data. 
+    of your data.
     """
     return __update(*args, **kwargs)
 
@@ -237,7 +237,7 @@ def __update():
     try:  # Transaction execution
         db.session.commit()
     except IntegrityError:
-        error_msg = f"Existing user already using email"
+        error_msg = "Existing user already using email"
         abort(409, messages={'error': error_msg})
 
     notifications.email_updated(user)

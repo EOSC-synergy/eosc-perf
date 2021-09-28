@@ -68,7 +68,7 @@ class TestCreate:
 
     @mark.usefixtures('grant_accesstoken')
     @mark.parametrize('token_sub', ["non-registered"], indirect=True)
-    @mark.parametrize('token_iss', ["https://aai-dev.egi.eu/oidc"], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
         {'name': "s3", 'address': "addr2", 'description': "Text"}
     ])
@@ -268,7 +268,7 @@ class TestReject:
     def test_204(self, response_POST, site):
         """POST method succeeded 200."""
         assert response_POST.status_code == 204
-        assert site == None
+        assert site is None
 
     def test_401(self, response_POST, site):
         """POST method fails 401 if not authorized."""
@@ -355,7 +355,7 @@ class TestCreateFlavor:
 
     @mark.usefixtures('grant_accesstoken')
     @mark.parametrize('token_sub', ["non-registered"], indirect=True)
-    @mark.parametrize('token_iss', ["https://aai-dev.egi.eu/oidc"], indirect=True)
+    @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
         {'name': "flavorN", 'description': "FlavorN for siteX"}
     ])
