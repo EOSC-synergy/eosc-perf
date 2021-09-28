@@ -20,7 +20,7 @@ resource_url = "/<uuid:id>"
 @blp.doc(operationId='GetFlavor')
 @blp.response(200, schemas.Flavor)
 def get(*args, **kwargs):
-    """(Free) Retrieves flavor details
+    """(Public) Retrieves flavor details
 
     Use this method to retrieve a specific flavor from the database.
     """
@@ -214,7 +214,7 @@ def __reject(id):
 @blp.response(200, schemas.Site)
 @blp.doc(operationId='GetFlavorSite')
 def site(*args, **kwargs):
-    """(Free) Retrieves flavor site details
+    """(Public) Retrieves flavor site details
 
     Use this method to retrieve the site information from a
     specific flavor in the database.

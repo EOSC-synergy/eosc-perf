@@ -25,7 +25,7 @@ resource_url = "/<uuid:id>"
 @queries.to_pagination()
 @queries.add_sorting(models.Tag)
 def list(*args, **kwargs):
-    """(Free) Filters and list tags
+    """(Public) Filters and list tags
 
     Use this method to get a list of tags filtered according to your
     requirements. The response returns a pagination object with the
@@ -92,7 +92,7 @@ def __create(body_args):
 @queries.to_pagination()
 @queries.add_sorting(models.Tag)
 def search(*args, **kwargs):
-    """(Free) Filters and list tags
+    """(Public) Filters and list tags
 
     Use this method to get a list of tags based on a general search
     of terms. For example, calling this method with terms=v1&terms=0
@@ -126,7 +126,7 @@ def __search(query_args):
 @blp.doc(operationId='GetTag')
 @blp.response(200, schemas.Tag)
 def get(*args, **kwargs):
-    """(Free) Retrieves tag details
+    """(Public) Retrieves tag details
 
     Use this method to retrieve a specific tag from the database.
     """

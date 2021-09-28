@@ -26,7 +26,7 @@ resource_url = "/<uuid:id>"
 @queries.add_sorting(models.Benchmark)
 @queries.add_datefilter(models.Benchmark)
 def list(*args, **kwargs):
-    """(Free) Filters and list benchmarks
+    """(Public) Filters and list benchmarks
 
     Use this method to get a list of benchmarks filtered according to your
     requirements. The response returns a pagination object with the
@@ -102,7 +102,7 @@ def __create(body_args):
 @queries.add_sorting(models.Benchmark)
 @queries.add_datefilter(models.Benchmark)
 def search(*args, **kwargs):
-    """(Free) Filters and list benchmarks
+    """(Public) Filters and list benchmarks
 
     Use this method to get a list of benchmarks based on a general search
     of terms. For example, calling this method with terms=v1&terms=0
@@ -145,7 +145,7 @@ def __search(query_args):
 @blp.arguments(args.Schema(), location='query', as_kwargs=True)
 @blp.response(200, schemas.Benchmark)
 def get(*args, **kwargs):
-    """(Free) Retrieves benchmark details
+    """(Public) Retrieves benchmark details
 
     Use this method to retrieve a specific benchmark from the database.
     """

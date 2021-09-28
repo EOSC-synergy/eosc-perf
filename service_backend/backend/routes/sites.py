@@ -26,7 +26,7 @@ resource_url = "/<uuid:id>"
 @queries.add_sorting(models.Site)
 @queries.add_datefilter(models.Site)
 def list(*args, **kwargs):
-    """(Free) Filters and list sites
+    """(Public) Filters and list sites
 
     Use this method to get a list of sites filtered according to your
     requirements. The response returns a pagination object with the
@@ -95,7 +95,7 @@ def __create(body_args):
 @queries.add_sorting(models.Site)
 @queries.add_datefilter(models.Site)
 def search(*args, **kwargs):
-    """(Free) Filters and list sites
+    """(Public) Filters and list sites
 
     Use this method to get a list of sites based on a general search
     of terms. For example, calling this method with terms=K&terms=T
@@ -130,7 +130,7 @@ def __search(query_args):
 @blp.doc(operationId='GetSite')
 @blp.response(200, schemas.Site)
 def get(*args, **kwargs):
-    """(Free) Retrieves site details
+    """(Public) Retrieves site details
 
     Use this method to retrieve a specific site from the database.
     """
@@ -319,7 +319,7 @@ def __reject(id):
 @queries.to_pagination()
 @queries.add_sorting(models.Flavor)
 def list_flavors(*args, **kwargs):
-    """(Free) Filters and list flavors
+    """(Public) Filters and list flavors
 
     Use this method to get a list of flavors filtered according to your
     requirements. The response returns a pagination object with the
@@ -395,7 +395,7 @@ def __create_flavor(body_args, id):
 @queries.add_sorting(models.Flavor)
 @queries.add_datefilter(models.Flavor)
 def search_flavors(*args, **kwargs):
-    """(Free) Filters and list flavors
+    """(Public) Filters and list flavors
 
     Use this method to get a list of flavors based on a general search
     of terms. For example, calling this method with terms=K&terms=T

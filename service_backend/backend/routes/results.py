@@ -26,7 +26,7 @@ resource_url = "/<uuid:id>"
 @queries.add_sorting(models.Result)
 @queries.add_datefilter(models.Result)
 def list(*args, **kwargs):
-    """(Free) Filters and list results
+    """(Public) Filters and list results
 
     Use this method to get a list of results filtered according to your
     requirements. The response returns a pagination object with the
@@ -191,7 +191,7 @@ def __create(query_args, body_args):
 @queries.add_sorting(models.Result)
 @queries.add_datefilter(models.Result)
 def search(*args, **kwargs):
-    """(Free) Filters and list results
+    """(Public) Filters and list results
 
     Use this method to get a list of results based on a general search
     of terms. For example, calling this method with terms=v1&terms=0
@@ -232,7 +232,7 @@ def __search(query_args):
 @blp.doc(operationId='GetResult')
 @blp.response(200, schemas.Result)
 def get(*args, **kwargs):
-    """(Free) Retrieves result details
+    """(Public) Retrieves result details
 
     Use this method to retrieve a specific result from the database.
     """
