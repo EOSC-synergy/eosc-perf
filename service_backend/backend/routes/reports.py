@@ -14,7 +14,7 @@ blp = Blueprint(
 )
 
 submits_url = '/submits'
-result_claims_url = '/claims/results'
+result_claims_url = '/claims'
 result_claim_url = result_claims_url + '/<uuid:id>'
 
 
@@ -90,7 +90,7 @@ def __list_claims(query_args):
 @blp.arguments(args.Schema(), location='query', as_kwargs=True)
 @blp.response(204)
 def approve_claim(*args, **kwargs):
-    """(Admin) Accepts an existing submit
+    """(Admin) Accepts an existing claim
 
     Use this method to approve an specific resource submitted by an user.
     It is a custom method, as side effect, it removes the submit report
@@ -100,7 +100,7 @@ def approve_claim(*args, **kwargs):
 
 
 def __approve_claim(id):
-    """Accepts the id matching submit.
+    """Accepts the id matching claim.
 
     If no submit exists with the indicated id, then 404 NotFound
     exception is raised.
