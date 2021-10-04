@@ -6,6 +6,9 @@ services:
     container_name: "perf-backend-testing"
     hostname: "perf-backend-testing"
     command: ["/bin/sleep","60m"]
+# Have to execute all tests in the container, user conflict in case mounted: 
+# - to write in the system root required
+# - to run test, pg_ctl: cannot be run as root
 #    volumes:
 #     - type: bind
 #       source: /eosc-perf/service_backend
