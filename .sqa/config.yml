@@ -1,6 +1,6 @@
 config:
   node_agent: 'docker_compose'
-  deploy_template: '.sqa-backend/docker-compose.yml'
+  deploy_template: '.sqa/docker-compose.yml'
   project_repos:
     eosc-perf:
       repo: 'https://github.com/EOSC-synergy/eosc-perf.git'
