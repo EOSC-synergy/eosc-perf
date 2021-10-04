@@ -1,0 +1,12 @@
+version: "3.7"
+
+services:
+  perf-backend-testing:
+    image: "eoscperf/cicd-images:backend"
+    container_name: "perf-backend-testing"
+    hostname: "perf-backend-testing"
+    volumes:
+     - type: bind
+       source: ./service_backend
+       target: /app
+
