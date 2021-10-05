@@ -29,6 +29,7 @@ CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 # ================================= DEVELOPMENT ================================
 FROM backend AS development
 
+COPY factories factories
 RUN pip install --no-cache -r requirements/prod.txt
 RUN pip install --no-cache -r requirements/dev.txt
 
@@ -39,6 +40,7 @@ CMD ["flask", "run", "--host=0.0.0.0"]
 # ================================= TESTING ====================================
 FROM backend AS testing
 
+COPY factories factories
 COPY tests tests
 COPY tox.ini tox.ini
 RUN pip install --no-cache tox
