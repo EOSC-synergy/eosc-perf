@@ -11,7 +11,7 @@ pipeline {
         stage('SQA baseline dynamic stages') {
             steps {
                 script {
-                    projectConfig = pipelineConfig(configFile='.sqa-backend/config.yml')
+                    projectConfig = pipelineConfig(configFile: '.sqa-backend/config.yml')
                     buildStages(projectConfig)
                 }
             }
