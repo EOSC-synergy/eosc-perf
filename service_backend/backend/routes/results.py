@@ -324,6 +324,13 @@ def __claim(body_args, id):
     """
     result = __get(id)
     claim = result.claim(message=body_args['message'])
+
+    try:  # Transaction execution
+        db.session.commit()
+    except IntegrityError:
+        error_msg = f"Conflict updating {id}"
+        abort(409, messages={'error': error_msg})
+
     notifications.result_claimed(result, claim)
     return claim
 
