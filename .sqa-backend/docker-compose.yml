@@ -8,6 +8,8 @@ services:
     build:
       context: ./service_backend
       dockerfile: Dockerfile.jepl
+      args:
+        - CICD_TAG=backend-1.0.1
 # Have to execute all tests in the container, user conflict in case mounted: 
 # - to write in the system root required
 # - to run test, pg_ctl: cannot be run as root

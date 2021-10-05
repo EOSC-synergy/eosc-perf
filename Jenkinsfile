@@ -8,15 +8,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Remove old Docker images') {
-           steps {
-                script {
-                    // update config.yml for Jenkins_ID
-                    sh "bash docker rmi eoscperf/cicd-images:backend"
-                    sh "bash docker rm *perf-backend-testing:latest"
-                }
-           }
-        }
         stage('SQA baseline dynamic stages') {
             steps {
                 script {
