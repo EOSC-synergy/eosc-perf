@@ -1,6 +1,6 @@
 # General Docker image with tools for running CI/CD tests of the backend
 # No eosc-perf code is installed
-#
+
 ARG INSTALL_PYTHON_VERSION=3.8
 ARG PYTHON_IMAGE_TAG=slim-buster
 FROM python:${INSTALL_PYTHON_VERSION}-${PYTHON_IMAGE_TAG}
