@@ -82,11 +82,15 @@ class NeedsApprove(HasUploader):
 
     @declared_attr
     def _submit_report_class(cls):
+        if 'Claim' in cls.__name__:
+            identity = "claim"
+        else:
+            identity = cls.__name__.lower()
         return type(
             f"{cls.__name__}SubmitReport", (Submit,),
             dict(
                 __mapper_args__={
-                    'polymorphic_identity': cls.__name__.lower(),
+                    'polymorphic_identity': identity,
                     'polymorphic_load': 'inline'
                 },
             ),
