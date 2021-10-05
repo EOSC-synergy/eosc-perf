@@ -1,0 +1,14 @@
+# Docker image for running CI/CD tests of the backend using JePL
+FROM eoscperf/cicd-images:backend
+
+COPY backend backend
+COPY autoapp.py ./
+COPY requirements requirements
+COPY factories factories
+COPY tests tests
+# package installation is described in tox.ini
+COPY tox.ini tox.ini
+
+ENV FLASK_ENV="production"
+
+

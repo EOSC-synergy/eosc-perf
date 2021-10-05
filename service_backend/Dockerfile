@@ -1,7 +1,7 @@
 # ================================== BUILDER ===================================
-ARG INSTALL_PYTHON_VERSION=${INSTALL_PYTHON_VERSION:-PYTHON_VERSION_NOT_SET}
-FROM python:${INSTALL_PYTHON_VERSION}-slim-buster AS backend
-RUN apt-get update && apt-get install
+ARG INSTALL_PYTHON_VERSION=3.8
+ARG PYTHON_IMAGE_TAG=slim-buster
+FROM python:${INSTALL_PYTHON_VERSION}-${PYTHON_IMAGE_TAG} AS backend
 
 WORKDIR /app
 
@@ -45,7 +45,7 @@ COPY factories factories
 COPY tests tests
 COPY tox.ini tox.ini
 RUN pip install --no-cache tox
-RUN apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     postgresql \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
@@ -56,3 +56,4 @@ USER sid
 
 ENV FLASK_ENV="production"
 CMD ["tox"]
+
