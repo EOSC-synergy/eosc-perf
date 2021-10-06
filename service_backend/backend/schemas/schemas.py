@@ -1,7 +1,7 @@
 """Schemas module for schemas definition."""
 import uuid
 
-from marshmallow import INCLUDE
+from marshmallow import INCLUDE, post_dump
 from marshmallow.validate import OneOf
 
 from . import BaseSchema as Schema
@@ -69,6 +69,14 @@ class Submit(UploadDatetime, Schema):
         description="UUID resource unique identification",
         example=str(uuid.uuid4()), required=True
     )
+
+    @post_dump
+    def aggregate_claims(self, data, **kwargs):
+        data = super().remove_skip_values(data, **kwargs)
+        return {
+            key: value if 'Claim' not in value else 'claim'
+            for key, value in data.items()
+        }
 
 
 class Submits(Pagination, Schema):
