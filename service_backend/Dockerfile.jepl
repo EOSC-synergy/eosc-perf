@@ -1,6 +1,6 @@
 # Docker image for running CI/CD tests of the backend using JePL
-ARG CICD_TAG=backend-1.0.1
-FROM eoscperf/cicd-images:${CICD_TAG}
+ARG CICD_IMAGE=eoscperf/cicd-images:backend-1.0.1
+FROM ${CICD_IMAGE}
 
 COPY backend backend
 COPY autoapp.py ./

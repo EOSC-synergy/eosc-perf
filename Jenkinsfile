@@ -8,13 +8,13 @@ pipeline {
     agent any
 
     environment {
+        sqa_config_backend = ".sqa-backend/config.yml"
+        dockerhub_cicd_backend = "eoscperf/cicd-images:backend-1.0.1"
         dockerhub_credentials = "o3as-dockerhub-vykozlov"
-        cicd_backend_version = "1.0.1"
-        dockerhub_cicd_backend = "eoscperf/cicd-images:backend-${cicd_backend_version}"
     }
 
     stages {
-        stage('Build Docker image with tools for CI/CD') {
+        stage('Build Docker image with tools for CI/CD (backend)') {
             when {
                 anyOf {
                    changeset 'service_backend/Dockerfile.cicd'
@@ -40,13 +40,12 @@ pipeline {
             }
         }
 
-        stage('SQA baseline dynamic stages') {
-            environment {
-                CICD_BACKEND_VERSION = "${env.cicd_backend_version}"
-            }
+        stage('SQA baseline dynamic stages (backend)') {
+            // may execute this action, only when "service_backend" is changed
+            //when { changeset 'service_backend/*'}
             steps {
                 script {
-                    projectConfig = pipelineConfig(configFile: '.sqa-backend/config.yml')
+                    projectConfig = pipelineConfig(configFile: env.sqa_config_backend)
                     buildStages(projectConfig)
                 }
             }
