@@ -1,6 +1,7 @@
 # ================================== BUILDER ===================================
-ARG INSTALL_PYTHON_VERSION=${INSTALL_PYTHON_VERSION:-PYTHON_VERSION_NOT_SET}
-FROM python:${INSTALL_PYTHON_VERSION}-slim-buster AS backend
+ARG INSTALL_PYTHON_VERSION=3.8
+ARG PYTHON_IMAGE_TAG=slim-buster
+FROM python:${INSTALL_PYTHON_VERSION}-${PYTHON_IMAGE_TAG} AS backend
 
 WORKDIR /app
 
@@ -55,3 +56,4 @@ USER sid
 
 ENV FLASK_ENV="production"
 CMD ["tox"]
+

@@ -1,0 +1,39 @@
+config:
+  node_agent: 'docker_compose'
+  deploy_template: '.sqa-backend/docker-compose.yml'
+#  project_repos:
+#    eosc-perf:
+#      repo: 'https://github.com/EOSC-synergy/eosc-perf.git'
+#      branch: 'backend'
+
+environment:
+  JPL_DOCKERFORCEBUILD: 'true'
+  LANG: C.UTF-8
+
+sqa_criteria:
+  qc_style:
+    repos:
+      eosc-perf-backend:
+        container: perf-backend-testing
+        tox:
+          tox_file: /app/tox.ini
+          testenv:
+            - stylecheck
+  qc_functional:
+    repos:
+      eosc-perf-backend:
+        container: perf-backend-testing
+        tox:
+          tox_file: /app/tox.ini
+          testenv: 
+            - functional
+  qc_security:
+    repos:
+      eosc-perf-backend:
+        container: perf-backend-testing
+        tox:
+          tox_file: /app/tox.ini
+          testenv:
+            - bandit
+
+timeout: 900
