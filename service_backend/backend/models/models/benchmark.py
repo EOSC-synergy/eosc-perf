@@ -39,13 +39,7 @@ class Benchmark(NeedsApprove, HasUploader, PkModel):
     #: (Text) Short text describing the main benchmark features
     description = Column(Text, nullable=True)
 
-    @declared_attr
-    def __table_args__(cls):
-        mixin_indexes = list((HasUploader.__table_args__))
-        mixin_indexes.extend([
-            UniqueConstraint('docker_image', 'docker_tag')
-        ])
-        return tuple(mixin_indexes)
+    name = UniqueConstraint('docker_image', 'docker_tag')
 
     def __init__(self, **properties):
         """Check the included schema is valid."""

@@ -1,7 +1,7 @@
 """Models module package for main models definition."""
 from datetime import datetime as dt
 
-from sqlalchemy import Column, DateTime, ForeignKeyConstraint, Text
+from sqlalchemy import Column, DateTime, ForeignKey, Text, UniqueConstraint
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import backref, relationship
 
@@ -47,14 +47,20 @@ class User(TokenModel):
 
 class HasUploader(object):
     """Mixin that adds an User as upload details to any model."""
+    __abstract__ = True
+    uploader_subiss = UniqueConstraint('uploader_sub', 'uploader_iss')
 
     #: (Text) OIDC subject of the user that created the model instance,
     #: *conflicts with uploader*
-    uploader_sub = Column(Text, nullable=False)
+    @declared_attr
+    def uploader_sub(cls):
+        return Column(ForeignKey('user.sub'), nullable=False)
 
     #: (Text) OIDC issuer of the user that created the model instance,
     #: *conflicts with uploader*
-    uploader_iss = Column(Text, nullable=False)
+    @declared_attr
+    def uploader_iss(cls):
+        return Column(ForeignKey('user.iss'), nullable=False)
 
     #: (ISO8601) Upload datetime of the model instance
     upload_datetime = Column(DateTime, nullable=False, default=dt.now)
@@ -63,13 +69,6 @@ class HasUploader(object):
         super().__init__(**properties)
         if self.uploader is None:
             self.uploader = User.current_user()
-
-    @declared_attr
-    def __table_args__(cls):
-        return (
-            ForeignKeyConstraint(['uploader_iss', 'uploader_sub'],
-                                 ['user.iss', 'user.sub']),
-        )
 
     @declared_attr
     def uploader(cls):

@@ -74,6 +74,7 @@ class Claim(NeedsApprove, HasUploader, PkModel):
 class HasClaims(SoftDelete):
     """Provides the model the capability to perform claims.
     """
+    __abstract__ = True
 
     @declared_attr
     def _claim_report_id(cls):
