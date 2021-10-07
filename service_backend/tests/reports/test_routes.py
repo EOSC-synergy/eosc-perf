@@ -70,7 +70,7 @@ class TestListClaims:
             asserts.match_query(item, url)
             item.pop('uploader')
             item.pop('resource_type')
-            assert models.Result.Claim.query.filter_by(**item).first()
+            assert models.Claim.query.filter_by(**item).first()
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'upload_before': "3000-01-01"},
@@ -140,7 +140,7 @@ class TestListClaims:
 #     def test_204(self, response_POST, claim):
 #         """POST method succeeded 200."""
 #         assert response_POST.status_code == 204
-#         assert None == models.Result.Claim.query.get(claim.id)
+#         assert None == models.Claim.query.get(claim.id)
 
 #     def test_401(self, response_POST, claim):
 #         """POST method fails 401 if not authorized."""

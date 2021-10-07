@@ -57,8 +57,8 @@ def __list_submits(query_args):
 @blp.arguments(args.ClaimFilter, location='query')
 @blp.response(200, schemas.Claims)
 @queries.to_pagination()
-@queries.add_sorting(models.Result.Claim)
-@queries.add_datefilter(models.Result.Claim)
+@queries.add_sorting(models.Claim)
+@queries.add_datefilter(models.Claim)
 def list_claims(*args, **kwargs):
     """(Admins) Filters and lists claims
 
@@ -80,7 +80,7 @@ def __list_claims(query_args):
     :return: Pagination object with filtered claims
     :rtype: :class:`flask_sqlalchemy.Pagination`
     """
-    query = models.Result.Claim.query
+    query = models.Claim.query
     return query.filter_by(**query_args)
 
 
@@ -106,9 +106,9 @@ def __get(id):
     :type id: uuid
     :raises NotFound: No claim with id found
     :return: The database result using the described id
-    :rtype: :class:`models.Result.Claim`
+    :rtype: :class:`models.Claim`
     """
-    result = models.Result.Claim.read(id, with_deleted=True)
+    result = models.Claim.read(id, with_deleted=True)
     if result is None:
         error_msg = f"Claim {id} not found in the database"
         abort(404, messages={'error': error_msg})
@@ -144,7 +144,7 @@ def __approve_claim(id):
     :raises NotFound: No submit with id found
     :raises UnprocessableEntity: Resource already approved
     """
-    claim = models.Result.Claim.read(id)
+    claim = models.Claim.read(id)
     if claim is None:
         error_msg = f"Claim {id} not found in the database"
         abort(404, messages={'error': error_msg})
@@ -192,7 +192,7 @@ def __reject_claim(id):
     :raises NotFound: No benchmark with id found
     :raises UnprocessableEntity: Resource already approved
     """
-    claim = models.Result.Claim.read(id)
+    claim = models.Claim.read(id)
     if claim is None:
         error_msg = f"Claim {id} not found in the database"
         abort(404, messages={'error': error_msg})
