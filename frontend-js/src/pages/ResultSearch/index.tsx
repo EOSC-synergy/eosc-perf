@@ -10,7 +10,7 @@ import { ResultTable } from './resultTable';
 import { Benchmark, Flavor, Result, Results, Site } from 'api';
 import { Paginator } from 'components/pagination';
 import { DiagramView } from './diagramView';
-import { ReportModal } from './reportModal';
+import { ResultReportModal } from 'components/resultReportModal';
 import {
     BenchmarkSearchPopover,
     FlavorSearchPopover,
@@ -304,7 +304,7 @@ function ResultSearch(): ReactElement {
                 }}
                 result={previewResult}
             />
-            <ReportModal
+            <ResultReportModal
                 show={showReportModal}
                 closeModal={() => {
                     setShowReportModal(false);

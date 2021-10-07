@@ -6,7 +6,7 @@ import { useMutation } from 'react-query';
 import { postHelper } from 'api-helpers';
 import { UserContext } from 'userContext';
 
-export function ReportModal(props: {
+export function ResultReportModal(props: {
     result: Result | null;
     show: boolean;
     closeModal: () => void;
