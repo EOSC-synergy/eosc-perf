@@ -7,19 +7,18 @@ from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.declarative import declared_attr
 
 from ..core import PkModel
-from . import HasUploadDatetime
-from .report import HasReports
+from .reports import NeedsApprove
 from .user import HasUploader
 
 
-class Benchmark(HasReports, HasUploadDatetime, HasUploader, PkModel):
-    """The benchmark model represents a single type of docker container 
+class Benchmark(NeedsApprove, HasUploader, PkModel):
+    """The benchmark model represents a single type of docker container
     designed to run and produce benchmark results from virtual machines.
 
     Benchmarks are tied down to a specific docker image and version to avoid
     confusion and misleading comparisons in case a benchmark container changes
     its metrics or scoring scale between versions.
-    
+
     It also includes a valid "JSON Schema" which is used to validate the
     results linked to the benchmark and uploaded into the system.
 
@@ -38,7 +37,7 @@ class Benchmark(HasReports, HasUploadDatetime, HasUploader, PkModel):
     json_schema = Column(JSON, nullable=False)
 
     #: (Text) Short text describing the main benchmark features
-    description = Column(Text, default="")
+    description = Column(Text, nullable=True)
 
     @declared_attr
     def __table_args__(cls):

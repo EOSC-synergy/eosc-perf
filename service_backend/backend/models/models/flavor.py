@@ -1,14 +1,14 @@
 """Flavor module."""
 from sqlalchemy import Column, ForeignKey, Text, UniqueConstraint
 from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.orm import relationship
 
 from ..core import PkModel
-from . import HasUploadDatetime
-from .report import HasReports
+from .reports import NeedsApprove
 from .user import HasUploader
 
 
-class Flavor(HasReports, HasUploadDatetime, HasUploader, PkModel):
+class Flavor(NeedsApprove, HasUploader, PkModel):
     """The Flavor model represents a flavor of virtual machines available
     for usage on a Site.
 
@@ -19,12 +19,15 @@ class Flavor(HasReports, HasUploadDatetime, HasUploader, PkModel):
     """
     #: (Text, required) Text with virtual hardware template identification
     name = Column(Text, nullable=False)
-    
+
     #: (Text) Text with useful information for users
-    description = Column(Text, nullable=True, default="")
+    description = Column(Text, nullable=True)
 
     #: (Site.id, required) Id of the Site the flavor belongs to
     site_id = Column(ForeignKey('site.id'), nullable=False)
+
+    #: (Site, required) Id of the Site the flavor belongs to
+    site = relationship("Site", back_populates="flavors")
 
     @declared_attr
     def __table_args__(cls):

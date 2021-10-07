@@ -1,203 +1,299 @@
 """Module to define query arguments."""
-from marshmallow import post_load
+from uuid import uuid4
+
+from marshmallow import fields
+from marshmallow.validate import OneOf, Range
 
 from . import BaseSchema as Schema
-from . import Pagination, fields
+from . import Search, Status, UploadFilter
 
 
-class BenchmarkFilter(Pagination, Schema):
+class Pagination(Schema):
 
-    #: (Text):
-    #: Docker image referenced by the benchmark
-    docker_image = fields.DockerImage()
+    #: (Int, required, dump_only):
+    #: The number of items to be displayed on a page.
+    per_page = fields.Integer(
+        description="The number of items to be displayed on a page",
+        validate=Range(min=1, max=100), load_default=100
+    )
 
-    #: (Text):
-    #: Docker image version/tag referenced by the benchmark
-    docker_tag = fields.DockerTag()
+    #: (Int, required, dump_only):
+    #: The return page number (1 indexed).
+    page = fields.Integer(
+        description="The return page number (1 indexed)",
+        validate=Range(min=1), load_default=1
+    )
+
+
+class UserFilter(Pagination, Schema):
+
+    #: (Text, required, dump_only):
+    #: Primary key containing the OIDC subject the model instance
+    sub = fields.String(
+        description="String containing an OIDC subject",
+        example="NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs",
+    )
+
+    #: (Text, required, dump_only):
+    #: Primary key containing the OIDC issuer of the model instance
+    iss = fields.String(
+        description="String containing an OIDC issuer",
+        example="https://self-issued.me",
+
+    )
+
+    #: (Email, required):
+    #: Electronic mail collected from OIDC access token
+    email = fields.String(
+        description="Email of user collected by the OIDC token",
+        example="simple_email@gmail.com",
+    )
 
     #: (Str):
     #: Order to return the results separated by coma
+    # TODO: Try fields.DelimitedList
     sort_by = fields.String(
         description="Order to return the results (coma separated)",
-        example="+docker_image,-docker_tag", missing="+docker_image")
+        example="+registration_datetime", load_default="+iss,+sub"
+    )
 
 
-class FlavorFilter(Pagination, Schema):
-
-    #: (Text):
-    #: Text with virtual hardware template identification
-    name = fields.FlavorName()
-
-    #: (Str):
-    #: Order to return the results separated by coma
-    sort_by = fields.String(
-        description="Order to return the results (coma separated)",
-        example="+name", missing="+name")
+class UserDelete(UserFilter):
+    class Meta:
+        fields = ("sub", "iss", "email")
 
 
-class ReportFilter(Pagination, Schema):
+class UserSearch(Pagination, Search, Schema):
+    pass
 
-    #: (Bool):
-    #: Contains the status information of the report
-    verdict = fields.Verdict()
+
+class SubmitFilter(Pagination, UploadFilter, Schema):
 
     #: (String):
-    #:Resource discriminator
-    resource_type = fields.Resource()
-
-    #: (ISO8601, attribute="upload_datetime", missing=None):
-    #: Upload datetime of the report before a specific date
-    upload_before = fields.UploadBefore(attribute="before", missing=None)
-
-    #: (ISO8601, attribute="upload_datetime", missing=None):
-    #: Upload datetime of the report after a specific date
-    upload_after = fields.UploadAfter(attribute="after", missing=None)
+    #: Resource discriminator
+    resource_type = fields.String(
+        description="Resource type discriminator",
+        example="benchmark",
+        validate=OneOf(["benchmark", "claim", "site", "flavor"])
+    )
 
     #: (Str):
     #: Order to return the results separated by coma
     sort_by = fields.String(
         description="Order to return the results (coma separated)",
-        example="+upload_datetime", missing="+verdict,+id")
-
-    @post_load
-    def process_input(self, data, **kwargs):
-        if 'verdict' in data and data['verdict'] == "null":
-            data['verdict'] = None
-        return data
+        example="+resource_type", load_default="+resource_type"
+    )
 
 
-class ResultFilter(Pagination, Schema):
-
-    #: (Benchmark.id):
-    #: Unique Identifier for result associated benchmark
-    benchmark_id = fields.Id()
-
-    #: (Site.id):
-    #: Unique Identifier for result associated site
-    site_id = fields.Id()
-
-    #: (Flavor.id):
-    #: Unique Identifier for result associated flavor
-    flavor_id = fields.Id()
-
-    #: ([Tag.id], required):
-    #: Unique Identifiers for result associated tags
-    tags_ids = fields.Ids()
-
-    #: (ISO8601, attribute="upload_datetime", missing=None):
-    #: Upload datetime of the report before a specific date
-    upload_before = fields.UploadBefore(attribute="before", missing=None)
-
-    #: (ISO8601, attribute="upload_datetime", missing=None):
-    #: Upload datetime of the report after a specific date
-    upload_after = fields.UploadAfter(attribute="after", missing=None)
-
-    #: (String; <json.path> <operation> <value>)
-    #: Expression to condition the returned results on JSON field
-    filters = fields.Filters()
+class ClaimFilter(Pagination, UploadFilter, Schema):
 
     #: (Str):
     #: Order to return the results separated by coma
     sort_by = fields.String(
         description="Order to return the results (coma separated)",
-        example="+execution_datetime", missing="+execution_datetime")
-
-
-class ResultContext(Schema):
-
-    #: (ISO8601, required") :
-    #: Benchmark execution **START**
-    execution_datetime = fields.ExecDT(required=True)
-
-    #: (Benchmark.id, required):
-    #: Unique Identifier for result associated benchmark
-    benchmark_id = fields.Id(required=True)
-
-    #: (Site.id, required):
-    #: Unique Identifier for result associated site
-    site_id = fields.Id(required=True)
-
-    #: (Flavor.id, required):
-    #: Unique Identifier for result associated flavor
-    flavor_id = fields.Id(required=True)
-
-    #: ([Tag.id], required):
-    #: Unique Identifiers for result associated tags
-    tags_ids = fields.Ids()
-
-
-class SiteFilter(Pagination, Schema):
-
-    #: (Text):
-    #: Human readable institution identification
-    name = fields.SiteName()
-
-    #: (Text):
-    #: Place where a site is physically located
-    address = fields.Address()
-
-    #: (Str):
-    #: Order to return the results separated by coma
-    sort_by = fields.String(
-        description="Order to return the results (coma separated)",
-        example="+name,+address", missing="+name")
+        example="+upload_datetime", load_default="+upload_datetime"
+    )
 
 
 class TagFilter(Pagination, Schema):
 
     #: (Text):
     #: Human readable feature identification
-    name = fields.TagName()
+    name = fields.String(
+        description="String with short feature identification",
+        example="python",
+    )
 
     #: (Str):
     #: Order to return the results separated by coma
     sort_by = fields.String(
         description="Order to return the results (coma separated)",
-        example="+name", missing="+name")
+        example="+name", load_default="+name"
+    )
 
 
-class UserFilter(Pagination, Schema):
-
-    #: (Text):
-    #: Primary key containing the OIDC subject the model instance
-    sub = fields.Sub()
-
-    #: (Text):
-    #: Primary key containing the OIDC issuer of the model instance
-    iss = fields.Iss()
-
-    #: (Email) Electronic mail collected from OIDC access token
-    email = fields.Email()
-
-    #: (Str):
-    #: Order to return the results separated by coma
-    sort_by = fields.String(
-        description="Order to return the results (coma separated)",
-        example="+email", missing="+iss,+sub")
+class TagSearch(Pagination, Search, Schema):
+    pass
 
 
-class UserDelete(Schema):
+class BenchmarkFilter(Pagination, UploadFilter, Status, Schema):
 
-    #: (Text):
-    #: Primary key containing the OIDC subject the model instance
-    sub = fields.Sub()
+    #: (Text, required):
+    #: Docker image referenced by the benchmark
+    docker_image = fields.String(
+        description="String with a docker hub container name",
+        example="deephdc/deep-oc-benchmarks_cnn",
+    )
 
-    #: (Text):
-    #: Primary key containing the OIDC issuer of the model instance
-    iss = fields.Iss()
-
-    #: (Email) Electronic mail collected from OIDC access token
-    email = fields.Email()
-
-
-class Search(Pagination, Schema):
-
-    #: ([Text]):
-    #: Group of strings to use as general search on model instances
-    terms = fields.Terms()
+    #: (Text, required):
+    #: Docker image version/tag referenced by the benchmark
+    docker_tag = fields.String(
+        description="String with a docker hub container tag",
+        example="1.0.2-gpu",
+    )
 
     #: (Str):
     #: Order to return the results separated by coma
     sort_by = fields.String(
         description="Order to return the results (coma separated)",
-        example="+upload_datetime", missing="")
+        example="+docker_image,-docker_tag", load_default="+docker_image"
+    )
+
+
+class BenchmarkSearch(Pagination, UploadFilter, Status, Search, Schema):
+    pass
+
+
+class SiteFilter(Pagination, UploadFilter, Status, Schema):
+
+    #: (Text):
+    #: Human readable institution identification
+    name = fields.String(
+        description="String with human readable institution identification",
+        example="Karlsruhe Institute of Technology",
+    )
+
+    #: (Text):
+    #: Place where a site is physically located
+    address = fields.String(
+        description="String with place where a site is located",
+        example="76131 Karlsruhe, Germany",
+    )
+
+    #: (Str):
+    #: Order to return the results separated by coma
+    sort_by = fields.String(
+        description="Order to return the results (coma separated)",
+        example="+name,+address", load_default="+name"
+    )
+
+
+class SiteSearch(Pagination, UploadFilter, Status, Search, Schema):
+    pass
+
+
+class FlavorFilter(Pagination, UploadFilter, Status, Schema):
+
+    #: (Text):
+    #: Text with virtual hardware template identification
+    name = fields.String(
+        description="String with virtual hardware template identification",
+        example="c6g.medium",
+    )
+
+    #: (Str):
+    #: Order to return the results separated by coma
+    sort_by = fields.String(
+        description="Order to return the results (coma separated)",
+        example="+name", load_default="+name"
+    )
+
+
+class FlavorSearch(Pagination, UploadFilter, Status, Search, Schema):
+    pass
+
+
+class ResultFilter(Pagination, UploadFilter, Schema):
+
+    #: (ISO8601):
+    #: Execution datetime of the instance before a specific date
+    execution_before = fields.Date(
+        description="Results executed before date (ISO8601)",
+        example="2059-03-10",
+    )
+
+    #: (ISO8601):
+    #: Execution datetime of the instance after a specific date
+    execution_after = fields.Date(
+        description="Results executed after date (ISO8601)",
+        example="2019-09-07",
+    )
+
+    #: (Benchmark.id):
+    #: Unique Identifier for result associated benchmark
+    benchmark_id = fields.UUID(
+        description="UUID benchmark unique identification",
+        example=str(uuid4()),
+    )
+
+    #: (Site.id):
+    #: Unique Identifier for result associated site
+    site_id = fields.UUID(
+        description="UUID site unique identification",
+        example=str(uuid4()),
+    )
+
+    #: (Flavor.id):
+    #: Unique Identifier for result associated flavor
+    flavor_id = fields.UUID(
+        description="UUID flavor unique identification",
+        example=str(uuid4()),
+    )
+
+    #: ([Tag.id], required):
+    #: Unique Identifiers for result associated tags
+    tags_ids = fields.List(
+        fields.UUID(
+            description="UUID tag unique identification",
+            example=str(uuid4()), required=True,
+        ),
+        description="UUID tags unique identifications",
+        example=[str(uuid4()) for _ in range(2)],
+    )
+
+    #: (String; <json.path> <operation> <value>)
+    #: Expression to condition the returned results on JSON field
+    filters = fields.List(
+        fields.String(
+            description="JSON filter condition (space sparated)",
+            example="machine.cpu.count > 4", required=True,
+        ),
+        description="List of filter conditions (space separated)",
+        example=["cpu.count > 4", "cpu.count < 80"], load_default=[]
+    )
+
+    #: (Str):
+    #: Order to return the results separated by coma
+    sort_by = fields.String(
+        description="Order to return the results (coma separated)",
+        example="+execution_datetime", load_default="+execution_datetime"
+    )
+
+
+class ResultContext(Schema):
+
+    #: (ISO8601, required) :
+    #: Benchmark execution **START**
+    execution_datetime = fields.DateTime(
+        description="START execution datetime of the result",
+        example="2021-09-08 20:37:10.192459", required=True,
+    )
+
+    #: (Benchmark.id, required):
+    #: Unique Identifier for result associated benchmark
+    benchmark_id = fields.UUID(
+        description="UUID benchmark unique identification",
+        example=str(uuid4()), required=True,
+    )
+
+    #: (Flavor.id, required):
+    #: Unique Identifier for result associated flavor
+    flavor_id = fields.UUID(
+        description="UUID flavor unique identification",
+        example=str(uuid4()), required=True,
+    )
+
+    #: ([Tag.id], default=[]):
+    #: Unique Identifiers for result associated tags
+    tags_ids = fields.List(
+        fields.UUID(
+            description="UUID tag unique identification",
+            example=str(uuid4()), required=True,
+        ),
+        description="UUID tags unique identifications",
+        example=[str(uuid4()) for _ in range(2)], load_default=[],
+    )
+
+
+class ResultSearch(Pagination, UploadFilter, Search, Schema):
+    pass

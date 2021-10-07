@@ -1,6 +1,6 @@
 # EOSC Perf -- Backend
 
-EOSC Performance API service. 
+EOSC Performance API service.
 
 # Prepare your environment
 Prepare your environment with the following variables:
@@ -21,7 +21,7 @@ DB_NAME=<my-db-name>
 
 
 # Running on docker as production
-To run the application on production, container technologies is the recommended way (docker, kubernetes, etc). 
+To run the application on production, container technologies is the recommended way (docker, kubernetes, etc).
 
 ## Environment details
 To run the application on production the following environment variables and secrets need to be set:
@@ -75,7 +75,7 @@ flask run
 
 
 # Run your database
-The application needs a [PostgreSQL](https://www.postgresql.org/) database where to store the persistent data in secured and efficient manner. We recommend deploy this database using container technologies (docker, kubernetes, etc). 
+The application needs a [PostgreSQL](https://www.postgresql.org/) database where to store the persistent data in secured and efficient manner. We recommend deploy this database using container technologies (docker, kubernetes, etc).
 
 Here is a docker run example to deploy a postgres database service on the port 5432.
 ```bash
@@ -83,7 +83,7 @@ docker run -p 5432:5432 -v `pwd`/data:/data \
     -e POSTGRES_USER=<defined-env-non-super-user> \
     -e POSTGRES_PASSWORD=<my-db-password> \
     -e POSTGRES_DB=<my-db-name> \
-    -e PGDATA=/data \ 
+    -e PGDATA=/data \
     postgres
 ```
 
@@ -112,7 +112,7 @@ docker run --rm --env-file .env \
 ## Backup your database
 You can backup your [PostgreSQL](https://www.postgresql.org/) database operating over the `data` folder if `PGDATA` was specified and mounted with `--volume` at the postgres container creation.
 
-> Although backup by coping the /data folder or volume container is simple, there are other [alternatives](https://www.postgresql.org/about/news/postgresql-14-beta-2-released-2249/) more correct advanced solutions with advantages.  
+> Although backup by coping the /data folder or volume container is simple, there are other [alternatives](https://www.postgresql.org/about/news/postgresql-14-beta-2-released-2249/) more correct advanced solutions with advantages.
 
 
 # Build documentation

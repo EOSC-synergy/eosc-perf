@@ -70,6 +70,7 @@ def db(app):
     [factories.DBSite(**x) for x in db_instances.sites]
     [factories.DBFlavor(**x) for x in db_instances.flavors]
     [factories.DBResult(**x) for x in db_instances.results]
+    database.session.commit()
     yield database
     database.drop_all()
 

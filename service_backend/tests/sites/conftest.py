@@ -25,4 +25,4 @@ def request_id(request, site_id):
 @fixture(scope='function')
 def url(endpoint, request_id, query):
     """Fixture that return the url for the request."""
-    return url_for(endpoint, site_id=request_id, **query)
+    return url_for(endpoint, id=request_id, **query)

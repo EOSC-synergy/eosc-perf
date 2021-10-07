@@ -2,8 +2,7 @@
 import uuid
 
 from backend import models
-from factory import (LazyFunction, SelfAttribute, Sequence, SubFactory,
-                     post_generation)
+from factory import LazyFunction, Sequence, SubFactory, post_generation
 from factory.alchemy import SQLAlchemyModelFactory
 
 from .core import BaseMeta, fdt
@@ -20,44 +19,36 @@ class DBUser(SQLAlchemyModelFactory):
     email = Sequence(lambda n: f"user{n}@example.com")
 
 
-class DBReport(SQLAlchemyModelFactory):
-    """Report factory. Default kwargs are:"""
-    class Meta(BaseMeta):
-        model = models.Report
-
-    id = LazyFunction(uuid.uuid4)
-    upload_datetime = fdt.fuzz()
-    verdict = None
-    message = Sequence(lambda n: f"Report message {n}")
-    uploader = SubFactory(DBUser)
-
-
 class DBBenchmark(SQLAlchemyModelFactory):
     """Benchmark factory. Default kwargs are:"""
     class Meta(BaseMeta):
         model = models.Benchmark
-        sqlalchemy_get_or_create = ('docker_image', 'docker_tag')
+        sqlalchemy_get_or_create = ('id',)
 
     id = LazyFunction(uuid.uuid4)
     upload_datetime = fdt.fuzz()
-    docker_image = Sequence(lambda n: f"b{n}")
+    docker_image = Sequence(lambda n: f"benchmark {n}")
     docker_tag = "latest"
-    description = ""
-    json_schema = {}
+    description = "Benchmark example"
+    json_schema = {"properties": {"time": {"type": "integer"}}}
     upload_datetime = fdt.fuzz()
     uploader = SubFactory(DBUser)
 
     @post_generation
-    def upload_verdict(self, create, verdict, **kwargs):
-        if verdict != None:
-            self.reports[0].verdict = verdict
+    def status(self, create, status, **kwargs):
+        if not status or status == "on_review":
+            pass
+        elif status == "approved":
+            self.approve()
+        else:
+            raise RuntimeError(f"bad status {status}")
 
 
 class DBSite(SQLAlchemyModelFactory):
     """Site factory. Default kwargs are:"""
     class Meta(BaseMeta):
         model = models.Site
-        sqlalchemy_get_or_create = ('name',)
+        sqlalchemy_get_or_create = ('id',)
 
     id = LazyFunction(uuid.uuid4)
     upload_datetime = fdt.fuzz()
@@ -68,36 +59,44 @@ class DBSite(SQLAlchemyModelFactory):
     uploader = SubFactory(DBUser)
 
     @post_generation
-    def upload_verdict(self, create, verdict, **kwargs):
-        if verdict != None:
-            self.reports[0].verdict = verdict
+    def status(self, create, status, **kwargs):
+        if not status or status == "on_review":
+            pass
+        elif status == "approved":
+            self.approve()
+        else:
+            raise RuntimeError(f"bad status {status}")
 
 
 class DBFlavor(SQLAlchemyModelFactory):
     """Flavor factory. Default kwargs are:"""
     class Meta(BaseMeta):
         model = models.Flavor
-        sqlalchemy_get_or_create = ('name', 'site_id')
+        sqlalchemy_get_or_create = ('id',)
 
     id = LazyFunction(uuid.uuid4)
     upload_datetime = fdt.fuzz()
     name = Sequence(lambda n: f"flavor{n}")
     description = "Text"
-    site_id = LazyFunction(lambda: DBSite().id)
+    site = SubFactory(DBSite)
     upload_datetime = fdt.fuzz()
     uploader = SubFactory(DBUser)
 
     @post_generation
-    def upload_verdict(self, create, verdict, **kwargs):
-        if verdict != None:
-            self.reports[0].verdict = verdict
+    def status(self, create, status, **kwargs):
+        if not status or status == "on_review":
+            pass
+        elif status == "approved":
+            self.approve()
+        else:
+            raise RuntimeError(f"bad status {status}")
 
 
 class DBTag(SQLAlchemyModelFactory):
     """Tag factory. Default kwargs are:"""
     class Meta(BaseMeta):
         model = models.Tag
-        sqlalchemy_get_or_create = ('name',)
+        sqlalchemy_get_or_create = ('id',)
 
     id = LazyFunction(uuid.uuid4)
     name = Sequence(lambda n: f"tag{n}")
@@ -113,22 +112,26 @@ class DBResult(SQLAlchemyModelFactory):
     id = LazyFunction(uuid.uuid4)
     upload_datetime = fdt.fuzz()
     execution_datetime = fdt.fuzz()
-    json = Sequence(lambda n: {'name': f"report_{n}"})
+    json = Sequence(lambda n: {'name': f"result_{n}"})
     benchmark = SubFactory(DBBenchmark)
-    site = SubFactory(DBSite)
-    flavor = SubFactory(DBFlavor, site_id=SelfAttribute('..site.id'))
+    flavor = SubFactory(DBFlavor)
     upload_datetime = fdt.fuzz()
     uploader = SubFactory(DBUser)
 
     @post_generation
-    def tags(self, create, names, **kwargs):
-        names = names if names is not None else []
-        for name in names:
-            tag = DBTag(name=name, **kwargs)
+    def tags(self, create, specs, **kwargs):
+        specs = specs if specs is not None else []
+        for spec in specs:
+            tag = DBTag(**{**spec, **kwargs})
             self.tags.append(tag)
 
     @post_generation
-    def reports(self, create, reports, **kwargs):
-        if reports:
-            for kwargs in reports:
-                DBReport(_association=self._report_association, **kwargs)
+    def claims(self, create, messages, **kwargs):
+        if messages:
+            for msg in messages:
+                self.claims.append(self.Claim(
+                    message=msg,
+                    uploader=DBUser(),
+                    resource=self
+                ))
+            self.delete

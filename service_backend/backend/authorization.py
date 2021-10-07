@@ -9,7 +9,7 @@ from flaat import Flaat, tokentools
 from flask import current_app, request
 from flask_smorest import abort
 
-from backend import models
+from . import models
 
 
 class Authorization(Flaat):
@@ -60,6 +60,26 @@ class Authorization(Flaat):
         admin_entitlements = app.config['ADMIN_ENTITLEMENTS']
         self.admin_entitlements = admin_entitlements
 
+    def current_tokeninfo(self):
+        """Returns the token information from the current request.
+
+        :return: Token information.
+        :rtype: dict or None
+        """
+        token = tokentools.get_access_token_from_request(request)
+        info = tokentools.get_accesstoken_info(token)
+        return info['body'] if 'body' in info else None
+
+    def current_userinfo(self):
+        """Returns the token user info from the introspection endpoint.
+
+        :return: User introspection endpoint information.
+        :rtype: dict or None
+        """
+        token = tokentools.get_access_token_from_request(request)
+        user_info = self.get_info_from_introspection_endpoints(token)
+        return user_info
+
     def valid_token(self):
         """Function to evaluate the validity of the user login"""
         try:
@@ -92,18 +112,13 @@ class Authorization(Flaat):
 
     def valid_user(self):
         """Function to evaluate the validity of the user login"""
-        if current_app.config['DISABLE_AUTHENTICATION']:
-            current_app.logger.warning("AUTHENTICATION is disabled")
-            return True
-
-        try:
-            access_token = tokentools.get_access_token_from_request(request)
-            user = models.User.get(token=access_token)
+        user = models.User.current_user()
+        if not user:
+            current_app.logger.error("User not registered")
+            return False
+        else:
             current_app.logger.debug(f"User info: {user}")
             return True
-        except Exception as e:
-            current_app.logger.error('Error validating user', exc_info=e)
-            return False
 
     def login_required(self, on_failure=None):
         """Decorator to enforce a valid login.

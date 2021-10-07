@@ -42,8 +42,9 @@ def match_benchmark(json, benchmark):
     assert json['docker_tag'] == benchmark.docker_tag
 
     # Check the benchmark has a description
-    assert 'description' in json and type(json['description']) is str
-    assert json['description'] == benchmark.description
+    if 'description' in json:
+        assert type(json['description']) is str
+        assert json['description'] == benchmark.description
 
     # Check the benchmark has a json_schema
     assert 'json_schema' in json and type(json['json_schema']) is dict
@@ -52,38 +53,53 @@ def match_benchmark(json, benchmark):
     return True
 
 
-def match_report(json, report):
-    """Checks the json db_instances matches the report object."""
+def match_submit(json):
+    """Checks the json db_instances matches the submit object."""
 
     # Check the report has an id
-    assert 'id' in json and type(json['id']) is str
-    assert json['id'] == str(report.id)
+    assert 'id' not in json
 
     # Check the report has a upload date
     assert 'upload_datetime' in json
     assert type(json['upload_datetime']) is str
-    upload_datetime = str(report.upload_datetime).replace(" ", "T")
-    assert json['upload_datetime'] == upload_datetime
-
-    # Check the report has a verdict
-    assert type(json['verdict']) is bool or json['verdict'] is None
-    assert json['verdict'] == report.verdict
-
-    # Check the report has a message
-    assert 'message' in json and type(json['message']) is str
-    assert json['message'] == report.message
 
     # Check the report has a resource_type
     assert 'resource_type' in json and type(json['resource_type']) is str
-    assert json['resource_type'] == report.resource_type
 
     # Check the report has a resource_id
     assert 'resource_id' in json and type(json['resource_id']) is str
-    assert json['resource_id'] == str(report.resource_id)
+
+    return True
+
+
+def match_claim(json, claim):
+    """Checks the json db_instances matches the claim object."""
+
+    # Check the report has an id
+    assert 'id' in json and type(json['id']) is str
+    assert json['id'] == str(claim.id)
+
+    # Check the report has a upload date
+    assert 'upload_datetime' in json
+    assert type(json['upload_datetime']) is str
+    upload_datetime = str(claim.upload_datetime).replace(" ", "T")
+    assert json['upload_datetime'] == upload_datetime
+
+    # Check the report has a message
+    assert 'message' in json and type(json['message']) is str
+    assert json['message'] == claim.message
+
+    # Check the report has a resource_type
+    assert 'resource_type' in json and type(json['resource_type']) is str
+    assert json['resource_type'] == claim.resource_type
+
+    # Check the report has a resource_id
+    assert 'resource_id' in json and type(json['resource_id']) is str
+    assert json['resource_id'] == str(claim.resource_id)
 
     # Check the report has a uploader
     assert 'uploader' in json  # Reports should only be accessible by admins
-    assert match_user(json['uploader'], report.uploader)
+    assert match_user(json['uploader'], claim.uploader)
 
     return True
 
@@ -104,8 +120,9 @@ def match_site(json, site):
     assert json['address'] == site.address
 
     # Check the site has description
-    assert 'description' in json and type(json['description']) is str
-    assert json['description'] == site.description
+    if 'description' in json:
+        assert type(json['description']) is str
+        assert json['description'] == site.description
 
     return True
 
@@ -122,8 +139,9 @@ def match_flavor(json, flavor):
     assert json['name'] == flavor.name
 
     # Check the flavor has description
-    assert 'description' in json and type(json['description']) is str
-    assert json['description'] == flavor.description
+    if 'description' in json:
+        assert type(json['description']) is str
+        assert json['description'] == flavor.description
 
     return True
 
@@ -140,8 +158,9 @@ def match_tag(json, tag):
     assert json['name'] == tag.name
 
     # Check the tag has a description
-    assert 'description' in json and type(json['description']) is str
-    assert json['description'] == tag.description
+    if 'description' in json:
+        assert type(json['description']) is str
+        assert json['description'] == tag.description
 
     return True
 
@@ -160,10 +179,6 @@ def match_user(json, user):
     # Check the user has email
     assert 'email' in json and type(json['email']) is str
     assert json['email'] == user.email
-
-    # Check the user has upload date
-    assert 'upload_datetime' in json and type(json['upload_datetime']) is str
-    assert json['upload_datetime'] == str(user.upload_datetime).replace(" ", "T")
 
     return True
 
@@ -233,16 +248,16 @@ def match_query(json, url):
             ])
 
     # Exclusive for /reports
-    if parsed_url.path == "/reports":
-        if 'verdict' in query_param:
-            if query_param['verdict'][0] == "true":
-                assert json['verdict'] == True
-            if query_param['verdict'][0] == "false":
-                assert json['verdict'] == False
-            if query_param['verdict'][0] == "null":
-                assert json['verdict'] == None
-        if 'type' in query_param:
-            assert json['type'] == query_param['type'][0]
+    if parsed_url.path == "/reports/submits":
+        if 'resource_type' in query_param:
+            assert json['resource_type'] == query_param['resource_type'][0]
+        if 'upload_before' in query_param:
+            assert json['upload_datetime'] < query_param['upload_before'][0]
+        if 'upload_after' in query_param:
+            assert json['upload_datetime'] > query_param['upload_after'][0]
+
+    # Exclusive for /reports
+    if parsed_url.path == "/reports/claims":
         if 'upload_before' in query_param:
             assert json['upload_datetime'] < query_param['upload_before'][0]
         if 'upload_after' in query_param:
@@ -251,20 +266,26 @@ def match_query(json, url):
     # Exclusive for /results
     if parsed_url.path == "/results":
         if 'docker_image' in query_param:
-            assert json['benchmark']['docker_image'] == query_param['docker_image'][0]
+            assert json['benchmark']['docker_image']\
+                == query_param['docker_image'][0]
         if 'docker_tag' in query_param:
-            assert json['benchmark']['docker_tag'] == query_param['docker_tag'][0]
+            assert json['benchmark']['docker_tag']\
+                == query_param['docker_tag'][0]
         if 'site_name' in query_param:
-            assert json['site']['name'] == query_param['site_name'][0]
+            assert json['site']['name']\
+                == query_param['site_name'][0]
         if 'flavor_name' in query_param:
-            assert json['flavor']['name'] == query_param['flavor_name'][0]
+            assert json['flavor']['name']\
+                == query_param['flavor_name'][0]
         if 'upload_before' in query_param:
-            assert json['upload_datetime'] < query_param['upload_before'][0]
+            assert json['upload_datetime']\
+                < query_param['upload_before'][0]
         if 'upload_after' in query_param:
-            assert json['upload_datetime'] > query_param['upload_after'][0]
+            assert json['upload_datetime']\
+                > query_param['upload_after'][0]
         if 'tag_names' in query_param:
-            assert set(x['name']
-                       for x in json['tags']) == set(query_param['tag_names'])
+            assert set(x['name'] for x in json['tags'])\
+                == set(query_param['tag_names'])
         # Add assert for filters
             # TODO: Assert for filters
 
@@ -370,33 +391,38 @@ def match_edit(json, body):
     return True
 
 
-def report_notification(report):
+def submit_notification(report):
     """Checks a report notification is in the outbox"""
     mail_outbox = mail.get_connection().mailman.outbox
-    msg_index = find_message(mail_outbox, headers={'Report-ID': report.id})
-    assert msg_index != -1  # Item message found
-    envelope = mail_outbox.pop(msg_index)
+
+    def filter(item):
+        headers = {'Resource-ID': str(report.resource.id)}
+        chk1 = headers.items() <= item.extra_headers.items()
+        chk2 = "submitted" in item.subject
+        return chk1 and chk2
+
+    envelope = pop_notification(mail_outbox, filter)
     assert envelope.from_email == "no-reply@example.com"
     assert report.resource.uploader.email in envelope.to
     assert "support@example.com" in envelope.cc
-    assert envelope.extra_headers['Report-verdict'] == report.verdict
 
 
 def user_welcome(user):
     """Checks a user welcome is in the outbox"""
     mail_outbox = mail.get_connection().mailman.outbox
-    msg_index = find_message(mail_outbox, subject="Thank you for registering")
-    assert msg_index != -1  # Item message found
-    envelope = mail_outbox.pop(msg_index)
+
+    def filter(item):
+        chk1 = "Thank you for registering" in item.subject
+        return chk1
+
+    envelope = pop_notification(mail_outbox, filter)
     assert envelope.from_email == "no-reply@example.com"
     assert user.email in envelope.to
+    assert envelope.cc == []
 
 
-def find_message(mail_outbox, headers=None, subject=None):
+def pop_notification(mail_outbox, filter):
     for index, item in enumerate(mail_outbox):
-        if headers and headers.items() <= item.extra_headers.items():
-            return index
-        if subject and subject in item.subject:
-            return index
-
+        if filter(item):
+            return mail_outbox.pop(index)
     raise KeyError("Message not found")

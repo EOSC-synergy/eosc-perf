@@ -11,15 +11,15 @@ by the community.
 
 OpenAPI specification
 =========================
-In order to improve usability, the API provides and OpenAPI v3 
+In order to improve usability, the API provides and OpenAPI v3
 specification which can be accessed at the path `/api-spec.json`.
 Additionally the root path provides a Graphical User Interface (GUI) build
-with `Swagger UI <swagger_ui_>`_ that users can use to test, 
+with `Swagger UI <swagger_ui_>`_ that users can use to test,
 interface and learn about the multiple methods offered by this API.
 
 .. image:: ../../images/SwaggerUI_screenshot.png
 
-More information about the OpenAPI community can be found at their home page 
+More information about the OpenAPI community can be found at their home page
 `openapis.org <openapi_home_>`_.
 
 .. _swagger_ui: https://swagger.io/tools/swagger-ui/
@@ -42,12 +42,12 @@ Although most of the GET reports are open to any request from any user,
 some are restricted to identified users and administrators. In order to
 identify into the service, the technology used is OpenID Connect.
 
-More information about OpenID Connect can be found at their home page 
+More information about OpenID Connect can be found at their home page
 `openid.net <oidc_home_>`_.
 
 In order to obtain an OIDC token you can use to identify yourself when
 using the API, we recommend the tool `oidc-agent <oidc_agent_>`_. Once
-configured, you can easily store your access token as environment 
+configured, you can easily store your access token as environment
 variable, for example:
 
 .. code-block:: bash

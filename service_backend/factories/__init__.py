@@ -23,12 +23,10 @@ Important: If you want to use the objects produced to be usable
 outside the scope of the session, you need to expunge them for the session.
 For more examples, see http://flask-sqlalchemy.pocoo.org/contexts/
 """
-from .factories import (DBBenchmark, DBFlavor, DBReport, DBResult, DBSite,
-                        DBTag, DBUser)
+from .factories import DBBenchmark, DBFlavor, DBResult, DBSite, DBTag, DBUser
 
 __all__ = [
     "DBBenchmark",
-    "DBReport",
     "DBResult",
     "DBSite",
     "DBFlavor",

@@ -12,11 +12,11 @@ psycopg2-binary~=2.8.6
 flask-migrate~=3.0.0
 
 # Schemas
-marshmallow~=3.10.0
+marshmallow~=3.13.0
 jsonschema~=3.2.0
 
-# REST GUI 
-flask-smorest~=0.31.3
+# REST GUI
+flask-smorest~=0.34.0
 
 # Deployment in production
 gevent~=21.1.2
@@ -36,4 +36,4 @@ flask-mailman~=0.3.0
 blinker~=1.4.0
 
 # Environment variable parsing
-environs~=9.3.2
+environs~=9.3.3

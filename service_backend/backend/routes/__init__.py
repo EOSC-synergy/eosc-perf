@@ -1,6 +1,6 @@
 """Backend package for the collection of the API URLs routes definitions.
 
-The API uses routes to determine which controller and action method to 
+The API uses routes to determine which controller and action method to
 execute. Routes should use meaningful URL users can remember and use
 directly when interfacing the API.
 

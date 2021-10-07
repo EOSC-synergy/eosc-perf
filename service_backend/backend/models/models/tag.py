@@ -27,14 +27,7 @@ class Tag(PkModel):
     name = Column(Text, unique=True, nullable=False)
 
     #: (Text) Useful information to help users to understand the label context
-    description = Column(Text, nullable=False, default="")
-
-    def __init__(self, **properties):
-        """Model initialization"""
-        super().__init__(**properties)
-
-    def __repr__(self) -> str:
-        return '<{} {}>'.format(self.__class__.__name__, self.name)
+    description = Column(Text, nullable=True)
 
     def __init__(self, **properties):
         """Model initialization"""

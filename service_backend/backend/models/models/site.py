@@ -3,12 +3,11 @@ from sqlalchemy import Column, Text
 from sqlalchemy.orm import relationship
 
 from ..core import PkModel
-from . import HasUploadDatetime
-from .report import HasReports
+from .reports import NeedsApprove
 from .user import HasUploader
 
 
-class Site(HasReports, HasUploadDatetime, HasUploader, PkModel):
+class Site(NeedsApprove, HasUploader, PkModel):
     """The Site model represents a location where a benchmark can be executed.
 
     This generally refers to the different virtual machine providers and
@@ -21,10 +20,13 @@ class Site(HasReports, HasUploadDatetime, HasUploader, PkModel):
     address = Column(Text, nullable=False)
 
     #: (Text) Useful site information to help users
-    description = Column(Text, nullable=True, default="")
+    description = Column(Text, nullable=True)
 
     #: ([Flavor], read_only) List of flavors available at the site
-    flavors = relationship("Flavor", cascade="all, delete-orphan")
+    flavors = relationship(
+        "Flavor", back_populates="site",
+        cascade="all, delete-orphan",
+        )
 
     def __init__(self, **properties):
         """Model initialization"""
@@ -33,4 +35,3 @@ class Site(HasReports, HasUploadDatetime, HasUploader, PkModel):
     def __repr__(self) -> str:
         """Human-readable representation string"""
         return "<{} {}>".format(self.__class__.__name__, self.name)
-

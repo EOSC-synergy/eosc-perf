@@ -14,6 +14,3 @@ class BaseMeta:
 
     #: Use the application session
     sqlalchemy_session = db.session
-
-    #: Commit objects after creation
-    sqlalchemy_session_persistence = 'commit'

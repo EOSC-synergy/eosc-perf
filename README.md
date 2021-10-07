@@ -1,5 +1,8 @@
 # EOSC-PERF
 
+[![Build Status](https://jenkins.eosc-synergy.eu/buildStatus/icon?job=eosc-synergy-org%2Feosc-perf%2Fbackend)](https://jenkins.eosc-synergy.eu/job/eosc-synergy-org/job/eosc-perf/job/backend/)
+[![Documentation Status](https://readthedocs.org/projects/perf/badge/?version=latest)](https://perf.readthedocs.io/en/latest/?badge=latest)
+
 ## Intro
 
 ![](docs/source/eosc%20synergy%20logo.png)

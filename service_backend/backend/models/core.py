@@ -1,114 +1,154 @@
 """Models core for models parent classes."""
 import uuid
 
-from backend.extensions import db
-from flaat import tokentools
-from flask_smorest import abort
 from sqlalchemy import Column, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.sql.sqltypes import Boolean
+from flask_sqlalchemy import BaseQuery
+
+from ..extensions import db
 
 
-class BaseModel(db.Model):
-    """Base model class that includes CRUD convenience methods
-    create, read, update & delete operations."""
+class BaseCRUD(db.Model):
+    """Base model that adds CRUD methods to the model.
+    """
     __abstract__ = True
 
     @classmethod
-    def create(cls, param):
-        """Creates a new record and save it the database.
+    def create(cls, properties):
+        """ Creates and saves a new record into the database.
 
-        :param param: Values to set on the model properties
-        :type param: dict
-        :raises Conflict: Database conflict on new instance
-        :return: The new created database model instance
-        :rtype: :class:`BaseModel`
+        :param properties: Values to set on the model properties
+        :type properties: dict
+        :return: The record instance
+        :rtype: :class:`MixinCRUD`
         """
-        instance = cls(**param)
-        return instance.save()
+        record = cls(**properties)
+        db.session.add(record)
+        return record
 
-    def update(self, param, commit=True):
-        """Updates specific fields of a record.
+    @classmethod
+    def read(cls, primary_key):
+        """ Returns the record from the database matching the id.
 
-        :param param: Values to set on the model properties
-        :type param: dict
-        :param commit: Commit changes, defaults to True
-        :type commit: bool, optional
-        :return: True, or instance if commit flag is False
-        :rtype: True or :class:`BaseModel`
+        :param primary_key: Record with primary_key to retrieve
+        :type primary_key: any
+        :return: Record to retrieve or None
+        :rtype: :class:`BaseModel` or None
         """
-        for attr, value in param.items():
+        with db.session.no_autoflush:
+            return cls.query.get(primary_key)
+
+    def update(self, properties):
+        """Updates specific fields from a record in the database.
+
+        :param properties: Values to set on the model properties
+        :type properties: dict
+        """
+        for attr, value in properties.items():
             setattr(self, attr, value)
-        return commit and self.save() or self
-
-    def save(self, commit=True):
-        """Adds the record to the session.
-
-        :param commit: Commit changes, defaults to True
-        :type commit: bool, optional
-        :return: Saved instance 
-        :rtype: :class:`BaseModel`
-        """
         db.session.add(self)
-        if commit:
-            try:
-                db.session.commit()
-            except IntegrityError:
-                abort(409)
-        return self
 
-    def delete(self, commit=True):
-        """Adds a record remove request to the session.
-        
-        :param commit: Commit changes, defaults to True
-        :type commit: bool, optional
-        :return: True, or session commit result if commit flag is False
-        :rtype: bool
+    def delete(self):
+        """Deletes a specific record from the database.
         """
-        db.session.delete(self)
-        return commit and db.session.commit()
+        if self in db.session.new:
+            db.session.expunge(self)
+        else:
+            db.session.delete(self)
 
 
-class PkModel(BaseModel):
-    """Base model class that includes CRUD convenience methods,
-    plus adds a 'primary key' column named `id`."""
+class QueryWithSoftDelete(BaseQuery):
+    """Custom query to exclude soft delete items from model query.
+    See https://blog.miguelgrinberg.com/post/implementing-the-soft-delete-pattern-with-flask-and-sqlalchemy
+    """ # noqa
+    _with_deleted = False
+
+    def __new__(cls, *args, **kwargs):
+        obj = super(QueryWithSoftDelete, cls).__new__(cls)
+        obj._with_deleted = kwargs.pop('_with_deleted', False)
+        if len(args) > 0:
+            super(QueryWithSoftDelete, obj).__init__(*args, **kwargs)
+            return obj.filter_by(deleted=False) if not obj._with_deleted\
+                else obj
+        return obj
+
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def with_deleted(self):
+        return self.__class__(
+            self._only_full_mapper_zero('get'),
+            session=db.session(), _with_deleted=True
+        )
+
+    def _get(self, *args, **kwargs):
+        # this calls the original query.get function from the base class
+        return super(QueryWithSoftDelete, self).get(*args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        # the query.get method does not like it if there is a filter clause
+        # pre-loaded, so we need to implement it using a workaround
+        obj = self.with_deleted()._get(*args, **kwargs)
+        return obj if obj is None\
+            or self._with_deleted\
+            or not obj.deleted else None
+
+
+class SoftDelete(BaseCRUD):
+    """Mixin  model class with 'primary keys' columns for token `sub` and `iss`.
+    """
+
+    __abstract__ = True
+    query_class = QueryWithSoftDelete
+
+    #: (Bool) Flag to hide the item from normal queries
+    deleted = Column(Boolean, nullable=False, default=False)
+
+    @classmethod
+    def read(cls, primary_key, with_deleted=False):
+        if with_deleted:
+            return cls.query.with_deleted().get(primary_key)
+        else:
+            return super().read(primary_key)
+
+    def undelete(cls, primary_key):
+        """Undeletes the indicated item (delete->False)
+        """
+        item = cls.query.get(primary_key)
+        if item:
+            item.deleted = False
+            db.session.add(item)
+        return item
+
+    def delete(self, hard=False):
+        """Deletes a specific record from the database.
+        """
+        if not hard:
+            self.deleted = True
+            db.session.add(self)
+        else:
+            return super().delete()
+
+
+class PkModel(BaseCRUD):
+    """Mixin class with 'primary key' column named `id`.
+    """
     __abstract__ = True
 
     #: (UUID) Primary key with an Unique Identifier for the model instance
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
-    @classmethod
-    def get(cls, id):
-        """Get record by ID."""
-        return cls.query.get_or_404(id)
 
-
-class TokenModel(BaseModel):
-    """Base model class that includes CRUD convenience methods,
-    plus adds 'primary keys' columns for token `sub` and `iss`."""
+class TokenModel(BaseCRUD):
+    """Mixin class with 'primary keys' columns for token `sub` and `iss`.
+    """
     __abstract__ = True
 
-    #: (Text) Primary key containing the OIDC subject the model instance 
+    #: (Text) Primary key containing the OIDC subject the model instance
     sub = Column(Text, primary_key=True, nullable=False)
 
     #: (Text) Primary key containing the OIDC issuer of the model instance
     iss = Column(Text, primary_key=True, nullable=False)
 
     __table_args__ = (UniqueConstraint('sub', 'iss'),)
-
-    @classmethod
-    def create(cls, token, param):
-        token_info = tokentools.get_accesstoken_info(token)
-        return super().create(dict(
-            sub=token_info['body']['sub'],
-            iss=token_info['body']['iss'],
-            **param
-        ))
-
-    @classmethod
-    def get(cls, token):
-        token_info = tokentools.get_accesstoken_info(token)
-        sub = token_info['body']['sub'],
-        iss = token_info['body']['iss'],
-        return cls.query.get_or_404((sub, iss))
-
