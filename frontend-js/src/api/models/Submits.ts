@@ -2,9 +2,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Result } from './Result';
+import type { Submit } from './Submit';
 
-export type Results = {
+export type Submits = {
     /**
      * True if a next page exists
      */
@@ -37,5 +37,5 @@ export type Results = {
      * The total number of items matching the query
      */
     readonly total: number;
-    items: Array<Result>;
+    items: Array<Submit>;
 };

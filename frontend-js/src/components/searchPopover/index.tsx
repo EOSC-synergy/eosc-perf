@@ -157,7 +157,7 @@ export function BenchmarkSearchPopover(props: {
             <SimpleSearchPopover<Benchmark>
                 queryKeyPrefix="benchmark"
                 tableName="Benchmark"
-                endpoint="/benchmarks/search"
+                endpoint="/benchmarks:search"
                 item={props.benchmark}
                 setItem={props.setBenchmark}
                 display={display}
@@ -212,7 +212,7 @@ export function SiteSearchPopover(props: {
             <SimpleSearchPopover<Site>
                 queryKeyPrefix="site"
                 tableName="Site"
-                endpoint="/sites/search"
+                endpoint="/sites:search"
                 item={props.site}
                 setItem={props.setSite}
                 display={display}
@@ -269,7 +269,7 @@ export function FlavorSearchPopover(props: {
                     <SimpleSearchPopover<Flavor>
                         queryKeyPrefix={'flavor-for-' + props.site.id}
                         tableName="Flavor"
-                        endpoint={'/sites/' + props.site.id + '/flavors/search'}
+                        endpoint={'/sites/' + props.site.id + '/flavors:search'}
                         item={props.flavor}
                         setItem={props.setFlavor}
                         display={display}

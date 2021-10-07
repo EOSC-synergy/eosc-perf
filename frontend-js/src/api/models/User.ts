@@ -6,17 +6,17 @@ export type User = {
     /**
      * String containing an OIDC subject
      */
-    readonly sub: string;
+    sub: string;
     /**
      * String containing an OIDC issuer
      */
-    readonly iss: string;
+    iss: string;
     /**
      * Email of user collected by the OIDC token
      */
     email: string;
     /**
-     * ISO8601 Datatime of the resource upload
+     * Time when the user was registered
      */
-    upload_datetime: string;
+    registration_datetime: string;
 }

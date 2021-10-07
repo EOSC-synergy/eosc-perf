@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { Result } from 'api';
 import Highlight from 'react-highlight';
-import './railscasts.css';
+import 'pages/ResultSearch/railscasts.css';
 
 /*
     TODO: ask if the x in the corner is necessary (also for column select)

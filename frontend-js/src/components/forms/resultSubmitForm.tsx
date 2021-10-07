@@ -6,7 +6,7 @@ import {
     SiteSearchPopover,
 } from 'components/searchPopover';
 import { TagSelection } from 'components/tagSelection';
-import { Alert, Button, Col, Form, FormGroup, Row } from 'react-bootstrap';
+import { Alert, Button, Col, Form, Row } from 'react-bootstrap';
 import { LicenseAgreementCheck } from 'components/licenseAgreementCheck';
 import { UserContext } from 'userContext';
 import { useMutation } from 'react-query';
@@ -35,7 +35,7 @@ export function ResultSubmitForm(props: {
                 // TODO: execution datetime?
                 execution_datetime: '2020-05-21T10:31:00.000Z',
                 benchmark_id: benchmark?.id,
-                site_id: site?.id,
+                //site_id: site?.id,
                 flavor_id: flavor?.id,
                 tags_ids: tags,
             }),

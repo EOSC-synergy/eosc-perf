@@ -4,15 +4,15 @@
 
 export type Tag = {
     /**
-     * UUID resource unique identification
-     */
-    readonly id: string;
-    /**
      * String with short feature identification
      */
     name: string;
     /**
      * String with an statement about the object
      */
-    description: string;
+    description: string | null;
+    /**
+     * UUID resource unique identification
+     */
+    readonly id: string;
 }

@@ -4,10 +4,6 @@
 
 export type Benchmark = {
     /**
-     * UUID resource unique identification
-     */
-    readonly id: string;
-    /**
      * String with a docker hub container name
      */
     docker_image: string;
@@ -19,5 +15,13 @@ export type Benchmark = {
     /**
      * String with an statement about the object
      */
-    description: string;
+    description: string | null;
+    /**
+     * Upload datetime of the referred resource
+     */
+    readonly upload_datetime: string;
+    /**
+     * UUID resource unique identification
+     */
+    readonly id: string;
 }

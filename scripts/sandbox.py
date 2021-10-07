@@ -26,6 +26,7 @@ def attempt_post(token: str, where: str, expected: Union[int, List[int]], params
     if response.status_code not in legal:
         print("Unexpected response", response.status_code, "received (vs ", ",".join([str(l) for l in legal]), ") for",
               where)
+        print(response.content)
         raise RuntimeError("see log")
 
     print("=>", response.status_code, response.json())
@@ -37,7 +38,7 @@ def add_demo(token: str, host: str):
     """Add sample data to the database."""
 
     print("Registering user")
-    user = attempt_post(token, host + "/users/self", [201, 409])
+    user = attempt_post(token, host + "/users:register", [201, 409])
 
     # Sites
     virtualbox = {
@@ -173,7 +174,7 @@ def add_demo(token: str, host: str):
             result_data = json.loads(data_raw)
         data = attempt_post(token, host + "/results", expected=201, params={
             "benchmark_id": benchmark["id"],
-            "site_id": result_info['site']["id"],
+            # "site_id": result_info['site']["id"],
             "flavor_id": result_info['flavor']["id"],
             "execution_datetime": datetime.datetime.now().isoformat(),
             "tags_ids": []

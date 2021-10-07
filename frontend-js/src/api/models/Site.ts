@@ -4,10 +4,6 @@
 
 export type Site = {
     /**
-     * UUID resource unique identification
-     */
-    readonly id: string;
-    /**
      * String with human readable institution identification
      */
     name: string;
@@ -18,5 +14,13 @@ export type Site = {
     /**
      * String with an statement about the object
      */
-    description: string;
+    description: string | null;
+    /**
+     * Upload datetime of the referred resource
+     */
+    readonly upload_datetime: string;
+    /**
+     * UUID resource unique identification
+     */
+    readonly id: string;
 }

@@ -1,5 +1,5 @@
 import React, { ReactElement, useContext, useState } from 'react';
-import { ReportCreate, Result } from 'api';
+import { CreateClaim, Result } from 'api';
 import { Button, Form, Modal } from 'react-bootstrap';
 import Highlight from 'react-highlight';
 import { useMutation } from 'react-query';
@@ -16,8 +16,8 @@ export function ReportModal(props: {
     const auth = useContext(UserContext);
 
     const { mutate } = useMutation(
-        (data: ReportCreate) =>
-            postHelper<ReportCreate>('/results/' + props.result?.id + '/report', data, auth.token, {
+        (data: CreateClaim) =>
+            postHelper<CreateClaim>('/results/' + props.result?.id + ':claim', data, auth.token, {
                 result_id: props.result?.id,
             }),
         {

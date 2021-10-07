@@ -4,15 +4,19 @@
 
 export type Flavor = {
     /**
-     * UUID resource unique identification
-     */
-    readonly id: string;
-    /**
      * String with virtual hardware template identification
      */
     name: string;
     /**
      * String with an statement about the object
      */
-    description: string;
+    description: string | null;
+    /**
+     * Upload datetime of the referred resource
+     */
+    readonly upload_datetime: string;
+    /**
+     * UUID resource unique identification
+     */
+    readonly id: string;
 }

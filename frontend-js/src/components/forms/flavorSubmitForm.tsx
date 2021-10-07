@@ -1,7 +1,7 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import { UserContext } from 'userContext';
 import { useMutation } from 'react-query';
-import { FlavorCreate, Site } from 'api';
+import { CreateFlavor, Site } from 'api';
 import { postHelper } from 'api-helpers';
 import axios, { AxiosError } from 'axios';
 import { Alert, Button, Form } from 'react-bootstrap';
@@ -27,8 +27,8 @@ export function FlavorSubmitForm(props: {
     }, []);
 
     const { mutate } = useMutation(
-        (data: FlavorCreate) =>
-            postHelper<FlavorCreate>('/sites/' + props.site.id + '/flavors', data, auth.token),
+        (data: CreateFlavor) =>
+            postHelper<CreateFlavor>('/sites/' + props.site.id + '/flavors', data, auth.token),
         {
             onSuccess: () => {
                 props.onSuccess();
@@ -76,7 +76,7 @@ export function FlavorSubmitForm(props: {
         }
         mutate({
             name,
-            description: description.length ? description : undefined,
+            description: description.length ? description : null,
         });
     }
 

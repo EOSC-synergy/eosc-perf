@@ -3,7 +3,7 @@ import pages from 'pages';
 import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import { UserContext } from 'userContext';
 import { useMutation } from 'react-query';
-import { BenchmarkCreate } from 'api';
+import { CreateBenchmark } from 'api';
 import { postHelper } from 'api-helpers';
 import axios, { AxiosError } from 'axios';
 
@@ -29,7 +29,7 @@ export function BenchmarkSubmitForm(props: {
     }, []);
 
     const { mutate } = useMutation(
-        (data: BenchmarkCreate) => postHelper<BenchmarkCreate>('/benchmarks', data, auth.token),
+        (data: CreateBenchmark) => postHelper<CreateBenchmark>('/benchmarks', data, auth.token),
         {
             onSuccess: () => {
                 props.onSuccess();
@@ -97,7 +97,7 @@ export function BenchmarkSubmitForm(props: {
         if (!isFormValid()) {
             return;
         }
-        const description_ = description && description.length ? description : undefined;
+        const description_ = description && description.length ? description : null;
         const template_ = template && template.length ? template : undefined;
         mutate({
             docker_image: dockerName,

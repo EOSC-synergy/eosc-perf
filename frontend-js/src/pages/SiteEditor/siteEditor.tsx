@@ -1,4 +1,4 @@
-import { Site, SiteEdit } from 'api';
+import { Site } from 'api';
 import { useMutation } from 'react-query';
 import { putHelper } from 'api-helpers';
 import React, { ReactElement, useContext, useState } from 'react';
@@ -11,8 +11,8 @@ export function SiteEditor(props: { site: Site; refetch: () => void }): ReactEle
     const auth = useContext(UserContext);
 
     const { mutate } = useMutation(
-        (data: SiteEdit) =>
-            putHelper<SiteEdit>('/sites/' + props.site.id, data, auth.token, {
+        (data: Site) =>
+            putHelper<Site>('/sites/' + props.site.id, data, auth.token, {
                 site_id: props.site.id,
             }),
         {
@@ -23,7 +23,9 @@ export function SiteEditor(props: { site: Site; refetch: () => void }): ReactEle
     );
 
     const [name, setName] = useState(props.site.name);
-    const [description, setDescription] = useState(props.site.description);
+    const [description, setDescription] = useState<string>(
+        props.site.description ? props.site.description : ''
+    );
     const [address, setAddress] = useState(props.site.address);
 
     return (
@@ -38,7 +40,13 @@ export function SiteEditor(props: { site: Site; refetch: () => void }): ReactEle
             <Button
                 variant="success"
                 onClick={() => {
-                    mutate({ name, description, address });
+                    mutate({
+                        name,
+                        description: description.length ? description : null,
+                        address,
+                        id: props.site.id,
+                        upload_datetime: props.site.upload_datetime,
+                    });
                 }}
             >
                 Submit

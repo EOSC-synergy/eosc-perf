@@ -1,4 +1,4 @@
-import { Flavor, FlavorEdit } from 'api';
+import { Flavor } from 'api';
 import React, { ReactElement, useContext, useState } from 'react';
 import { useMutation } from 'react-query';
 import { putHelper } from 'api-helpers';
@@ -7,8 +7,10 @@ import { Check, PencilSquare } from 'react-bootstrap-icons';
 import { UserContext } from 'userContext';
 
 export function FlavorEditor(props: { flavor: Flavor; refetch: () => void }): ReactElement {
-    const [name, setName] = useState(props.flavor.name);
-    const [desc, setDesc] = useState(props.flavor.description);
+    const [name, setName] = useState<string>(props.flavor.name);
+    const [desc, setDesc] = useState<string>(
+        props.flavor.description ? props.flavor.description : ''
+    );
 
     const [editing, setEditing] = useState(false);
 
@@ -17,14 +19,14 @@ export function FlavorEditor(props: { flavor: Flavor; refetch: () => void }): Re
     function updateEditing(editing: boolean) {
         if (editing) {
             setName(props.flavor.name);
-            setDesc(props.flavor.description);
+            setDesc(props.flavor.description ? props.flavor.description : '');
         }
         setEditing(editing);
     }
 
     const { mutate } = useMutation(
-        (data: FlavorEdit) =>
-            putHelper<FlavorEdit>('/sites/flavors/' + props.flavor.id, data, auth.token, {
+        (data: Flavor) =>
+            putHelper<Flavor>('/sites/flavors/' + props.flavor.id, data, auth.token, {
                 flavor_id: props.flavor.id,
             }),
         {
@@ -45,7 +47,12 @@ export function FlavorEditor(props: { flavor: Flavor; refetch: () => void }): Re
                 />
                 <Button
                     onClick={() => {
-                        mutate({ name, description: desc });
+                        mutate({
+                            name,
+                            description: desc.length ? desc : null,
+                            id: props.flavor.id,
+                            upload_datetime: props.flavor.upload_datetime,
+                        });
                     }}
                     disabled={!editing}
                 >

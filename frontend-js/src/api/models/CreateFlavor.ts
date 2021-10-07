@@ -2,13 +2,13 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type FlavorEdit = {
+export type CreateFlavor = {
     /**
      * String with virtual hardware template identification
      */
-    name?: string;
+    name: string;
     /**
      * String with an statement about the object
      */
-    description?: string;
+    description: string | null;
 }

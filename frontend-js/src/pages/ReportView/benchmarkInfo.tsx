@@ -1,15 +1,14 @@
 import React, { ReactElement } from 'react';
-import { Benchmark, Report } from 'api';
+import { Benchmark } from 'api';
 import { useQuery } from 'react-query';
 import { getHelper } from 'api-helpers';
 import { LoadingOverlay } from 'components/loadingOverlay';
-import { ReportInteraction } from './reportInteraction';
 
-export function BenchmarkReportInfo(props: { report: Report; refetch: () => void }): ReactElement {
+export function BenchmarkInfo(props: { id: string }): ReactElement {
     const { isLoading, data, isSuccess } = useQuery(
-        'benchmark-' + props.report.resource_id,
+        'benchmark-' + props.id,
         () => {
-            return getHelper<Benchmark>('/benchmarks/' + props.report.resource_id);
+            return getHelper<Benchmark>('/benchmarks/' + props.id);
         },
         {
             refetchOnWindowFocus: false, // do not spam queries
@@ -28,7 +27,6 @@ export function BenchmarkReportInfo(props: { report: Report; refetch: () => void
                         {/*Uploader: {{ uploader_name }} ({{ uploader_mail }})<br /> */}
                         Description: {data.data.description}
                         <br />
-                        Date: {props.report.upload_datetime}
                     </p>
                     <a href={dockerHubLink}>{data.data.docker_image}</a>
                     <br />
@@ -36,7 +34,6 @@ export function BenchmarkReportInfo(props: { report: Report; refetch: () => void
                     {/*<div id="docker_desc" className="jumbotron" style="overflow:scroll;height:60%">
                           {{ docker_desc | safe}}
                       </div> */}
-                    <ReportInteraction {...props} />
                 </>
             )}
         </>

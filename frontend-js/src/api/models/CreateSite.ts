@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type SiteCreate = {
+export type CreateSite = {
     /**
      * String with human readable institution identification
      */
@@ -14,5 +14,5 @@ export type SiteCreate = {
     /**
      * String with an statement about the object
      */
-    description?: string;
+    description: string | null;
 }

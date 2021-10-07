@@ -2,7 +2,7 @@ import { Alert, Button, Form } from 'react-bootstrap';
 import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import { UserContext } from 'userContext';
 import { useMutation } from 'react-query';
-import { SiteCreate } from 'api';
+import { CreateSite } from 'api';
 import { postHelper } from 'api-helpers';
 import axios, { AxiosError } from 'axios';
 
@@ -26,7 +26,7 @@ export function SiteSubmitForm(props: {
     }, []);
 
     const { mutate } = useMutation(
-        (data: SiteCreate) => postHelper<SiteCreate>('/sites', data, auth.token),
+        (data: CreateSite) => postHelper<CreateSite>('/sites', data, auth.token),
         {
             onSuccess: () => {
                 props.onSuccess();
@@ -79,7 +79,7 @@ export function SiteSubmitForm(props: {
         mutate({
             name,
             address,
-            description: description.length ? description : undefined,
+            description: description.length ? description : null,
         });
     }
 

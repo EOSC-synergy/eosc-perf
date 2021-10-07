@@ -26,7 +26,7 @@ export function getHelper<Type>(
 
 export function postHelper<Type>(
     endpoint: string,
-    data: Type,
+    data?: Type,
     accessToken?: string,
     params?: Record<string, unknown>
 ): Promise<AxiosResponse<Type>> {
@@ -76,6 +76,18 @@ export function patchHelper<Type>(
                   }
                 : undefined,
         params: params,
+        ...defaultOptions,
+    });
+}
+
+export function deleteHelper(endpoint: string, accessToken?: string): Promise<AxiosResponse> {
+    return axios.delete(API_BASE_PATH + endpoint, {
+        headers:
+            accessToken !== undefined
+                ? {
+                      Authorization: 'Bearer ' + accessToken,
+                  }
+                : undefined,
         ...defaultOptions,
     });
 }

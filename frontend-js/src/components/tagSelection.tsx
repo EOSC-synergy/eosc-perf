@@ -1,9 +1,8 @@
 import React, { ReactElement, useContext, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { getHelper, postHelper } from 'api-helpers';
-import { Result, Tag, TagCreate, Tags } from 'api';
+import { CreateTag, Tags } from 'api';
 import { Button, Form, InputGroup, ListGroup } from 'react-bootstrap';
-import axios, { AxiosError } from 'axios';
 import { UserContext } from 'userContext';
 
 export function TagSelection(props: {
@@ -24,7 +23,7 @@ export function TagSelection(props: {
     const auth = useContext(UserContext);
 
     const { mutate } = useMutation(
-        (data: TagCreate) => postHelper<TagCreate>('/tags', data, auth.token),
+        (data: CreateTag) => postHelper<CreateTag>('/tags', data, auth.token),
         {
             onSuccess: () => {
                 tags.refetch().then(() => undefined);

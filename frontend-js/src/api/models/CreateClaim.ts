@@ -2,9 +2,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type ReportCreate = {
+export type CreateClaim = {
     /**
-     * Message included in a report
+     * Resource type discriminator
      */
     message: string;
 }

@@ -2,27 +2,26 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { Benchmark } from './models/Benchmark';
-export type { BenchmarkCreate } from './models/BenchmarkCreate';
-export type { BenchmarkEdit } from './models/BenchmarkEdit';
 export type { Benchmarks } from './models/Benchmarks';
+export { Claim } from './models/Claim';
+export type { Claims } from './models/Claims';
+export type { CreateBenchmark } from './models/CreateBenchmark';
+export type { CreateClaim } from './models/CreateClaim';
+export type { CreateFlavor } from './models/CreateFlavor';
+export type { CreateSite } from './models/CreateSite';
+export type { CreateTag } from './models/CreateTag';
 export type { Error } from './models/Error';
 export type { Flavor } from './models/Flavor';
-export type { FlavorCreate } from './models/FlavorCreate';
-export type { FlavorEdit } from './models/FlavorEdit';
 export type { Flavors } from './models/Flavors';
 export type { Json } from './models/Json';
-export type { Report } from './models/Report';
-export type { ReportCreate } from './models/ReportCreate';
-export type { Reports } from './models/Reports';
+export type { PaginationMetadata } from './models/PaginationMetadata';
 export type { Result } from './models/Result';
 export type { Results } from './models/Results';
 export type { Site } from './models/Site';
-export type { SiteCreate } from './models/SiteCreate';
-export type { SiteEdit } from './models/SiteEdit';
 export type { Sites } from './models/Sites';
+export { Submit } from './models/Submit';
+export type { Submits } from './models/Submits';
 export type { Tag } from './models/Tag';
-export type { TagCreate } from './models/TagCreate';
-export type { TagEdit } from './models/TagEdit';
 export type { Tags } from './models/Tags';
 export type { TagsIds } from './models/TagsIds';
 export type { User } from './models/User';

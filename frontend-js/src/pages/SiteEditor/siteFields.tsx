@@ -33,7 +33,9 @@ export function Description(props: {
     site: Site;
     update: (description: string) => void;
 }): ReactElement {
-    const [description, setDescription] = useState(props.site.description);
+    const [description, setDescription] = useState<string>(
+        props.site.description ? props.site.description : ''
+    );
 
     return (
         <Form.Group>

@@ -2,9 +2,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Report } from './Report';
+import type { Claim } from './Claim';
 
-export type Reports = {
+export type Claims = {
     /**
      * True if a next page exists
      */
@@ -37,5 +37,5 @@ export type Reports = {
      * The total number of items matching the query
      */
     readonly total: number;
-    items: Array<Report>;
-}
+    items: Array<Claim>;
+};

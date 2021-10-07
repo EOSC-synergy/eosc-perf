@@ -2,7 +2,7 @@ import React, { ReactElement, useState } from 'react';
 import { Accordion, Button, Card, Col, Container, ListGroup, Row } from 'react-bootstrap';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { useQuery } from 'react-query';
-import { JsonPreviewModal } from 'pages/ResultSearch/jsonPreviewModal';
+import { JsonPreviewModal } from 'components/jsonPreviewModal';
 import { ResultsPerPageSelection } from 'components/resultsPerPageSelection';
 import { CardAccordionToggle } from './cardAccordionToggle';
 import { getHelper } from 'api-helpers';
@@ -139,7 +139,7 @@ function ResultSearch(): ReactElement {
                 flavor_id: site !== undefined ? flavor?.id : undefined,
             }),
         () => {
-            return getHelper<Results>('/results', undefined, {
+            return getHelper<Results>('/results:search', undefined, {
                 per_page: resultsPerPage,
                 page,
                 benchmark_id: benchmark?.id,
