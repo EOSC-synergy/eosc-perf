@@ -73,10 +73,10 @@ class Submit(UploadDatetime, Schema):
     @post_dump
     def aggregate_claims(self, data, **kwargs):
         data = super().remove_skip_values(data, **kwargs)
-        return {
-            key: value if 'Claim' not in value else 'claim'
-            for key, value in data.items()
-        }
+        if 'resource_type' in data:
+            if "claim" in data['resource_type']:
+                data['resource_type'] = "claim"
+        return data
 
 
 class Submits(Pagination, Schema):
