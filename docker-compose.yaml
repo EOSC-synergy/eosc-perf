@@ -67,6 +67,7 @@ services:
     networks:
       - frontend-net
       - backend-net
+      - smtp-net
     secrets:
       - cookie_secret
       - oidc_secret
