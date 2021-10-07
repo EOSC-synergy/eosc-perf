@@ -7,7 +7,7 @@ import requests
 
 
 def attempt_post(token: str, where: str, expected: Union[int, List[int]], params: Optional[dict] = None,
-                 data: Optional[str] = None) -> dict:
+                 data: Optional[str] = None) -> Union[dict, bool]:
     if type(expected) is int:
         legal: List[int] = [expected]
     else:
@@ -29,12 +29,18 @@ def attempt_post(token: str, where: str, expected: Union[int, List[int]], params
         print(response.content)
         raise RuntimeError("see log")
 
-    print("=>", response.status_code, response.json())
+    if response.status_code == 204:
+        print("=>", response.status_code)
+    else:
+        print("=>", response.status_code, response.json())
 
-    return response.json()
+    if response.status_code == 204:
+        return True
+    else:
+        return response.json()
 
 
-def add_demo(token: str, host: str):
+def add_demo(token: str, host: str, no_approve: bool):
     """Add sample data to the database."""
 
     print("Registering user")
@@ -116,6 +122,8 @@ def add_demo(token: str, host: str):
             "name": site_meta["name"],
             "address": site_meta["address"]
         }))
+        if not no_approve:
+            attempt_post(token, host + "/sites/" + site["id"] + ":approve", expected=204)
 
         site_meta["id"] = site["id"]
 
@@ -125,6 +133,9 @@ def add_demo(token: str, host: str):
                 "name": flavor_meta["name"],
                 "description": ""
             }))
+            if not no_approve:
+                attempt_post(token, host + "/flavors/" + flavor["id"] + ":approve",
+                             expected=204)
             flavor_meta["id"] = flavor["id"]
 
     # Create benchmark
@@ -137,8 +148,11 @@ def add_demo(token: str, host: str):
             "json_schema": {}
             # "json_template": json.loads(file.read())
         }))
-        # "template": file.read()})
+        if not no_approve:
+            approval = attempt_post(token, host + "/benchmarks/" + benchmark["id"] + ":approve", expected=204)
 
+    if no_approve:
+        return
     # Create results
     results = [
         {'site': virtualbox, 'flavor': virtualbox["flavors"][0], 'file': 'result-1.json'},
@@ -185,10 +199,12 @@ def main():
     parser = argparse.ArgumentParser(description='Demo data helper')
     parser.add_argument('token', help='Bearer / access token to use')
     parser.add_argument('--host', nargs='?', default='https://localhost/api/v1', help='Host to POST data to')
+    parser.add_argument("--no-approve", action="store_true",
+                        help="Do not approve sites & benchmarks (and do not submit results)")
 
     args = parser.parse_args()
 
-    add_demo(args.token, args.host)
+    add_demo(args.token, args.host, args.no_approve)
 
 
 if __name__ == "__main__":
