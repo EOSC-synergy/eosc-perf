@@ -108,7 +108,7 @@ def __get(id):
     :return: The database result using the described id
     :rtype: :class:`models.Result.Claim`
     """
-    result = models.Result.Claim.read(id, with_deleted=True)
+    result = models.Result.Claim.read(id)
     if result is None:
         error_msg = f"Claim {id} not found in the database"
         abort(404, messages={'error': error_msg})
