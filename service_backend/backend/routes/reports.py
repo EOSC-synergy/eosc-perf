@@ -108,12 +108,12 @@ def __get(id):
     :return: The database result using the described id
     :rtype: :class:`models.Result.Claim`
     """
-    result = models.Result.Claim.read(id)
-    if result is None:
+    claim = models.Result.Claim.read(id)
+    if claim is None:
         error_msg = f"Claim {id} not found in the database"
         abort(404, messages={'error': error_msg})
     else:
-        return result
+        return claim
 
 
 @blp.route(result_claim_url + ':approve', methods=['POST'])
