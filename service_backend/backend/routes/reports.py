@@ -84,6 +84,38 @@ def __list_claims(query_args):
     return query.filter_by(**query_args)
 
 
+@blp.route(result_claim_url, methods=['GET'])
+@blp.doc(operationId='GetClaim')
+@auth.admin_required()
+@blp.response(200, schemas.Claim)
+def get(*args, **kwargs):
+    """(Public) Retrieves claim details
+
+    Use this method to retrieve a specific claim from the database.
+    """
+    return __get(*args, **kwargs)
+
+
+def __get(id):
+    """Returns the id matching claim.
+
+    If no result exists with the indicated id, then 404 NotFound
+    exception is raised.
+
+    :param id: The id of the claim to retrieve
+    :type id: uuid
+    :raises NotFound: No claim with id found
+    :return: The database result using the described id
+    :rtype: :class:`models.Result.Claim`
+    """
+    result = models.Result.Claim.read(id, with_deleted=True)
+    if result is None:
+        error_msg = f"Claim {id} not found in the database"
+        abort(404, messages={'error': error_msg})
+    else:
+        return result
+
+
 @blp.route(result_claim_url + ':approve', methods=['POST'])
 @blp.doc(operationId='ApproveClaim')
 @auth.admin_required()
