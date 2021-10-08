@@ -139,7 +139,7 @@ function ResultSearch(): ReactElement {
                 flavor_id: site !== undefined ? flavor?.id : undefined,
             }),
         () => {
-            return getHelper<Results>('/results:search', undefined, {
+            return getHelper<Results>('/results', undefined, {
                 per_page: resultsPerPage,
                 page,
                 benchmark_id: benchmark?.id,
