@@ -68,6 +68,7 @@ class ResourceStatus(enum.Enum):
 class NeedsApprove(HasUploader):
     """Creates a new submit report together with the new resource.
     """
+    __abstract__ = True
 
     #: (ItemStatus) Status of the resource
     status = Column(Enum(ResourceStatus), default=ResourceStatus.on_review)

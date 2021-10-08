@@ -295,8 +295,8 @@ def __results(query_args):
 @blp.arguments(args.ClaimFilter, location='query')
 @blp.response(200, schemas.Claims)
 @queries.to_pagination()
-@queries.add_sorting(models.Result.Claim)
-@queries.add_datefilter(models.Result.Claim)
+@queries.add_sorting(models.Claim)
+@queries.add_datefilter(models.Claim)
 def claims(*args, **kwargs):
     """(Users) Returns your uploaded pending claims
 
@@ -312,5 +312,5 @@ def __claims(query_args):
     :raises Forbidden: You don't have the administrator rights
     """
     user = __get()
-    query = models.Result.Claim.query
+    query = models.Claim.query
     return query.filter_by(uploader=user, **query_args)

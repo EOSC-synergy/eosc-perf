@@ -102,7 +102,7 @@ class Claim(Id, UploadDatetime, CreateClaim):
     #: Resource unique identification
     resource_type = fields.String(
         description="Resource type discriminator",
-        example="result", required=True, dump_default="result",
+        example="result", required=True,
         validate=OneOf(["result"]),
     )
 

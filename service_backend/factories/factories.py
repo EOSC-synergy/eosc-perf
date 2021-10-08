@@ -129,9 +129,9 @@ class DBResult(SQLAlchemyModelFactory):
     def claims(self, create, messages, **kwargs):
         if messages:
             for msg in messages:
-                self.claims.append(self.Claim(
-                    message=msg,
+                self._claim_report_class(
                     uploader=DBUser(),
+                    message=msg,
                     resource=self
-                ))
+                )
             self.delete

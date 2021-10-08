@@ -387,8 +387,8 @@ def __update_tags(body_args, id):
 @blp.arguments(args.ClaimFilter, location='query')
 @blp.response(200, schemas.Claims)
 @queries.to_pagination()
-@queries.add_sorting(models.Result.Claim)
-@queries.add_datefilter(models.Result.Claim)
+@queries.add_sorting(models.Claim)
+@queries.add_datefilter(models.Claim)
 def list_claims(*args, **kwargs):
     """(Owner or Admins) Returns the result claims.
 
@@ -416,7 +416,7 @@ def __list_claims(query_args, id):
     else:
         abort(403)
 
-    query = models.Result.Claim.query
+    query = models.Result._claim_report_class.query
     return query.filter_by(resource_id=id, **query_args)
 
 

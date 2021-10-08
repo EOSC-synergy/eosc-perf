@@ -2,7 +2,7 @@
 import jsonschema
 from flask_smorest import abort
 from jsonschema.exceptions import ValidationError
-from sqlalchemy import Column, DateTime, ForeignKey
+from sqlalchemy import Column, DateTime, ForeignKey, ForeignKeyConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import backref, relationship
@@ -55,6 +55,11 @@ class Result(HasClaims, HasTags, HasUploader, PkModel):
     ))
     site_name = association_proxy('site', 'name')
     site_address = association_proxy('site', 'address')
+
+    __table_args__ = (
+        ForeignKeyConstraint(['uploader_iss', 'uploader_sub'],
+                             ['user.iss', 'user.sub']),
+    )
 
     def __init__(self, site=None, site_id=None, **properties):
         """Validates the result passes the benchmark JSON Schema and sets

@@ -1,5 +1,5 @@
 """Sites module."""
-from sqlalchemy import Column, Text
+from sqlalchemy import Column, ForeignKeyConstraint, Text, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from ..core import PkModel
@@ -26,7 +26,12 @@ class Site(NeedsApprove, HasUploader, PkModel):
     flavors = relationship(
         "Flavor", back_populates="site",
         cascade="all, delete-orphan",
-        )
+    )
+
+    __table_args__ = (
+        ForeignKeyConstraint(['uploader_iss', 'uploader_sub'],
+                             ['user.iss', 'user.sub']),
+    )
 
     def __init__(self, **properties):
         """Model initialization"""
