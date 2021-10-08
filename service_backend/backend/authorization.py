@@ -156,7 +156,7 @@ class Authorization(Flaat):
             (g_entries, user_msg) = self._get_entitlements_from_claim(
                 all_info, claim)
             if not g_entries:
-                raise Exception(user_msg)
+                return False
 
             required = self._determine_number_of_required_matches(
                 match, req_glist)

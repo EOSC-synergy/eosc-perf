@@ -258,7 +258,7 @@ class TestClaim:
         assert response_POST.status_code == 201
         asserts.match_query(response_POST.json, url)
         asserts.match_body(response_POST.json, body)
-        assert models.Claim.query.\
+        assert models.Result._claim_report_class.query.\
             filter_by(resource_id=result_id).first()
 
     def test_401(self, response_POST):
@@ -392,7 +392,8 @@ class TestListClaims:
             asserts.match_query(item, url)
             item.pop('uploader')
             item.pop('resource_type')
-            assert models.Claim.query.filter_by(**item)
+            assert models.Result._claim_report_class.query\
+                .filter_by(**item)
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[
@@ -410,7 +411,8 @@ class TestListClaims:
             asserts.match_query(item, url)
             item.pop('uploader')
             item.pop('resource_type')
-            assert models.Claim.query.filter_by(**item).first()
+            assert models.Result._claim_report_class.query.\
+                filter_by(**item).first()
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'upload_before': "3000-01-01"}

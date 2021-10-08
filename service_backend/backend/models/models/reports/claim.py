@@ -11,7 +11,8 @@ different association types.
 from datetime import datetime as dt
 
 from backend.models.models.user import HasUploader
-from sqlalchemy import Column, DateTime, ForeignKey, String, Text
+from sqlalchemy import (Column, DateTime, ForeignKey, String, Text,
+                        ForeignKeyConstraint)
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import backref, relationship
@@ -51,6 +52,11 @@ class Claim(NeedsApprove, HasUploader, PkModel):
         'polymorphic_on': resource_type,
         # 'with_polymorphic': '*'
     }
+
+    __table_args__ = (
+        ForeignKeyConstraint(['uploader_iss', 'uploader_sub'],
+                            ['user.iss', 'user.sub']),
+    )
 
     def __init__(self, **properties):
         """Model initialization"""
@@ -97,7 +103,7 @@ class HasClaims(SoftDelete):
         """([Report]) Claim report related to the model instance"""
         return relationship(
             cls._claim_report_class,
-            backref=backref("resource"),
+            backref=backref("resource", uselist=False),
         )
 
     def claim(self, message):

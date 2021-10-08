@@ -1,6 +1,6 @@
 """Flavor module."""
-from sqlalchemy import Column, ForeignKey, Text, UniqueConstraint
-from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy import (Column, ForeignKey, ForeignKeyConstraint, Text,
+                        UniqueConstraint)
 from sqlalchemy.orm import relationship
 
 from ..core import PkModel
@@ -29,7 +29,11 @@ class Flavor(NeedsApprove, HasUploader, PkModel):
     #: (Site, required) Id of the Site the flavor belongs to
     site = relationship("Site", back_populates="flavors")
 
-    path = UniqueConstraint('site_id', 'name')
+    __table_args__ = (
+        UniqueConstraint('site_id', 'name'),
+        ForeignKeyConstraint(['uploader_iss', 'uploader_sub'],
+                             ['user.iss', 'user.sub']),
+    )
 
     def __init__(self, **properties):
         """Model initialization"""

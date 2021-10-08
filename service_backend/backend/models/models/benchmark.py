@@ -2,7 +2,7 @@
 import jsonschema
 from flask_smorest import abort
 from jsonschema.exceptions import SchemaError
-from sqlalchemy import Column, Text, UniqueConstraint
+from sqlalchemy import Column, Text, UniqueConstraint, ForeignKeyConstraint
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.declarative import declared_attr
 
@@ -39,7 +39,11 @@ class Benchmark(NeedsApprove, HasUploader, PkModel):
     #: (Text) Short text describing the main benchmark features
     description = Column(Text, nullable=True)
 
-    name = UniqueConstraint('docker_image', 'docker_tag')
+    __table_args__ = (
+        UniqueConstraint('docker_image', 'docker_tag'),
+        ForeignKeyConstraint(['uploader_iss', 'uploader_sub'],
+                             ['user.iss', 'user.sub']),
+    )
 
     def __init__(self, **properties):
         """Check the included schema is valid."""

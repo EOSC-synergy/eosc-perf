@@ -48,19 +48,14 @@ class User(TokenModel):
 class HasUploader(object):
     """Mixin that adds an User as upload details to any model."""
     __abstract__ = True
-    uploader_subiss = UniqueConstraint('uploader_sub', 'uploader_iss')
 
     #: (Text) OIDC subject of the user that created the model instance,
     #: *conflicts with uploader*
-    @declared_attr
-    def uploader_sub(cls):
-        return Column(ForeignKey('user.sub'), nullable=False)
+    uploader_sub = Column(Text, nullable=False)
 
     #: (Text) OIDC issuer of the user that created the model instance,
     #: *conflicts with uploader*
-    @declared_attr
-    def uploader_iss(cls):
-        return Column(ForeignKey('user.iss'), nullable=False)
+    uploader_iss = Column(Text, nullable=False)
 
     #: (ISO8601) Upload datetime of the model instance
     upload_datetime = Column(DateTime, nullable=False, default=dt.now)

@@ -416,7 +416,7 @@ def __list_claims(query_args, id):
     else:
         abort(403)
 
-    query = models.Claim.query
+    query = models.Result._claim_report_class.query
     return query.filter_by(resource_id=id, **query_args)
 
 
