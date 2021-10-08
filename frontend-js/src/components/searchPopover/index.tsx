@@ -120,7 +120,7 @@ export function BenchmarkSearchPopover(props: {
             <>
                 Benchmark:{' '}
                 {benchmark ? (
-                    <a href={'https://hub.docker.com/repository/docker/' + benchmark.docker_image}>
+                    <a href={'https://hub.docker.com/r/' + benchmark.docker_image}>
                         {benchmark.docker_image + ':' + benchmark.docker_tag}
                     </a>
                 ) : (

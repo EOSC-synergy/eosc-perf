@@ -15,7 +15,7 @@ export function BenchmarkInfo(props: { id: string }): ReactElement {
         }
     );
 
-    const dockerHubLink = 'https://hub.docker.com/repository/docker/' + data?.data.docker_image;
+    const dockerHubLink = 'https://hub.docker.com/r/' + data?.data.docker_image;
 
     return (
         <>
