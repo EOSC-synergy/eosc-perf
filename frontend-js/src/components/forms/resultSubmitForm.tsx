@@ -32,7 +32,6 @@ export function ResultSubmitForm(props: {
     const { mutate } = useMutation(
         (data: Result) =>
             postHelper<Result>('/results', data, auth.token, {
-                // TODO: execution datetime?
                 execution_datetime: '2020-05-21T10:31:00.000Z',
                 benchmark_id: benchmark?.id,
                 //site_id: site?.id,
