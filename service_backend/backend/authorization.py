@@ -5,6 +5,9 @@
 
 from functools import wraps
 
+from aarc_g002_entitlement import (Aarc_g002_entitlement,
+                                   Aarc_g002_entitlement_Error,
+                                   Aarc_g002_entitlement_ParseError)
 from flaat import Flaat, tokentools
 from flask import current_app, request
 from flask_smorest import abort
@@ -31,7 +34,8 @@ class Authorization(Flaat):
 
         self.set_web_framework('flask')
         self.set_trusted_OP_list([
-            'https://aai-dev.egi.eu/oidc'
+            'https://aai-dev.egi.eu/oidc',
+            'https://aai.egi.eu/oidc'
         ])
 
         # Flaat timeout:
@@ -45,10 +49,6 @@ class Authorization(Flaat):
         #     3: Max
         verbosity = app.config.get('FLAAT_VERBOSITY', 0)
         self.set_verbosity(verbosity)
-
-        # TLS verification:
-        verify_tls = app.config.get('VERIFY_TLS', False)
-        self.set_verify_tls(verify_tls)
 
         # Required for using token introspection endpoint:
         client_id = app.config['OIDC_CLIENT_ID']
@@ -145,7 +145,7 @@ class Authorization(Flaat):
             return True
 
         try:
-            claim = 'eduperson_assurance'
+            claim = 'eduperson_entitlement'
             all_info = self._get_all_info_from_request(request)
             current_app.logger.debug(f"request info: {all_info}")
 
@@ -163,12 +163,29 @@ class Authorization(Flaat):
             if not required:
                 raise Exception("Error interpreting 'match' parameter")
 
+            def e_expander(es):
+                """Helper function to catch exceptions in list comprehension"""
+                try:
+                    return Aarc_g002_entitlement(es, strict=False)
+                except ValueError:
+                    return None
+                except Aarc_g002_entitlement_ParseError:
+                    return None
+                except Aarc_g002_entitlement_Error:
+                    return None
+
+            avail_entitlements = [e_expander(
+                es) for es in g_entries if e_expander(es) is not None]
+            req_entitlements = [e_expander(
+                es) for es in req_glist if e_expander(es) is not None]
+
             # now we do the actual checking
             matches = 0
-            for entry in g_entries:
-                for g in req_glist:
-                    if entry == g:
+            for req in req_entitlements:
+                for avail in avail_entitlements:
+                    if req.is_contained_in(avail):
                         matches += 1
+
             current_app.logger.debug(f"found {matches} of {required} matches")
             return matches >= required
 
