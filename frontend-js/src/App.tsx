@@ -104,7 +104,7 @@ function NavHeader(props: { setCurrentTab: (tab: string) => void }) {
                     <Nav>
                         <NavDropdown
                             id="base-login-dropdown"
-                            title={auth.name || 'Not logged in.'}
+                            title={auth.name ?? 'Not logged in'}
                             className="justify-content-end"
                         >
                             {auth.token ? (
