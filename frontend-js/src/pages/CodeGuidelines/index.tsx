@@ -35,6 +35,11 @@ function CodeGuidelines(): ReactElement {
                     </li>
                 </ul>
             </p>
+            <p>
+                To have a field show up as a suggested field to the user for filtering, add{' '}
+                <code>&quot;suggestToUser&quot;: true</code> to the property in JSON Schema, like in
+                the example below.
+            </p>
             <p>Example template:</p>
             <div className="m-2">
                 <Highlight className="json">{JSON.stringify(template, null, 4)}</Highlight>

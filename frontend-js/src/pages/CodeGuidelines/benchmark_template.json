@@ -3,7 +3,7 @@
   "type": "object",
   "properties": {
     "arguments": {
-      "type": "string"
+      "const": "Total Time - 4K, 16 Rays Per Pixel"
     },
     "machine": {
       "type": "object",
@@ -12,7 +12,8 @@
           "type": "object",
           "properties": {
             "arch": {
-              "type": "string"
+              "type": "string",
+              "suggestToUser": true
             },
             "bits": {
               "type": "number"
@@ -21,7 +22,8 @@
               "type": "string"
             },
             "count": {
-              "type": "number"
+              "type": "number",
+              "suggestToUser": true
             },
             "hz_actual_friendly": {
               "type": "string"
@@ -41,7 +43,8 @@
           "type": "string"
         },
         "score": {
-          "type": "number"
+          "type": "number",
+          "suggestToUser": true
         }
       },
       "required": [
@@ -50,10 +53,10 @@
       ]
     },
     "test": {
-      "type": "string"
+      "const": "pts/c-ray-1.2.0"
     },
     "units": {
-      "type": "string"
+      "const": "Seconds"
     }
   },
   "required": [
