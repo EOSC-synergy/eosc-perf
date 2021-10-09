@@ -145,8 +145,7 @@ def add_demo(token: str, host: str, no_approve: bool):
             "docker_image": "thechristophe/openbench-c-ray",
             "docker_tag": "latest",
             "description": "Compare cpu perf with multithreaded raytracing",
-            "json_schema": {}
-            # "json_template": json.loads(file.read())
+            "json_schema": json.loads(file.read())
         }))
         if not no_approve:
             approval = attempt_post(token, host + "/benchmarks/" + benchmark["id"] + ":approve", expected=204)

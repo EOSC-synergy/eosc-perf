@@ -2,6 +2,7 @@ import React, { ReactElement } from 'react';
 import { Container } from 'react-bootstrap';
 import template from './benchmark_template.json';
 import { PageBase } from '../pageBase';
+import Highlight from 'react-highlight';
 
 function CodeGuidelines(): ReactElement {
     return (
@@ -14,27 +15,29 @@ function CodeGuidelines(): ReactElement {
             </p>
             <h2>Result Json</h2>
             <p>
-                Below is a example JSON, which is containing the minimum set of required output
-                parameters.
+                You may submit templates for the results as JSON Schemas to prevent unrelated or
+                invalid JSON files from being uploaded. Below is a example JSON schema, which is
+                containing the minimum set of required output parameters.
             </p>
             <p>
-                Keys prefixed with <code>!</code> are recognized as notable keys. Notable keys are a
-                select subset of all keys that may be noteworthy for result comparisons. These keys
-                will be shown as suggestions as a dropdown in the JSON filter, and can be used as
-                fields in the line graph. The exclamation point will <i>not</i> be considered part
-                of the key name.
-            </p>
-            <p>
-                Example: <code>{'{"group": {"!key": value}}'}</code> refers to{' '}
-                <code>{'{"group": {"key": value}}'}</code>/ <code>group.key</code>.
+                You may learn more about writing <a href="https://json-schema.org/">JSON Schema</a>{' '}
+                templates at:
+                <ul>
+                    <li>
+                        <a href="https://json-schema.org/learn/getting-started-step-by-step">
+                            https://json-schema.org/learn/getting-started-step-by-step
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://json-schema.org/understanding-json-schema/basics.html">
+                            https://json-schema.org/understanding-json-schema/basics.html
+                        </a>
+                    </li>
+                </ul>
             </p>
             <p>Example template:</p>
             <div className="m-2">
-                <code>
-                    <span style={{ whiteSpace: 'pre-wrap' }}>
-                        {JSON.stringify(template, null, 4)}
-                    </span>
-                </code>
+                <Highlight className="json">{JSON.stringify(template, null, 4)}</Highlight>
             </div>
         </Container>
     );

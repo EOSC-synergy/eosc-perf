@@ -1,13 +1,66 @@
 {
-    "arguments": "Total Time - 4K, 16 Rays Per Pixel",
-    "result": {
-        "!score": 612.003
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "arguments": {
+      "type": "string"
     },
-    "machine":{
+    "machine": {
+      "type": "object",
+      "properties": {
         "cpu": {
-            "brand_raw": "AMD Ryzen 9 5900X 12-Core Processor",
-            "!count": 1
+          "type": "object",
+          "properties": {
+            "arch": {
+              "type": "string"
+            },
+            "bits": {
+              "type": "number"
+            },
+            "brand_raw": {
+              "type": "string"
+            },
+            "count": {
+              "type": "number"
+            },
+            "hz_actual_friendly": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "count"
+          ]
         }
+      }
     },
-    "!test": "pts/c-ray-1.2.0"
+    "result": {
+      "description": "The execution results",
+      "type": "object",
+      "properties": {
+        "all_results": {
+          "type": "string"
+        },
+        "score": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "all_results",
+        "score"
+      ]
+    },
+    "test": {
+      "type": "string"
+    },
+    "units": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "arguments",
+    "machine",
+    "result",
+    "test",
+    "units"
+  ]
 }
