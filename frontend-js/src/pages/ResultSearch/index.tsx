@@ -23,37 +23,7 @@ import { FilterEdit } from 'pages/ResultSearch/filterEdit';
 
 import hash from 'object-hash';
 import { Ordered, orderedComparator } from 'components/ordered';
-
-interface SchemaField {
-    type?: string;
-    suggestToUser?: boolean;
-}
-
-interface SchemaObject extends SchemaField {
-    properties: { [key: string]: SchemaField };
-}
-
-function determineNotableKeys(benchmark: Benchmark): string[] {
-    function recurser([key, field]: [string, SchemaField]): string[] {
-        if (field.suggestToUser && field.type !== 'object') {
-            return [key];
-        }
-
-        if (field.type === 'object') {
-            return Object.entries((field as SchemaObject).properties)
-                .map(recurser) // get all interesting children
-                .reduce((acc: string[], arr: string[]) => [...acc, ...arr]) // make one array
-                .map((path: string) => key + '.' + path); // prefix current key
-        }
-        return [];
-    }
-
-    const schema = benchmark.json_schema as SchemaObject;
-
-    return Object.entries(schema.properties)
-        .map(recurser)
-        .reduce((acc: string[], arr: string[]) => [...acc, ...arr]);
-}
+import { determineNotableKeys } from 'pages/ResultSearch/jsonSchema';
 
 function ResultSearch(): ReactElement {
     const [benchmark, setBenchmark] = useState<Benchmark | undefined>(undefined);
@@ -91,9 +61,6 @@ function ResultSearch(): ReactElement {
         setFilters(newMap);
     }
 
-    /*const suggestedFields = benchmark.isSuccess
-        ? determineNotableKeys(benchmark!.data.data)
-        : undefined;*/
     const suggestedFields = benchmark ? determineNotableKeys(benchmark) : undefined;
 
     const [resultsPerPage, setResultsPerPage] = useState(20);
@@ -103,8 +70,6 @@ function ResultSearch(): ReactElement {
 
     const [showReportModal, setShowReportModal] = useState(false);
 
-    // TODO: use map for performance?
-    // TODO: maintain sorting
     const [selectedResults, setSelectedResults] = useState<Ordered<Result>[]>([]);
 
     const [previewResult, setPreviewResult] = useState<Result | null>(null);
@@ -172,10 +137,11 @@ function ResultSearch(): ReactElement {
                 filters: [...filters.keys()]
                     .map((k) => {
                         const filter = filters.get(k);
-                        if (filter === undefined) {
-                            return undefined;
-                        }
-                        if (filter.key.length === 0 || filter.value.length === 0) {
+                        if (
+                            filter === undefined ||
+                            filter.key.length === 0 ||
+                            filter.value.length === 0
+                        ) {
                             return undefined;
                         }
                         return filter.key + ' ' + filter.mode + ' ' + filter.value;
@@ -186,7 +152,6 @@ function ResultSearch(): ReactElement {
             });
         },
         {
-            enabled: true, //benchmarkId.length === 0 || benchmark.isSuccess,
             refetchOnWindowFocus: false, // do not spam queries
         }
     );
