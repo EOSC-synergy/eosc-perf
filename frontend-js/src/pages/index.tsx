@@ -6,6 +6,7 @@ import PrivacyPolicyModule from './PrivacyPolicy';
 import ReportViewModule from './ReportView';
 import SiteEditorModule from './SiteEditor';
 import SiteSubmissionModule from 'pages/SiteSubmit';
+import TermsOfServiceModule from 'pages/TermsOfService';
 
 const modules = {
     all: [
@@ -17,6 +18,7 @@ const modules = {
         PrivacyPolicyModule,
         ReportViewModule,
         SiteEditorModule,
+        TermsOfServiceModule,
     ],
     ResultSearchModule,
     ResultSubmissionModule,
@@ -26,6 +28,7 @@ const modules = {
     PrivacyPolicyModule,
     ReportViewModule,
     SiteEditorModule,
+    TermsOfServiceModule,
 };
 
 export default modules;

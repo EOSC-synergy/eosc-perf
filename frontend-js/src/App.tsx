@@ -154,6 +154,13 @@ function App() {
                             <ul className="list-unstyled list-inline my-0">
                                 <li className="list-inline-item mx-5">
                                     <LinkTo
+                                        reference={modules.TermsOfServiceModule}
+                                        className="text-muted"
+                                        setCurrentTab={setCurrentTab}
+                                    />
+                                </li>
+                                <li className="list-inline-item mx-5">
+                                    <LinkTo
                                         reference={modules.PrivacyPolicyModule}
                                         className="text-muted"
                                         setCurrentTab={setCurrentTab}
