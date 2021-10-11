@@ -130,14 +130,14 @@ flavors[4]['status'] = "on_review"
 # Result specifications
 results = [{'id': uuid4()} for _ in range(5)]
 
-results[0]['json'] = {'time': 10}
+results[0]['json'] = {'time': 10, 'type': "AMD"}
 results[0]['tags'] = [tag for tag in tags[0:2]]
 results[0]['benchmark__id'] = benchmarks[0]['id']
 results[0]['flavor__id'] = flavors[0]['id']
 results[0]['uploader__email'] = users[0]['email']
 results[0]['upload_datetime'] = datetime(2000, 1, 1)
 
-results[1]['json'] = {'time': 12}
+results[1]['json'] = {'time': 12, 'cpu': True}
 results[1]['tags'] = [tag for tag in tags[0:4:2]]
 results[1]['benchmark__id'] = benchmarks[1]['id']
 results[1]['flavor__id'] = flavors[2]['id']

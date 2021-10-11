@@ -26,6 +26,8 @@ class TestList:
         {'tags_ids[]': [tag['id'] for tag in [tags[0], tags[1]]]},
         {'upload_before': "3000-01-01"},
         {'upload_after': "1000-01-01"},
+        {'filters': ["type == AMD"]},
+        {'filters': ["cpu == True"]},
         {'filters': ["time < 11", "time > 9"]},
         {'filters[]': ["time < 11", "time > 9"]},
         {},  # Multiple reports
@@ -48,6 +50,7 @@ class TestList:
             assert not result.deleted
 
     @mark.parametrize('query', indirect=True, argvalues=[
+        {'filters': ["time <> a"]},
         {'bad_key': "This is a non expected query key"},
         {'sort_by': "Bad sort command"},
         {'uploader_email': "sub_1@email.com"}  # GDPR protected

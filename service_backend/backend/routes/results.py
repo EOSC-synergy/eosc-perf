@@ -8,7 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from .. import models, notifications
 from ..extensions import auth, db
 from ..schemas import args, schemas
-from ..utils import queries
+from ..utils import queries, filters
 
 blp = Blueprint(
     'results', __name__, description='Operations on results'
@@ -88,30 +88,19 @@ def __list(query_args):
     parsed_filters = []
     for filter in query_args.pop('filters'):
         try:
-            path, operator, value = tuple(filter.split(' '))
+            new_filter = filters.new_filter(models.Result, filter)
+            parsed_filters.append(new_filter)
         except ValueError as err:
             abort(422, messages={
                 'filter': filter, 'reason': err.args,
                 'hint': "Probably missing spaces (%20)",
                 'example': "filters=machine.cpu.count%20%3E%205"
             })
-        path = tuple(path.split('.'))
-        if operator is None:
-            abort(422, "filter operator not defined")
-        elif operator == "<":
-            parsed_filters.append(models.Result.json[path] < value)
-        elif operator == ">":
-            parsed_filters.append(models.Result.json[path] > value)
-        elif operator == ">=":
-            parsed_filters.append(models.Result.json[path] >= value)
-        elif operator == "<=":
-            parsed_filters.append(models.Result.json[path] <= value)
-        elif operator == "==":
-            parsed_filters.append(models.Result.json[path] == value)
-        else:
+        except KeyError as err:
             abort(422, message={
-                'filter': f"Unknown filter operator: '{operator}'",
-                'hint': "Use only one of ['==', '>', '<', '>=', '<=']"
+                'filter': filter, 'reason': err.args,
+                'hint': "Use only one of ['==', '>', '<', '>=', '<=']",
+                'example': "filters=machine.cpu.count%20%3E%205"
             })
     try:
         query = query.filter(and_(True, *parsed_filters))
