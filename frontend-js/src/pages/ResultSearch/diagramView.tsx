@@ -36,7 +36,11 @@ export function DiagramView(props: {
                 charts.all.map((chart) => (
                     <div key={chart.id}>
                         {chart.id === selectedDiagram && (
-                            <chart.element results={props.results} benchmark={props.benchmark} />
+                            <chart.element
+                                results={props.results}
+                                benchmark={props.benchmark}
+                                suggestions={props.suggestions}
+                            />
                         )}
                     </div>
                 ))}

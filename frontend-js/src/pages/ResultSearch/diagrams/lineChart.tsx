@@ -4,6 +4,7 @@ import { Form } from 'react-bootstrap';
 import { Line } from 'react-chartjs-2';
 import { fetchSubkey, getSubkeyName } from '../jsonKeyHelpers';
 import { Ordered } from 'components/ordered';
+import { InputWithSuggestions } from 'components/inputWithSuggestions';
 
 enum Mode {
     Simple,
@@ -31,13 +32,17 @@ const BACKGROUND_COLORS = [
     'rgba(201, 203, 207, 0.5)', // gray
 ];
 
-function LineChart(props: { results: Ordered<Result>[]; benchmark?: Benchmark }): ReactElement {
+function LineChart(props: {
+    results: Ordered<Result>[];
+    benchmark?: Benchmark;
+    suggestions?: string[];
+}): ReactElement {
     const [mode, setMode] = useState(Mode.Simple);
 
     const [grouping, setGrouping] = useState(false);
 
-    const [xAxis, setXAxis] = useState('machine.cpu.count');
-    const [yAxis, setYAxis] = useState('result.score');
+    const [xAxis, setXAxis] = useState('');
+    const [yAxis, setYAxis] = useState('');
 
     function analyzeData(results: Ordered<Result>[]) {
         let sameSite = true;
@@ -163,21 +168,20 @@ function LineChart(props: { results: Ordered<Result>[]; benchmark?: Benchmark })
                     disabled={mode !== Mode.Linear && mode !== Mode.Logarithmic}
                 />
             </Form.Group>
-            <Form>
-                <Form.Group className="mb-1">
-                    <Form.Control
-                        placeholder="x axis"
-                        onChange={(e) => setXAxis(e.target.value)}
-                        value="machine.cpu.count"
-                        className="mb-1"
-                    />
-                    <Form.Control
-                        placeholder="y axis"
-                        onChange={(e) => setYAxis(e.target.value)}
-                        value="result.score"
-                    />
-                </Form.Group>
-            </Form>
+            <Form.Group className="mb-1">
+                <InputWithSuggestions
+                    placeholder="x axis"
+                    setInput={(i) => setXAxis(i)}
+                    suggestions={props.suggestions}
+                />
+            </Form.Group>
+            <Form.Group>
+                <InputWithSuggestions
+                    placeholder="y axis"
+                    setInput={(i) => setYAxis(i)}
+                    suggestions={props.suggestions}
+                />
+            </Form.Group>
 
             {xAxis.length > 0 && yAxis.length > 0 && (
                 <Line
