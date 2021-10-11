@@ -14,9 +14,11 @@ import { ResultOps } from './resultOps';
 import { Pencil } from 'react-bootstrap-icons';
 import { ColumnSelectModal } from './columnSelectModal';
 import '../../actionable.css';
+import { Ordered } from 'components/ordered';
 
 export function ResultTable(props: {
     results: Result[];
+    pageOffset: number;
     ops: ResultOps;
     suggestions?: string[];
 }): ReactElement {
@@ -54,41 +56,47 @@ export function ResultTable(props: {
                 </thead>
 
                 <tbody>
-                    {props.results.map((result) => (
-                        <tr key={result.id}>
-                            <td>
-                                <CheckboxColumn result={result} ops={props.ops} />
-                            </td>
-                            {benchmarkColumnEnabled && (
+                    {props.results.map((result, index) => {
+                        const r: Ordered<Result> = {
+                            ...result,
+                            orderIndex: index + props.pageOffset,
+                        };
+                        return (
+                            <tr key={r.id}>
                                 <td>
-                                    <BenchmarkColumn result={result} />
+                                    <CheckboxColumn result={r} ops={props.ops} />
                                 </td>
-                            )}
-                            {siteColumnEnabled && (
+                                {benchmarkColumnEnabled && (
+                                    <td>
+                                        <BenchmarkColumn result={r} />
+                                    </td>
+                                )}
+                                {siteColumnEnabled && (
+                                    <td>
+                                        <SiteColumn result={r} />
+                                    </td>
+                                )}
+                                {siteFlavorColumnEnabled && (
+                                    <td>
+                                        <SiteFlavorColumn result={r} />
+                                    </td>
+                                )}
+                                {tagsColumnEnabled && (
+                                    <td>
+                                        <TagsColumn result={r} />
+                                    </td>
+                                )}
+                                {customColumns.map((column) => (
+                                    <td key={column}>
+                                        <CustomColumn result={r} jsonKey={column} />
+                                    </td>
+                                ))}
                                 <td>
-                                    <SiteColumn result={result} />
+                                    <ActionColumn result={r} ops={props.ops} />
                                 </td>
-                            )}
-                            {siteFlavorColumnEnabled && (
-                                <td>
-                                    <SiteFlavorColumn result={result} />
-                                </td>
-                            )}
-                            {tagsColumnEnabled && (
-                                <td>
-                                    <TagsColumn result={result} />
-                                </td>
-                            )}
-                            {customColumns.map((column) => (
-                                <td key={column}>
-                                    <CustomColumn result={result} jsonKey={column} />
-                                </td>
-                            ))}
-                            <td>
-                                <ActionColumn result={result} ops={props.ops} />
-                            </td>
-                        </tr>
-                    ))}
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </Table>
             <ColumnSelectModal

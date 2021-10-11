@@ -22,6 +22,7 @@ import { Filter } from 'pages/ResultSearch/filter';
 import { FilterEdit } from 'pages/ResultSearch/filterEdit';
 
 import hash from 'object-hash';
+import { Ordered } from 'components/ordered';
 
 interface SchemaField {
     type?: string;
@@ -104,29 +105,33 @@ function ResultSearch(): ReactElement {
 
     // TODO: use map for performance?
     // TODO: maintain sorting
-    const [selectedResults, setSelectedResults] = useState<Result[]>([]);
+    const [selectedResults, setSelectedResults] = useState<Ordered<Result>[]>([]);
 
-    const [previewResult, setPreviewResult] = useState<Result | null>(null);
-    const [reportedResult, setReportedResult] = useState<Result | null>(null);
+    const [previewResult, setPreviewResult] = useState<Ordered<Result> | null>(null);
+    const [reportedResult, setReportedResult] = useState<Ordered<Result> | null>(null);
 
     // helpers for subelements
     const resultOps = {
-        select: function (result: Result) {
+        select: function (result: Ordered<Result>) {
             if (!this.isSelected(result)) {
-                setSelectedResults([...selectedResults, result]);
+                // cannot call setSelectedResults directly, need to put in variable first
+                const arr = [...selectedResults, result].sort(
+                    (a, b) => a.orderIndex - b.orderIndex
+                );
+                setSelectedResults(arr);
             }
         },
-        unselect: function (result: Result) {
+        unselect: function (result: Ordered<Result>) {
             setSelectedResults(selectedResults.filter((r) => r.id !== result.id));
         },
-        isSelected: function (result: Result) {
-            return selectedResults.includes(result);
+        isSelected: function (result: Ordered<Result>) {
+            return selectedResults.some((r) => r.id === result.id);
         },
-        display: function (result: Result) {
+        display: function (result: Ordered<Result>) {
             setPreviewResult(result);
             setShowJSONPreview(true);
         },
-        report: function (result: Result) {
+        report: function (result: Ordered<Result>) {
             setReportedResult(result);
             setShowReportModal(true);
         },
@@ -255,9 +260,10 @@ function ResultSearch(): ReactElement {
                 </Row>
                 <Card className="my-2">
                     <div>
-                        {results.isSuccess && results.data.data.total > 0 && (
+                        {results.isSuccess && results.data && results.data.data.total > 0 && (
                             <ResultTable
-                                results={results.data.data.items!}
+                                results={results.data.data.items}
+                                pageOffset={results.data.data.per_page * results.data.data.page}
                                 ops={resultOps}
                                 suggestions={suggestedFields}
                             />
@@ -303,20 +309,24 @@ function ResultSearch(): ReactElement {
                     )}
                 </Card>
             </Container>
-            <JsonPreviewModal
-                show={showJSONPreview}
-                closeModal={() => {
-                    setShowJSONPreview(false);
-                }}
-                result={previewResult}
-            />
-            <ResultReportModal
-                show={showReportModal}
-                closeModal={() => {
-                    setShowReportModal(false);
-                }}
-                result={reportedResult}
-            />
+            {previewResult && (
+                <JsonPreviewModal
+                    show={showJSONPreview}
+                    closeModal={() => {
+                        setShowJSONPreview(false);
+                    }}
+                    result={previewResult}
+                />
+            )}
+            {reportedResult && (
+                <ResultReportModal
+                    show={showReportModal}
+                    closeModal={() => {
+                        setShowReportModal(false);
+                    }}
+                    result={reportedResult}
+                />
+            )}
         </>
     );
 }

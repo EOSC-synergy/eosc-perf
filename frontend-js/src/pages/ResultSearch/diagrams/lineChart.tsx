@@ -3,6 +3,7 @@ import { Benchmark, Result } from 'api';
 import { Form } from 'react-bootstrap';
 import { Line } from 'react-chartjs-2';
 import { fetchSubkey, getSubkeyName } from '../jsonKeyHelpers';
+import { Ordered } from 'components/ordered';
 
 enum Mode {
     Simple,
@@ -30,7 +31,7 @@ const BACKGROUND_COLORS = [
     'rgba(201, 203, 207, 0.5)', // gray
 ];
 
-function LineChart(props: { results: Result[]; benchmark?: Benchmark }): ReactElement {
+function LineChart(props: { results: Ordered<Result>[]; benchmark?: Benchmark }): ReactElement {
     const [mode, setMode] = useState(Mode.Simple);
 
     const [grouping, setGrouping] = useState(false);
@@ -38,7 +39,7 @@ function LineChart(props: { results: Result[]; benchmark?: Benchmark }): ReactEl
     const [xAxis, setXAxis] = useState('machine.cpu.count');
     const [yAxis, setYAxis] = useState('result.score');
 
-    function analyzeData(results: Result[]) {
+    function analyzeData(results: Ordered<Result>[]) {
         let sameSite = true;
         let columnsAreNumbers = true;
 
@@ -63,7 +64,7 @@ function LineChart(props: { results: Result[]; benchmark?: Benchmark }): ReactEl
 
     const properties = analyzeData(props.results);
 
-    function processInput(results: Result[]) {
+    function processInput(results: Ordered<Result>[]) {
         const labels = []; // labels below graph
         const dataPoints = [];
 

@@ -2,9 +2,10 @@ import React, { ChangeEvent, ReactElement, useState } from 'react';
 import { Benchmark, Result } from 'api';
 import { Badge, Form } from 'react-bootstrap';
 import charts from './diagrams';
+import { Ordered } from 'components/ordered';
 
 export function DiagramView(props: {
-    results: Result[];
+    results: Ordered<Result>[];
     benchmark?: Benchmark;
     suggestions?: string[];
 }): ReactElement {

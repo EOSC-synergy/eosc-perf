@@ -4,8 +4,9 @@ import { Button, ButtonGroup } from 'react-bootstrap';
 import { ResultOps } from '../resultOps';
 import { Envelope, Exclamation, Hash, Trash } from 'react-bootstrap-icons';
 import { UserContext } from 'userContext';
+import { Ordered } from 'components/ordered';
 
-export function ActionColumn(props: { result: Result; ops: ResultOps }): ReactElement {
+export function ActionColumn(props: { result: Ordered<Result>; ops: ResultOps }): ReactElement {
     // TODO: CSS: figure out why button group taller than it should be
 
     const auth = useContext(UserContext);
