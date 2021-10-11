@@ -183,15 +183,22 @@ function ResultSearch(): ReactElement {
                                         />
                                         <hr />
                                         <ListGroup variant="flush">
-                                            {[...filters.keys()].map((key) => (
-                                                <ListGroup.Item key={key}>
-                                                    <FilterEdit
-                                                        filter={filters.get(key)!}
-                                                        setFilter={setFilter}
-                                                        deleteFilter={deleteFilter}
-                                                    />
-                                                </ListGroup.Item>
-                                            ))}
+                                            {[...filters.keys()].flatMap((key) => {
+                                                const filter = filters.get(key);
+                                                if (filter === undefined) {
+                                                    return [];
+                                                }
+
+                                                return [
+                                                    <ListGroup.Item key={key}>
+                                                        <FilterEdit
+                                                            filter={filter}
+                                                            setFilter={setFilter}
+                                                            deleteFilter={deleteFilter}
+                                                        />
+                                                    </ListGroup.Item>,
+                                                ];
+                                            })}
                                         </ListGroup>
                                         <Flex>
                                             <Flex.FloatLeft>
