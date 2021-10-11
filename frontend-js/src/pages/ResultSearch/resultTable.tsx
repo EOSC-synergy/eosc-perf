@@ -1,5 +1,5 @@
 import React, { ReactElement, useState } from 'react';
-import { Table } from 'react-bootstrap';
+import { Form, Table } from 'react-bootstrap';
 import { Result } from 'api';
 import {
     ActionColumn,
@@ -37,8 +37,26 @@ export function ResultTable(props: {
             <Table className="mb-0">
                 <thead>
                     <tr>
-                        {/* checkbox has no label */}
-                        <th />
+                        <th>
+                            <Form>
+                                <Form.Check
+                                    type="switch"
+                                    onChange={() => {
+                                        props.results.every((r) => props.ops.isSelected(r))
+                                            ? props.ops.unselectMultiple(props.results)
+                                            : props.ops.selectMultiple(
+                                                  props.results.map((r, i) => {
+                                                      return {
+                                                          ...r,
+                                                          orderIndex: i + props.pageOffset,
+                                                      };
+                                                  })
+                                              );
+                                    }}
+                                    checked={props.results.every((r) => props.ops.isSelected(r))}
+                                />
+                            </Form>
+                        </th>
                         {benchmarkColumnEnabled && <th>Benchmark</th>}
                         {siteColumnEnabled && <th>Site</th>}
                         {siteFlavorColumnEnabled && <th>Site flavor</th>}

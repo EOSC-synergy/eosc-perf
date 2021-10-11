@@ -22,7 +22,7 @@ import { Filter } from 'pages/ResultSearch/filter';
 import { FilterEdit } from 'pages/ResultSearch/filterEdit';
 
 import hash from 'object-hash';
-import { Ordered } from 'components/ordered';
+import { Ordered, orderedComparator } from 'components/ordered';
 
 interface SchemaField {
     type?: string;
@@ -107,31 +107,44 @@ function ResultSearch(): ReactElement {
     // TODO: maintain sorting
     const [selectedResults, setSelectedResults] = useState<Ordered<Result>[]>([]);
 
-    const [previewResult, setPreviewResult] = useState<Ordered<Result> | null>(null);
-    const [reportedResult, setReportedResult] = useState<Ordered<Result> | null>(null);
+    const [previewResult, setPreviewResult] = useState<Result | null>(null);
+    const [reportedResult, setReportedResult] = useState<Result | null>(null);
 
     // helpers for subelements
     const resultOps = {
         select: function (result: Ordered<Result>) {
             if (!this.isSelected(result)) {
                 // cannot call setSelectedResults directly, need to put in variable first
-                const arr = [...selectedResults, result].sort(
-                    (a, b) => a.orderIndex - b.orderIndex
-                );
+                const arr = [...selectedResults, result].sort(orderedComparator);
                 setSelectedResults(arr);
             }
         },
-        unselect: function (result: Ordered<Result>) {
+        selectMultiple: function (results: Ordered<Result>[]) {
+            const newResults = results.filter((r) => !resultOps.isSelected(r));
+            if (newResults.length === 0) {
+                return;
+            }
+            const combined = [...selectedResults, ...newResults].sort(orderedComparator);
+            setSelectedResults(combined);
+        },
+        unselect: function (result: Result) {
             setSelectedResults(selectedResults.filter((r) => r.id !== result.id));
         },
-        isSelected: function (result: Ordered<Result>) {
+        unselectMultiple: function (results: Result[]) {
+            setSelectedResults(
+                selectedResults.filter(
+                    (selected) => !results.some((unselected) => unselected.id === selected.id)
+                )
+            );
+        },
+        isSelected: function (result: Result) {
             return selectedResults.some((r) => r.id === result.id);
         },
-        display: function (result: Ordered<Result>) {
+        display: function (result: Result) {
             setPreviewResult(result);
             setShowJSONPreview(true);
         },
-        report: function (result: Ordered<Result>) {
+        report: function (result: Result) {
             setReportedResult(result);
             setShowReportModal(true);
         },
