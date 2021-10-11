@@ -133,5 +133,5 @@ class DBResult(SQLAlchemyModelFactory):
                     uploader=DBUser(),
                     message=msg,
                     resource=self
-                )
+                ).approve()
             self.delete
