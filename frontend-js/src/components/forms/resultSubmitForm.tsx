@@ -7,7 +7,7 @@ import {
 } from 'components/searchPopover';
 import { TagSelection } from 'components/tagSelection';
 import { Alert, Button, Col, Form, Row } from 'react-bootstrap';
-import { LicenseAgreementCheck } from 'components/licenseAgreementCheck';
+import { TermsOfServiceCheck } from 'components/termsOfServiceCheck';
 import { UserContext } from 'userContext';
 import { useMutation } from 'react-query';
 import { Benchmark, Flavor, Result, Site } from 'api';
@@ -24,7 +24,7 @@ export function ResultSubmitForm(props: {
     const [site, setSite] = useState<Site | undefined>(undefined);
     const [flavor, setFlavor] = useState<Flavor | undefined>(undefined);
     const [tags, setTags] = useState<string[]>([]);
-    const [licenseAgreementAccepted, setLicenseAgreementAccepted] = useState(false);
+    const [termsOfServiceAccepted, setTermsOfServiceAccepted] = useState(false);
     const [fileContents, setFileContents] = useState<string | undefined>(undefined);
 
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
@@ -76,7 +76,7 @@ export function ResultSubmitForm(props: {
             benchmark &&
             site &&
             flavor &&
-            licenseAgreementAccepted &&
+            termsOfServiceAccepted &&
             fileContents &&
             auth.token !== undefined
         );
@@ -131,9 +131,9 @@ export function ResultSubmitForm(props: {
 
                 <Row className="align-items-center">
                     <Col>
-                        <LicenseAgreementCheck
-                            licenseAgreementAccepted={licenseAgreementAccepted}
-                            setLicenseAgreementAccepted={setLicenseAgreementAccepted}
+                        <TermsOfServiceCheck
+                            termsOfServiceAccepted={termsOfServiceAccepted}
+                            setTermsOfServiceAccepted={setTermsOfServiceAccepted}
                         />
                     </Col>
                     <Col md="auto">
