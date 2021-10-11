@@ -1,10 +1,11 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, ReactNode, useState } from 'react';
 import { Dropdown, FormControl, InputGroup } from 'react-bootstrap';
 
 export function InputWithSuggestions(props: {
     setInput: (input: string) => void;
     suggestions?: string[];
     placeholder?: string;
+    children?: ReactNode;
 }): ReactElement {
     const [input, setInput] = useState('');
 
@@ -33,6 +34,8 @@ export function InputWithSuggestions(props: {
                     </Dropdown.Menu>
                 </>
             )}
+            {/* TODO: clean up, find alternative for this (this is used in filters) */}
+            {props.children}
         </Dropdown>
     );
 }

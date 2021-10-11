@@ -195,6 +195,7 @@ function ResultSearch(): ReactElement {
                                                             filter={filter}
                                                             setFilter={setFilter}
                                                             deleteFilter={deleteFilter}
+                                                            suggestions={suggestedFields}
                                                         />
                                                     </ListGroup.Item>,
                                                 ];

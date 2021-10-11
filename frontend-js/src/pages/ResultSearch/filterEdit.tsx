@@ -1,11 +1,13 @@
 import React, { ChangeEvent, ReactElement, useState } from 'react';
 import { Filter } from 'pages/ResultSearch/filter';
-import { CloseButton, Col, Form, InputGroup, Row } from 'react-bootstrap';
+import { CloseButton, Col, Form, Row } from 'react-bootstrap';
+import { InputWithSuggestions } from 'components/inputWithSuggestions';
 
 export function FilterEdit(props: {
     filter: Filter;
     setFilter: (id: string, key: string, mode: string, value: string) => void;
     deleteFilter: (id: string) => void;
+    suggestions?: string[];
 }): ReactElement {
     const [key, setKey] = useState(props.filter.key);
     const [mode, setMode] = useState(props.filter.mode);
@@ -14,16 +16,14 @@ export function FilterEdit(props: {
     return (
         <Row>
             <Col>
-                <InputGroup>
-                    <Form.Control
-                        aria-label="JSON Key"
-                        placeholder="JSON Key"
-                        value={key}
-                        onChange={(e) => {
-                            setKey(e.target.value);
-                            props.setFilter(props.filter.id, e.target.value, mode, value);
-                        }}
-                    />
+                <InputWithSuggestions
+                    suggestions={props.suggestions}
+                    setInput={(e) => {
+                        setKey(e);
+                        props.setFilter(props.filter.id, e, mode, value);
+                    }}
+                    placeholder="JSON Key"
+                >
                     <Form.Select
                         value={mode}
                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
@@ -47,7 +47,7 @@ export function FilterEdit(props: {
                             props.setFilter(props.filter.id, key, mode, e.target.value);
                         }}
                     />
-                </InputGroup>
+                </InputWithSuggestions>
             </Col>
             <Col md="auto">
                 <CloseButton onClick={() => props.deleteFilter(props.filter.id)} />
