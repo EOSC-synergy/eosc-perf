@@ -6,6 +6,7 @@ import { useMutation } from 'react-query';
 import { CreateBenchmark } from 'api';
 import { postHelper } from 'api-helpers';
 import axios, { AxiosError } from 'axios';
+import { NavLink } from 'react-router-dom';
 
 // TODO: do not show invalid on first load
 //       use default state valid?
@@ -149,8 +150,10 @@ export function BenchmarkSubmitForm(props: {
                 <Form.Group>
                     <Form.Label htmlFor="template">
                         Benchmark result JSON template (optional,{' '}
-                        {/* TODO: react-router-hash-link */}
-                        <a href={pages.CodeGuidelinesModule.path + '#json'}>example here</a>):
+                        <NavLink to={pages.CodeGuidelinesModule.path + '#json'}>
+                            example here
+                        </NavLink>
+                        ):
                     </Form.Label>
                     <Form.Control
                         id="template"
