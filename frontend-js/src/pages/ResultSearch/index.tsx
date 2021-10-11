@@ -24,6 +24,7 @@ import { FilterEdit } from 'pages/ResultSearch/filterEdit';
 import hash from 'object-hash';
 import { Ordered, orderedComparator } from 'components/ordered';
 import { determineNotableKeys } from 'pages/ResultSearch/jsonSchema';
+import Flex from 'components/Flex';
 
 function ResultSearch(): ReactElement {
     const [benchmark, setBenchmark] = useState<Benchmark | undefined>(undefined);
@@ -192,24 +193,18 @@ function ResultSearch(): ReactElement {
                                                 </ListGroup.Item>
                                             ))}
                                         </ListGroup>
-                                        <div className="d-flex">
-                                            <div
-                                                className="justify-content-start"
-                                                style={{ flex: 1, marginRight: 'auto' }}
-                                            >
+                                        <Flex>
+                                            <Flex.FloatLeft>
                                                 <Button variant="success" onClick={addFilter}>
                                                     Add filter
                                                 </Button>
-                                            </div>
-                                            <div
-                                                className="d-flex justify-content-end"
-                                                style={{ flex: 1, marginLeft: 'auto' }}
-                                            >
+                                            </Flex.FloatLeft>
+                                            <Flex.FloatRight className="d-flex">
                                                 <Button onClick={() => results.refetch()}>
                                                     Apply filters
                                                 </Button>
-                                            </div>
-                                        </div>
+                                            </Flex.FloatRight>
+                                        </Flex>
                                     </Card.Body>
                                 </Accordion.Collapse>
                             </Card>
@@ -254,36 +249,18 @@ function ResultSearch(): ReactElement {
                     </div>
                     {/* fuck flexbox & CSS spacing */}
                     {results.isSuccess && (
-                        <div className="m-2 d-flex">
-                            <div
-                                className="justify-content-start"
-                                style={{ flex: 1, marginRight: 'auto' }}
-                            >
+                        <Flex className="m-2">
+                            <Flex.FloatLeft>
                                 <ResultsPerPageSelection
                                     onChange={setResultsPerPage}
                                     currentSelection={resultsPerPage}
                                 />
-                            </div>
-                            <div className="d-flex justify-content-center" style={{ flex: 1 }}>
+                            </Flex.FloatLeft>
+                            <Flex.Center className="d-flex">
                                 <Paginator pagination={results.data.data} navigateTo={setPage} />
-                            </div>
-                            <div
-                                className="d-flex justify-content-end"
-                                style={{ flex: 1, marginLeft: 'auto' }}
-                            >
-                                <Button
-                                    variant="primary"
-                                    onClick={() => undefined}
-                                    className="me-1"
-                                    disabled
-                                >
-                                    Invert Selection
-                                </Button>
-                                <Button variant="primary" onClick={() => undefined} disabled>
-                                    Select All
-                                </Button>
-                            </div>
-                        </div>
+                            </Flex.Center>
+                            <Flex.FloatRight className="d-flex" />
+                        </Flex>
                     )}
                 </Card>
             </Container>
