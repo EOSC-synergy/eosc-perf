@@ -2,9 +2,9 @@
 import jsonschema
 from flask_smorest import abort
 from jsonschema.exceptions import SchemaError
-from sqlalchemy import Column, Text, UniqueConstraint, ForeignKeyConstraint
+from sqlalchemy import Column, ForeignKeyConstraint, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSON
-from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.orm import column_property
 
 from ..core import PkModel
 from .reports import NeedsApprove
@@ -32,6 +32,9 @@ class Benchmark(NeedsApprove, HasUploader, PkModel):
 
     #: (Text, required) Docker image version/tag referenced by the benchmark
     docker_tag = Column(Text, nullable=False)
+
+    #: (Text, read_only) Benchmark name: image:tag
+    name = column_property(docker_image + ":" + docker_tag)
 
     #: (JSON, required) Schema used to validate benchmark results before upload
     json_schema = Column(JSON, nullable=False)

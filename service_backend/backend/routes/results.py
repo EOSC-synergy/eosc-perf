@@ -216,8 +216,7 @@ def __search(query_args):
     for keyword in query_args.pop('terms'):
         search = search.filter(
             or_(
-                models.Result.docker_image.contains(keyword),
-                models.Result.docker_tag.contains(keyword),
+                models.Result.benchmark_name.contains(keyword),
                 models.Result.site_name.contains(keyword),
                 models.Result.site_address.contains(keyword),
                 models.Result.flavor_name.contains(keyword),

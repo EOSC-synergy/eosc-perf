@@ -2,13 +2,16 @@
 import jsonschema
 from flask_smorest import abort
 from jsonschema.exceptions import ValidationError
-from sqlalchemy import Column, DateTime, ForeignKey, ForeignKeyConstraint
+from sqlalchemy import (Column, DateTime, ForeignKey, ForeignKeyConstraint,
+                        select)
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.ext.associationproxy import association_proxy
-from sqlalchemy.orm import backref, relationship
+from sqlalchemy.orm import backref, column_property, relationship
 
 from ..core import PkModel
+from .benchmark import Benchmark
+from .flavor import Flavor
 from .reports import HasClaims
+from .site import Site
 from .tag import HasTags
 from .user import HasUploader
 
@@ -34,17 +37,20 @@ class Result(HasClaims, HasTags, HasUploader, PkModel):
     benchmark = relationship("Benchmark", backref=backref(
         "_results", cascade="all, delete-orphan"
     ))
-    docker_image = association_proxy('benchmark', 'docker_image')
-    docker_tag = association_proxy('benchmark', 'docker_tag')
+    benchmark_name = column_property(
+        select([Benchmark.name]).where(Benchmark.id == benchmark_id)
+    )
 
     #: (Conflicts Flavor) Id of the flavor used to executed the benchmark
     flavor_id = Column(ForeignKey('flavor.id'), nullable=False)
 
     #: (Flavor, required) Flavor used to executed the benchmark
     flavor = relationship("Flavor", backref=backref(
-        "_results", cascade="all, delete-orphan"
+        "_results", cascade="all, delete-orphan",
     ))
-    flavor_name = association_proxy('flavor', 'name')
+    flavor_name = column_property(
+        select([Flavor.name]).where(Flavor.id == flavor_id)
+    )
 
     #: (Collected from flavor) Id of the site where the benchmar was executed
     site_id = Column(ForeignKey('site.id'), nullable=False)
@@ -53,8 +59,12 @@ class Result(HasClaims, HasTags, HasUploader, PkModel):
     site = relationship("Site", backref=backref(
         "_results", cascade="all, delete-orphan"
     ))
-    site_name = association_proxy('site', 'name')
-    site_address = association_proxy('site', 'address')
+    site_name = column_property(
+        select([Site.name]).where(Site.id == site_id)
+    )
+    site_address = column_property(
+        select([Site.address]).where(Site.id == site_id)
+    )
 
     __table_args__ = (
         ForeignKeyConstraint(['uploader_iss', 'uploader_sub'],

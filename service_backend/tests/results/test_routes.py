@@ -32,6 +32,8 @@ class TestList:
         {'sort_by': "+json"},
         {'sort_by': "+upload_datetime"},
         {'sort_by': "+execution_datetime"},
+        {'sort_by': "+benchmark_name"},
+        {'sort_by': "+site_name,+flavor_name"},
         {'sort_by': "+id"}
     ])
     def test_200(self, response_GET, url):
@@ -159,6 +161,8 @@ class TestSearch:
         {'sort_by': "+json"},
         {'sort_by': "+upload_datetime"},
         {'sort_by': "+execution_datetime"},
+        {'sort_by': "+benchmark_name"},
+        {'sort_by': "+site_name,+flavor_name"},
         {'sort_by': "+id"}
     ])
     def test_200(self, response_GET, url):
