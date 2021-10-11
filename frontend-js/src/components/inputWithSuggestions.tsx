@@ -24,7 +24,7 @@ export function InputWithSuggestions(props: {
             />
             {props.suggestions !== undefined && props.suggestions.length > 0 && (
                 <>
-                    <Dropdown.Toggle split variant="success" />
+                    <Dropdown.Toggle split variant="outline-secondary" />
                     <Dropdown.Menu>
                         {props.suggestions.map((suggestion) => (
                             <Dropdown.Item key={suggestion} eventKey={suggestion}>
