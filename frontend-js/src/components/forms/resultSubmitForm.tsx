@@ -1,10 +1,5 @@
 import React, { ReactElement, useContext, useState } from 'react';
 import { JsonSelection } from 'components/jsonSelection';
-import {
-    BenchmarkSearchPopover,
-    FlavorSearchPopover,
-    SiteSearchPopover,
-} from 'components/searchPopover';
 import { TagSelection } from 'components/tagSelection';
 import { Alert, Button, Col, Form, Row } from 'react-bootstrap';
 import { TermsOfServiceCheck } from 'components/termsOfServiceCheck';
@@ -13,6 +8,9 @@ import { useMutation } from 'react-query';
 import { Benchmark, Flavor, Result, Site } from 'api';
 import { postHelper } from 'api-helpers';
 import axios, { AxiosError } from 'axios';
+import { SiteSearchPopover } from 'components/searchPopover/siteSearchPopover';
+import { BenchmarkSearchPopover } from 'components/searchPopover/benchmarkSearchPopover';
+import { FlavorSearchPopover } from 'components/searchPopover/flavorSearchPopover';
 
 export function ResultSubmitForm(props: {
     onSuccess: () => void;

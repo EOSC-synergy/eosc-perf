@@ -11,11 +11,6 @@ import { Benchmark, Flavor, Result, Results, Site } from 'api';
 import { Paginator } from 'components/pagination';
 import { DiagramView } from './diagramView';
 import { ResultReportModal } from 'components/resultReportModal';
-import {
-    BenchmarkSearchPopover,
-    FlavorSearchPopover,
-    SiteSearchPopover,
-} from 'components/searchPopover';
 import { PageBase } from '../pageBase';
 import { v4 as uuidv4 } from 'uuid';
 import { Filter } from 'pages/ResultSearch/filter';
@@ -25,6 +20,10 @@ import hash from 'object-hash';
 import { Ordered, orderedComparator } from 'components/ordered';
 import { determineNotableKeys } from 'pages/ResultSearch/jsonSchema';
 import Flex from 'components/Flex';
+import qs from 'qs';
+import { SiteSearchPopover } from 'components/searchPopover/siteSearchPopover';
+import { BenchmarkSearchPopover } from 'components/searchPopover/benchmarkSearchPopover';
+import { FlavorSearchPopover } from 'components/searchPopover/flavorSearchPopover';
 
 function ResultSearch(): ReactElement {
     const [benchmark, setBenchmark] = useState<Benchmark | undefined>(undefined);
