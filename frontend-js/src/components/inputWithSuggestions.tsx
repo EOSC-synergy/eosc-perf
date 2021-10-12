@@ -21,6 +21,7 @@ export function InputWithSuggestions(props: {
                 placeholder={props.placeholder}
                 aria-label={props.placeholder ?? 'Input field with suggestions'}
                 value={input}
+                onChange={(e) => setInput(e.target.value)}
             />
             {props.suggestions !== undefined && props.suggestions.length > 0 && (
                 <>
