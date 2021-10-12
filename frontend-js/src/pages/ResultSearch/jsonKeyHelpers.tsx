@@ -4,7 +4,7 @@ export type Json = string | number | boolean | null | Json[] | { [key: string]: 
  * Fetch a sub-key from an object, as noted by the filter JSON syntax.
  * @param {Json} obj The object to navigate.
  * @param {string} keyPath The path to the value to read.
- * @returns {unknown} The desired value, or undefined
+ * @returns unknown The desired value, or undefined
  */
 export function fetchSubkey(obj: Json, keyPath: string): unknown {
     const keys = keyPath.split('.');
