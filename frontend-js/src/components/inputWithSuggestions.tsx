@@ -9,19 +9,25 @@ export function InputWithSuggestions(props: {
 }): ReactElement {
     const [input, setInput] = useState('');
 
+    function updateInput(input: string) {
+        setInput(input);
+        props.setInput(input);
+    }
+
     return (
         <Dropdown
             as={InputGroup}
             onSelect={(k) => {
-                setInput(k ?? '');
-                props.setInput(k ?? '');
+                updateInput(input ?? '');
             }}
         >
             <FormControl
                 placeholder={props.placeholder}
                 aria-label={props.placeholder ?? 'Input field with suggestions'}
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={(e) => {
+                    updateInput(e.target.value);
+                }}
             />
             {props.suggestions !== undefined && props.suggestions.length > 0 && (
                 <>
