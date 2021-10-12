@@ -29,7 +29,7 @@ export function FilterEdit(props: {
                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                             // TODO: why do they say it's a FormEvent and we have to assert ChangeEvent??
                             setMode(e.target.value);
-                            props.setFilter(props.filter.id, key, mode, value);
+                            props.setFilter(props.filter.id, key, e.target.value, value);
                         }}
                     >
                         <option value=">">&gt;</option>
