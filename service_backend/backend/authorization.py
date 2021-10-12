@@ -33,10 +33,11 @@ class Authorization(Flaat):
         super().__init__()
 
         self.set_web_framework('flask')
-        self.set_trusted_OP_list([
-            'https://aai-dev.egi.eu/oidc',
-            'https://aai.egi.eu/oidc'
-        ])
+        environment = app.config.get('ENV')
+        if environment == "development":
+            self.set_trusted_OP_list(['https://aai-dev.egi.eu/oidc'])
+        else:
+            self.set_trusted_OP_list(['https://aai.egi.eu/oidc'])
 
         # Flaat timeout:
         timeout = app.config.get('FLAAT_TIMEOUT', 3)
