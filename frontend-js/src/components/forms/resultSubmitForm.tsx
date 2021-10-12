@@ -1,4 +1,4 @@
-import React, { ReactElement, useContext, useState } from 'react';
+import React, { ReactElement, ReactNode, useContext, useState } from 'react';
 import { JsonSelection } from 'components/jsonSelection';
 import { TagSelection } from 'components/tagSelection';
 import { Alert, Button, Col, Form, Row } from 'react-bootstrap';
@@ -7,10 +7,11 @@ import { UserContext } from 'userContext';
 import { useMutation } from 'react-query';
 import { Benchmark, Flavor, Result, Site } from 'api';
 import { postHelper } from 'api-helpers';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import { SiteSearchPopover } from 'components/searchSelectors/siteSearchPopover';
 import { BenchmarkSearchSelect } from 'components/searchSelectors/benchmarkSearchSelect';
 import { FlavorSearchSelect } from 'components/searchSelectors/flavorSearchSelect';
+import { getErrorMessage } from 'components/forms/getErrorMessage';
 
 export function ResultSubmitForm(props: {
     onSuccess: () => void;
@@ -25,7 +26,7 @@ export function ResultSubmitForm(props: {
     const [termsOfServiceAccepted, setTermsOfServiceAccepted] = useState(false);
     const [fileContents, setFileContents] = useState<string | undefined>(undefined);
 
-    const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
+    const [errorMessage, setErrorMessage] = useState<ReactNode | undefined>(undefined);
 
     const { mutate } = useMutation(
         (data: Result) =>
@@ -41,29 +42,7 @@ export function ResultSubmitForm(props: {
                 props.onSuccess();
             },
             onError: (error: Error | AxiosError) => {
-                if (axios.isAxiosError(error)) {
-                    if (error.response) {
-                        switch (error.response.status) {
-                            case 409:
-                                setErrorMessage('Result already exists');
-                                break;
-                            case 422:
-                            default:
-                                setErrorMessage(
-                                    'Could not process submission:' + error.response.data.message
-                                );
-                                break;
-                        }
-                    } else if (error.request) {
-                        setErrorMessage('No response');
-                    } else {
-                        setErrorMessage(error.message);
-                    }
-                    // Access to config, request, and response
-                } else {
-                    // Just a stock error
-                    setErrorMessage('Unknown error, check the console');
-                }
+                setErrorMessage(getErrorMessage(error));
                 props.onError();
             },
         }
@@ -105,9 +84,7 @@ export function ResultSubmitForm(props: {
             {auth.token === undefined && (
                 <Alert variant="danger">You must be logged in to submit new results!</Alert>
             )}
-            {errorMessage !== undefined && (
-                <Alert variant="danger">{'Error: ' + errorMessage}</Alert>
-            )}
+            {errorMessage !== undefined && <Alert variant="danger">Error: {errorMessage}</Alert>}
             <Form>
                 <Form.Group className="mb-3">
                     <JsonSelection fileContents={fileContents} setFileContents={setFileContents} />{' '}

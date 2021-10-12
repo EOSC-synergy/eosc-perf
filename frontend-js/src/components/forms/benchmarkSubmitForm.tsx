@@ -1,12 +1,13 @@
 import { Alert, Button, Form, InputGroup } from 'react-bootstrap';
 import pages from 'pages';
-import React, { ReactElement, useContext, useEffect, useState } from 'react';
+import React, { ReactElement, ReactNode, useContext, useEffect, useState } from 'react';
 import { UserContext } from 'userContext';
 import { useMutation } from 'react-query';
 import { CreateBenchmark } from 'api';
 import { postHelper } from 'api-helpers';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import { NavLink } from 'react-router-dom';
+import { getErrorMessage } from 'components/forms/getErrorMessage';
 
 // TODO: do not show invalid on first load
 //       use default state valid?
@@ -22,7 +23,7 @@ export function BenchmarkSubmitForm(props: {
     const [template, setTemplate] = useState('');
     const [description, setDescription] = useState('');
 
-    const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
+    const [errorMessage, setErrorMessage] = useState<ReactNode | undefined>(undefined);
 
     // clear error message on load
     useEffect(() => {
@@ -36,29 +37,7 @@ export function BenchmarkSubmitForm(props: {
                 props.onSuccess();
             },
             onError: (error: Error | AxiosError) => {
-                if (axios.isAxiosError(error)) {
-                    if (error.response) {
-                        switch (error.response.status) {
-                            case 409:
-                                setErrorMessage('Benchmark already exists');
-                                break;
-                            case 422:
-                            default:
-                                setErrorMessage(
-                                    'Could not process submission:' + error.response.data.message
-                                );
-                                break;
-                        }
-                    } else if (error.request) {
-                        setErrorMessage('No response');
-                    } else {
-                        setErrorMessage(error.message);
-                    }
-                    // Access to config, request, and response
-                } else {
-                    // Just a stock error
-                    setErrorMessage('Unknown error, check the console');
-                }
+                setErrorMessage(getErrorMessage(error));
                 props.onError();
             },
         }
@@ -113,9 +92,7 @@ export function BenchmarkSubmitForm(props: {
             {auth.token === undefined && (
                 <Alert variant="danger">You must be logged in to submit new benchmarks!</Alert>
             )}
-            {errorMessage !== undefined && (
-                <Alert variant="danger">{'Error: ' + errorMessage}</Alert>
-            )}
+            {errorMessage !== undefined && <Alert variant="danger">Error: {errorMessage}</Alert>}
             <Form>
                 <Form.Group className="mb-3">
                     <Form.Label htmlFor="benchmark">Benchmark:</Form.Label>
