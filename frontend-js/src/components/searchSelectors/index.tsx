@@ -38,7 +38,7 @@ export function SearchingSelector<Item extends Identifiable>(props: {
 
     const popover = (
         <Popover id="benchmarkSelect" style={{ maxWidth: '576px', width: 'auto' }}>
-            <Popover.Header as="h3">Benchmark Search</Popover.Header>
+            <Popover.Header as="h3">{props.tableName} Search</Popover.Header>
             <Popover.Body>
                 <SearchForm setSearchString={setSearchString} />
                 <div style={{ position: 'relative' }}>
