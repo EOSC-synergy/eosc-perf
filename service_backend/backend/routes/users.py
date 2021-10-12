@@ -78,7 +78,7 @@ def __register():
     tokeninfo = auth.current_tokeninfo()
     user_info = auth.current_userinfo()
     if not user_info:
-        error_msg = "No user info received from 'introspection endpoint'"
+        error_msg = "No user info received from 'OP endpoint'"
         abort(500, messages={'error': error_msg})
     elif 'email' not in user_info:
         abort(422, messages={'error': "No scope for email in oidc token"})
