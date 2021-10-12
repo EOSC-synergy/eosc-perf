@@ -1,7 +1,7 @@
 import { Site } from 'api';
 import React, { ReactElement, useState } from 'react';
 import { SiteSubmissionModal } from 'components/submissionModals/siteSubmissionModal';
-import { SimpleSearchPopover } from 'components/searchPopover/index';
+import { SearchingSelector } from 'components/searchSelectors/index';
 
 export function SiteSearchPopover(props: {
     site?: Site;
@@ -40,7 +40,7 @@ export function SiteSearchPopover(props: {
 
     return (
         <>
-            <SimpleSearchPopover<Site>
+            <SearchingSelector<Site>
                 queryKeyPrefix="site"
                 tableName="Site"
                 endpoint="/sites:search"

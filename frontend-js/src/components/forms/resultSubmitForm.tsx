@@ -8,9 +8,9 @@ import { useMutation } from 'react-query';
 import { Benchmark, Flavor, Result, Site } from 'api';
 import { postHelper } from 'api-helpers';
 import axios, { AxiosError } from 'axios';
-import { SiteSearchPopover } from 'components/searchPopover/siteSearchPopover';
-import { BenchmarkSearchPopover } from 'components/searchPopover/benchmarkSearchPopover';
-import { FlavorSearchPopover } from 'components/searchPopover/flavorSearchPopover';
+import { SiteSearchPopover } from 'components/searchSelectors/siteSearchPopover';
+import { BenchmarkSearchSelect } from 'components/searchSelectors/benchmarkSearchSelect';
+import { FlavorSearchSelect } from 'components/searchSelectors/flavorSearchSelect';
 
 export function ResultSubmitForm(props: {
     onSuccess: () => void;
@@ -114,13 +114,13 @@ export function ResultSubmitForm(props: {
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                    <BenchmarkSearchPopover benchmark={benchmark} setBenchmark={setBenchmark} />
+                    <BenchmarkSearchSelect benchmark={benchmark} setBenchmark={setBenchmark} />
                 </Form.Group>
                 <Form.Group className="mb-3">
                     <SiteSearchPopover site={site} setSite={setSite} />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                    <FlavorSearchPopover site={site} flavor={flavor} setFlavor={setFlavor} />
+                    <FlavorSearchSelect site={site} flavor={flavor} setFlavor={setFlavor} />
                 </Form.Group>
 
                 <Form.Group className="mb-1">

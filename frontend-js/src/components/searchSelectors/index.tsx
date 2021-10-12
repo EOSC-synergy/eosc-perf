@@ -8,7 +8,7 @@ import { Paginated, Paginator } from '../pagination';
 import { Button, Col, OverlayTrigger, Popover, Row } from 'react-bootstrap';
 import { Identifiable } from '../identifiable';
 
-export function SimpleSearchPopover<Item extends Identifiable>(props: {
+export function SearchingSelector<Item extends Identifiable>(props: {
     queryKeyPrefix: string;
     tableName: string;
     endpoint: string;

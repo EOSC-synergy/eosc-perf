@@ -1,9 +1,9 @@
 import { Benchmark } from 'api';
 import React, { ReactElement, useState } from 'react';
 import { BenchmarkSubmissionModal } from 'components/submissionModals/benchmarkSubmissionModal';
-import { SimpleSearchPopover } from 'components/searchPopover/index';
+import { SearchingSelector } from 'components/searchSelectors/index';
 
-export function BenchmarkSearchPopover(props: {
+export function BenchmarkSearchSelect(props: {
     benchmark?: Benchmark;
     setBenchmark: (benchmark?: Benchmark) => void;
 }): ReactElement {
@@ -46,7 +46,7 @@ export function BenchmarkSearchPopover(props: {
 
     return (
         <>
-            <SimpleSearchPopover<Benchmark>
+            <SearchingSelector<Benchmark>
                 queryKeyPrefix="benchmark"
                 tableName="Benchmark"
                 endpoint="/benchmarks:search"

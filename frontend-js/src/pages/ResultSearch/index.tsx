@@ -21,9 +21,9 @@ import { Ordered, orderedComparator } from 'components/ordered';
 import { determineNotableKeys } from 'pages/ResultSearch/jsonSchema';
 import Flex from 'components/Flex';
 import qs from 'qs';
-import { SiteSearchPopover } from 'components/searchPopover/siteSearchPopover';
-import { BenchmarkSearchPopover } from 'components/searchPopover/benchmarkSearchPopover';
-import { FlavorSearchPopover } from 'components/searchPopover/flavorSearchPopover';
+import { SiteSearchPopover } from 'components/searchSelectors/siteSearchPopover';
+import { BenchmarkSearchSelect } from 'components/searchSelectors/benchmarkSearchSelect';
+import { FlavorSearchSelect } from 'components/searchSelectors/flavorSearchSelect';
 
 function ResultSearch(): ReactElement {
     const [benchmark, setBenchmark] = useState<Benchmark | undefined>(undefined);

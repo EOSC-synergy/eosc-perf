@@ -1,9 +1,9 @@
 import { Flavor, Site } from 'api';
 import React, { ReactElement, useState } from 'react';
 import { FlavorSubmissionModal } from 'components/submissionModals/flavorSubmissionModal';
-import { SimpleSearchPopover } from 'components/searchPopover/index';
+import { SearchingSelector } from 'components/searchSelectors/index';
 
-export function FlavorSearchPopover(props: {
+export function FlavorSearchSelect(props: {
     site?: Site;
     flavor?: Flavor;
     setFlavor: (flavor?: Flavor) => void;
@@ -45,7 +45,7 @@ export function FlavorSearchPopover(props: {
         <>
             {props.site ? (
                 <>
-                    <SimpleSearchPopover<Flavor>
+                    <SearchingSelector<Flavor>
                         queryKeyPrefix={'flavor-for-' + props.site.id}
                         tableName="Flavor"
                         endpoint={'/sites/' + props.site.id + '/flavors:search'}
