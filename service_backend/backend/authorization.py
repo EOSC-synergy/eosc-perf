@@ -33,11 +33,10 @@ class Authorization(Flaat):
         super().__init__()
 
         self.set_web_framework('flask')
-        environment = app.config.get('ENV')
-        if environment == "development":
-            self.set_trusted_OP_list(['https://aai-dev.egi.eu/oidc'])
-        else:
-            self.set_trusted_OP_list(['https://aai.egi.eu/oidc'])
+        self.set_trusted_OP_list([
+            'https://aai.egi.eu/oidc',
+            'https://aai-dev.egi.eu/oidc',
+        ])
 
         # Flaat timeout:
         timeout = app.config.get('FLAAT_TIMEOUT', 3)
@@ -78,7 +77,7 @@ class Authorization(Flaat):
         :rtype: dict or None
         """
         token = tokentools.get_access_token_from_request(request)
-        user_info = self.get_info_from_introspection_endpoints(token)
+        user_info = self.get_all_info_by_at(token)
         return user_info
 
     def valid_token(self):
