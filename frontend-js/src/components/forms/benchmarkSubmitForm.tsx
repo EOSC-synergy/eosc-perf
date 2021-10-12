@@ -8,6 +8,7 @@ import { postHelper } from 'api-helpers';
 import { AxiosError } from 'axios';
 import { NavLink } from 'react-router-dom';
 import { getErrorMessage } from 'components/forms/getErrorMessage';
+import benchmarkJsonSchema from '../benchmarkJsonSchema.json';
 
 // TODO: do not show invalid on first load
 //       use default state valid?
@@ -126,7 +127,7 @@ export function BenchmarkSubmitForm(props: {
 
                 <Form.Group>
                     <Form.Label htmlFor="template">
-                        Benchmark result JSON template (optional,{' '}
+                        Benchmark result JSON schema (optional,{' '}
                         <NavLink to={pages.CodeGuidelinesModule.path + '#json'}>
                             example here
                         </NavLink>
@@ -134,7 +135,7 @@ export function BenchmarkSubmitForm(props: {
                     </Form.Label>
                     <Form.Control
                         id="template"
-                        placeholder='{ "required_arg": 5, "!notable_argument": 10 }'
+                        placeholder={JSON.stringify(benchmarkJsonSchema, null, 4)}
                         onChange={(e) => setTemplate(e.target.value)}
                         as="textarea"
                         isInvalid={!isTemplateValid()}

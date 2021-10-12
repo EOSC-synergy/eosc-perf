@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Container } from 'react-bootstrap';
-import template from './benchmark_template.json';
+import template from 'components/benchmarkJsonSchema.json';
 import { PageBase } from '../pageBase';
 import Highlight from 'react-highlight';
 
