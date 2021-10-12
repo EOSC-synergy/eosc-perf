@@ -208,8 +208,8 @@ function ResultSearch(): ReactElement {
 
     return (
         <>
-            <Container fluid="xl" className="mt-3">
-                <Row>
+            <Container fluid="xl">
+                <Row className="mb-2">
                     <Col>
                         <Accordion defaultActiveKey="filters">
                             <Card>
@@ -294,7 +294,7 @@ function ResultSearch(): ReactElement {
                         </Accordion>
                     </Col>
                 </Row>
-                <Card className="my-2">
+                <Card>
                     <div>
                         {results.isSuccess && results.data && results.data.data.total > 0 && (
                             <ResultTable

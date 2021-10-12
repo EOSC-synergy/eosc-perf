@@ -133,7 +133,7 @@ function App() {
             <Router>
                 <NavHeader setCurrentTab={setCurrentTab} />
                 <div className="App">
-                    <div className="App-content">
+                    <div className="App-content my-3">
                         <Switch>
                             <Route exact path="/">
                                 <Redirect to={modules.ResultSearchModule.path} />
