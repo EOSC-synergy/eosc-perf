@@ -61,7 +61,7 @@ class BaseCRUD(db.Model):
 class QueryWithSoftDelete(BaseQuery):
     """Custom query to exclude soft delete items from model query.
     See https://blog.miguelgrinberg.com/post/implementing-the-soft-delete-pattern-with-flask-and-sqlalchemy
-    """ # noqa
+    """  # noqa
     _with_deleted = False
 
     def __new__(cls, *args, **kwargs):

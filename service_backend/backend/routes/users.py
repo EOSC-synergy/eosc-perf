@@ -78,7 +78,7 @@ def __register():
     tokeninfo = auth.current_tokeninfo()
     user_info = auth.current_userinfo()
     if not user_info:
-        error_msg = "No user info received from 'introspection endpoint'"
+        error_msg = "No user info received from 'OP endpoint'"
         abort(500, messages={'error': error_msg})
     elif 'email' not in user_info:
         abort(422, messages={'error': "No scope for email in oidc token"})
@@ -295,8 +295,8 @@ def __results(query_args):
 @blp.arguments(args.ClaimFilter, location='query')
 @blp.response(200, schemas.Claims)
 @queries.to_pagination()
-@queries.add_sorting(models.Result.Claim)
-@queries.add_datefilter(models.Result.Claim)
+@queries.add_sorting(models.Claim)
+@queries.add_datefilter(models.Claim)
 def claims(*args, **kwargs):
     """(Users) Returns your uploaded pending claims
 
@@ -312,5 +312,5 @@ def __claims(query_args):
     :raises Forbidden: You don't have the administrator rights
     """
     user = __get()
-    query = models.Result.Claim.query
+    query = models.Claim.query
     return query.filter_by(uploader=user, **query_args)

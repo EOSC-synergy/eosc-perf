@@ -85,7 +85,7 @@ class SubmitFilter(Pagination, UploadFilter, Schema):
     )
 
 
-class ClaimFilter(Pagination, UploadFilter, Schema):
+class ClaimFilter(Pagination, UploadFilter, Status, Schema):
 
     #: (Str):
     #: Order to return the results separated by coma

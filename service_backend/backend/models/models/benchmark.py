@@ -2,9 +2,9 @@
 import jsonschema
 from flask_smorest import abort
 from jsonschema.exceptions import SchemaError
-from sqlalchemy import Column, Text, UniqueConstraint
+from sqlalchemy import Column, ForeignKeyConstraint, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSON
-from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.orm import column_property
 
 from ..core import PkModel
 from .reports import NeedsApprove
@@ -33,19 +33,20 @@ class Benchmark(NeedsApprove, HasUploader, PkModel):
     #: (Text, required) Docker image version/tag referenced by the benchmark
     docker_tag = Column(Text, nullable=False)
 
+    #: (Text, read_only) Benchmark name: image:tag
+    name = column_property(docker_image + ":" + docker_tag)
+
     #: (JSON, required) Schema used to validate benchmark results before upload
     json_schema = Column(JSON, nullable=False)
 
     #: (Text) Short text describing the main benchmark features
     description = Column(Text, nullable=True)
 
-    @declared_attr
-    def __table_args__(cls):
-        mixin_indexes = list((HasUploader.__table_args__))
-        mixin_indexes.extend([
-            UniqueConstraint('docker_image', 'docker_tag')
-        ])
-        return tuple(mixin_indexes)
+    __table_args__ = (
+        UniqueConstraint('docker_image', 'docker_tag'),
+        ForeignKeyConstraint(['uploader_iss', 'uploader_sub'],
+                             ['user.iss', 'user.sub']),
+    )
 
     def __init__(self, **properties):
         """Check the included schema is valid."""

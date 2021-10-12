@@ -26,12 +26,16 @@ class TestList:
         {'tags_ids[]': [tag['id'] for tag in [tags[0], tags[1]]]},
         {'upload_before': "3000-01-01"},
         {'upload_after': "1000-01-01"},
+        {'filters': ["type == AMD"]},
+        {'filters': ["cpu == True"]},
         {'filters': ["time < 11", "time > 9"]},
         {'filters[]': ["time < 11", "time > 9"]},
         {},  # Multiple reports
         {'sort_by': "+json"},
         {'sort_by': "+upload_datetime"},
         {'sort_by': "+execution_datetime"},
+        {'sort_by': "+benchmark_name"},
+        {'sort_by': "+site_name,+flavor_name"},
         {'sort_by': "+id"}
     ])
     def test_200(self, response_GET, url):
@@ -46,6 +50,7 @@ class TestList:
             assert not result.deleted
 
     @mark.parametrize('query', indirect=True, argvalues=[
+        {'filters': ["time <> a"]},
         {'bad_key': "This is a non expected query key"},
         {'sort_by': "Bad sort command"},
         {'uploader_email': "sub_1@email.com"}  # GDPR protected
@@ -159,6 +164,8 @@ class TestSearch:
         {'sort_by': "+json"},
         {'sort_by': "+upload_datetime"},
         {'sort_by': "+execution_datetime"},
+        {'sort_by': "+benchmark_name"},
+        {'sort_by': "+site_name,+flavor_name"},
         {'sort_by': "+id"}
     ])
     def test_200(self, response_GET, url):
@@ -258,7 +265,7 @@ class TestClaim:
         assert response_POST.status_code == 201
         asserts.match_query(response_POST.json, url)
         asserts.match_body(response_POST.json, body)
-        assert models.Result.Claim.query.\
+        assert models.Result._claim_report_class.query.\
             filter_by(resource_id=result_id).first()
 
     def test_401(self, response_POST):
@@ -392,7 +399,8 @@ class TestListClaims:
             asserts.match_query(item, url)
             item.pop('uploader')
             item.pop('resource_type')
-            assert models.Result.Claim.query.filter_by(**item)
+            assert models.Result._claim_report_class.query\
+                .filter_by(**item)
 
     @mark.usefixtures('grant_admin')
     @mark.parametrize('query', indirect=True, argvalues=[
@@ -410,7 +418,8 @@ class TestListClaims:
             asserts.match_query(item, url)
             item.pop('uploader')
             item.pop('resource_type')
-            assert models.Result.Claim.query.filter_by(**item).first()
+            assert models.Result._claim_report_class.query.\
+                filter_by(**item).first()
 
     @mark.parametrize('query', indirect=True, argvalues=[
         {'upload_before': "3000-01-01"}

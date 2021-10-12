@@ -1,23 +1,21 @@
-"""Claims module with generic association which persists association
-objects within individual tables, each one generated to persist
-those objects on behalf of a particular parent class.
+"""Claims module with mixin that provides a generic association
+using a single target table and a single association table,
+referred to by all parent tables.  The association table
+contains a "discriminator" column which determines what type of
+parent object associates to each particular row in the association
+table.
 
-This configuration has the advantage that each type of parent
-maintains its "Claim" rows separately, so that collection
-size for one type of parent will have no impact on other types
-of parent. Navigation between parent and "Claim" is simple,
-direct, and bidirectional.
-
-This recipe is the most efficient (speed wise and storage wise)
-and simple of all of them.
-
-The creation of many related tables may seem at first like an issue
-but there really isn't any - the management and targeting of these tables
-is completely automated.
+SQLAlchemy's single-table-inheritance feature is used to target
+different association types.
 """
-from sqlalchemy import Column, ForeignKey, Text
+from datetime import datetime as dt
+
+from backend.models.models.user import HasUploader
+from sqlalchemy import (Column, DateTime, ForeignKey, String, Text,
+                        ForeignKeyConstraint)
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import backref, relationship
 
 from ...core import PkModel, SoftDelete
 from ..user import HasUploader
@@ -33,13 +31,32 @@ class Claim(NeedsApprove, HasUploader, PkModel):
 
     **Properties**:
     """
-    __abstract__ = True  # table_per_related
-
     #: (Text) Information created by user to describe the issue
     message = Column(Text, nullable=False)
 
     #: (Resource) Resource the claim is linked to
-    resource = NotImplementedError()  # Implemented at HasClaims
+    resource = NotImplementedError()  # Implemented at NeedsApprove
+
+    #: (String) Refers to the type report
+    resource_type = Column(String, nullable=False)
+
+    #: (Read_only) Resource unique identification
+    resource_id = association_proxy("resource", "id")
+
+    #: (Read_only) Upload datetime of the model instance
+    # upload_datetime = association_proxy("resource", "upload_datetime")
+    upload_datetime = Column(DateTime, nullable=False, default=dt.now)
+
+    # Polymorphism related to the resource the claim is linked
+    __mapper_args__ = {
+        'polymorphic_on': resource_type,
+        # 'with_polymorphic': '*'
+    }
+
+    __table_args__ = (
+        ForeignKeyConstraint(['uploader_iss', 'uploader_sub'],
+                            ['user.iss', 'user.sub']),
+    )
 
     def __init__(self, **properties):
         """Model initialization"""
@@ -47,7 +64,11 @@ class Claim(NeedsApprove, HasUploader, PkModel):
 
     def __repr__(self):
         """Human-readable representation string"""
-        return "{} {}".format(self.__class__.__name__, self.message)
+        return "{}({}): {}".format(
+            self.__class__.__name__,
+            self.resource_type,
+            self.message
+        )
 
     def delete(self):
         """Deletes the claim report and restores the resource."""
@@ -57,22 +78,33 @@ class Claim(NeedsApprove, HasUploader, PkModel):
 
 
 class HasClaims(SoftDelete):
-    """HasClaims mixin, creates a new Claim class for each resource.
+    """Provides the model the capability to perform claims.
     """
     __abstract__ = True
 
     @declared_attr
-    def Claim(cls):
-        table_specs = dict(
-            __tablename__=f"{cls.__tablename__}_claim",
-            resource_id=Column(ForeignKey(f"{cls.__tablename__}.id")),
-            resource=relationship(cls, back_populates="claims")
+    def _claim_report_id(cls):
+        return Column(ForeignKey('claim.id'))
+
+    @declared_attr
+    def _claim_report_class(cls):
+        return type(
+            f"{cls.__name__}ClaimReport", (Claim,),
+            dict(
+                __mapper_args__={
+                    'polymorphic_identity': cls.__name__.lower(),
+                    'polymorphic_load': 'inline'
+                },
+            ),
         )
-        return type(f"{cls.__name__}Claim", (Claim,), table_specs)
 
     @declared_attr
     def claims(cls):
-        return relationship(cls.Claim, back_populates="resource")
+        """([Report]) Claim report related to the model instance"""
+        return relationship(
+            cls._claim_report_class,
+            backref=backref("resource", uselist=False),
+        )
 
     def claim(self, message):
         """Creates a pending claim related to the resource and soft
@@ -81,7 +113,8 @@ class HasClaims(SoftDelete):
         :param message: Message to include in the claim
         :type message: str
         """
-        claim = self.Claim(message=message, resource=self)
-        self.claims.append(claim)
         self.delete()
-        return claim
+        return self.__class__._claim_report_class(
+            message=message,
+            resource=self
+        )
