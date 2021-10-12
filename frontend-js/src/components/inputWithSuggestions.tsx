@@ -18,7 +18,7 @@ export function InputWithSuggestions(props: {
         <Dropdown
             as={InputGroup}
             onSelect={(k) => {
-                updateInput(input ?? '');
+                updateInput(k ?? '');
             }}
         >
             <FormControl
