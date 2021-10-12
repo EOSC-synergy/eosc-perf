@@ -25,7 +25,16 @@ import { SiteSearchPopover } from 'components/searchSelectors/siteSearchPopover'
 import { BenchmarkSearchSelect } from 'components/searchSelectors/benchmarkSearchSelect';
 import { FlavorSearchSelect } from 'components/searchSelectors/flavorSearchSelect';
 
+type QueryParams = {
+    benchmarkId?: string;
+    siteId?: string;
+    flavorId?: string;
+};
+
 function ResultSearch(): ReactElement {
+    const [queryParams, setQueryParams] = useState<QueryParams>(
+        qs.parse(window.location.search.slice(1))
+    );
     const [benchmark, setBenchmark] = useState<Benchmark | undefined>(undefined);
     const [site, setSite] = useState<Site | undefined>(undefined);
     const [flavor, setFlavor] = useState<Flavor | undefined>(undefined);
@@ -156,6 +165,47 @@ function ResultSearch(): ReactElement {
         }
     );
 
+    function refreshLocation(queryParams: QueryParams) {
+        window.history.replaceState(
+            null,
+            '',
+            window.location.pathname +
+                qs.stringify(queryParams, {
+                    addQueryPrefix: true,
+                })
+        );
+    }
+
+    function updateBenchmark(benchmark?: Benchmark) {
+        setBenchmark(benchmark);
+        const newQueryParams = {
+            ...queryParams,
+            benchmarkId: benchmark?.id,
+        };
+        refreshLocation(newQueryParams);
+        setQueryParams(newQueryParams);
+    }
+
+    function updateSite(site?: Site) {
+        setSite(site);
+        const newQueryParams = {
+            ...queryParams,
+            siteId: site?.id,
+        };
+        refreshLocation(newQueryParams);
+        setQueryParams(newQueryParams);
+    }
+
+    function updateFlavor(flavor?: Flavor) {
+        setFlavor(flavor);
+        const newQueryParams = {
+            ...queryParams,
+            flavorId: flavor?.id,
+        };
+        refreshLocation(newQueryParams);
+        setQueryParams(newQueryParams);
+    }
+
     return (
         <>
             <Container fluid="xl" className="mt-3">
@@ -170,15 +220,21 @@ function ResultSearch(): ReactElement {
                                 </Card.Header>
                                 <Accordion.Collapse eventKey="filters">
                                     <Card.Body>
-                                        <BenchmarkSearchPopover
+                                        <BenchmarkSearchSelect
                                             benchmark={benchmark}
-                                            setBenchmark={setBenchmark}
+                                            setBenchmark={updateBenchmark}
+                                            initialBenchmarkId={queryParams.benchmarkId}
                                         />
-                                        <SiteSearchPopover site={site} setSite={setSite} />
-                                        <FlavorSearchPopover
+                                        <SiteSearchPopover
+                                            site={site}
+                                            setSite={updateSite}
+                                            initialSiteId={queryParams.siteId}
+                                        />
+                                        <FlavorSearchSelect
                                             site={site}
                                             flavor={flavor}
-                                            setFlavor={setFlavor}
+                                            setFlavor={updateFlavor}
+                                            initialFlavorId={queryParams.flavorId}
                                         />
                                         <hr />
                                         <ListGroup variant="flush">

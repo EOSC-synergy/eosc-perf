@@ -2,11 +2,28 @@ import { Site } from 'api';
 import React, { ReactElement, useState } from 'react';
 import { SiteSubmissionModal } from 'components/submissionModals/siteSubmissionModal';
 import { SearchingSelector } from 'components/searchSelectors/index';
+import { useQuery } from 'react-query';
+import { getHelper } from 'api-helpers';
 
 export function SiteSearchPopover(props: {
     site?: Site;
     setSite: (site?: Site) => void;
+    initialSiteId?: string;
 }): ReactElement {
+    useQuery(
+        'initial-site-' + props.initialSiteId,
+        () => {
+            return getHelper<Site>('/sites/' + props.initialSiteId);
+        },
+        {
+            enabled: props.initialSiteId !== undefined,
+            refetchOnWindowFocus: false, // do not spam queries
+            onSuccess: (data) => {
+                props.setSite(data.data);
+            },
+        }
+    );
+
     function display(site?: Site) {
         return (
             <>

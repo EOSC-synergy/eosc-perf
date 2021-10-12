@@ -2,13 +2,30 @@ import { Flavor, Site } from 'api';
 import React, { ReactElement, useState } from 'react';
 import { FlavorSubmissionModal } from 'components/submissionModals/flavorSubmissionModal';
 import { SearchingSelector } from 'components/searchSelectors/index';
+import { useQuery } from 'react-query';
+import { getHelper } from 'api-helpers';
 
 export function FlavorSearchSelect(props: {
     site?: Site;
     flavor?: Flavor;
     setFlavor: (flavor?: Flavor) => void;
+    initialFlavorId?: string;
 }): ReactElement {
     // TODO: reset value if site is undefined?
+
+    useQuery(
+        'initial-flavor-' + props.initialFlavorId,
+        () => {
+            return getHelper<Flavor>('/flavors/' + props.initialFlavorId);
+        },
+        {
+            enabled: props.initialFlavorId !== undefined,
+            refetchOnWindowFocus: false, // do not spam queries
+            onSuccess: (data) => {
+                props.setFlavor(data.data);
+            },
+        }
+    );
 
     function display(flavor?: Flavor) {
         return (

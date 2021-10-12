@@ -2,11 +2,28 @@ import { Benchmark } from 'api';
 import React, { ReactElement, useState } from 'react';
 import { BenchmarkSubmissionModal } from 'components/submissionModals/benchmarkSubmissionModal';
 import { SearchingSelector } from 'components/searchSelectors/index';
+import { useQuery } from 'react-query';
+import { getHelper } from 'api-helpers';
 
 export function BenchmarkSearchSelect(props: {
     benchmark?: Benchmark;
     setBenchmark: (benchmark?: Benchmark) => void;
+    initialBenchmarkId?: string;
 }): ReactElement {
+    useQuery(
+        'initial-benchmark-' + props.initialBenchmarkId,
+        () => {
+            return getHelper<Benchmark>('/benchmarks/' + props.initialBenchmarkId);
+        },
+        {
+            enabled: props.initialBenchmarkId !== undefined,
+            refetchOnWindowFocus: false, // do not spam queries
+            onSuccess: (data) => {
+                props.setBenchmark(data.data);
+            },
+        }
+    );
+
     function display(benchmark?: Benchmark) {
         return (
             <>
