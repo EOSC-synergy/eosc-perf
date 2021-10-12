@@ -26,6 +26,10 @@ export function determineNotableKeys(benchmark: Benchmark): string[] {
 
     const schema = benchmark.json_schema as SchemaObject;
 
+    if (schema === undefined || schema.properties === undefined) {
+        return [];
+    }
+
     return Object.entries(schema.properties)
         .map(recurser)
         .reduce((acc: string[], arr: string[]) => [...acc, ...arr]);
