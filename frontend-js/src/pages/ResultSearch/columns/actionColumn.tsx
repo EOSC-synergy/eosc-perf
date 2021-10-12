@@ -5,11 +5,17 @@ import { ResultOps } from '../resultOps';
 import { Envelope, Exclamation, Hash, Trash } from 'react-bootstrap-icons';
 import { UserContext } from 'userContext';
 import { Ordered } from 'components/ordered';
+import { useMutation } from 'react-query';
+import { deleteHelper } from 'api-helpers';
 
 export function ActionColumn(props: { result: Ordered<Result>; ops: ResultOps }): ReactElement {
     // TODO: CSS: figure out why button group taller than it should be
 
     const auth = useContext(UserContext);
+
+    const { mutate: deleteResult } = useMutation(() =>
+        deleteHelper('/results/' + props.result.id, auth.token)
+    );
 
     return (
         <ButtonGroup size="sm">
@@ -38,11 +44,8 @@ export function ActionColumn(props: { result: Ordered<Result>; ops: ResultOps })
                     >
                         <Envelope />
                     </Button>
-                    <Button
-                        variant="danger"
-                        onClick={() => undefined /* TODO: delete button */}
-                        disabled
-                    >
+                    {/* TODO: visual feedback */}
+                    <Button variant="danger" onClick={() => deleteResult()}>
                         <Trash />
                     </Button>
                 </>
