@@ -21,7 +21,7 @@ def authenticate_user():
     return controller.authenticator.redirect_to_authentication()
 
 
-@authenticator_blueprint.route('/auth/oidc-redirect')
+@authenticator_blueprint.route('/oidc-redirect')
 def authentication_redirect():
     """"OIDC-Authentication redirect through authenticator singleton."""
     if controller.is_authenticated():
