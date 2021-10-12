@@ -27,14 +27,16 @@ export function ActionColumn(props: { result: Ordered<Result>; ops: ResultOps })
             >
                 <Hash />
             </Button>
-            <Button
-                variant="warning"
-                onClick={() => {
-                    props.ops.report(props.result);
-                }}
-            >
-                <Exclamation />
-            </Button>
+            {auth.token !== undefined && (
+                <Button
+                    variant="warning"
+                    onClick={() => {
+                        props.ops.report(props.result);
+                    }}
+                >
+                    <Exclamation />
+                </Button>
+            )}
             {auth.admin && (
                 <>
                     <Button
