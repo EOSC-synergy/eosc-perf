@@ -38,7 +38,8 @@ class Result(HasClaims, HasTags, HasUploader, PkModel):
         "_results", cascade="all, delete-orphan"
     ))
     benchmark_name = column_property(
-        select([Benchmark.name]).where(Benchmark.id == benchmark_id)
+        select([Benchmark.name]).where(Benchmark.id == benchmark_id).
+        scalar_subquery()
     )
 
     #: (Conflicts Flavor) Id of the flavor used to executed the benchmark
@@ -49,7 +50,8 @@ class Result(HasClaims, HasTags, HasUploader, PkModel):
         "_results", cascade="all, delete-orphan",
     ))
     flavor_name = column_property(
-        select([Flavor.name]).where(Flavor.id == flavor_id)
+        select([Flavor.name]).where(Flavor.id == flavor_id).
+        scalar_subquery()
     )
 
     #: (Collected from flavor) Id of the site where the benchmar was executed
@@ -60,10 +62,12 @@ class Result(HasClaims, HasTags, HasUploader, PkModel):
         "_results", cascade="all, delete-orphan"
     ))
     site_name = column_property(
-        select([Site.name]).where(Site.id == site_id)
+        select([Site.name]).where(Site.id == site_id).
+        scalar_subquery()
     )
     site_address = column_property(
-        select([Site.address]).where(Site.id == site_id)
+        select([Site.address]).where(Site.id == site_id).
+        scalar_subquery()
     )
 
     __table_args__ = (
