@@ -9,7 +9,7 @@ file. In the last case, ensure the application has access to read such files.
 """
 import functools
 
-from environs import Env
+from environs import Env, EnvError
 from marshmallow.validate import OneOf
 
 
@@ -55,7 +55,7 @@ str = development_defaults(env.str)
 
 
 # Secret key for security and cookie encryption
-SECRET_KEY = str("SECRET_KEY", dev_default="not-so-secret")
+SECRET_KEY = str("SECRET_KEY", default="", dev_default="not-so-secret")
 """| Secret key to use on flask configuration.
 
 | When ENV is set to `production`, a configuration value is required.
@@ -75,6 +75,8 @@ SECRET_KEY_FILE = str("SECRET_KEY_FILE", default="")
 """
 if SECRET_KEY_FILE:
     SECRET_KEY = open(SECRET_KEY_FILE).read().rstrip('\n')
+if not SECRET_KEY:
+    raise EnvError("Environment variable 'SECRET_KEY' empty")
 
 
 # Database configuration
@@ -149,7 +151,7 @@ OIDC_CLIENT_ID = str("OIDC_CLIENT_ID", dev_default="not-defined")
 :meta hide-value:
 """
 
-OIDC_CLIENT_SECRET = str("OIDC_CLIENT_SECRET", dev_default="not-defined")
+OIDC_CLIENT_SECRET = str("OIDC_CLIENT_SECRET", default="", dev_default="not-defined")
 """| Secret to validate the application identify on the Authorization Server.
 | See https://openid.net/specs/openid-connect-core-1_0.html
 
@@ -169,6 +171,8 @@ OIDC_CLIENT_SECRET_FILE = str("OIDC_CLIENT_SECRET_FILE", default="")
 """
 if OIDC_CLIENT_SECRET_FILE:
     OIDC_CLIENT_SECRET = open(OIDC_CLIENT_SECRET_FILE).read().rstrip('\n')
+if not OIDC_CLIENT_SECRET:
+    raise EnvError("Environment variable 'OIDC_CLIENT_SECRET' empty")
 
 ADMIN_ENTITLEMENTS = str("ADMIN_ENTITLEMENTS", default="")
 """| OIDC Entitlements to grant administrator rights to users.
