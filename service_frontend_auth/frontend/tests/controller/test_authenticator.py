@@ -3,10 +3,9 @@ from time import time
 
 from dotenv import load_dotenv
 from flask import Flask, session
-
 from frontend.configuration import configuration
 from frontend.controller.authenticator import read_file_content, Authenticator, MockAuthenticator
-from frontend.controller.io_controller import controller, IOController
+from frontend.controller.io_controller import IOController
 from frontend.tests.utility import setup_test_config
 
 mock_authenticator = MockAuthenticator()
@@ -139,11 +138,6 @@ class AuthenticatorTests(unittest.TestCase):
         admin_entitlement = configuration.get('debug_admin_entitlements')[:1]
         admin_entitlement[0] += '#aai.egi.eu'
         session['user']['info']['eduperson_entitlement'] = admin_entitlement
-
-    @staticmethod
-    def _get_sample_result_data():
-        with open("frontend/tests/controller/sample_result.json") as file:
-            return file.read()
 
     @staticmethod
     def _logout():

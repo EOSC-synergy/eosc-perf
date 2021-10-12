@@ -8,8 +8,8 @@ Exposed endpoints:
 """
 
 import json
-from flask import Blueprint, Response, redirect
 
+from flask import Blueprint, Response, redirect
 from frontend.controller.io_controller import controller
 
 authenticator_blueprint = Blueprint('authenticator', __name__)
@@ -36,7 +36,7 @@ def who_am_i():
     """"""
     data = controller.authenticator.get_user_info()
     if data is None:
-        return Response("{}", mimetype="application/json", status=401)
+        return Response("{}", mimetype="application/json", status=404)
     return Response(json.dumps(data), mimetype='application/json')
 
 

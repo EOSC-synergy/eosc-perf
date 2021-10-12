@@ -1,8 +1,10 @@
 """This module exposes the function to create the Flask app object.
 """
 
-from flask import Flask
 import sys
+
+from flask import Flask
+
 from .configuration import configuration
 from .controller.io_controller import controller
 from .view.pages.authenticator import authenticator_blueprint
@@ -61,8 +63,6 @@ def create_app(custom_configuration: dict = None):
     flask_application.wsgi_app = ReverseProxied(flask_application.wsgi_app)
 
     if configuration.get('debug'):
-        # flask_application.config['DEBUG'] = True
-        # app.config['SQLALCHEMY_ECHO'] = True
         print("Running in debug mode")
     else:
         print("Running in production mode")
