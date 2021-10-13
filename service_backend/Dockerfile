@@ -38,22 +38,3 @@ ENV FLASK_ENV="development"
 EXPOSE 5000
 CMD ["flask", "run", "--host=0.0.0.0"]
 
-# ================================= TESTING ====================================
-FROM backend AS testing
-
-COPY factories factories
-COPY tests tests
-COPY tox.ini tox.ini
-RUN pip install --no-cache tox
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    postgresql \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN useradd -m sid
-RUN chown -R sid:sid /app
-USER sid
-
-ENV FLASK_ENV="production"
-CMD ["tox"]
-
