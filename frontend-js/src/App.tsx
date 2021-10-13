@@ -22,6 +22,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { emptyUser, UserContext, UserInfo } from 'userContext';
 
 import logo from './assets/images/eosc-perf-logo.svg';
+import { getHelper } from 'api-helpers';
 
 const queryClient = new QueryClient();
 
@@ -108,7 +109,14 @@ function NavHeader(props: { setCurrentTab: (tab: string) => void }) {
                             className="justify-content-end"
                         >
                             {auth.token ? (
-                                <NavDropdown.Item href="/auth/logout">Logout</NavDropdown.Item>
+                                <>
+                                    <NavDropdown.Item href="/auth/logout">Logout</NavDropdown.Item>
+                                    {!auth.registered && (
+                                        <NavDropdown.Item href="/register">
+                                            Register
+                                        </NavDropdown.Item>
+                                    )}
+                                </>
                             ) : (
                                 <NavDropdown.Item href="/auth/login">Login</NavDropdown.Item>
                             )}
@@ -128,8 +136,23 @@ function App() {
         retry: false,
     });
 
+    const amIRegistered = useQuery(
+        'registered',
+        () => getHelper('/users/self', whoAmI.data?.data.token),
+        {
+            retry: false,
+            enabled: whoAmI.isSuccess,
+        }
+    );
+
     return (
-        <UserContext.Provider value={whoAmI.isSuccess ? whoAmI.data.data : emptyUser}>
+        <UserContext.Provider
+            value={
+                whoAmI.isSuccess
+                    ? { ...whoAmI.data.data, registered: amIRegistered.isSuccess }
+                    : emptyUser
+            }
+        >
             <Router>
                 <NavHeader setCurrentTab={setCurrentTab} />
                 <div className="App">
