@@ -85,6 +85,7 @@ export function ResultSubmitForm(props: {
                 <Alert variant="danger">You must be logged in to submit new results!</Alert>
             )}
             {errorMessage !== undefined && <Alert variant="danger">Error: {errorMessage}</Alert>}
+            <RegistrationCheck />
             <Form>
                 <Form.Group className="mb-3">
                     <JsonSelection fileContents={fileContents} setFileContents={setFileContents} />{' '}
@@ -93,9 +94,28 @@ export function ResultSubmitForm(props: {
                 <Form.Group className="mb-3">
                     <BenchmarkSearchSelect benchmark={benchmark} setBenchmark={setBenchmark} />
                 </Form.Group>
+
                 <Form.Group className="mb-3">
                     <SiteSearchPopover site={site} setSite={setSite} />
                 </Form.Group>
+
+                <Form.Group className="mb-3">
+                    <Row>
+                        <Col>Execution date:</Col>
+                        <Col md="auto">
+                            <DatePicker
+                                selected={execDate}
+                                onChange={(date) => setExecDate(date as Date | null)}
+                                showTimeSelect
+                                timeIntervals={15}
+                                dateFormat="MMMM d, yyyy HH:mm"
+                                timeFormat="HH:mm"
+                            />
+                        </Col>
+                    </Row>
+                    {/* dateFormat="Pp"*/}
+                </Form.Group>
+
                 <Form.Group className="mb-3">
                     <FlavorSearchSelect site={site} flavor={flavor} setFlavor={setFlavor} />
                 </Form.Group>

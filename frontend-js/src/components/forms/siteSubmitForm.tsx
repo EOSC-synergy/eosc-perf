@@ -6,6 +6,7 @@ import { CreateSite } from 'api';
 import { postHelper } from 'api-helpers';
 import { AxiosError } from 'axios';
 import { getErrorMessage } from 'components/forms/getErrorMessage';
+import { RegistrationCheck } from 'components/registrationCheck';
 
 // TODO: do not show invalid on first load
 //       use default state valid?
@@ -68,6 +69,7 @@ export function SiteSubmitForm(props: {
                 <Alert variant="danger">You must be logged in to submit new sites!</Alert>
             )}
             {errorMessage !== undefined && <Alert variant="danger">Error: {errorMessage}</Alert>}
+            <RegistrationCheck />
             <Form>
                 <Form.Group>
                     <Form.Label>Name:</Form.Label>

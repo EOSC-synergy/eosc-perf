@@ -9,6 +9,7 @@ import { AxiosError } from 'axios';
 import { NavLink } from 'react-router-dom';
 import { getErrorMessage } from 'components/forms/getErrorMessage';
 import benchmarkJsonSchema from '../benchmarkJsonSchema.json';
+import { RegistrationCheck } from 'components/registrationCheck';
 
 // TODO: do not show invalid on first load
 //       use default state valid?
@@ -94,6 +95,7 @@ export function BenchmarkSubmitForm(props: {
                 <Alert variant="danger">You must be logged in to submit new benchmarks!</Alert>
             )}
             {errorMessage !== undefined && <Alert variant="danger">Error: {errorMessage}</Alert>}
+            <RegistrationCheck />
             <Form>
                 <Form.Group className="mb-3">
                     <Form.Label htmlFor="benchmark">Benchmark:</Form.Label>
