@@ -13,6 +13,10 @@ import { BenchmarkSearchSelect } from 'components/searchSelectors/benchmarkSearc
 import { FlavorSearchSelect } from 'components/searchSelectors/flavorSearchSelect';
 import { getErrorMessage } from 'components/forms/getErrorMessage';
 
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { RegistrationCheck } from 'components/registrationCheck';
+
 export function ResultSubmitForm(props: {
     onSuccess: () => void;
     onError: () => void;
@@ -26,12 +30,14 @@ export function ResultSubmitForm(props: {
     const [termsOfServiceAccepted, setTermsOfServiceAccepted] = useState(false);
     const [fileContents, setFileContents] = useState<string | undefined>(undefined);
 
+    const [execDate, setExecDate] = useState<Date | null>(new Date());
+
     const [errorMessage, setErrorMessage] = useState<ReactNode | undefined>(undefined);
 
     const { mutate } = useMutation(
         (data: Result) =>
             postHelper<Result>('/results', data, auth.token, {
-                execution_datetime: '2020-05-21T10:31:00.000Z',
+                execution_datetime: execDate?.toISOString(),
                 benchmark_id: benchmark?.id,
                 //site_id: site?.id,
                 flavor_id: flavor?.id,
@@ -100,6 +106,10 @@ export function ResultSubmitForm(props: {
                 </Form.Group>
 
                 <Form.Group className="mb-3">
+                    <FlavorSearchSelect site={site} flavor={flavor} setFlavor={setFlavor} />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
                     <Row>
                         <Col>Execution date:</Col>
                         <Col md="auto">
@@ -114,10 +124,6 @@ export function ResultSubmitForm(props: {
                         </Col>
                     </Row>
                     {/* dateFormat="Pp"*/}
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                    <FlavorSearchSelect site={site} flavor={flavor} setFlavor={setFlavor} />
                 </Form.Group>
 
                 <Form.Group className="mb-1">
