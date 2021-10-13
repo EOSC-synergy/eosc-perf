@@ -318,6 +318,7 @@ def __reject(id):
 @blp.response(200, schemas.Flavors)
 @queries.to_pagination()
 @queries.add_sorting(models.Flavor)
+@queries.add_datefilter(models.Flavor)
 def list_flavors(*args, **kwargs):
     """(Public) Filters and list flavors
 

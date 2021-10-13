@@ -298,8 +298,11 @@ class TestListFlavors:
     @mark.parametrize('query', indirect=True, argvalues=[
         {'name': flavors[0]['name']},
         {'name': flavors[2]['name']},
+        {'upload_before': "3000-01-01"},
+        {'upload_after': "1000-01-01"},
         {},  # Multiple results
         {'sort_by': "+name"},
+        {'sort_by': "+upload_datetime"},        
         {'sort_by': "+id"}
     ])
     def test_200(self, response_GET, url):
@@ -333,7 +336,7 @@ class TestCreateFlavor:
     @mark.parametrize('token_iss', [users[0]['iss']], indirect=True)
     @mark.parametrize('body', indirect=True, argvalues=[
         {'name': "flavorN", 'description': "FlavorN for siteX"},
-        {'name': "flavorN"}
+        {'name': "flavorN"},
     ])
     def test_201(self, response_POST, site, url, body):
         """POST method succeeded 201."""
