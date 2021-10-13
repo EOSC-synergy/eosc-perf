@@ -5,6 +5,7 @@ export type UserInfo = {
     email?: string;
     name?: string;
     admin: boolean;
+    registered: boolean;
 };
 
 export const emptyUser: UserInfo = {
@@ -12,6 +13,7 @@ export const emptyUser: UserInfo = {
     email: undefined,
     name: undefined,
     admin: false,
+    registered: false,
 };
 
 export const UserContext = React.createContext(emptyUser);

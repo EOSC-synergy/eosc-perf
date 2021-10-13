@@ -5,6 +5,8 @@ import { CreateTag, Tags } from 'api';
 import { Button, Form, InputGroup, ListGroup } from 'react-bootstrap';
 import { UserContext } from 'userContext';
 
+import './zIndexReset.css';
+
 export function TagSelection(props: {
     tags: string[];
     addTag: (tag: string) => void;
@@ -89,6 +91,7 @@ export function TagSelection(props: {
                         variant="success"
                         disabled={!auth.token || customTagName.length < 1}
                         onClick={() => addTag()}
+                        className="reset-z-index"
                     >
                         Add Tag
                     </Button>

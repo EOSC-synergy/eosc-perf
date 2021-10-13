@@ -6,6 +6,7 @@ import { postHelper } from 'api-helpers';
 import { AxiosError } from 'axios';
 import { Alert, Button, Form } from 'react-bootstrap';
 import { getErrorMessage } from 'components/forms/getErrorMessage';
+import { RegistrationCheck } from 'components/registrationCheck';
 
 // TODO: do not show invalid on first load
 //       use default state valid?
@@ -65,6 +66,7 @@ export function FlavorSubmitForm(props: {
                 <Alert variant="danger">You must be logged in to submit new site flavors!</Alert>
             )}
             {errorMessage !== undefined && <Alert variant="danger">Error: {errorMessage}</Alert>}
+            <RegistrationCheck />
             <Form>
                 <Form.Group className="mb-3">
                     <Form.Label>Name:</Form.Label>
