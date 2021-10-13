@@ -6,7 +6,7 @@ export function TagsColumn(props: { result: Ordered<Result> }): ReactElement {
     return (
         <>
             {props.result.tags.length ? (
-                props.result.tags.join(', ')
+                props.result.tags.map((tag) => tag.name).join(', ')
             ) : (
                 <div className="text-muted">None</div>
             )}
