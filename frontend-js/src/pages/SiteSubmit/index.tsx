@@ -1,5 +1,5 @@
 import React, { ReactElement, useState } from 'react';
-import { Card, Container, Toast } from 'react-bootstrap';
+import { Card, Container, Toast, ToastContainer } from 'react-bootstrap';
 import { PageBase } from '../pageBase';
 import { SiteSubmitForm } from 'components/forms/siteSubmitForm';
 
@@ -19,17 +19,19 @@ function SiteSubmission(): ReactElement {
                     />
                 </Card.Body>
             </Card>
-            <Toast
-                show={showSuccessToast}
-                onClose={() => setShowSuccessToast(false)}
-                delay={5000}
-                autohide
-            >
-                <Toast.Header>
-                    <strong className="me-auto">eosc-perf</strong>
-                </Toast.Header>
-                <Toast.Body>Submission successful.</Toast.Body>
-            </Toast>
+            <ToastContainer position="middle-center">
+                <Toast
+                    show={showSuccessToast}
+                    onClose={() => setShowSuccessToast(false)}
+                    delay={4000}
+                    autohide
+                >
+                    <Toast.Header>
+                        <strong className="me-auto">eosc-perf</strong>
+                    </Toast.Header>
+                    <Toast.Body>Submission successful.</Toast.Body>
+                </Toast>
+            </ToastContainer>
         </Container>
     );
 }
