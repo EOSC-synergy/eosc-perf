@@ -84,7 +84,7 @@ export function BenchmarkSubmitForm(props: {
             docker_image: dockerName,
             docker_tag: dockerTag,
             description: description_,
-            json_schema: template_,
+            json_schema: template_ ? JSON.parse(template_) : undefined,
         });
     }
 
