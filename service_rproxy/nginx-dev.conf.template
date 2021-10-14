@@ -1,0 +1,95 @@
+gzip on;
+
+root /var/www/web;
+
+server {
+  listen       80;
+  listen       [::]:80;
+  
+  server_name ${DOMAIN};
+
+  location /nginx/reload {
+    auth_basic 'Access restriction';
+    auth_basic_user_file /tmp/.htpasswd;
+    proxy_pass http://localhost:9000;
+  }
+
+  location /.well-known/acme-challenge/ {
+    root /var/www/certbot;
+  }
+
+  location / {
+    return 301 https://$host$request_uri;
+  }
+}
+
+server {
+  listen       443 http2 ssl default_server;
+  listen       [::]:443 http2 ssl default_server;
+  
+  ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
+
+  server_name ${DOMAIN};
+
+  include /etc/letsencrypt/options-ssl-nginx.conf;
+  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+  add_header 'Access-Control-Allow-Origin' *;
+
+  # Add support for javascript modules
+  include mime.types;
+  types
+  {
+    application/javascript mjs;
+  }
+
+  location /auth {
+    autoindex off;
+    include uwsgi_params;
+    uwsgi_pass frontend-auth:5000;
+  }
+
+  location /oidc-redirect {
+    autoindex off;
+    include uwsgi_params;
+    uwsgi_pass frontend-auth:5000;
+  }
+
+  location ${BACKEND_URL}/v1 {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Scheme $scheme;
+    proxy_set_header X-Script-Name ${BACKEND_URL}/v1;
+    proxy_set_header Host $http_host;
+
+    proxy_redirect off;
+    proxy_pass http://backend_v1:5000;
+  }
+
+  # This is required: the webapp tries connecting to the webpack server for updates,
+  # it sees https:// and attempts wss://, but the dev server is running http:// (ws://), so
+  # some special rules are required
+  location /sockjs-node {
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_http_version 1.1;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $host;
+    proxy_pass http://frontend-app:3000;
+  }
+
+  location / {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Scheme $scheme;
+    proxy_set_header X-Script-Name /;
+    proxy_set_header Host $http_host;
+
+    proxy_redirect off;
+    proxy_pass http://frontend-app:3000;
+  }
+
+  # Deny .htaccess etc
+  location ~ /\.ht {
+    deny  all;
+  }
+}

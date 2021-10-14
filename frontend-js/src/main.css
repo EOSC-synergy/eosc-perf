@@ -1,0 +1,23 @@
+
+.loading-background {
+    background-color: rgba(52, 58, 64, 0.6);
+    transition: opacity .5s ease-in-out;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loading-background.loading {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.center-contents {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/*
+@media (min-width: 576px) {
+}
+*/

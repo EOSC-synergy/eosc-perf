@@ -1,4 +1,4 @@
-FROM nginx:1.19-alpine
+FROM nginx:1.19-alpine as base
 
 RUN apk add --no-cache apache2-utils curl bash netcat-openbsd openssl \
 &&  mkdir -p /etc/nginx/letsencrypt \
@@ -14,3 +14,10 @@ ENTRYPOINT ["/bin/bash", "/docker-entrypoint.sh"]
 RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx.conf.template /etc/nginx/templates/app.conf.template
 CMD ["nginx", "-g", "daemon off;"]
+
+FROM base as production
+COPY nginx.conf.template /etc/nginx/templates/app.conf.template
+
+FROM base as development
+COPY nginx-dev.conf.template /etc/nginx/templates/app.conf.template
+
