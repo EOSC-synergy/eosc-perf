@@ -10,8 +10,7 @@ services:
       target: ${EOSC_PERF_ENV}
     env_file: .env
     environment:
-      TODO: "fix this env variables on docker-compose"
-      SECRET_KEY_FILE: /run/secrets/cookie_secret
+      COOKIE_KEY_FILE: /run/secrets/cookie_secret
       OIDC_CLIENT_SECRET_FILE: /run/secrets/oidc_secret
     networks:
       - frontend-net
