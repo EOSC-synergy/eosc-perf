@@ -1,20 +1,18 @@
 version: "3.5"
 
 services:
-  frontend:
-    container_name: frontend
+  frontend-auth:
+    container_name: frontend-auth
     restart: unless-stopped
-    image: frontend
+    image: frontend-auth
     build:
-      context: ./service_frontend
+      context: service_frontend_auth
       target: ${EOSC_PERF_ENV}
     env_file: .env
     environment:
       TODO: "fix this env variables on docker-compose"
       SECRET_KEY_FILE: /run/secrets/cookie_secret
       OIDC_CLIENT_SECRET_FILE: /run/secrets/oidc_secret
-    volumes:
-      - ./service_frontend/:/app
     networks:
       - frontend-net
       - backend-net
@@ -22,6 +20,17 @@ services:
     secrets:
       - cookie_secret
       - oidc_secret
+
+  frontend-app:
+    container_name: frontend-app
+    restart: unless-stopped
+    image: frontend-app
+    build:
+      context: frontend-js
+    networks:
+      - frontend-net
+    #volumes:
+    #  - ./frontend-js/:/app
 
   backend_v1:
     container_name: backend_v1
@@ -53,12 +62,16 @@ services:
       MAIL_FROM: ${MAIL_FROM}
       MAIL_SERVER: postfix
       MAIL_PORT: 25
+    command: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 -m flask run --no-debugger --no-reload --host 0.0.0.0 --port 5000"]
     volumes:
       - ./service_backend/:/app
     networks:
       - frontend-net
       - backend-net
       - smtp-net
+    ports:
+      - 5000:5000
+      - 5678:5678
     secrets:
       - cookie_secret
       - oidc_secret
@@ -85,14 +98,15 @@ services:
     image: reverse_proxy
     build:
       context: ./service_rproxy
+      target: development
     depends_on:
-      - frontend
+      - frontend-auth
       - backend_v1
       - certificate
     env_file: .env
     volumes:
-      - ./static:/var/www/web/
-      - ./frontend_client/src:/var/www/web/js/
+      # - ./frontend-js/build/:/var/www/web/
+      #  - ./frontend_client/src:/var/www/web/js/
       - ./service_certificate/conf:/etc/letsencrypt
       - ./service_certificate/www:/var/www/certbot/
     secrets:
@@ -103,6 +117,8 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    environment:
+      BACKEND_URL: /api
 
   certificate:
     container_name: certificate
