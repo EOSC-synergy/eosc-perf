@@ -38,7 +38,7 @@ services:
     image: backend
     build:
       context: ./service_backend
-      target: ${EOSC_PERF_ENV}
+      target: development
       args:
         INSTALL_PYTHON_VERSION: 3.8
     depends_on:
@@ -62,7 +62,6 @@ services:
       MAIL_FROM: ${MAIL_FROM}
       MAIL_SERVER: postfix
       MAIL_PORT: 25
-    command: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 -m flask run --no-debugger --no-reload --host 0.0.0.0 --port 5000"]
     volumes:
       - ./service_backend/:/app
     networks:
@@ -105,8 +104,6 @@ services:
       - certificate
     env_file: .env
     volumes:
-      # - ./frontend-js/build/:/var/www/web/
-      #  - ./frontend_client/src:/var/www/web/js/
       - ./service_certificate/conf:/etc/letsencrypt
       - ./service_certificate/www:/var/www/certbot/
     secrets:

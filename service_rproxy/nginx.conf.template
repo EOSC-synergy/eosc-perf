@@ -61,6 +61,7 @@ server {
   }
 
   location / {
+    try_files $uri /index.html;
   }
 
   # Deny .htaccess etc
