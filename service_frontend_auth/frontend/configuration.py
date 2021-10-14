@@ -60,7 +60,6 @@ class ConfigHandler:
         'oidc_redirect_hostname': 'localhost',
         'admin_entitlement': 'urn:mace:egi.eu:group:mteam.data.kit.edu:role=member',
         'debug': False,
-        'debug_admin_entitlement': 'urn:mace:egi.eu:group:mteam.data.kit.edu:role=member',
     }
 
     def __init__(self):
@@ -86,8 +85,7 @@ class ConfigHandler:
                 'oidc_client_id': _get_var('OIDC_CLIENT_ID'),
                 'oidc_redirect_hostname': _get_var('DOMAIN'),
                 'admin_entitlement': _get_var('ADMIN_ENTITLEMENTS'),
-                'debug': _get_var('EOSC_PERF_DEBUG', bool),
-                'debug_admin_entitlement': _get_var('EOSC_PERF_DEBUG_ADMIN_ENTITLEMENTS'),
+                'debug': _get_var('DEBUG', bool),
             }
 
             for key, value in self.DEFAULTS.items():

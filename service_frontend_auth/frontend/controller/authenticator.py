@@ -110,12 +110,12 @@ class Authenticator(MockAuthenticator):
         flask_app.config["EOSC_PERF_CLIENT_ID"] = self.client_id
         flask_app.config["EOSC_PERF_CLIENT_SECRET"] = self.client_secret
 
+        self.admin_entitlement = configuration.get('admin_entitlement')
+
         if configuration.get('debug'):
-            self.admin_entitlement = configuration.get('debug_admin_entitlement')
             self.conf_url = CONFIGURATION_URL_DEBUG
             self.userinfo_url = USERINFO_URL_DEBUG
         else:
-            self.admin_entitlement = configuration.get('admin_entitlement')
             self.conf_url = CONFIGURATION_URL
             self.userinfo_url = USERINFO_URL
 

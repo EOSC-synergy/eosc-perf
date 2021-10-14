@@ -12,6 +12,9 @@ services:
     environment:
       COOKIE_KEY_FILE: /run/secrets/cookie_secret
       OIDC_CLIENT_SECRET_FILE: /run/secrets/oidc_secret
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
+      DOMAIN: ${DOMAIN}
+      ADMIN_ENTITLEMENTS: ${ADMIN_ENTITLEMENTS}
     networks:
       - frontend-net
       - backend-net
@@ -102,6 +105,9 @@ services:
       - backend_v1
       - certificate
     env_file: .env
+    environment:
+      DOMAIN: ${DOMAIN}
+      BACKEND_URL: /api
     volumes:
       - ./service_certificate/conf:/etc/letsencrypt
       - ./service_certificate/www:/var/www/certbot/
@@ -113,8 +119,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    environment:
-      BACKEND_URL: /api
 
   certificate:
     container_name: certificate
@@ -123,6 +127,8 @@ services:
     build:
       context: ./service_certificate
     env_file: .env
+    environment:
+      NGINX_CREDENTIALS: /run/secrets/nginx_api_credentials
     volumes:
       - ./service_certificate/conf:/etc/letsencrypt
       - ./service_certificate/www:/var/www/certbot
@@ -139,6 +145,8 @@ services:
       - ./service_certificate/conf:/etc/letsencrypt
       - ./logs/postfix:/var/log
     env_file: .env
+    environment:
+      DOMAIN: ${DOMAIN}
     ports:
       - "25:25"
     networks:
