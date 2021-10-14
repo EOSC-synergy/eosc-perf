@@ -48,7 +48,7 @@ services:
       BACKEND_URL: /api/v1
       FLASK_APP: autoapp.py
       FLASK_ENV: ${EOSC_PERF_ENV}
-      GUNICORN_WORKERS: ${BACKEND_WORKERS}
+      GUNICORN_WORKERS: 1
       SECRET_KEY_FILE: /run/secrets/cookie_secret
       OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
       OIDC_CLIENT_SECRET_FILE: /run/secrets/oidc_secret
