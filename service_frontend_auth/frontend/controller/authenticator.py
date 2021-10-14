@@ -142,7 +142,6 @@ class Authenticator(MockAuthenticator):
         Returns:
             bool: True if logged in through EGI Check-In or token not expired.
         """
-        # print(session)
         if not self._token_expired():
             return True
         try:
@@ -152,14 +151,12 @@ class Authenticator(MockAuthenticator):
             session['user'] = user
             session['user']['token'] = token
             session['user']['info'] = userinfo
-            print(token)
         except KeyError:
             return False
         return True
 
     def get_user_info(self) -> Optional[dict]:
         if self.is_authenticated():
-            print("getting data")
             try:
                 token = session['user']['token']['access_token']
                 email = session['user']['info']['email']
@@ -167,9 +164,7 @@ class Authenticator(MockAuthenticator):
                 admin = self.is_admin()
                 return {"token": token, "email": email, "name": name, "admin": admin}
             except KeyError:
-                print("failed")
                 return None
-        print("not authed")
         return None
 
     def is_admin(self) -> bool:
