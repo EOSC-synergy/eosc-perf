@@ -7,7 +7,7 @@ services:
     image: frontend-auth
     build:
       context: service_frontend_auth
-      target: ${EOSC_PERF_ENV}
+      target: development
     env_file: .env
     environment:
       COOKIE_KEY_FILE: /run/secrets/cookie_secret
@@ -46,7 +46,7 @@ services:
     environment:
       BACKEND_URL: /api/v1
       FLASK_APP: autoapp.py
-      FLASK_ENV: ${EOSC_PERF_ENV}
+      FLASK_ENV: development
       GUNICORN_WORKERS: 1
       SECRET_KEY_FILE: /run/secrets/cookie_secret
       OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
