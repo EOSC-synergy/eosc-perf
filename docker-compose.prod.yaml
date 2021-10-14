@@ -2,8 +2,8 @@ version: "3.5"
 
 services:
   frontend-auth:
-    volumes:
-      - ./service_frontend/:/app
+    build:
+      target: production
 
   frontend-app:
     profiles:
@@ -12,6 +12,8 @@ services:
   backend_v1:
     build:
       target: production
+    environment:
+      FLASK_ENV: production
 
   reverse_proxy:
     build:
