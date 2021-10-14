@@ -9,7 +9,7 @@ from ..extensions import auth, db
 from ..schemas import schemas
 
 blp = Blueprint(
-    'flavors', __name__, description='Operations on sites'
+    'flavors', __name__, description='Operations on flavors'
 )
 
 collection_url = ""
@@ -228,7 +228,7 @@ def __site(id):
     If no flavor exists with the indicated id, then 404 NotFound
     exception is raised.
 
-    :param id: The id of the flavor which contains the site
+    :param id: The id of the flavor contained by the site
     :type id: uuid
     :raises NotFound: No flavor with id found
     :return: The database site which contains the described id
