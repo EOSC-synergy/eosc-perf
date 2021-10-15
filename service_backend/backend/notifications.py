@@ -1,6 +1,19 @@
 """Module with notification definitions for users and admins."""
 from flask import current_app
 from flask_mailman import EmailMessage
+from functools import wraps
+from flask import current_app
+
+
+def warning_if_fail(notification):
+    @wraps(notification)
+    def decorated(*args, **kwargs):
+        try:
+            return notification(*args, **kwargs)
+        except Exception as err:
+            current_app.logger.warning(f"{err}")
+            return err
+    return decorated
 
 
 # -------------------------------------------------------------------
@@ -16,6 +29,7 @@ perf-support
 """
 
 
+@warning_if_fail
 def user_welcome(user):
     return EmailMessage(
         subject="Thank you for registering",
@@ -38,6 +52,7 @@ perf-support
 """
 
 
+@warning_if_fail
 def email_updated(user):
     return EmailMessage(
         subject="Your user information was updated",
@@ -63,8 +78,12 @@ perf-support
 """
 
 
+@warning_if_fail
 def resource_submitted(resource):
     resource_type = resource.submit_report.resource_type
+
+    raise Exception("hi")
+
     return EmailMessage(
         subject=f"New {resource_type} resource submitted: {resource.id}",
         body=resource_submitted_body.format(resource=resource),
@@ -90,6 +109,7 @@ perf-support
 """
 
 
+@warning_if_fail
 def resource_approved(resource):
     return EmailMessage(
         subject=f"Resource approved: {resource.id}",
@@ -118,6 +138,7 @@ perf-support
 """
 
 
+@warning_if_fail
 def resource_rejected(resource):
     return EmailMessage(
         subject=f"Resource rejected: {resource.id}",
@@ -148,6 +169,7 @@ perf-support
 """
 
 
+@warning_if_fail
 def result_claimed(result, claim):
     return EmailMessage(
         subject=f"Claim submitted on result: {result.id}",
@@ -175,6 +197,7 @@ perf-support
 """
 
 
+@warning_if_fail
 def result_restored(result):
     return EmailMessage(
         subject=f"Result restored: {result.id}",
