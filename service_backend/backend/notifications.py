@@ -136,13 +136,13 @@ perf-support
 
 
 @warning_if_fail
-def resource_rejected(resource):
+def resource_rejected(uploader, resource):
     return EmailMessage(
         subject=f"Resource rejected: {resource.id}",
         body=resource_rejected_body.format(resource=resource),
         headers={'Resource-ID': f"{resource.id}"},
         from_email=current_app.config['MAIL_FROM'],
-        to=[resource.uploader.email],
+        to=[uploader.email],
         cc=[current_app.config['MAIL_SUPPORT']],
     ).send()
 
