@@ -81,9 +81,6 @@ perf-support
 @warning_if_fail
 def resource_submitted(resource):
     resource_type = resource.submit_report.resource_type
-
-    raise Exception("hi")
-
     return EmailMessage(
         subject=f"New {resource_type} resource submitted: {resource.id}",
         body=resource_submitted_body.format(resource=resource),
