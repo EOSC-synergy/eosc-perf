@@ -317,6 +317,7 @@ def __reject(id):
     :raises NotFound: No benchmark with id found
     """
     benchmark = __get(id)
+    uploader = benchmark.uploader
 
     try:  # Reject benchmark
         benchmark.reject()
@@ -330,4 +331,4 @@ def __reject(id):
         error_msg = f"Conflict deleting {id}"
         abort(409, messages={'error': error_msg})
 
-    notifications.resource_rejected(benchmark)
+    notifications.resource_rejected(uploader, benchmark)
