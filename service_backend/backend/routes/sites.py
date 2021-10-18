@@ -296,6 +296,7 @@ def __reject(id):
     :raises NotFound: No site with id found
     """
     site = __get(id)
+    uploader = site.uploader
 
     try:  # Reject site
         site.reject()
@@ -309,7 +310,7 @@ def __reject(id):
         error_msg = f"Conflict deleting {id}"
         abort(409, messages={'error': error_msg})
 
-    notifications.resource_rejected(site)
+    notifications.resource_rejected(uploader, site)
 
 
 @blp.route(resource_url + '/flavors', methods=['GET'])

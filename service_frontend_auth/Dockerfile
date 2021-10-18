@@ -14,6 +14,8 @@ CMD [ "uwsgi", "--ini", "uwsgi.ini" ]
 # ================================= PRODUCTION =================================
 FROM frontend-base as production
 
+ENV DEBUG=false
+
 # copy the whole webapp
 COPY uwsgi.ini ./
 COPY frontend/ frontend/
@@ -23,6 +25,8 @@ USER uwsgi
 
 # ================================= DEVELOPMENT ================================
 FROM frontend-base AS development
+
+ENV DEBUG=true
 
 COPY requirements-docs.txt requirements-test.txt ./
 RUN pip install --no-cache -r requirements-docs.txt -r requirements-test.txt

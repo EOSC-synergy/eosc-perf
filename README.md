@@ -26,21 +26,13 @@ USERNAME
 PASSWORD
 ```
 
-6. Configure email credentials `email_credentials.ini`:
-
-```
-[Mail]
-Username = YOUR_USERNAME
-Password = YOUR_PASSWORD
-```
-
-7. Set up a `upload_license.txt`: `cp upload_license.txt.placeholder upload_license.txt`, write content
-8. To generate HTTPS certs & nginx configuration: #TODO
+5. Set up a `upload_license.txt`: `cp upload_license.txt.placeholder upload_license.txt`, write content
+6. To generate HTTPS certs & nginx configuration: #TODO
     * If you want to deploy to production: Run `bash init-lentsencrypt.sh`
     * If you want to develop locally (on `localhost`): Run `bash init-dev-certs.sh`
-9. Run `docker-compose build`
-10. Run backend build steps in a venv   
-10. Run `docker-compose up`
+7. Run `docker-compose build`
+8. Run backend build steps in a venv
+9. Run `docker-compose up`
 
 To set up a development environment:
 
@@ -57,3 +49,11 @@ docker-compose up  # Brings up the services (including backend)
 docker-compose run flask db migrate  # Creates a migration for the db from code
 docker-compose run flask db upgrade  # Upgrades/Creates tables on the db (using port)
 ```
+
+To restore a database backup:
+
+1. Uncomment `- ./backups:/backups` in docker-compose.yaml
+1. Reset the database: `bash help_scripts/reset-database.sh`
+1. Start database container: `docker-compose up database`
+1. Connect to database container and run `pg_restore -d ${POSTGRES_DB} -F t <path to your backup tar> -c -U db_user`
+

@@ -7,12 +7,14 @@ services:
     image: frontend-auth
     build:
       context: service_frontend_auth
-      target: ${EOSC_PERF_ENV}
+      target: development
     env_file: .env
     environment:
-      TODO: "fix this env variables on docker-compose"
-      SECRET_KEY_FILE: /run/secrets/cookie_secret
+      COOKIE_KEY_FILE: /run/secrets/cookie_secret
       OIDC_CLIENT_SECRET_FILE: /run/secrets/oidc_secret
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
+      DOMAIN: ${DOMAIN}
+      ADMIN_ENTITLEMENTS: ${ADMIN_ENTITLEMENTS}
     networks:
       - frontend-net
       - backend-net
@@ -38,7 +40,7 @@ services:
     image: backend
     build:
       context: ./service_backend
-      target: ${EOSC_PERF_ENV}
+      target: development
       args:
         INSTALL_PYTHON_VERSION: 3.8
     depends_on:
@@ -47,8 +49,8 @@ services:
     environment:
       BACKEND_URL: /api/v1
       FLASK_APP: autoapp.py
-      FLASK_ENV: ${EOSC_PERF_ENV}
-      GUNICORN_WORKERS: ${BACKEND_WORKERS}
+      FLASK_ENV: development
+      GUNICORN_WORKERS: 1
       SECRET_KEY_FILE: /run/secrets/cookie_secret
       OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
       OIDC_CLIENT_SECRET_FILE: /run/secrets/oidc_secret
@@ -68,6 +70,9 @@ services:
       - frontend-net
       - backend-net
       - smtp-net
+    ports:
+      - 5000:5000
+      - 5678:5678
     secrets:
       - cookie_secret
       - oidc_secret
@@ -83,6 +88,7 @@ services:
       PGDATA: /data
     volumes:
       - postgres:/data
+      #- ./backups:/backups
     networks:
       - backend-net
     ports:
@@ -100,9 +106,10 @@ services:
       - backend_v1
       - certificate
     env_file: .env
+    environment:
+      DOMAIN: ${DOMAIN}
+      BACKEND_URL: /api
     volumes:
-      # - ./frontend-js/build/:/var/www/web/
-      #  - ./frontend_client/src:/var/www/web/js/
       - ./service_certificate/conf:/etc/letsencrypt
       - ./service_certificate/www:/var/www/certbot/
     secrets:
@@ -113,8 +120,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    environment:
-      BACKEND_URL: /api
 
   certificate:
     container_name: certificate
@@ -123,6 +128,8 @@ services:
     build:
       context: ./service_certificate
     env_file: .env
+    environment:
+      NGINX_CREDENTIALS: /run/secrets/nginx_api_credentials
     volumes:
       - ./service_certificate/conf:/etc/letsencrypt
       - ./service_certificate/www:/var/www/certbot
@@ -139,10 +146,29 @@ services:
       - ./service_certificate/conf:/etc/letsencrypt
       - ./logs/postfix:/var/log
     env_file: .env
+    environment:
+      DOMAIN: ${DOMAIN}
     ports:
       - "25:25"
     networks:
       - smtp-net
+
+  database_backup:
+    image: postgres_backup
+    build:
+      context: service_backup
+    volumes:
+      - ./backups:/workdir
+    depends_on:
+      - database
+    networks:
+      - backend-net
+    environment:
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_DATABASE=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
 
 networks:
   frontend-net:

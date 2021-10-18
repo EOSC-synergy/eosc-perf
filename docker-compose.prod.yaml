@@ -1,0 +1,22 @@
+version: "3.5"
+
+services:
+  frontend-auth:
+    build:
+      target: production
+
+  frontend-app:
+    profiles:
+      - disabled
+
+  backend_v1:
+    build:
+      target: production
+    environment:
+      FLASK_ENV: production
+
+  reverse_proxy:
+    build:
+      target: production
+    volumes:
+      - ./frontend-js/build/:/var/www/web/

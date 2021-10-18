@@ -197,6 +197,7 @@ def __reject_claim(id):
         error_msg = f"Claim {id} not found in the database"
         abort(404, messages={'error': error_msg})
 
+    uploader = claim.uploader
     try:  # Reject claim resource
         claim.reject()
     except RuntimeError:
@@ -209,6 +210,6 @@ def __reject_claim(id):
         error_msg = f"Conflict deleting {id}"
         abort(409, messages={'error': error_msg})
 
-    notifications.resource_rejected(claim)
+    notifications.resource_rejected(uploader, claim)
     if not claim.resource.deleted:
         notifications.result_restored(claim.resource)

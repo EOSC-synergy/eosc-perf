@@ -194,6 +194,7 @@ def __reject(id):
     :raises NotFound: No flavor with id found
     """
     flavor = __get(id)
+    uploader = flavor.uploader
 
     try:  # Reject flavor
         flavor.reject()
@@ -207,7 +208,7 @@ def __reject(id):
         error_msg = f"Conflict deleting {id}"
         abort(409, messages={'error': error_msg})
 
-    notifications.resource_rejected(flavor)
+    notifications.resource_rejected(uploader, flavor)
 
 
 @blp.route(resource_url + '/site', methods=["GET"])

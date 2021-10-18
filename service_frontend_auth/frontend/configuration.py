@@ -54,13 +54,12 @@ class ConfigHandler:
     config: dict = {}
 
     DEFAULTS: dict = {
-        'secret_key_file': 'SET_ME',
+        'cookie_key_file': 'SET_ME',
         'oidc_client_secret_file': 'SET_ME',
         'oidc_client_id': 'SET_ME',
         'oidc_redirect_hostname': 'localhost',
-        'admin_entitlements': ['urn:mace:egi.eu:group:mteam.data.kit.edu:role=member'],
+        'admin_entitlement': 'urn:mace:egi.eu:group:mteam.data.kit.edu:role=member',
         'debug': False,
-        'debug_admin_entitlements': ['urn:mace:egi.eu:group:mteam.data.kit.edu:role=member'],
     }
 
     def __init__(self):
@@ -81,13 +80,12 @@ class ConfigHandler:
 
         if load_env:
             env_values: dict = {
-                'secret_key_file': _get_var('COOKIE_KEY_PATH'),
+                'cookie_key_file': _get_var('COOKIE_KEY_FILE'),
                 'oidc_client_secret_file': _get_var('OIDC_CLIENT_SECRET_FILE'),
                 'oidc_client_id': _get_var('OIDC_CLIENT_ID'),
                 'oidc_redirect_hostname': _get_var('DOMAIN'),
-                'admin_entitlements': _get_var('ADMIN_ENTITLEMENTS', list),
-                'debug': _get_var('EOSC_PERF_DEBUG', bool),
-                'debug_admin_entitlements': _get_var('EOSC_PERF_DEBUG_ADMIN_ENTITLEMENTS', list),
+                'admin_entitlement': _get_var('ADMIN_ENTITLEMENTS'),
+                'debug': _get_var('DEBUG', bool),
             }
 
             for key, value in self.DEFAULTS.items():

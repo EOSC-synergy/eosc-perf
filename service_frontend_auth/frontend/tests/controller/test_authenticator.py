@@ -48,7 +48,7 @@ class AuthenticatorTests(unittest.TestCase):
         self.assertRaises(ValueError, Authenticator, self.flask)
 
         configuration.reload()
-        configuration.set('secret_key_file', 'SET_ME')
+        configuration.set('cookie_key_file', 'SET_ME')
         self.assertRaises(ValueError, Authenticator, self.flask)
 
         configuration.reload()
@@ -135,7 +135,7 @@ class AuthenticatorTests(unittest.TestCase):
 
     def _login_admin(self):
         self._login_standard_user()
-        admin_entitlement = configuration.get('debug_admin_entitlements')[:1]
+        admin_entitlement = configuration.get('debug_admin_entitlement')
         admin_entitlement[0] += '#aai.egi.eu'
         session['user']['info']['eduperson_entitlement'] = admin_entitlement
 

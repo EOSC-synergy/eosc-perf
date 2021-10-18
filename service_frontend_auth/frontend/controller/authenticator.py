@@ -67,8 +67,7 @@ class Authenticator(MockAuthenticator):
 
     Attributes:
         oauth (OAuth): The used Flask OAuth registry for oauth clients.
-        admin_entitlements (List[str]): If a user has one entitlement that is included in this list,
-        they have admin rights.
+        admin_entitlement (str): If a user has this entitlement, they have admin rights.
         hostname (str): The hostname used for redirection after authentication.
         client_secret (str): The oauth client secret.
         scope (str): The scope used for registering the oauth client.
@@ -81,7 +80,7 @@ class Authenticator(MockAuthenticator):
             flask_app (Flask): The flask app for which to set up OIDC functionality.
         """
         self.oauth = None
-        self.admin_entitlements = []
+        self.admin_entitlement = None
         self.hostname = None
         self.client_id = None
         self.client_secret = None
@@ -96,7 +95,7 @@ class Authenticator(MockAuthenticator):
         if self.client_secret is None or len(self.client_secret) == 0:
             raise ValueError("Invalid OIDC client secret file given")
 
-        flask_app.secret_key = read_file_content(configuration.get('secret_key_file'))
+        flask_app.secret_key = read_file_content(configuration.get('cookie_key_file'))
         # generate random temporary key if none is given
         if flask_app.secret_key is None or len(flask_app.secret_key) == 0:
             flask_app.secret_key = urandom(16)
@@ -111,12 +110,12 @@ class Authenticator(MockAuthenticator):
         flask_app.config["EOSC_PERF_CLIENT_ID"] = self.client_id
         flask_app.config["EOSC_PERF_CLIENT_SECRET"] = self.client_secret
 
+        self.admin_entitlement = configuration.get('admin_entitlement')
+
         if configuration.get('debug'):
-            self.admin_entitlements = configuration.get('debug_admin_entitlements')
             self.conf_url = CONFIGURATION_URL_DEBUG
             self.userinfo_url = USERINFO_URL_DEBUG
         else:
-            self.admin_entitlements = configuration.get('admin_entitlements')
             self.conf_url = CONFIGURATION_URL
             self.userinfo_url = USERINFO_URL
 
@@ -182,12 +181,11 @@ class Authenticator(MockAuthenticator):
         except KeyError:
             return False
         for entitlement in entitlements:
-            for required in self.admin_entitlements:
-                try:
-                    if self._match_entitlement(required, entitlement):
-                        return True
-                except Aarc_g002_entitlement_Error:
-                    continue
+            try:
+                if self._match_entitlement(self.admin_entitlement, entitlement):
+                    return True
+            except Aarc_g002_entitlement_Error:
+                continue
         return False
 
     def logout(self) -> bool:

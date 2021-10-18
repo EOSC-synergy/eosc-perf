@@ -31,10 +31,8 @@ CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 FROM backend AS development
 
 COPY factories factories
-RUN pip install --no-cache -r requirements/prod.txt
 RUN pip install --no-cache -r requirements/dev.txt
 
 ENV FLASK_ENV="development"
 EXPOSE 5000
-CMD ["flask", "run", "--host=0.0.0.0"]
-
+CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "-m", "flask", "run", "--no-debugger", "--no-reload", "--host", "0.0.0.0", "--port", "5000"]
