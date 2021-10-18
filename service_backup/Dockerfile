@@ -1,5 +1,5 @@
-FROM alpine:3.13.1
-
+#FROM alpine:3.13.1
+FROM postgres:alpine
 
 COPY /backup.sh /
 RUN mkdir /workdir && chmod +x /backup.sh && apk add --no-cache bash

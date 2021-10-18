@@ -88,6 +88,7 @@ services:
       PGDATA: /data
     volumes:
       - postgres:/data
+      #- ./backups:/backups
     networks:
       - backend-net
     ports:
@@ -151,6 +152,23 @@ services:
       - "25:25"
     networks:
       - smtp-net
+
+  database_backup:
+    image: postgres_backup
+    build:
+      context: service_backup
+    volumes:
+      - ./backups:/workdir
+    depends_on:
+      - database
+    networks:
+      - backend-net
+    environment:
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_DATABASE=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
 
 networks:
   frontend-net:

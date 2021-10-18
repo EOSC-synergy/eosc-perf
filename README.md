@@ -49,3 +49,11 @@ docker-compose up  # Brings up the services (including backend)
 docker-compose run flask db migrate  # Creates a migration for the db from code
 docker-compose run flask db upgrade  # Upgrades/Creates tables on the db (using port)
 ```
+
+To restore a database backup:
+
+1. Uncomment `- ./backups:/backups` in docker-compose.yaml
+1. Reset the database: `bash help_scripts/reset-database.sh`
+1. Start database container: `docker-compose up database`
+1. Connect to database container and run `pg_restore -d ${POSTGRES_DB} -F t <path to your backup tar> -c -U db_user`
+

@@ -32,3 +32,5 @@ nginx_api_credentials.txt
 
 # Compiled documentation
 docs/build/
+
+backups/*
