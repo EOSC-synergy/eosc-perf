@@ -26,21 +26,13 @@ USERNAME
 PASSWORD
 ```
 
-6. Configure email credentials `email_credentials.ini`:
-
-```
-[Mail]
-Username = YOUR_USERNAME
-Password = YOUR_PASSWORD
-```
-
-7. Set up a `upload_license.txt`: `cp upload_license.txt.placeholder upload_license.txt`, write content
-8. To generate HTTPS certs & nginx configuration: #TODO
+5. Set up a `upload_license.txt`: `cp upload_license.txt.placeholder upload_license.txt`, write content
+6. To generate HTTPS certs & nginx configuration: #TODO
     * If you want to deploy to production: Run `bash init-lentsencrypt.sh`
     * If you want to develop locally (on `localhost`): Run `bash init-dev-certs.sh`
-9. Run `docker-compose build`
-10. Run backend build steps in a venv   
-10. Run `docker-compose up`
+7. Run `docker-compose build`
+8. Run backend build steps in a venv
+9. Run `docker-compose up`
 
 To set up a development environment:
 
