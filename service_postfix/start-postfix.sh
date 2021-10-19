@@ -67,6 +67,11 @@ postconf -e inet_protocols="all"
 
 postconf -e masquerade_domains="\$myhostname"
 
+# delay emails to the same domain to avoid blocking
+# http://www.postfix.org/postconf.5.html#default_destination_rate_delay
+postconf -e default_destination_rate_delay="2m"
+postconf -e default_destination_concurrency_failed_cohort_limit="10"
+
 # switch chroot off for smtp
 postconf -F smtp/*/chroot=n
 
