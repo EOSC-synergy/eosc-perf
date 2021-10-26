@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { useQuery } from 'react-query';
 import axios from 'axios';
-import { emptyUser, UserContext, UserInfo } from 'userContext';
+import { emptyUser, UserContext, UserInfo } from 'components/userContext';
 import { getHelper } from 'api-helpers';
 
 export function UserContextWrapper(props: { children: ReactNode }) {

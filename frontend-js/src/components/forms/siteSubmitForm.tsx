@@ -1,6 +1,6 @@
 import { Alert, Button, Form } from 'react-bootstrap';
 import React, { ReactElement, ReactNode, useContext, useEffect, useState } from 'react';
-import { UserContext } from 'userContext';
+import { UserContext } from 'components/userContext';
 import { useMutation } from 'react-query';
 import { CreateSite } from 'api';
 import { postHelper } from 'api-helpers';
