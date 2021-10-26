@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
-import './App.css';
 
 // styling
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './main.css';
 
 // app-switching
-import { Redirect } from 'react-router';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import modules from './pages'; // All the parent knows is that it has modules ...
 import Switch from 'react-bootstrap/Switch';
 
 // data fetch
@@ -16,6 +13,16 @@ import { Footer } from 'components/footer';
 import { NavHeader } from 'components/navHeader';
 import { UserContextWrapper } from 'components/userContextWrapper';
 import { QueryClientWrapper } from 'components/queryClientWrapper';
+import BenchmarkSubmissionPage from 'pages/benchmarkSubmission';
+import CodeGuidelinesPage from 'pages/codeGuidelines';
+import ResultSearchPage from 'pages/resultSearch';
+import PrivacyPolicyPage from 'pages/privacyPolicy';
+import RegistrationPage from 'pages/registration';
+import ReportViewPage from 'pages/reportView';
+import ResultSubmissionPage from 'pages/resultSubmission';
+import SiteEditorPage from 'pages/siteEditor';
+import SiteSubmissionPage from 'pages/siteSubmission';
+import TermsOfServicePage from 'pages/termsOfService';
 
 function AppRouter() {
     // state
@@ -24,21 +31,35 @@ function AppRouter() {
     return (
         <Router>
             <NavHeader setCurrentTab={setCurrentTab} />
-            <div className="App">
-                <div className="App-content my-3">
-                    <Switch>
-                        <Route exact path="/">
-                            <Redirect to={modules.ResultSearchModule.path} />
-                        </Route>
-                        {modules.all.map((module) => (
-                            <Route
-                                path={module.path}
-                                component={module.element}
-                                key={module.name}
-                            />
-                        ))}
-                    </Switch>
-                </div>
+            <div className="my-3">
+                <Switch>
+                    <Route exact path="/" component={ResultSearchPage.component} />
+                    <Route
+                        path={BenchmarkSubmissionPage.path}
+                        component={BenchmarkSubmissionPage.component}
+                    />
+                    <Route
+                        path={CodeGuidelinesPage.path}
+                        component={CodeGuidelinesPage.component}
+                    />
+                    <Route path={PrivacyPolicyPage.path} component={PrivacyPolicyPage.component} />
+                    <Route path={RegistrationPage.path} component={RegistrationPage.component} />
+                    <Route path={ReportViewPage.path} component={ReportViewPage.component} />
+                    <Route path={ResultSearchPage.path} component={ResultSearchPage.component} />
+                    <Route
+                        path={ResultSubmissionPage.path}
+                        component={ResultSubmissionPage.component}
+                    />
+                    <Route path={SiteEditorPage.path} component={SiteEditorPage.component} />
+                    <Route
+                        path={SiteSubmissionPage.path}
+                        component={SiteSubmissionPage.component}
+                    />
+                    <Route
+                        path={TermsOfServicePage.path}
+                        component={TermsOfServicePage.component}
+                    />
+                </Switch>
             </div>
             <Footer setCurrentTab={setCurrentTab} />
         </Router>

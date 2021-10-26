@@ -3,7 +3,7 @@ import { useMutation, useQuery } from 'react-query';
 import { getHelper, postHelper } from 'api-helpers';
 import { CreateTag, Tags } from 'api';
 import { Button, Form, InputGroup, ListGroup } from 'react-bootstrap';
-import { UserContext } from 'userContext';
+import { UserContext } from 'components/userContext';
 
 import './zIndexReset.css';
 

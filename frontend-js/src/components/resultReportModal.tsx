@@ -4,7 +4,7 @@ import { Button, Form, Modal } from 'react-bootstrap';
 import Highlight from 'react-highlight';
 import { useMutation } from 'react-query';
 import { postHelper } from 'api-helpers';
-import { UserContext } from 'userContext';
+import { UserContext } from 'components/userContext';
 
 export function ResultReportModal(props: {
     result: Result | null;

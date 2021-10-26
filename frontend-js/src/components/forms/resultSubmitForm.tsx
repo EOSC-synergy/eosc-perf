@@ -3,7 +3,7 @@ import { JsonSelection } from 'components/jsonSelection';
 import { TagSelection } from 'components/tagSelection';
 import { Alert, Button, Col, Form, Row } from 'react-bootstrap';
 import { TermsOfServiceCheck } from 'components/termsOfServiceCheck';
-import { UserContext } from 'userContext';
+import { UserContext } from 'components/userContext';
 import { useMutation } from 'react-query';
 import { Benchmark, Flavor, Result, Site } from 'api';
 import { postHelper } from 'api-helpers';

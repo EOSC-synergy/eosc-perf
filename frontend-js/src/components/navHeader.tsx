@@ -1,9 +1,15 @@
 import React, { useContext } from 'react';
-import { UserContext } from 'userContext';
+import { UserContext } from 'components/userContext';
 import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
-import modules from 'pages';
 import logo from 'assets/images/eosc-perf-logo.4.svg';
 import { ModuleNavLink } from 'components/moduleNavLink';
+import ResultSearchPage from 'pages/resultSearch';
+import CodeGuidelinesPage from 'pages/codeGuidelines';
+import ReportViewPage from 'pages/reportView';
+import SiteSubmissionPage from 'pages/siteSubmission';
+import BenchmarkSubmissionPage from 'pages/benchmarkSubmission';
+import ResultSubmissionPage from 'pages/resultSubmission';
+import SiteEditorPage from 'pages/siteEditor';
 
 export function NavHeader(props: { setCurrentTab: (tab: string) => void }) {
     const auth = useContext(UserContext);
@@ -11,45 +17,45 @@ export function NavHeader(props: { setCurrentTab: (tab: string) => void }) {
     return (
         <header>
             <Navbar bg="dark" expand="lg" variant="dark">
-                <Navbar.Brand href={modules.ResultSearchModule.path} className="ms-2">
+                <Navbar.Brand href={ResultSearchPage.path} className="ms-2">
                     <img src={logo} height="40" alt="EOSC-Performance" />
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
                         <ModuleNavLink
-                            reference={modules.ResultSearchModule}
+                            reference={ResultSearchPage}
                             setCurrentTab={props.setCurrentTab}
                             className="nav-link"
                         />
                         <NavDropdown title="Submit" id="base-submit-dropdown">
                             <ModuleNavLink
-                                reference={modules.ResultSubmissionModule}
+                                reference={ResultSubmissionPage}
                                 setCurrentTab={props.setCurrentTab}
                             />
                             <ModuleNavLink
-                                reference={modules.BenchmarkSubmissionModule}
+                                reference={BenchmarkSubmissionPage}
                                 setCurrentTab={props.setCurrentTab}
                             />
                             <ModuleNavLink
-                                reference={modules.SiteSubmissionModule}
+                                reference={SiteSubmissionPage}
                                 setCurrentTab={props.setCurrentTab}
                             />
                         </NavDropdown>
                         <NavDropdown title="Instructions" id="base-instructions-dropdown">
                             <ModuleNavLink
-                                reference={modules.CodeGuidelinesModule}
+                                reference={CodeGuidelinesPage}
                                 setCurrentTab={props.setCurrentTab}
                             />
                         </NavDropdown>
                         {auth.admin && (
                             <NavDropdown title="Admin" id="base-admin-dropdown">
                                 <ModuleNavLink
-                                    reference={modules.ReportViewModule}
+                                    reference={ReportViewPage}
                                     setCurrentTab={props.setCurrentTab}
                                 />
                                 <ModuleNavLink
-                                    reference={modules.SiteEditorModule}
+                                    reference={SiteEditorPage}
                                     setCurrentTab={props.setCurrentTab}
                                 />
                             </NavDropdown>

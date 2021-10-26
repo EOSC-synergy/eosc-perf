@@ -1,5 +1,5 @@
 import React, { ReactElement, ReactNode, useContext, useEffect, useState } from 'react';
-import { UserContext } from 'userContext';
+import { UserContext } from 'components/userContext';
 import { useMutation } from 'react-query';
 import { CreateFlavor, Site } from 'api';
 import { postHelper } from 'api-helpers';

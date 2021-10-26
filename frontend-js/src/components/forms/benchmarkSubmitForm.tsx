@@ -1,7 +1,6 @@
 import { Alert, Button, Form, InputGroup } from 'react-bootstrap';
-import pages from 'pages';
 import React, { ReactElement, ReactNode, useContext, useEffect, useState } from 'react';
-import { UserContext } from 'userContext';
+import { UserContext } from 'components/userContext';
 import { useMutation } from 'react-query';
 import { CreateBenchmark } from 'api';
 import { postHelper } from 'api-helpers';
@@ -10,6 +9,7 @@ import { NavLink } from 'react-router-dom';
 import { getErrorMessage } from 'components/forms/getErrorMessage';
 import benchmarkJsonSchema from '../benchmarkJsonSchema.json';
 import { RegistrationCheck } from 'components/registrationCheck';
+import CodeGuidelinesPage from 'pages/codeGuidelines';
 
 // TODO: do not show invalid on first load
 //       use default state valid?
@@ -130,9 +130,7 @@ export function BenchmarkSubmitForm(props: {
                 <Form.Group>
                     <Form.Label htmlFor="template">
                         Benchmark result JSON schema (optional,{' '}
-                        <NavLink to={pages.CodeGuidelinesModule.path + '#json'}>
-                            example here
-                        </NavLink>
+                        <NavLink to={CodeGuidelinesPage.path + '#json'}>example here</NavLink>
                         ):
                     </Form.Label>
                     <Form.Control
