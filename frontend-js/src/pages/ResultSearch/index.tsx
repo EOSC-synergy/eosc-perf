@@ -189,6 +189,8 @@ function ResultSearch(): ReactElement {
         };
         refreshLocation(newQueryParams);
         setQueryParams(newQueryParams);
+
+        setSelectedResults([]);
     }
 
     function updateSite(site?: Site) {
