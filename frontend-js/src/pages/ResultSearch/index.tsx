@@ -72,7 +72,7 @@ function ResultSearch(): ReactElement {
 
     const suggestedFields = benchmark ? determineNotableKeys(benchmark) : undefined;
 
-    const [resultsPerPage, setResultsPerPage] = useState(20);
+    const [resultsPerPage, setResultsPerPage_] = useState(20);
     const [page, setPage] = useState(1);
     // json preview modal
     const [showJSONPreview, setShowJSONPreview] = useState(false);
@@ -83,6 +83,11 @@ function ResultSearch(): ReactElement {
 
     const [previewResult, setPreviewResult] = useState<Result | null>(null);
     const [reportedResult, setReportedResult] = useState<Result | null>(null);
+
+    function setResultsPerPage(results: number) {
+        setResultsPerPage_(results);
+        setPage(1);
+    }
 
     // helpers for subelements
     const resultOps = {
