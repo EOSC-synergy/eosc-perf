@@ -23,6 +23,7 @@ import ResultSubmissionPage from 'pages/resultSubmission';
 import SiteEditorPage from 'pages/siteEditor';
 import SiteSubmissionPage from 'pages/siteSubmission';
 import TermsOfServicePage from 'pages/termsOfService';
+import { AnalyticsWrapper } from 'components/analyticsWrapper';
 
 function AppRouter() {
     // state
@@ -68,8 +69,10 @@ function AppRouter() {
 
 export default (
     <QueryClientWrapper>
-        <UserContextWrapper>
-            <AppRouter />
-        </UserContextWrapper>
+        <AnalyticsWrapper>
+            <UserContextWrapper>
+                <AppRouter />
+            </UserContextWrapper>
+        </AnalyticsWrapper>
     </QueryClientWrapper>
 );

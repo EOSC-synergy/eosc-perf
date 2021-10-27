@@ -3,6 +3,8 @@
 To set up:
 
 1. `npm install`
+1. Put your google analytics user id in .env.local:
+   `REACT_APP_GOOGLE_ANALYTICS=<your id>`
 
 To run development server:
 
