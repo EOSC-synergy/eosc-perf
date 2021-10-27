@@ -1,5 +1,6 @@
 import React, { ReactElement, ReactNode } from 'react';
 import { Identifiable } from '../identifiable';
+import 'components/actionable.css';
 
 export function Table<Item extends Identifiable>(props: {
     items?: Item[];
@@ -19,7 +20,9 @@ export function Table<Item extends Identifiable>(props: {
                     props.items.map((item: Item) => (
                         <tr key={item.id}>
                             <td style={{ borderBottom: '1px solid #ddd' }}>
-                                {props.displayItem(item)}
+                                <div onClick={() => props.setItem(item)} className="actionable">
+                                    {props.displayItem(item)}
+                                </div>
                             </td>
                         </tr>
                     ))

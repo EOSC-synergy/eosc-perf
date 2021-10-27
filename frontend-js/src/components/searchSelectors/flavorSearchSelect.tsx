@@ -47,9 +47,7 @@ export function FlavorSearchSelect(props: {
     function displayRow(flavor: Flavor) {
         return (
             <>
-                <a title={flavor.name} href="#" onClick={() => props.setFlavor(flavor)}>
-                    {flavor.name}
-                </a>
+                {flavor.name}
                 <div>
                     {flavor.description}
                     <br />

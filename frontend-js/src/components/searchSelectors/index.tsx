@@ -23,6 +23,8 @@ export function SearchingSelector<Item extends Identifiable>(props: {
 
     const [searchString, setSearchString] = useState<string>('');
 
+    const [show, setShow] = useState<boolean>(false);
+
     const items = useQuery(
         props.queryKeyPrefix + '-page-' + page + '-' + searchString,
         () => {
@@ -35,6 +37,15 @@ export function SearchingSelector<Item extends Identifiable>(props: {
             refetchOnWindowFocus: false, // do not spam queries
         }
     );
+
+    function onToggle(show: boolean) {
+        setShow(show);
+    }
+
+    function setItem(item?: Item) {
+        props.setItem(item);
+        setShow(false);
+    }
 
     const popover = (
         <Popover id="benchmarkSelect" style={{ maxWidth: '576px', width: 'auto' }}>
@@ -59,7 +70,7 @@ export function SearchingSelector<Item extends Identifiable>(props: {
                     {items.isSuccess && (
                         <Table<Item>
                             items={items.data.data.items}
-                            setItem={props.setItem}
+                            setItem={setItem}
                             tableName={props.tableName}
                             displayItem={props.displayRow}
                         />
@@ -75,7 +86,7 @@ export function SearchingSelector<Item extends Identifiable>(props: {
                         <Button
                             className="m-1"
                             variant="secondary"
-                            onClick={() => props.setItem(undefined)}
+                            onClick={() => setItem(undefined)}
                         >
                             Deselect
                         </Button>
@@ -96,7 +107,14 @@ export function SearchingSelector<Item extends Identifiable>(props: {
             <Row>
                 <Col>{props.display(props.item)} </Col>
                 <Col md="auto">
-                    <OverlayTrigger trigger="click" placement="bottom" overlay={popover} rootClose>
+                    <OverlayTrigger
+                        trigger="click"
+                        placement="bottom"
+                        overlay={popover}
+                        rootClose
+                        show={show}
+                        onToggle={onToggle}
+                    >
                         <Button variant="success" size="sm">
                             Select
                         </Button>
