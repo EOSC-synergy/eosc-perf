@@ -187,6 +187,7 @@ function LineChart(props: {
                 <Line
                     data={processInput(props.results)}
                     options={{
+                        animation: false,
                         responsive: true,
                         plugins: {
                             legend: {
