@@ -44,13 +44,7 @@ export function BenchmarkSearchSelect(props: {
     function displayRow(benchmark: Benchmark) {
         return (
             <>
-                <a
-                    href="#"
-                    title={benchmark.docker_image + ':' + benchmark.docker_tag}
-                    onClick={() => props.setBenchmark(benchmark)}
-                >
-                    {benchmark.docker_image + ':' + benchmark.docker_tag}
-                </a>
+                {benchmark.docker_image + ':' + benchmark.docker_tag}
                 <div>
                     {benchmark.description}
                     <br />

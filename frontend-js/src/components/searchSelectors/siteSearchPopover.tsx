@@ -42,9 +42,7 @@ export function SiteSearchPopover(props: {
     function displayRow(site: Site) {
         return (
             <>
-                <a title={site.name} href="#" onClick={() => props.setSite(site)}>
-                    {site.name}
-                </a>
+                {site.name}
                 <div>
                     {site.description}
                     <br />
