@@ -1,5 +1,5 @@
 import { Flavor, Site } from 'api';
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { FlavorSubmissionModal } from 'components/submissionModals/flavorSubmissionModal';
 import { SearchingSelector } from 'components/searchSelectors/index';
 import { useQuery } from 'react-query';
@@ -26,6 +26,8 @@ export function FlavorSearchSelect(props: {
             },
         }
     );
+
+    useEffect(() => props.setFlavor(undefined), [props.site]);
 
     function display(flavor?: Flavor) {
         return (
