@@ -1,7 +1,7 @@
 import { Flavor, Flavors, Site } from 'api';
 import { useQuery } from 'react-query';
 import { getHelper } from 'api-helpers';
-import { Card } from 'react-bootstrap';
+import { Card, Form } from 'react-bootstrap';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { FlavorEditor } from 'components/siteEditor/flavorEditor';
 import React, { ReactElement } from 'react';
@@ -19,13 +19,16 @@ export function FlavorList(props: { site: Site }): ReactElement {
     );
 
     return (
-        <Card style={{ maxHeight: '16rem' }} className="overflow-auto">
-            {isLoading && <LoadingOverlay />}
-            {isSuccess &&
-                data &&
-                data.data.items.map((flavor: Flavor) => (
-                    <FlavorEditor flavor={flavor} key={flavor.id} refetch={refetch} />
-                ))}
-        </Card>
+        <Form.Group className="mb-3">
+            <Form.Label>Flavors:</Form.Label>
+            <Card style={{ maxHeight: '16rem' }} className="overflow-auto">
+                {isLoading && <LoadingOverlay />}
+                {isSuccess &&
+                    data &&
+                    data.data.items.map((flavor: Flavor) => (
+                        <FlavorEditor flavor={flavor} key={flavor.id} refetch={refetch} />
+                    ))}
+            </Card>
+        </Form.Group>
     );
 }

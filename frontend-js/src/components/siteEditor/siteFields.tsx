@@ -4,7 +4,7 @@ import React, { ReactElement, useState } from 'react';
 
 export function SiteId(props: { site: Site }): ReactElement {
     return (
-        <Form.Group>
+        <Form.Group className="mb-3">
             <Form.Label>Identifier:</Form.Label>
             <Form.Control type="text" value={props.site.id} readOnly />
         </Form.Group>
@@ -15,7 +15,7 @@ export function SiteName(props: { site: Site; update: (newName: string) => void 
     const [name, setName] = useState(props.site.name);
 
     return (
-        <Form.Group>
+        <Form.Group className="mb-3">
             <Form.Label>Name:</Form.Label>
             <Form.Control
                 onChange={(e) => {
@@ -38,7 +38,7 @@ export function Description(props: {
     );
 
     return (
-        <Form.Group>
+        <Form.Group className="mb-3">
             <Form.Label>Description:</Form.Label>
             <Form.Control
                 as="textarea"
@@ -56,7 +56,7 @@ export function NetAddress(props: { site: Site; update: (address: string) => voi
     const [address, setAddress] = useState(props.site.address);
 
     return (
-        <Form.Group>
+        <Form.Group className="mb-3">
             <Form.Label>Network address:</Form.Label>
             <Form.Control
                 onChange={(e) => {
