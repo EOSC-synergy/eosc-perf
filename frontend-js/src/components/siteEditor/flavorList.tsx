@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import { getHelper } from 'api-helpers';
 import { Card } from 'react-bootstrap';
 import { LoadingOverlay } from 'components/loadingOverlay';
-import { FlavorEditor } from 'components/flavorEditor';
+import { FlavorEditor } from 'components/siteEditor/flavorEditor';
 import React, { ReactElement } from 'react';
 
 export function FlavorList(props: { site: Site }): ReactElement {

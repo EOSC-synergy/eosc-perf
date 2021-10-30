@@ -4,7 +4,7 @@ import { Site, Sites } from 'api';
 import { useQuery } from 'react-query';
 import { getHelper } from 'api-helpers';
 import { LoadingOverlay } from 'components/loadingOverlay';
-import { SiteEditor } from 'components/siteEditor';
+import { SiteEditor } from 'components/siteEditor/siteEditor';
 import { Page } from 'pages/page';
 
 function SiteSelect(props: { site: Site; setActiveSite: (site: Site) => void }): ReactElement {
