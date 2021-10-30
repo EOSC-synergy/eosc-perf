@@ -3,6 +3,7 @@ import { Benchmark } from 'api';
 import { useQuery } from 'react-query';
 import { getHelper } from 'api-helpers';
 import { LoadingOverlay } from 'components/loadingOverlay';
+import { truthyOrNoneTag } from 'utility';
 
 export function BenchmarkInfo(props: { id: string }): ReactElement {
     const { isLoading, data, isSuccess } = useQuery(
@@ -25,7 +26,7 @@ export function BenchmarkInfo(props: { id: string }): ReactElement {
                     <p>
                         {/* TODO: uploader */}
                         {/*Uploader: {{ uploader_name }} ({{ uploader_mail }})<br /> */}
-                        Description: {data.data.description}
+                        Description: {truthyOrNoneTag(data.data.description)}
                         <br />
                     </p>
                     <a href={dockerHubLink}>{data.data.docker_image}</a>

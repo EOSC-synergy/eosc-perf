@@ -3,6 +3,7 @@ import { Site } from 'api';
 import { useQuery } from 'react-query';
 import { getHelper } from 'api-helpers';
 import { LoadingOverlay } from 'components/loadingOverlay';
+import { truthyOrNoneTag } from 'utility';
 
 export function SiteInfo(props: { id: string }): ReactElement {
     const { isLoading, data, isSuccess } = useQuery(
@@ -24,7 +25,7 @@ export function SiteInfo(props: { id: string }): ReactElement {
                     <br />
                     Address: {data.data.address}
                     <br />
-                    Description: {data.data.description}
+                    Description: {truthyOrNoneTag(data.data.description)}
                     <br />
                     {/* Uploader: {{ uploader_name }} ({{ uploader_mail }})<br/> */}
                     <br />
