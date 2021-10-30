@@ -3,8 +3,8 @@ import { useMutation } from 'react-query';
 import { putHelper } from 'api-helpers';
 import React, { ReactElement, useContext, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import { Description, NetAddress, SiteId, SiteName } from 'components/siteFields';
-import { FlavorList } from 'components/flavorList';
+import { Description, NetAddress, SiteId, SiteName } from 'components/siteEditor/siteFields';
+import { FlavorList } from 'components/siteEditor/flavorList';
 import { UserContext } from 'components/userContext';
 
 export function SiteEditor(props: { site: Site; refetch: () => void }): ReactElement {
