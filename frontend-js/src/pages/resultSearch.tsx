@@ -19,7 +19,7 @@ import { FilterEdit } from 'components/resultSearch/filterEdit';
 import hash from 'object-hash';
 import { Ordered, orderedComparator } from 'components/ordered';
 import { determineNotableKeys } from 'components/resultSearch/jsonSchema';
-import Flex from 'components/Flex';
+import Flex from 'components/flex';
 import qs from 'qs';
 import { SiteSearchPopover } from 'components/searchSelectors/siteSearchPopover';
 import { BenchmarkSearchSelect } from 'components/searchSelectors/benchmarkSearchSelect';
