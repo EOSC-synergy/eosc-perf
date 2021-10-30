@@ -5,6 +5,7 @@ import { getHelper } from 'api-helpers';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { Button } from 'react-bootstrap';
 import { JsonPreviewModal } from 'components/jsonPreviewModal';
+import { truthyOrNoneTag } from 'utility';
 
 export function ResultInfo(props: { id: string }): ReactElement {
     const { isLoading, data, isSuccess } = useQuery(
@@ -33,10 +34,7 @@ export function ResultInfo(props: { id: string }): ReactElement {
                     Benchmark: {data.data.benchmark.docker_image + data.data.benchmark.docker_tag}
                     <br />
                     {/* Uploader: {{ uploader_name }} ({{ uploader_mail }})<br /> */}
-                    Tags:{' '}
-                    {data.data.tags.map((tag) => tag.name).join(', ') || (
-                        <div className="text-muted d-inline">None</div>
-                    )}
+                    Tags: {truthyOrNoneTag(data.data.tags.map((tag) => tag.name).join(', '))}
                     <br />
                     <Button onClick={() => setShowPreview(true)} size="sm">
                         View JSON

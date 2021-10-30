@@ -4,6 +4,7 @@ import { useQuery } from 'react-query';
 import { getHelper } from 'api-helpers';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { SiteInfo } from 'components/reportView/siteInfo';
+import { truthyOrNoneTag } from 'utility';
 
 export function FlavorInfo(props: { id: string }): ReactElement {
     const flavor = useQuery(
@@ -34,7 +35,7 @@ export function FlavorInfo(props: { id: string }): ReactElement {
                 <>
                     New flavor: {flavor.data.data.name}
                     <br />
-                    Description: {flavor.data.data.description}
+                    Description: {truthyOrNoneTag(flavor.data.data.description)}
                     <br />
                     Site:
                     {site.isSuccess && site.data && <SiteInfo id={site.data.data.id} />}
