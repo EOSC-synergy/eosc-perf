@@ -5,6 +5,7 @@ import { Card, Form } from 'react-bootstrap';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { FlavorEditor } from 'components/siteEditor/flavorEditor';
 import React, { ReactElement } from 'react';
+import { NewFlavor } from 'components/siteEditor/newFlavor';
 
 export function FlavorList(props: { site: Site }): ReactElement {
     const { isLoading, data, isSuccess, refetch } = useQuery(
@@ -28,6 +29,7 @@ export function FlavorList(props: { site: Site }): ReactElement {
                     data.data.items.map((flavor: Flavor) => (
                         <FlavorEditor flavor={flavor} key={flavor.id} refetch={refetch} />
                     ))}
+                <NewFlavor site={props.site} />
             </Card>
         </Form.Group>
     );
