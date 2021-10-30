@@ -21,14 +21,13 @@ export function SiteInfo(props: { id: string }): ReactElement {
             {isLoading && <LoadingOverlay />}
             {isSuccess && data && (
                 <>
-                    New site: {data.data.name}
+                    Name: {data.data.name}
                     <br />
                     Address: {data.data.address}
                     <br />
                     Description: {truthyOrNoneTag(data.data.description)}
                     <br />
                     {/* Uploader: {{ uploader_name }} ({{ uploader_mail }})<br/> */}
-                    <br />
                 </>
             )}
         </>

@@ -34,7 +34,7 @@ export function ClaimInteraction(props: {
     );
 
     return (
-        <>
+        <div className="mt-2">
             <Button
                 variant="danger"
                 onClick={() => {
@@ -43,6 +43,6 @@ export function ClaimInteraction(props: {
             >
                 {props.deleteText || 'Delete'}
             </Button>
-        </>
+        </div>
     );
 }
