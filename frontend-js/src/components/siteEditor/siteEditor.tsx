@@ -30,21 +30,13 @@ export function SiteEditor(props: { site: Site; refetch: () => void }): ReactEle
 
     return (
         <Form>
-            <Form.Group className="mb-3">
-                <SiteId site={props.site} />
-            </Form.Group>
-            <Form.Group className="mb-3">
-                <SiteName site={props.site} update={(name: string) => setName(name)} />
-            </Form.Group>
-            <Form.Group className="mb-3">
-                <Description
-                    site={props.site}
-                    update={(description: string) => setDescription(description)}
-                />
-            </Form.Group>
-            <Form.Group className="mb-3">
-                <NetAddress site={props.site} update={(address: string) => setAddress(address)} />
-            </Form.Group>
+            <SiteId site={props.site} />
+            <SiteName site={props.site} update={(name: string) => setName(name)} />
+            <Description
+                site={props.site}
+                update={(description: string) => setDescription(description)}
+            />
+            <NetAddress site={props.site} update={(address: string) => setAddress(address)} />
             <Form.Group className="mb-3">
                 <Button
                     variant="success"
