@@ -5,7 +5,7 @@ import { getHelper } from 'api-helpers';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { Button } from 'react-bootstrap';
 import { JsonPreviewModal } from 'components/jsonPreviewModal';
-import { truthyOrNoneTag } from 'utility';
+import { benchmarkLinkDisplay, truthyOrNoneTag } from 'utility';
 
 export function ResultInfo(props: { id: string }): ReactElement {
     const { isLoading, data, isSuccess } = useQuery(
@@ -24,21 +24,20 @@ export function ResultInfo(props: { id: string }): ReactElement {
         <>
             {isLoading && <LoadingOverlay />}
             {isSuccess && data && (
-                <p>
+                <>
                     {/* TODO: *reporter* info */}
                     {/* Reported by: {{ reporter_name }} ({{ reporter_mail }})<br /> */}
-                    {/*Message: {props.claim.message}*/}
-                    <br />
+                    {/* Uploader: {{ uploader_name }} ({{ uploader_mail }})<br /> */}
                     Site: {data.data.site.name}
                     <br />
-                    Benchmark: {data.data.benchmark.docker_image + data.data.benchmark.docker_tag}
+                    Benchmark: {benchmarkLinkDisplay(data.data.benchmark)}
                     <br />
-                    {/* Uploader: {{ uploader_name }} ({{ uploader_mail }})<br /> */}
                     Tags: {truthyOrNoneTag(data.data.tags.map((tag) => tag.name).join(', '))}
                     <br />
-                    <Button onClick={() => setShowPreview(true)} size="sm">
+                    <Button onClick={() => setShowPreview(true)} size="sm" className="mb-1">
                         View JSON
                     </Button>
+                    <br />
                     {showPreview && (
                         <JsonPreviewModal
                             result={data.data}
@@ -46,7 +45,7 @@ export function ResultInfo(props: { id: string }): ReactElement {
                             closeModal={() => setShowPreview(false)}
                         />
                     )}
-                </p>
+                </>
             )}
         </>
     );

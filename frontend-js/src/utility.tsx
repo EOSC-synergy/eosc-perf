@@ -1,4 +1,5 @@
 import React from 'react';
+import { Benchmark } from 'api';
 
 /**
  * If a specified string is falsy, replace it with a muted gray "None" text or similar
@@ -15,4 +16,22 @@ export function truthyOrNoneTag(value: string | undefined | null, altText = 'Non
         );
     }
     return value;
+}
+
+/**
+ * Display a label for a benchmark with image and tag, with a link to the docker hub
+ * @param {Benchmark} benchmark Benchmark to display label for
+ * @returns {JSX.Element} Label
+ */
+export function benchmarkLinkDisplay(benchmark: Benchmark) {
+    const dockerHubLink = 'https://hub.docker.com/r/' + benchmark.docker_image;
+
+    return (
+        <>
+            <a href={dockerHubLink} style={{ display: 'inline' }}>
+                {benchmark.docker_image}
+            </a>
+            {':' + benchmark.docker_tag}
+        </>
+    );
 }

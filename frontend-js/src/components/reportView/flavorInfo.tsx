@@ -33,13 +33,14 @@ export function FlavorInfo(props: { id: string }): ReactElement {
             {flavor.isLoading && <LoadingOverlay />}
             {flavor.isSuccess && flavor.data && (
                 <>
-                    New flavor: {flavor.data.data.name}
+                    Name: {flavor.data.data.name}
                     <br />
                     Description: {truthyOrNoneTag(flavor.data.data.description)}
                     <br />
+                    <hr />
                     Site:
-                    {site.isSuccess && site.data && <SiteInfo id={site.data.data.id} />}
                     <br />
+                    {site.isSuccess && site.data && <SiteInfo id={site.data.data.id} />}
                 </>
             )}
         </>

@@ -5,6 +5,7 @@ import { Claim } from 'api';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { ResultInfo } from 'components/reportView/resultInfo';
 import { UserContext } from 'components/userContext';
+import { truthyOrNoneTag } from 'utility';
 
 export function ClaimInfo(props: { id: string }): ReactElement {
     const auth = useContext(UserContext);
@@ -24,7 +25,7 @@ export function ClaimInfo(props: { id: string }): ReactElement {
             {claim.isLoading && <LoadingOverlay />}
             {claim.isSuccess && claim.data && (
                 <>
-                    Message: {claim.data.data.message} <br />
+                    Message: {truthyOrNoneTag(claim.data.data.message)} <br />
                     {claim.data.data.resource_type === 'result' && (
                         <ResultInfo id={claim.data.data.resource_id} />
                     )}

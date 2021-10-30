@@ -53,12 +53,13 @@ export function SubmitInteraction(props: {
     );
 
     return (
-        <>
+        <div className="mt-2">
             <Button
                 variant="success"
                 onClick={() => {
                     approve();
                 }}
+                className="me-1"
             >
                 {props.approveText || 'Approve'}
             </Button>
@@ -70,6 +71,6 @@ export function SubmitInteraction(props: {
             >
                 {props.rejectText || 'Reject'}
             </Button>
-        </>
+        </div>
     );
 }

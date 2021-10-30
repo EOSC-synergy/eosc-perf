@@ -3,7 +3,7 @@ import { Benchmark } from 'api';
 import { useQuery } from 'react-query';
 import { getHelper } from 'api-helpers';
 import { LoadingOverlay } from 'components/loadingOverlay';
-import { truthyOrNoneTag } from 'utility';
+import { benchmarkLinkDisplay, truthyOrNoneTag } from 'utility';
 
 export function BenchmarkInfo(props: { id: string }): ReactElement {
     const { isLoading, data, isSuccess } = useQuery(
@@ -16,20 +16,16 @@ export function BenchmarkInfo(props: { id: string }): ReactElement {
         }
     );
 
-    const dockerHubLink = 'https://hub.docker.com/r/' + data?.data.docker_image;
-
     return (
         <>
             {isLoading && <LoadingOverlay />}
             {isSuccess && data && (
                 <>
-                    <p>
-                        {/* TODO: uploader */}
-                        {/*Uploader: {{ uploader_name }} ({{ uploader_mail }})<br /> */}
-                        Description: {truthyOrNoneTag(data.data.description)}
-                        <br />
-                    </p>
-                    <a href={dockerHubLink}>{data.data.docker_image}</a>
+                    {/* TODO: uploader */}
+                    {/*Uploader: {{ uploader_name }} ({{ uploader_mail }})<br /> */}
+                    Image: {benchmarkLinkDisplay(data.data)}
+                    <br />
+                    Description: {truthyOrNoneTag(data.data.description)}
                     <br />
                     {/* TODO: markdown parser */}
                     {/*<div id="docker_desc" className="jumbotron" style="overflow:scroll;height:60%">
