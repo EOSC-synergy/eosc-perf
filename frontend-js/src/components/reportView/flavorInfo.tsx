@@ -17,12 +17,13 @@ export function FlavorInfo(props: { id: string }): ReactElement {
     );
 
     const site = useQuery(
-        'site-' + flavor.data?.data.id,
+        'site-for-' + props.id,
         () => {
-            return getHelper<Flavor>('/sites/' + flavor.data?.data.id);
+            return getHelper<Flavor>('/flavors/' + props.id + '/site');
         },
         {
-            refetchOnWindowFocus: false, // do not spam queries
+            refetchOnWindowFocus: false, // do not spam queries,
+            enabled: flavor.isSuccess,
         }
     );
 
