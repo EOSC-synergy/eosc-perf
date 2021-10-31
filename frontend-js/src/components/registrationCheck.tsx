@@ -9,7 +9,7 @@ export function RegistrationCheck(): ReactElement {
 
     return (
         <>
-            {!auth.registered && (
+            {auth.token && !auth.registered && (
                 <Alert variant="warning">
                     You must register before submitting data to the services on this website! Have a
                     look at the <NavLink to={RegistrationPage.path}>registration page</NavLink>.
