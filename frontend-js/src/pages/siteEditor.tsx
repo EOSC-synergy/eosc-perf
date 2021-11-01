@@ -21,7 +21,7 @@ function SiteSelect(props: { site: Site; setActiveSite: (site: Site) => void }):
 }
 
 function SitesEditor(): ReactElement {
-    const { isLoading, data, isSuccess, refetch } = useQuery(
+    const sites = useQuery(
         'sites',
         () => {
             return getHelper<Sites>('/sites');
@@ -40,11 +40,14 @@ function SitesEditor(): ReactElement {
             <Row>
                 <Col>
                     <ListGroup>
-                        {isLoading && <LoadingOverlay />}
-                        {isSuccess && data && data.data.items.length === 0 && 'No sites found!'}
-                        {isSuccess &&
-                            data &&
-                            data.data.items.map((site: Site) => (
+                        {sites.isLoading && <LoadingOverlay />}
+                        {sites.isSuccess &&
+                            sites.data &&
+                            sites.data.data.items.length === 0 &&
+                            'No sites found!'}
+                        {sites.isSuccess &&
+                            sites.data &&
+                            sites.data.data.items.map((site: Site) => (
                                 <SiteSelect
                                     site={site}
                                     setActiveSite={setActiveSite}
@@ -55,7 +58,7 @@ function SitesEditor(): ReactElement {
                 </Col>
                 <Col>
                     {activeSite != null && (
-                        <SiteEditor key={activeSite.id} site={activeSite} refetch={refetch} />
+                        <SiteEditor key={activeSite.id} site={activeSite} refetch={sites.refetch} />
                     )}
                 </Col>
             </Row>
