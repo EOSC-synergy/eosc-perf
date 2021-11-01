@@ -19,22 +19,22 @@ function CodeGuidelines(): ReactElement {
                 invalid JSON files from being uploaded. Below is a example JSON schema, which is
                 containing the minimum set of required output parameters.
             </p>
-            <p>
+            <p style={{ marginBottom: '0em' }}>
                 You may learn more about writing <a href="https://json-schema.org/">JSON Schema</a>{' '}
                 templates at:
-                <ul>
-                    <li>
-                        <a href="https://json-schema.org/learn/getting-started-step-by-step">
-                            https://json-schema.org/learn/getting-started-step-by-step
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://json-schema.org/understanding-json-schema/basics.html">
-                            https://json-schema.org/understanding-json-schema/basics.html
-                        </a>
-                    </li>
-                </ul>
             </p>
+            <ul>
+                <li>
+                    <a href="https://json-schema.org/learn/getting-started-step-by-step">
+                        https://json-schema.org/learn/getting-started-step-by-step
+                    </a>
+                </li>
+                <li>
+                    <a href="https://json-schema.org/understanding-json-schema/basics.html">
+                        https://json-schema.org/understanding-json-schema/basics.html
+                    </a>
+                </li>
+            </ul>
             <p>
                 To have a field show up as a suggested field to the user for filtering, add{' '}
                 <code>&quot;suggestToUser&quot;: true</code> to the property in JSON Schema, like in
