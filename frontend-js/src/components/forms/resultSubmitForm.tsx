@@ -1,11 +1,10 @@
 import React, { ReactElement, ReactNode, useContext, useState } from 'react';
 import { JsonSelection } from 'components/jsonSelection';
-import { TagSelection } from 'components/tagSelection';
 import { Alert, Button, Col, Form, Row } from 'react-bootstrap';
 import { TermsOfServiceCheck } from 'components/termsOfServiceCheck';
 import { UserContext } from 'components/userContext';
 import { useMutation } from 'react-query';
-import { Benchmark, Flavor, Result, Site } from 'api';
+import { Benchmark, Flavor, Result, Site, Tag } from 'api';
 import { postHelper } from 'api-helpers';
 import { AxiosError } from 'axios';
 import { SiteSearchPopover } from 'components/searchSelectors/siteSearchPopover';
@@ -16,6 +15,7 @@ import { getErrorMessage } from 'components/forms/getErrorMessage';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { RegistrationCheck } from 'components/registrationCheck';
+import { TagSelector } from 'components/tagSelector';
 
 export function ResultSubmitForm(props: {
     onSuccess: () => void;
@@ -26,7 +26,7 @@ export function ResultSubmitForm(props: {
     const [benchmark, setBenchmark] = useState<Benchmark | undefined>(undefined);
     const [site, setSite] = useState<Site | undefined>(undefined);
     const [flavor, setFlavor] = useState<Flavor | undefined>(undefined);
-    const [tags, setTags] = useState<string[]>([]);
+    const [tags, setTags] = useState<Tag[]>([]);
     const [termsOfServiceAccepted, setTermsOfServiceAccepted] = useState(false);
     const [fileContents, setFileContents] = useState<string | undefined>(undefined);
 
@@ -41,7 +41,7 @@ export function ResultSubmitForm(props: {
                 benchmark_id: benchmark?.id,
                 //site_id: site?.id,
                 flavor_id: flavor?.id,
-                tags_ids: tags,
+                tags_ids: tags.map((tag) => tag.id),
             }),
         {
             onSuccess: () => {
@@ -63,17 +63,6 @@ export function ResultSubmitForm(props: {
             fileContents &&
             auth.token !== undefined
         );
-    }
-
-    function addTag(tag: string) {
-        if (tags.includes(tag)) {
-            return;
-        }
-        setTags([...tags, ...[tag]]);
-    }
-
-    function removeTag(tag: string) {
-        setTags(tags.filter((v) => v !== tag));
     }
 
     function submit() {
@@ -126,9 +115,9 @@ export function ResultSubmitForm(props: {
                     {/* dateFormat="Pp"*/}
                 </Form.Group>
 
-                <Form.Group className="mb-1">
-                    <TagSelection tags={tags} addTag={addTag} removeTag={removeTag} />
-                </Form.Group>
+                <div className="mb-1">
+                    <TagSelector selected={tags} setSelected={setTags} />
+                </div>
 
                 <Row className="align-items-center">
                     <Col>
