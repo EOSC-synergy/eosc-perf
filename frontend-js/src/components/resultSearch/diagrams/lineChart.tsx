@@ -5,6 +5,7 @@ import { Line } from 'react-chartjs-2';
 import { fetchSubkey, getSubkeyName } from 'components/resultSearch/jsonKeyHelpers';
 import { Ordered } from 'components/ordered';
 import { InputWithSuggestions } from 'components/inputWithSuggestions';
+import { ChartData, ChartDataset, ScatterDataPoint, TooltipItem } from 'chart.js';
 
 enum Mode {
     Simple,
@@ -69,7 +70,9 @@ function LineChart(props: {
 
     const properties = analyzeData(props.results);
 
-    function processInput(results: Ordered<Result>[]) {
+    function processInput(
+        results: Ordered<Result>[]
+    ): ChartData<'line', (number | ScatterDataPoint | null)[], unknown> {
         const labels = []; // labels below graph
         const dataPoints = [];
 
@@ -93,7 +96,7 @@ function LineChart(props: {
                 labelSet.add(x);
             }
 
-            const data: Record<string, unknown>[] = [];
+            const data: ChartDataset<'line'>[] = [];
             let colorIndex = 0;
             datasets.forEach(function (dataMeta, site, _) {
                 data.push({
@@ -115,8 +118,8 @@ function LineChart(props: {
 
         // default behaviour
         for (const result of results) {
-            const x = fetchSubkey(result.json, xAxis) as number | string;
-            const y = fetchSubkey(result.json, yAxis) as number | string;
+            const x = fetchSubkey(result.json, xAxis) as number;
+            const y = fetchSubkey(result.json, yAxis) as number;
             if (x === undefined || y === undefined) {
                 continue;
             }
@@ -124,7 +127,7 @@ function LineChart(props: {
             if (!properties.sameSite) {
                 label += ' (' + result.site.name + ')';
             }
-            dataPoints.push({ x: x, y });
+            dataPoints.push({ x, y });
             labels.push(label);
         }
 
@@ -197,6 +200,13 @@ function LineChart(props: {
                                 display: true,
                                 text: 'Line Graph',
                             },
+                            tooltip: {
+                                callbacks: {
+                                    title: function (tooltipItem: TooltipItem<'line'>[]) {
+                                        return tooltipItem[0].label;
+                                    },
+                                },
+                            },
                         },
                         scales: {
                             x: {
@@ -217,22 +227,6 @@ function LineChart(props: {
                         elements: {
                             line: {
                                 tension: 0,
-                            },
-                        },
-                        tooltips: {
-                            callbacks: {
-                                title: function (
-                                    tooltipItem: {
-                                        label: string;
-                                        xLabel: string;
-                                        yLabel: string;
-                                    }[],
-                                    _: unknown
-                                ) {
-                                    return (
-                                        tooltipItem[0].yLabel + ' (' + tooltipItem[0].label + ')'
-                                    );
-                                },
                             },
                         },
                     }}
