@@ -8,7 +8,7 @@ import React, { ReactElement } from 'react';
 import { NewFlavor } from 'components/siteEditor/newFlavor';
 
 export function FlavorList(props: { site: Site }): ReactElement {
-    const { isLoading, data, isSuccess, refetch } = useQuery(
+    const flavors = useQuery(
         ['flavors', props.site.id],
         () => {
             return getHelper<Flavors>('/sites/' + props.site.id + '/flavors');
@@ -23,11 +23,11 @@ export function FlavorList(props: { site: Site }): ReactElement {
         <Form.Group className="mb-3">
             <Form.Label>Flavors:</Form.Label>
             <Card style={{ maxHeight: '16rem' }} className="overflow-auto">
-                {isLoading && <LoadingOverlay />}
-                {isSuccess &&
-                    data &&
-                    data.data.items.map((flavor: Flavor) => (
-                        <FlavorEditor flavor={flavor} key={flavor.id} refetch={refetch} />
+                {flavors.isLoading && <LoadingOverlay />}
+                {flavors.isSuccess &&
+                    flavors.data &&
+                    flavors.data.data.items.map((flavor: Flavor) => (
+                        <FlavorEditor flavor={flavor} key={flavor.id} refetch={flavors.refetch} />
                     ))}
                 <NewFlavor site={props.site} />
             </Card>

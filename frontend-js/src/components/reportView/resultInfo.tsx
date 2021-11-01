@@ -8,7 +8,7 @@ import { JsonPreviewModal } from 'components/jsonPreviewModal';
 import { benchmarkLinkDisplay, truthyOrNoneTag } from 'utility';
 
 export function ResultInfo(props: { id: string }): ReactElement {
-    const { isLoading, data, isSuccess } = useQuery(
+    const result = useQuery(
         ['result', props.id],
         () => {
             return getHelper<Result>('/results/' + props.id);
@@ -22,17 +22,17 @@ export function ResultInfo(props: { id: string }): ReactElement {
 
     return (
         <>
-            {isLoading && <LoadingOverlay />}
-            {isSuccess && data && (
+            {result.isLoading && <LoadingOverlay />}
+            {result.isSuccess && result.data && (
                 <>
                     {/* TODO: *reporter* info */}
                     {/* Reported by: {{ reporter_name }} ({{ reporter_mail }})<br /> */}
                     {/* Uploader: {{ uploader_name }} ({{ uploader_mail }})<br /> */}
-                    Site: {data.data.site.name}
+                    Site: {result.data.data.site.name}
                     <br />
-                    Benchmark: {benchmarkLinkDisplay(data.data.benchmark)}
+                    Benchmark: {benchmarkLinkDisplay(result.data.data.benchmark)}
                     <br />
-                    Tags: {truthyOrNoneTag(data.data.tags.map((tag) => tag.name).join(', '))}
+                    Tags: {truthyOrNoneTag(result.data.data.tags.map((tag) => tag.name).join(', '))}
                     <br />
                     <Button onClick={() => setShowPreview(true)} size="sm" className="mb-1">
                         View JSON
@@ -40,7 +40,7 @@ export function ResultInfo(props: { id: string }): ReactElement {
                     <br />
                     {showPreview && (
                         <JsonPreviewModal
-                            result={data.data}
+                            result={result.data.data}
                             show={showPreview}
                             closeModal={() => setShowPreview(false)}
                         />

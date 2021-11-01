@@ -6,7 +6,7 @@ import { LoadingOverlay } from 'components/loadingOverlay';
 import { benchmarkLinkDisplay, truthyOrNoneTag } from 'utility';
 
 export function BenchmarkInfo(props: { id: string }): ReactElement {
-    const { isLoading, data, isSuccess } = useQuery(
+    const benchmark = useQuery(
         ['benchmark', props.id],
         () => {
             return getHelper<Benchmark>('/benchmarks/' + props.id);
@@ -18,14 +18,14 @@ export function BenchmarkInfo(props: { id: string }): ReactElement {
 
     return (
         <>
-            {isLoading && <LoadingOverlay />}
-            {isSuccess && data && (
+            {benchmark.isLoading && <LoadingOverlay />}
+            {benchmark.isSuccess && benchmark.data && (
                 <>
                     {/* TODO: uploader */}
                     {/*Uploader: {{ uploader_name }} ({{ uploader_mail }})<br /> */}
-                    Image: {benchmarkLinkDisplay(data.data)}
+                    Image: {benchmarkLinkDisplay(benchmark.data.data)}
                     <br />
-                    Description: {truthyOrNoneTag(data.data.description)}
+                    Description: {truthyOrNoneTag(benchmark.data.data.description)}
                     <br />
                     {/* TODO: markdown parser */}
                     {/*<div id="docker_desc" className="jumbotron" style="overflow:scroll;height:60%">
