@@ -9,7 +9,7 @@ import { NewFlavor } from 'components/siteEditor/newFlavor';
 
 export function FlavorList(props: { site: Site }): ReactElement {
     const { isLoading, data, isSuccess, refetch } = useQuery(
-        'flavors-' + props.site.id,
+        ['flavors', props.site.id],
         () => {
             return getHelper<Flavors>('/sites/' + props.site.id + '/flavors');
         },

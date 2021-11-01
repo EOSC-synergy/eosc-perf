@@ -7,7 +7,7 @@ import { truthyOrNoneTag } from 'utility';
 
 export function SiteInfo(props: { id: string }): ReactElement {
     const { isLoading, data, isSuccess } = useQuery(
-        'site-' + props.id,
+        ['site', props.id],
         () => {
             return getHelper<Site>('/sites/' + props.id);
         },

@@ -8,7 +8,7 @@ import { truthyOrNoneTag } from 'utility';
 
 export function FlavorInfo(props: { id: string }): ReactElement {
     const flavor = useQuery(
-        'flavor-' + props.id,
+        ['flavor', props.id],
         () => {
             return getHelper<Flavor>('/flavors/' + props.id);
         },
@@ -18,7 +18,7 @@ export function FlavorInfo(props: { id: string }): ReactElement {
     );
 
     const site = useQuery(
-        'site-for-' + props.id,
+        ['site-for', props.id],
         () => {
             return getHelper<Flavor>('/flavors/' + props.id + '/site');
         },

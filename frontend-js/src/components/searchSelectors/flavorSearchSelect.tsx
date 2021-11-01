@@ -14,7 +14,7 @@ export function FlavorSearchSelect(props: {
     // TODO: reset value if site is undefined?
 
     useQuery(
-        'initial-flavor-' + props.initialFlavorId,
+        ['initial-flavor', props.initialFlavorId],
         () => {
             return getHelper<Flavor>('/flavors/' + props.initialFlavorId);
         },

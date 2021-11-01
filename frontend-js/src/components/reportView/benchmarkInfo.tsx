@@ -7,7 +7,7 @@ import { benchmarkLinkDisplay, truthyOrNoneTag } from 'utility';
 
 export function BenchmarkInfo(props: { id: string }): ReactElement {
     const { isLoading, data, isSuccess } = useQuery(
-        'benchmark-' + props.id,
+        ['benchmark', props.id],
         () => {
             return getHelper<Benchmark>('/benchmarks/' + props.id);
         },
