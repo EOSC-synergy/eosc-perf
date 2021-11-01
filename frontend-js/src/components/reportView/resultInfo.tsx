@@ -9,7 +9,7 @@ import { benchmarkLinkDisplay, truthyOrNoneTag } from 'utility';
 
 export function ResultInfo(props: { id: string }): ReactElement {
     const { isLoading, data, isSuccess } = useQuery(
-        'result-' + props.id,
+        ['result', props.id],
         () => {
             return getHelper<Result>('/results/' + props.id);
         },

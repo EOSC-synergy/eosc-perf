@@ -11,7 +11,7 @@ export function SiteSearchPopover(props: {
     initialSiteId?: string;
 }): ReactElement {
     useQuery(
-        'initial-site-' + props.initialSiteId,
+        ['initial-site', props.initialSiteId],
         () => {
             return getHelper<Site>('/sites/' + props.initialSiteId);
         },

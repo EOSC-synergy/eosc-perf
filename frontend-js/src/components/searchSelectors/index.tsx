@@ -26,7 +26,7 @@ export function SearchingSelector<Item extends Identifiable>(props: {
     const [show, setShow] = useState<boolean>(false);
 
     const items = useQuery(
-        props.queryKeyPrefix + '-page-' + page + '-' + searchString,
+        [props.queryKeyPrefix, page, searchString],
         () => {
             return getHelper<Paginated<Item>>(props.endpoint, undefined, {
                 // split here so we can add searchString to key to fetch automatically

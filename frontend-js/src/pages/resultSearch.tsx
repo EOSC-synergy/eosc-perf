@@ -16,7 +16,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { Filter } from 'components/resultSearch/filter';
 import { FilterEdit } from 'components/resultSearch/filterEdit';
 
-import hash from 'object-hash';
 import { Ordered, orderedComparator } from 'components/ordered';
 import { determineNotableKeys } from 'components/resultSearch/jsonSchema';
 import Flex from 'components/flex';
@@ -131,16 +130,14 @@ function ResultSearch(): ReactElement {
 
     // hash used for queryKey to not have to add a dozen strings
     const results = useQuery(
-        'results-' +
-            resultsPerPage +
-            '-' +
-            hash({
-                per_page: resultsPerPage,
-                page,
-                benchmark_id: benchmark?.id,
-                site_id: site?.id,
-                flavor_id: site !== undefined ? flavor?.id : undefined,
-            }),
+        [
+            'results',
+            resultsPerPage,
+            page,
+            benchmark?.id,
+            site?.id,
+            site !== undefined ? flavor?.id : undefined,
+        ],
         () => {
             return getHelper<Results>('/results', undefined, {
                 per_page: resultsPerPage,

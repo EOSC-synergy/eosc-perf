@@ -11,7 +11,7 @@ export function BenchmarkSearchSelect(props: {
     initialBenchmarkId?: string;
 }): ReactElement {
     useQuery(
-        'initial-benchmark-' + props.initialBenchmarkId,
+        ['initial-benchmark', props.initialBenchmarkId],
         () => {
             return getHelper<Benchmark>('/benchmarks/' + props.initialBenchmarkId);
         },
