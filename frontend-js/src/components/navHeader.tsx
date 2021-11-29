@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { ReactElement, useContext } from 'react';
 import { UserContext } from 'components/userContext';
 import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import logo from 'assets/images/eosc-perf-logo.4.svg';
@@ -10,9 +10,12 @@ import SiteSubmissionPage from 'pages/siteSubmission';
 import BenchmarkSubmissionPage from 'pages/benchmarkSubmission';
 import ResultSubmissionPage from 'pages/resultSubmission';
 import SiteEditorPage from 'pages/siteEditor';
+import { useAuth } from 'oidc-react';
+import { Wrench } from 'react-bootstrap-icons';
 
-export function NavHeader(props: { setCurrentTab: (tab: string) => void }) {
+export function NavHeader(props: { setCurrentTab: (tab: string) => void }): ReactElement {
     const auth = useContext(UserContext);
+    const authentication = useAuth();
 
     return (
         <header>
@@ -67,12 +70,23 @@ export function NavHeader(props: { setCurrentTab: (tab: string) => void }) {
                     <Nav>
                         <NavDropdown
                             id="base-login-dropdown"
-                            title={auth.name ?? 'Not logged in'}
+                            title={
+                                <>
+                                    {auth.name ?? 'Not logged in'}{' '}
+                                    {auth.admin && (
+                                        <div title="Administrator" style={{ display: 'inline' }}>
+                                            <Wrench style={{ color: 'red' }} />
+                                        </div>
+                                    )}
+                                </>
+                            }
                             className="justify-content-end"
                         >
-                            {auth.token ? (
+                            {auth.loggedIn ? (
                                 <>
-                                    <NavDropdown.Item href="/auth/logout">Logout</NavDropdown.Item>
+                                    <NavDropdown.Item onClick={() => authentication.signOut()}>
+                                        Logout
+                                    </NavDropdown.Item>
                                     {!auth.registered && (
                                         <NavDropdown.Item href="/register">
                                             Register
@@ -80,7 +94,9 @@ export function NavHeader(props: { setCurrentTab: (tab: string) => void }) {
                                     )}
                                 </>
                             ) : (
-                                <NavDropdown.Item href="/auth/login">Login</NavDropdown.Item>
+                                <NavDropdown.Item onClick={() => authentication.signIn()}>
+                                    Login
+                                </NavDropdown.Item>
                             )}
                         </NavDropdown>
                     </Nav>

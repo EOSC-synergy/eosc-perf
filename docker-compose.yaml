@@ -1,28 +1,6 @@
 version: "3.5"
 
 services:
-  frontend-auth:
-    container_name: frontend-auth
-    restart: unless-stopped
-    image: frontend-auth
-    build:
-      context: service_frontend_auth
-      target: development
-    env_file: .env
-    environment:
-      COOKIE_KEY_FILE: /run/secrets/cookie_secret
-      OIDC_CLIENT_SECRET_FILE: /run/secrets/oidc_secret
-      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
-      DOMAIN: ${DOMAIN}
-      ADMIN_ENTITLEMENTS: ${ADMIN_ENTITLEMENTS}
-    networks:
-      - frontend-net
-      - backend-net
-      - smtp-net
-    secrets:
-      - cookie_secret
-      - oidc_secret
-
   frontend-app:
     container_name: frontend-app
     restart: unless-stopped

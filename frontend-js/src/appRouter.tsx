@@ -11,7 +11,6 @@ import Switch from 'react-bootstrap/Switch';
 // data fetch
 import { Footer } from 'components/footer';
 import { NavHeader } from 'components/navHeader';
-import { UserContextWrapper } from 'components/userContextWrapper';
 import { QueryClientWrapper } from 'components/queryClientWrapper';
 import BenchmarkSubmissionPage from 'pages/benchmarkSubmission';
 import CodeGuidelinesPage from 'pages/codeGuidelines';
@@ -23,6 +22,26 @@ import ResultSubmissionPage from 'pages/resultSubmission';
 import SiteEditorPage from 'pages/siteEditor';
 import SiteSubmissionPage from 'pages/siteSubmission';
 import TermsOfServicePage from 'pages/termsOfService';
+
+import { AuthProvider } from 'oidc-react';
+import { UserContextWrapper } from 'components/userContextWrapper';
+import { AuthProviderProps } from 'oidc-react/build/src/AuthContextInterface';
+
+const oidcConfig: AuthProviderProps = {
+    authority:
+        process.env.NODE_ENV === 'development'
+            ? 'https://aai-dev.egi.eu/oidc/'
+            : 'https://aai.egi.eu/oidc/',
+    onSignIn: async () => {
+        // TODO: can we do this with react-router to avoid reload?
+        window.location.href = '/';
+    },
+    clientId: process.env.REACT_APP_OIDC_CLIENT_ID,
+    redirectUri: window.location.protocol + '//' + window.location.host + '/oidc-redirect',
+    scope: 'openid email profile eduperson_entitlement offline_access',
+    autoSignIn: false,
+    responseType: 'code',
+};
 
 function AppRouter() {
     // state
@@ -68,8 +87,10 @@ function AppRouter() {
 
 export default (
     <QueryClientWrapper>
-        <UserContextWrapper>
-            <AppRouter />
-        </UserContextWrapper>
+        <AuthProvider {...oidcConfig}>
+            <UserContextWrapper>
+                <AppRouter />
+            </UserContextWrapper>
+        </AuthProvider>
     </QueryClientWrapper>
 );
