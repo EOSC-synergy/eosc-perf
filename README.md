@@ -17,6 +17,7 @@ You can build it up by running
 To deploy the application:
 
 1. Set up a `.env` file: `cp .env-example .env`, configure it following the comments
+1. Set up a `.env.local` file for frontend-js: `cp .env .env.local` and fill in the blanks
 1. Configure your EGI-AAI OIDC client secret `oidc_secret.txt`
 1. Configure flask cookie encryption key `cookie_secret.txt`
 1. Configure NGINX API credentials `nginx_api_credentials.txt`:
