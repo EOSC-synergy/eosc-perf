@@ -4,7 +4,7 @@ config:
 #  project_repos:
 #    eosc-perf:
 #      repo: 'https://github.com/EOSC-synergy/eosc-perf.git'
-#      branch: 'backend'
+#      branch: 'frontend'
 
 environment:
   JPL_DOCKERFORCEBUILD: 'true'
@@ -19,16 +19,16 @@ sqa_criteria:
         - bash -c "cd /perf-frontend-testing && npm install && ./node_modules/.bin/eslint ./ -f html"
   qc_coverage:
     repos:
-      o3webapp-fe:
+      eosc-perf-frontend:
         container: perf-frontend-testing
         commands:
-        - bash -c "cd /perf-frontend-testing/ && npm test -- --verbose"
+        - bash -c "cd /perf-frontend-testing && npm test -- --verbose"
   qc_security:
     repos:
-      o3webapp-fe:
+      eosc-perf-frontend:
         container: perf-frontend-testing
         commands:
         - bash -c "cd /perf-frontend-testing && npm audit"
 
-timeout: 900
+timeout: 1800
 

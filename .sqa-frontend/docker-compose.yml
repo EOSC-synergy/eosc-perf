@@ -3,11 +3,14 @@ version: "3.7"
 services:
   perf-frontend-testing:
     image: "node:latest"
+    #container_name: "perf-frontend-testing-${GIT_BRANCH}"
     # add the code and build container
     volumes:
      - type: bind
        source: ./frontend-js
        target: /perf-frontend-testing
+    # to avoid shutting down the container
+    command: ["tail","-f","/dev/null"]
 
   perf-frontend:
      build:
