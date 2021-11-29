@@ -10,6 +10,7 @@ pipeline {
     environment {
         sqa_config_backend = ".sqa-backend/config.yml"
         dockerhub_cicd_backend = "eoscperf/cicd-images:backend-1.0.1"
+        sqa_config_frontend = ".sqa-frontend/config.yml"
         dockerhub_credentials = "o3as-dockerhub-vykozlov"
     }
 
@@ -42,10 +43,25 @@ pipeline {
 
         stage('SQA baseline dynamic stages (backend)') {
             // may execute this action, only when "service_backend" is changed
-            //when { changeset 'service_backend/*'}
+            when { changeset 'service_backend/*'}
             steps {
                 script {
                     projectConfig = pipelineConfig(configFile: env.sqa_config_backend)
+                    buildStages(projectConfig)
+                }
+            }
+            post {
+                cleanup {
+                    cleanWs()
+                }
+            }
+        }
+        stage('SQA baseline dynamic stages (frontend)') {
+            // may execute this action, only when "frontend-js" is changed
+            //when { changeset 'frontend-js/*'}
+            steps {
+                script {
+                    projectConfig = pipelineConfig(configFile: env.sqa_config_frontend)
                     buildStages(projectConfig)
                 }
             }

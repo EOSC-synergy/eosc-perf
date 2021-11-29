@@ -1,0 +1,34 @@
+config:
+  node_agent: 'docker_compose'
+  deploy_template: '.sqa-frontend/docker-compose.yml'
+#  project_repos:
+#    eosc-perf:
+#      repo: 'https://github.com/EOSC-synergy/eosc-perf.git'
+#      branch: 'backend'
+
+environment:
+  JPL_DOCKERFORCEBUILD: 'true'
+  LANG: C.UTF-8
+
+sqa_criteria:
+  qc_style:
+    repos:
+      eosc-perf-frontend:
+        container: perf-frontend-testing
+        commands: 
+        - bash -c "cd /perf-frontend-testing && npm install && ./node_modules/.bin/eslint ./ -f html"
+  qc_coverage:
+    repos:
+      o3webapp-fe:
+        container: perf-frontend-testing
+        commands:
+        - bash -c "cd /perf-frontend-testing/ && npm test -- --verbose"
+  qc_security:
+    repos:
+      o3webapp-fe:
+        container: perf-frontend-testing
+        commands:
+        - bash -c "cd /perf-frontend-testing && npm audit"
+
+timeout: 900
+

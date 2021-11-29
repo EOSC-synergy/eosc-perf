@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  perf-frontend-testing:
+    image: "node:latest"
+    # add the code and build container
+    volumes:
+     - type: bind
+       source: ./frontend-js
+       target: /perf-frontend-testing
+
+  perf-frontend:
+     build:
+        context: "./frontend-js"
+        dockerfile: "Dockerfile"
+     image: "perf/perf-frontend-js"

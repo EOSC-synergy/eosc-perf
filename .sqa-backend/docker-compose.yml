@@ -2,8 +2,7 @@ version: "3.7"
 
 services:
   perf-backend-testing:
-    container_name: "perf-backend-testing"
-    hostname: "perf-backend-testing"
+    #container_name: "perf-backend-testing-${GIT_BRANCH}"
     # add the code and build container
     build:
       context: ./service_backend
