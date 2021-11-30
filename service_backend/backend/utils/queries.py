@@ -69,7 +69,7 @@ def parse_sort(model, control_field):
 
 def json_field(model, control_field):
     path=control_field[6:]
-    return model.json[path].cast(Float)
+    return model.json[path].astext
 
 
 def generic_field(model, control_field):

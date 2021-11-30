@@ -36,6 +36,7 @@ class TestList:
         {'sort_by': "+benchmark_name"},
         {'sort_by': "+site_name,+flavor_name"},
         {'sort_by': "+json.time"},
+        {'sort_by': "+json.type"},
         {'sort_by': "+id"}
     ])
     def test_200(self, response_GET, url):
