@@ -56,8 +56,7 @@ def parse_sort(model, control_field):
     except KeyError as err:
         flask_smorest.abort(422, message={
             'KeyError': f"Unexpected field '{err.args[0]}'",
-            'hint': "Use ',' to separate fields",
-            'possible_fields': [x.name for x in model.__table__.columns]
+            'hint': "Use ',' to separate fields"
         })
     if operator == '+':
         return field.asc()
