@@ -66,6 +66,17 @@ pipeline {
                 }
             }
             post {
+                success {
+                  // publish html
+                  publishHTML target: [
+                      allowMissing: false,
+                      alwaysLinkToLastBuild: false,
+                      keepAll: true,
+                      reportDir: 'frontend-js',
+                      reportFiles: 'eslint-codestyle.html',
+                      reportName: 'ESlint Codestyle Report'
+                    ]
+                }            
                 cleanup {
                     cleanWs()
                 }

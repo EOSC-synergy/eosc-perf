@@ -16,7 +16,7 @@ sqa_criteria:
       eosc-perf-frontend:
         container: perf-frontend-testing
         commands: 
-        - bash -c "cd /perf-frontend-testing && npm install && ./node_modules/.bin/eslint ./ -f html"
+        - bash -c "cd /perf-frontend-testing && npm ci && ./node_modules/.bin/eslint ./ -f html -o eslint-codestyle.html"
   qc_coverage:
     repos:
       eosc-perf-frontend:
@@ -30,5 +30,5 @@ sqa_criteria:
         commands:
         - bash -c "cd /perf-frontend-testing && npm audit"
 
-timeout: 1800
+timeout: 900
 
