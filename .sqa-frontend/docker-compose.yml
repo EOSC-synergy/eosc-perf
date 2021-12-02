@@ -7,8 +7,8 @@ services:
     # add the code and build container
     volumes:
      - type: bind
-       source: ./frontend-js
-       target: /perf-frontend-testing
+       source: ./
+       target: /perf-testing
     # to avoid shutting down the container
     command: ["tail","-f","/dev/null"]
 

@@ -66,21 +66,19 @@ pipeline {
                 }
             }
             post {
-                //success {
-                //  // publish html
-                //  publishHTML target: [
-                //      allowMissing: false,
-                //      alwaysLinkToLastBuild: false,
-                //     keepAll: true,
-                //      reportDir: 'frontend-js',
-                //      reportFiles: 'eslint-codestyle.html',
-                //      reportName: 'ESlint Codestyle Report'
-                //    ]
-                //}
                 always {
+                    // replace path in the docker container with relative path
+                    sh "sed -i 's/\\/perf-testing/./gi' frontend-js/eslint-codestyle.xml"
                     recordIssues(
                         enabledForFailure: true, aggregatingResults: true,
                         tool: checkStyle(pattern: 'frontend-js/eslint-codestyle.xml', reportEncoding:'UTF-8')
+                    )
+                    recordIssues(
+                        tool: issues(name: 'NPM Audit', pattern:'frontend-js/npm-audit.json'),
+                        //qualityGates: [
+                        //   [threshold: 100, type: 'TOTAL', unstable: true],
+                        //   [threshold: 1, type: 'TOTAL_ERROR', unstable: false]
+                        //]
                     )
                 }          
                 cleanup {

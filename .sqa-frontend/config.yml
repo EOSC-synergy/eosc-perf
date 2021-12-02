@@ -16,21 +16,22 @@ sqa_criteria:
       eosc-perf-frontend:
         container: perf-frontend-testing
         commands: 
-        - bash -c "cd /perf-frontend-testing && npm ci --audit=false && ./node_modules/.bin/eslint ./ -f checkstyle -o eslint-codestyle.xml"
+        - bash -c "cd /perf-testing/frontend-js && npm ci --audit=false && ./node_modules/.bin/eslint ./ -f checkstyle -o eslint-codestyle.xml"
         #- bash -c "cd /perf-frontend-testing && npm ci --audit=false && ./node_modules/.bin/eslint ./ -f stylish"
   qc_coverage:
     repos:
       eosc-perf-frontend:
         container: perf-frontend-testing
         commands:
-        - bash -c "cd /perf-frontend-testing && npm test -- --verbose"
+        - bash -c "cd /perf-testing/frontend-js && npm test -- --verbose"
   qc_security:
     repos:
       eosc-perf-frontend:
         container: perf-frontend-testing
         commands:
           # Fail an audit if the results include a vulnerability with a level of high or higher:
-        - bash -c "cd /perf-frontend-testing && npm audit --audit-level=high"
+          # parse the output for Warnings-NG plugin:
+        - bash -c "cd /perf-testing/frontend-js && npm audit --audit-level=high --json | node ../.sqa-frontend/transform-audit.js > npm-audit.json"
 
 timeout: 900
 
