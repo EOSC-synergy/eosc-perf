@@ -34,9 +34,12 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --coverage --watchAll=false",
-    "test:local": "react-scripts test",
+    "test:coverage": "react-scripts test --coverage --watchAll=false --coverageDirectory=coverage --verbose",
+    "test": "react-scripts test",
     "eject": "react-scripts eject"
+  },
+  "jest": {
+    "coverageReporters": ["text", "cobertura"]
   },
   "eslintConfig": {
     "env": {

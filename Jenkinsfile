@@ -67,13 +67,24 @@ pipeline {
             }
             post {
                 always {
+                    // publish codestyle:
                     // replace path in the docker container with relative path
                     sh "sed -i 's/\\/perf-testing/./gi' frontend-js/eslint-codestyle.xml"
                     recordIssues(
                         enabledForFailure: true, aggregatingResults: true,
                         tool: checkStyle(pattern: 'frontend-js/eslint-codestyle.xml', reportEncoding:'UTF-8')
                     )
+
+                    // publish cobertura report:
+                    cobertura(
+                        coberturaReportFile: 'frontend-js/coverage/cobertura-coverage.xml', 
+                        enableNewApi: true,
+                        failUnhealthy: false, failUnstable: false, onlyStable: false
+                    )
+
+                    // publish the output of npm audit:
                     recordIssues(
+                        enabledForFailure: true, aggregatingResults: true,
                         tool: issues(name: 'NPM Audit', pattern:'frontend-js/npm-audit.json'),
                         //qualityGates: [
                         //   [threshold: 100, type: 'TOTAL', unstable: true],

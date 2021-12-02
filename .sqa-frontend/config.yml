@@ -23,15 +23,17 @@ sqa_criteria:
       eosc-perf-frontend:
         container: perf-frontend-testing
         commands:
-        - bash -c "cd /perf-testing/frontend-js && npm test -- --verbose"
+        - bash -c "cd /perf-testing/frontend-js && npm run test:coverage"
   qc_security:
     repos:
       eosc-perf-frontend:
         container: perf-frontend-testing
         commands:
-          # Fail an audit if the results include a vulnerability with a level of high or higher:
-          # parse the output for Warnings-NG plugin:
-        - bash -c "cd /perf-testing/frontend-js && npm audit --audit-level=high --json | node ../.sqa-frontend/transform-audit.js > npm-audit.json"
+          # (optional) pipefail: set the exit status $? to the exit code of the last program to exit non-zero
+          # npm audit --json : to produce json output
+          # transform-audit.js: parse the output for Warnings-NG plugin
+          # npm audit --audit-level=high: fail an audit if a vulnerability of a level 'high' or higher (may result in exit 1 + printout)
+        - bash -c "cd /perf-testing/frontend-js && npm audit --json | node ../.sqa-frontend/transform-audit.js > npm-audit.json && npm audit --audit-level=high"
 
 timeout: 900
 
