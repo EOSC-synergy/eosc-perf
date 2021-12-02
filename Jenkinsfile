@@ -76,7 +76,13 @@ pipeline {
                 //      reportFiles: 'eslint-codestyle.html',
                 //      reportName: 'ESlint Codestyle Report'
                 //    ]
-                //}            
+                //}
+                always {
+                    recordIssues(
+                        enabledForFailure: true, aggregatingResults: true,
+                        tool: checkStyle(pattern: 'frontend-js/eslint-codestyle.xml', reportEncoding:'UTF-8')
+                    )
+                }          
                 cleanup {
                     cleanWs()
                 }

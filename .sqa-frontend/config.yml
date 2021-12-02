@@ -16,8 +16,8 @@ sqa_criteria:
       eosc-perf-frontend:
         container: perf-frontend-testing
         commands: 
-        #- bash -c "cd /perf-frontend-testing && npm ci && ./node_modules/.bin/eslint ./ -f html -o eslint-codestyle.html"
-        - bash -c "cd /perf-frontend-testing && npm ci && ./node_modules/.bin/eslint ./ -f stylish"
+        - bash -c "cd /perf-frontend-testing && npm ci --audit=false && ./node_modules/.bin/eslint ./ -f checkstyle -o eslint-codestyle.xml"
+        #- bash -c "cd /perf-frontend-testing && npm ci --audit=false && ./node_modules/.bin/eslint ./ -f stylish"
   qc_coverage:
     repos:
       eosc-perf-frontend:
@@ -29,7 +29,8 @@ sqa_criteria:
       eosc-perf-frontend:
         container: perf-frontend-testing
         commands:
-        - bash -c "cd /perf-frontend-testing && npm audit"
+          # Fail an audit if the results include a vulnerability with a level of high or higher:
+        - bash -c "cd /perf-frontend-testing && npm audit --audit-level=high"
 
 timeout: 900
 
