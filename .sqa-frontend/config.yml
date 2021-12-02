@@ -16,7 +16,8 @@ sqa_criteria:
       eosc-perf-frontend:
         container: perf-frontend-testing
         commands: 
-        - bash -c "cd /perf-frontend-testing && npm ci && ./node_modules/.bin/eslint ./ -f html -o eslint-codestyle.html"
+        #- bash -c "cd /perf-frontend-testing && npm ci && ./node_modules/.bin/eslint ./ -f html -o eslint-codestyle.html"
+        - bash -c "cd /perf-frontend-testing && npm ci && ./node_modules/.bin/eslint ./ -f stylish"
   qc_coverage:
     repos:
       eosc-perf-frontend:
