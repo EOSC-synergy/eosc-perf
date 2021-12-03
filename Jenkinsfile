@@ -72,7 +72,9 @@ pipeline {
                     sh "sed -i 's/\\/perf-testing/./gi' frontend-js/eslint-codestyle.xml"
                     recordIssues(
                         enabledForFailure: true, aggregatingResults: true,
-                        tool: checkStyle(pattern: 'frontend-js/eslint-codestyle.xml', reportEncoding:'UTF-8')
+                        tool: checkStyle(pattern: 'frontend-js/eslint-codestyle.xml', 
+                                         reportEncoding:'UTF-8',
+                                         name: 'FE - CheckStyle')
                     )
 
                     // publish cobertura report:
@@ -85,7 +87,7 @@ pipeline {
                     // publish the output of npm audit:
                     recordIssues(
                         enabledForFailure: true, aggregatingResults: true,
-                        tool: issues(name: 'NPM Audit', pattern:'frontend-js/npm-audit.json'),
+                        tool: issues(name: 'FE - NPM Audit', pattern:'frontend-js/npm-audit.json'),
                         //qualityGates: [
                         //   [threshold: 100, type: 'TOTAL', unstable: true],
                         //   [threshold: 1, type: 'TOTAL_ERROR', unstable: false]
