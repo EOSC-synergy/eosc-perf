@@ -2,7 +2,6 @@
 import functools
 
 import flask_smorest
-from sqlalchemy import Float
 
 
 def to_pagination():
@@ -69,7 +68,7 @@ def parse_sort(model, control_field):
 
 def json_field(model, control_field):
     path=control_field[6:]
-    return model.json[path].astext
+    return model.json[path]
 
 
 def generic_field(model, control_field):
