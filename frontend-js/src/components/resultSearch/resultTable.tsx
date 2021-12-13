@@ -11,16 +11,55 @@ import {
     TagsColumn,
 } from 'components/resultSearch/columns';
 import { ResultOps } from 'components/resultSearch/resultOps';
-import { Pencil } from 'react-bootstrap-icons';
+import { ChevronDown, ChevronUp, Pencil } from 'react-bootstrap-icons';
 import { ColumnSelectModal } from 'components/resultSearch/columnSelectModal';
 import 'components/actionable.css';
 import { Ordered } from 'components/ordered';
+import { Sorting, SortMode } from 'components/resultSearch/sorting';
+
+function SortingTableHeader(props: {
+    label: string;
+    sortKey: string;
+    sorting: Sorting;
+    setSorting: (sort: Sorting) => void;
+}) {
+    function updateSortOrder() {
+        if (props.sorting.key === props.sortKey) {
+            // sort in reverse
+            if (props.sorting.mode === SortMode.Ascending) {
+                props.setSorting({ ...props.sorting, mode: SortMode.Descending });
+            }
+            // unsort
+            else {
+                props.setSorting({ mode: SortMode.Disabled, key: '' });
+            }
+        }
+        // sorting by something else
+        else {
+            props.setSorting({ mode: SortMode.Ascending, key: props.sortKey });
+        }
+    }
+
+    return (
+        <th onClick={() => updateSortOrder()}>
+            {props.label}{' '}
+            {props.sorting.key === props.sortKey && (
+                <>
+                    {props.sorting.mode === SortMode.Ascending && <ChevronDown />}
+                    {props.sorting.mode === SortMode.Descending && <ChevronUp />}
+                </>
+            )}
+        </th>
+    );
+}
 
 export function ResultTable(props: {
     results: Result[];
     pageOffset: number;
     ops: ResultOps;
     suggestions?: string[];
+    sorting: Sorting;
+    setSorting: (sort: Sorting) => void;
 }): ReactElement {
     const [benchmarkColumnEnabled, setBenchmarkColumnEnabled] = useState(true);
     const [siteColumnEnabled, setSiteColumnEnabled] = useState(true);
@@ -57,9 +96,30 @@ export function ResultTable(props: {
                                 />
                             </Form>
                         </th>
-                        {benchmarkColumnEnabled && <th>Benchmark</th>}
-                        {siteColumnEnabled && <th>Site</th>}
-                        {siteFlavorColumnEnabled && <th>Site flavor</th>}
+                        {benchmarkColumnEnabled && (
+                            <SortingTableHeader
+                                label="Benchmark"
+                                sortKey="benchmark_name"
+                                sorting={props.sorting}
+                                setSorting={props.setSorting}
+                            />
+                        )}
+                        {siteColumnEnabled && (
+                            <SortingTableHeader
+                                label="Site"
+                                sortKey="site_name"
+                                sorting={props.sorting}
+                                setSorting={props.setSorting}
+                            />
+                        )}
+                        {siteFlavorColumnEnabled && (
+                            <SortingTableHeader
+                                label="Site flavor"
+                                sortKey="flavor_name"
+                                sorting={props.sorting}
+                                setSorting={props.setSorting}
+                            />
+                        )}
                         {tagsColumnEnabled && <th>Tags</th>}
                         {/* TODO: hover */}
                         {customColumns.map((column) => (
