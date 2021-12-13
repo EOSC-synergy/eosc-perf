@@ -23,6 +23,7 @@ import qs from 'qs';
 import { SiteSearchPopover } from 'components/searchSelectors/siteSearchPopover';
 import { BenchmarkSearchSelect } from 'components/searchSelectors/benchmarkSearchSelect';
 import { FlavorSearchSelect } from 'components/searchSelectors/flavorSearchSelect';
+import { Sorting, SortMode } from 'components/resultSearch/sorting';
 
 type QueryParams = {
     benchmarkId?: string;
@@ -39,6 +40,8 @@ function ResultSearch(): ReactElement {
     const [flavor, setFlavor] = useState<Flavor | undefined>(undefined);
 
     const [filters, setFilters] = useState<Map<string, Filter>>(new Map());
+
+    const [sorting, setSorting] = useState<Sorting>({ mode: SortMode.Disabled, key: '' });
 
     function addFilter() {
         const newMap = new Map(filters); // shallow copy
@@ -137,6 +140,11 @@ function ResultSearch(): ReactElement {
             benchmark?.id,
             site?.id,
             site !== undefined ? flavor?.id : undefined,
+            sorting.mode === SortMode.Ascending
+                ? '+' + sorting.key
+                : sorting.mode === SortMode.Descending
+                ? '-' + sorting.key
+                : undefined,
         ],
         () => {
             return getHelper<Results>('/results', undefined, {
@@ -160,6 +168,12 @@ function ResultSearch(): ReactElement {
                     .filter((v?: string) => {
                         return v !== undefined;
                     }),
+                sort_by:
+                    sorting.mode === SortMode.Ascending
+                        ? '+' + sorting.key
+                        : sorting.mode === SortMode.Descending
+                        ? '-' + sorting.key
+                        : undefined,
             });
         },
         {
@@ -306,6 +320,10 @@ function ResultSearch(): ReactElement {
                                 pageOffset={results.data.data.per_page * results.data.data.page}
                                 ops={resultOps}
                                 suggestions={suggestedFields}
+                                sorting={sorting}
+                                setSorting={(sort) => {
+                                    setSorting(sort);
+                                }}
                             />
                         )}
                         {results.isSuccess && results.data.data.total === 0 && (
