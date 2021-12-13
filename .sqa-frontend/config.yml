@@ -33,7 +33,8 @@ sqa_criteria:
           # npm audit --json : to produce json output
           # transform-audit.js: parse the output for Warnings-NG plugin
           # npm audit --audit-level=high: fail an audit if a vulnerability of a level 'high' or higher (may result in exit 1 + printout)
-        - bash -c "cd /perf-testing/frontend-js && npm audit --json | node ../.sqa-frontend/transform-audit.js > npm-audit.json && npm audit --audit-level=high"
+        - bash -c "cd /perf-testing/frontend-js && npm run audit:prod -- json | node ../.sqa-frontend/transform-audit.js > npm-audit.json \
+                   && npm run audit:prod -- audit-level=high"
 
 timeout: 900
 

@@ -78,8 +78,9 @@ pipeline {
                     )
 
                     // publish cobertura report:
+                    sh "cd frontend-js/coverage && mv cobertura-coverage.xml fe-cobertura-coverage.xml && cd -"
                     cobertura(
-                        coberturaReportFile: 'frontend-js/coverage/cobertura-coverage.xml', 
+                        coberturaReportFile: 'frontend-js/coverage/fe-cobertura-coverage.xml', 
                         enableNewApi: true,
                         failUnhealthy: false, failUnstable: false, onlyStable: false
                     )
