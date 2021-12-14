@@ -43,9 +43,8 @@ process.stdin.on('end', () => {
             fileName: vulnerability.name,
             packageName: isAdvisory ? 'advisory' : 'derived',
             type: vulnerability.fixAvailable ? 'autofixable' : 'non-autofixable',
-            additional: isAdvisory ? vulnerability.nodes.join(', ') : vulnerability.nodes.join(''),
             message: isAdvisory ? advisories.map((adv) => adv.title).join(' and ') : '',
-            description: isAdvisory ? `See: ${advisories.map((adv) => adv.url).join(' and ')}` : '',
+            description: isAdvisory ? `nodes: ${vulnerability.nodes.join(', ')} <br> See: ${advisories.map((adv) => adv.url).join(' and ')}` : `nodes: ${vulnerability.nodes.join(', ')}`,
             severity: warningsNGSeverity(vulnerability.severity)
         };
     });
