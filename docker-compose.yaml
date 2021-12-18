@@ -6,11 +6,11 @@ services:
     restart: unless-stopped
     image: frontend-app
     build:
-      context: frontend-js
+      context: frontend-app
     networks:
       - frontend-net
-    #volumes:
-    #  - ./frontend-js/:/app
+    volumes:
+      - ./frontend-app/:/app
 
   backend_v1:
     container_name: backend_v1
