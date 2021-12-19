@@ -60,13 +60,13 @@ export function ResultTable(props: {
     suggestions?: string[];
     sorting: Sorting;
     setSorting: (sort: Sorting) => void;
+    customColumns: string[];
+    setCustomColumns: (customColumns: string[]) => void;
 }): ReactElement {
     const [benchmarkColumnEnabled, setBenchmarkColumnEnabled] = useState(true);
     const [siteColumnEnabled, setSiteColumnEnabled] = useState(true);
     const [siteFlavorColumnEnabled, setSiteFlavorColumnEnabled] = useState(true);
     const [tagsColumnEnabled, setTagsColumnEnabled] = useState(true);
-
-    const [customColumns, setCustomColumns] = useState<string[]>([]);
 
     // column selection modal
     const [showColumnSelection, setShowColumnSelection] = useState(false);
@@ -122,8 +122,14 @@ export function ResultTable(props: {
                     )}
                     {tagsColumnEnabled && <th>Tags</th>}
                     {/* TODO: hover */}
-                    {customColumns.map((column) => (
-                        <th key={column}>{column}</th>
+                    {props.customColumns.map((column) => (
+                        <SortingTableHeader
+                            label={column}
+                            sortKey={'json.' + column}
+                            sorting={props.sorting}
+                            setSorting={props.setSorting}
+                            key={column}
+                        />
                     ))}
                     <th>
                         <a href='#' onClick={() => setShowColumnSelection(true)}>
@@ -164,7 +170,7 @@ export function ResultTable(props: {
                                     <TagsColumn result={r} />
                                 </td>
                             )}
-                            {customColumns.map((column) => (
+                            {props.customColumns.map((column) => (
                                 <td key={column}>
                                     <CustomColumn result={r} jsonKey={column} />
                                 </td>
@@ -180,8 +186,8 @@ export function ResultTable(props: {
             <ColumnSelectModal
                 show={showColumnSelection}
                 closeModal={() => setShowColumnSelection(false)}
-                columns={customColumns}
-                setColumns={setCustomColumns}
+                columns={props.customColumns}
+                setColumns={props.setCustomColumns}
                 suggestions={props.suggestions}
             />
         </>
