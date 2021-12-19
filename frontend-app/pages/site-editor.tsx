@@ -22,6 +22,12 @@ function SiteSelect(props: {
     );
 }
 
+/**
+ * Admin-only page to edit sites in the database and add flavors.
+ *
+ * @returns {React.ReactElement}
+ * @constructor
+ */
 function SitesEditor(): ReactElement {
     const sites = useQuery(
         'sites',

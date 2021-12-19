@@ -6,6 +6,15 @@ import { UserContext } from 'components/userContext';
 import Link from 'next/link';
 import { JsonHighlight } from 'components/jsonHighlight';
 
+/**
+ * Page handling first-time user registration.
+ *
+ * Users are not automatically registered when logging in through EGI, they must register and accept our privacy policy
+ * separately on this page.
+ *
+ * @returns {React.ReactElement}
+ * @constructor
+ */
 function Registration(): ReactElement {
     const auth = useContext(UserContext);
 
@@ -41,7 +50,7 @@ function Registration(): ReactElement {
                 </Alert>
             )}
             I hereby acknowledge I have read and accepted the{' '}
-            <Link href='/termsOfService'>Terms of Use</Link>.<br />
+            <Link href='/terms-of-service'>Terms of Use</Link>.<br />
             <Button
                 onClick={() => registration.mutate()}
                 disabled={registration.isSuccess}

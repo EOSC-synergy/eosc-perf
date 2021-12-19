@@ -20,30 +20,30 @@ export function NavHeader(props: {}): ReactElement {
                 <Navbar.Toggle aria-controls='basic-navbar-nav' />
                 <Navbar.Collapse id='basic-navbar-nav'>
                     <Nav className='me-auto'>
-                        <Link href='/resultSearch' passHref>
+                        <Link href='/search/result' passHref>
                             <Nav.Link>
                                 Search
                             </Nav.Link>
                         </Link>
                         <NavDropdown title='Submit' id='base-submit-dropdown'>
-                            <Link href='/resultSubmission' passHref>
+                            <Link href='/submit/result' passHref>
                                 <NavDropdown.Item>
                                     Results
                                 </NavDropdown.Item>
                             </Link>
-                            <Link href='/benchmarkSubmission' passHref>
+                            <Link href='/submit/benchmark' passHref>
                                 <NavDropdown.Item>
                                     Benchmarks
                                 </NavDropdown.Item>
                             </Link>
-                            <Link href='/siteSubmission' passHref>
+                            <Link href='/submit/site' passHref>
                                 <NavDropdown.Item>
                                     Sites
                                 </NavDropdown.Item>
                             </Link>
                         </NavDropdown>
                         <NavDropdown title='Instructions' id='base-instructions-dropdown'>
-                            <Link href='/codeGuidelines' passHref>
+                            <Link href='/code-guidelines' passHref>
                                 <NavDropdown.Item>
                                     Code guidelines
                                 </NavDropdown.Item>
@@ -51,12 +51,12 @@ export function NavHeader(props: {}): ReactElement {
                         </NavDropdown>
                         {auth.admin && (
                             <NavDropdown title='Admin' id='base-admin-dropdown'>
-                                <Link href='/reportView' passHref>
+                                <Link href='/report-view' passHref>
                                     <NavDropdown.Item>
                                         Report view
                                     </NavDropdown.Item>
                                 </Link>
-                                <Link href='/siteEditor' passHref>
+                                <Link href='/site-editor' passHref>
                                     <NavDropdown.Item>
                                         Site editor
                                     </NavDropdown.Item>

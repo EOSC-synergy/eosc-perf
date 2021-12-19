@@ -87,6 +87,12 @@ function ClaimView(props: { claim: Claim; refetch: () => void }) {
     );
 }
 
+/**
+ * Admin-only page to view pending reports and submissions.
+ *
+ * @returns {React.ReactElement}
+ * @constructor
+ */
 function ReportsView(): ReactElement {
     const auth = useContext(UserContext);
 
