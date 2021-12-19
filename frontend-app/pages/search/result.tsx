@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Accordion, Button, Card, Col, Container, ListGroup, Row } from 'react-bootstrap';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { useQuery } from 'react-query';
@@ -18,17 +18,11 @@ import { FilterEdit } from 'components/resultSearch/filterEdit';
 import { Ordered, orderedComparator } from 'components/ordered';
 import { determineNotableKeys } from 'components/resultSearch/jsonSchema';
 import Flex from 'components/flex';
-import qs from 'qs';
 import { SiteSearchPopover } from 'components/searchSelectors/siteSearchPopover';
 import { BenchmarkSearchSelect } from 'components/searchSelectors/benchmarkSearchSelect';
 import { FlavorSearchSelect } from 'components/searchSelectors/flavorSearchSelect';
 import { Sorting, SortMode } from 'components/resultSearch/sorting';
-
-type QueryParams = {
-    benchmarkId?: string;
-    siteId?: string;
-    flavorId?: string;
-};
+import { useRouter } from 'next/router';
 
 /**
  * Search page for ran benchmarks
@@ -36,10 +30,7 @@ type QueryParams = {
  * @constructor
  */
 function ResultSearch(): ReactElement {
-    const [queryParams, setQueryParams] = useState<QueryParams>({});
-    useEffect(() => {
-        setQueryParams(qs.parse(window.location.search.slice(1)));
-    }, []);
+    const router = useRouter();
 
     const [benchmark, setBenchmark] = useState<Benchmark | undefined>(undefined);
     const [site, setSite] = useState<Site | undefined>(undefined);
@@ -198,48 +189,41 @@ function ResultSearch(): ReactElement {
         }
     );
 
-    function refreshLocation(queryParams: QueryParams) {
-        // TODO: nextjs route
-        /*window.history.replaceState(
-            null,
-            '',
-            window.location.pathname +
-            qs.stringify(queryParams, {
-                addQueryPrefix: true
-            })
-        );*/
+    function refreshLocation(benchmark: Benchmark | undefined, site: Site | undefined, flavor: Flavor | undefined) {
+        let query = {};
+        if (benchmark && benchmark.id) {
+            query = { ...query, benchmarkId: benchmark.id };
+        }
+        if (site && site.id) {
+            query = { ...query, siteId: site.id };
+        }
+        if (flavor && flavor.id) {
+            query = { ...query, flavorId: flavor.id };
+        }
+        router.push({
+            pathname: '/search/result',
+            query
+        }, undefined, { shallow: true });
     }
 
     function updateBenchmark(benchmark?: Benchmark) {
         setBenchmark(benchmark);
-        const newQueryParams = {
-            ...queryParams,
-            benchmarkId: benchmark?.id
-        };
-        refreshLocation(newQueryParams);
-        setQueryParams(newQueryParams);
-
         setSelectedResults([]);
+
+        refreshLocation(benchmark, site, flavor);
     }
 
     function updateSite(site?: Site) {
         setSite(site);
-        const newQueryParams = {
-            ...queryParams,
-            siteId: site?.id
-        };
-        refreshLocation(newQueryParams);
-        setQueryParams(newQueryParams);
+        setFlavor(undefined);
+
+        refreshLocation(benchmark, site, flavor);
     }
 
     function updateFlavor(flavor?: Flavor) {
         setFlavor(flavor);
-        const newQueryParams = {
-            ...queryParams,
-            flavorId: flavor?.id
-        };
-        refreshLocation(newQueryParams);
-        setQueryParams(newQueryParams);
+
+        refreshLocation(benchmark, site, flavor);
     }
 
     return (
@@ -256,22 +240,27 @@ function ResultSearch(): ReactElement {
                                 </Card.Header>
                                 <Accordion.Collapse eventKey='filters'>
                                     <Card.Body>
-                                        <BenchmarkSearchSelect
-                                            benchmark={benchmark}
-                                            setBenchmark={updateBenchmark}
-                                            initialBenchmarkId={queryParams.benchmarkId}
-                                        />
-                                        <SiteSearchPopover
-                                            site={site}
-                                            setSite={updateSite}
-                                            initialSiteId={queryParams.siteId}
-                                        />
-                                        <FlavorSearchSelect
-                                            site={site}
-                                            flavor={flavor}
-                                            setFlavor={updateFlavor}
-                                            initialFlavorId={queryParams.flavorId}
-                                        />
+                                        {router.isReady && <>
+                                            <BenchmarkSearchSelect
+                                                benchmark={benchmark}
+                                                initBenchmark={(b) => setBenchmark(b)}
+                                                setBenchmark={updateBenchmark}
+                                                initialBenchmarkId={router.query.benchmarkId as string | undefined}
+                                            />
+                                            <SiteSearchPopover
+                                                site={site}
+                                                initSite={(s) => setSite(s)}
+                                                setSite={updateSite}
+                                                initialSiteId={router.query.siteId as string | undefined}
+                                            />
+                                            <FlavorSearchSelect
+                                                site={site}
+                                                flavor={flavor}
+                                                initFlavor={(f) => setFlavor(f)}
+                                                setFlavor={updateFlavor}
+                                                initialFlavorId={router.query.flavorId as string | undefined}
+                                            />
+                                        </>}
                                         <hr />
                                         <ListGroup variant='flush'>
                                             {[...filters.keys()].flatMap((key) => {
