@@ -11,5 +11,5 @@ export function CustomColumn(props: {
     const value = fetchSubkey(props.result.json, props.jsonKey) as
         | string
         | number;
-    return <>{truthyOrNoneTag(value.toString(), 'Not found!')}</>;
+    return <>{truthyOrNoneTag(value?.toString(), 'Not found!')}</>;
 }
