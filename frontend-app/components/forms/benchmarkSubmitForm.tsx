@@ -6,7 +6,7 @@ import { CreateBenchmark } from 'model';
 import { postHelper } from 'components/api-helpers';
 import { AxiosError } from 'axios';
 import { getErrorMessage } from 'components/forms/getErrorMessage';
-import benchmarkJsonSchema from 'components/benchmarkJsonSchema.json';
+import benchmarkJsonSchema from 'components/benchmarkJsonSchemaExample.json';
 import { RegistrationCheck } from 'components/registrationCheck';
 import Link from 'next/link';
 
