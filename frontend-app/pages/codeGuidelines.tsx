@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Container } from 'react-bootstrap';
-import template from 'components/benchmarkJsonSchema.json';
+import template from 'components/benchmarkJsonSchemaExample.json';
 import { JsonHighlight } from 'components/jsonHighlight';
 
 function CodeGuidelines(): ReactElement {
