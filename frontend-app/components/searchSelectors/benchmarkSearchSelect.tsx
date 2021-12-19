@@ -7,6 +7,7 @@ import { getHelper } from 'components/api-helpers';
 
 export function BenchmarkSearchSelect(props: {
     benchmark?: Benchmark;
+    initBenchmark?: (benchmark?: Benchmark) => void;
     setBenchmark: (benchmark?: Benchmark) => void;
     initialBenchmarkId?: string;
 }): ReactElement {
@@ -19,7 +20,11 @@ export function BenchmarkSearchSelect(props: {
             enabled: props.initialBenchmarkId !== undefined,
             refetchOnWindowFocus: false, // do not spam queries
             onSuccess: (data) => {
-                props.setBenchmark(data.data);
+                if (props.initBenchmark) {
+                    props.initBenchmark(data.data);
+                } else {
+                    props.setBenchmark(data.data);
+                }
             }
         }
     );

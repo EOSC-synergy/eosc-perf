@@ -7,6 +7,7 @@ import { getHelper } from 'components/api-helpers';
 
 export function SiteSearchPopover(props: {
     site?: Site;
+    initSite?: (site?: Site) => void;
     setSite: (site?: Site) => void;
     initialSiteId?: string;
 }): ReactElement {
@@ -19,7 +20,11 @@ export function SiteSearchPopover(props: {
             enabled: props.initialSiteId !== undefined,
             refetchOnWindowFocus: false, // do not spam queries
             onSuccess: (data) => {
-                props.setSite(data.data);
+                if (props.initSite) {
+                    props.initSite(data.data);
+                } else {
+                    props.setSite(data.data);
+                }
             }
         }
     );
