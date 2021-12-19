@@ -71,6 +71,7 @@ export function ColumnSelectModal(props: {
                     onClick={() => {
                         props.closeModal();
                         props.setColumns(activeColumns);
+                        setNewColumn('');
                     }}
                 >
                     Close
