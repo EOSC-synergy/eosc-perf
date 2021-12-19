@@ -1,5 +1,5 @@
 import { Flavor, Site } from 'model';
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { FlavorSubmissionModal } from 'components/submissionModals/flavorSubmissionModal';
 import { SearchingSelector } from 'components/searchSelectors/index';
 import { useQuery } from 'react-query';
@@ -8,11 +8,10 @@ import { getHelper } from 'components/api-helpers';
 export function FlavorSearchSelect(props: {
     site?: Site;
     flavor?: Flavor;
+    initFlavor?: (flavor?: Flavor) => void;
     setFlavor: (flavor?: Flavor) => void;
     initialFlavorId?: string;
 }): ReactElement {
-    // TODO: reset value if site is undefined?
-
     useQuery(
         ['initial-flavor', props.initialFlavorId],
         () => {
@@ -22,14 +21,14 @@ export function FlavorSearchSelect(props: {
             enabled: props.initialFlavorId !== undefined,
             refetchOnWindowFocus: false, // do not spam queries
             onSuccess: (data) => {
-                props.setFlavor(data.data);
+                if (props.initFlavor) {
+                    props.initFlavor(data.data);
+                } else {
+                    props.setFlavor(data.data);
+                }
             }
         }
     );
-
-    const { site } = props;
-
-    useEffect(() => props.setFlavor(undefined), [site]);
 
     function display(flavor?: Flavor) {
         return (
