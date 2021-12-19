@@ -13,7 +13,9 @@ export function ColumnSelectModal(props: {
     const [activeColumns, setActiveColumns] = useState(props.columns);
 
     function addColumn() {
-        setActiveColumns([...activeColumns, newColumn]);
+        if (newColumn.length > 0) {
+            setActiveColumns([...activeColumns, newColumn]);
+        }
     }
 
     function removeColumn(column: string) {
