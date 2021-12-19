@@ -3,6 +3,12 @@ import { Container } from 'react-bootstrap';
 
 import Link from 'next/link';
 
+/**
+ * Page containing our terms of service / acceptable use policy.
+ *
+ * @returns {React.ReactElement}
+ * @constructor
+ */
 function TermsOfService(): ReactElement {
     return (
         <Container>
@@ -105,7 +111,7 @@ function TermsOfService(): ReactElement {
             </p>
             <p>
                 The privacy statements (e.g. Privacy Notices) are located at:{' '}
-                <Link href='/privacyPolicy'>Privacy Policy</Link>
+                <Link href='/privacy-policy'>Privacy Policy</Link>
             </p>
             <p>
                 The KIT Impressum is found here: <a href='https://www.kit.edu/legals.php'>Legals</a>

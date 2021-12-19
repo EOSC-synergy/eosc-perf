@@ -9,10 +9,10 @@ export function Footer() {
                 <div className='text-center text-md-center'>
                     <ul className='list-unstyled list-inline my-0'>
                         <li className='list-inline-item mx-5'>
-                            <div className='text-muted'><Link href='/termsOfService'>Terms of service</Link></div>
+                            <div className='text-muted'><Link href='/terms-of-service'>Terms of service</Link></div>
                         </li>
                         <li className='list-inline-item mx-5'>
-                            <div className='text-muted'><Link href='/privacyPolicy'>Privacy policy</Link></div>
+                            <div className='text-muted'><Link href='/privacy-policy'>Privacy policy</Link></div>
                         </li>
                         <li className='list-inline-item mx-5'>
                             <a

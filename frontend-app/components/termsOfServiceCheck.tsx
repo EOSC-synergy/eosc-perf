@@ -12,7 +12,7 @@ export function TermsOfServiceCheck(props: {
             label={
                 <>
                     I have read and accept the{' '}
-                    <Link href='/termsOfService'>Terms of Service</Link>
+                    <Link href='/terms-of-service'>Terms of Service</Link>
                 </>
             }
             checked={props.termsOfServiceAccepted}

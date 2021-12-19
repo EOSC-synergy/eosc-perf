@@ -138,7 +138,7 @@ export function BenchmarkSubmitForm(props: {
                 <Form.Group>
                     <Form.Label htmlFor='template'>
                         Benchmark result JSON schema (optional,{' '}
-                        <Link href='/codeGuidelines#json'>example here</Link>
+                        <Link href='/code-guidelines#json'>example here</Link>
                         ):
                     </Form.Label>
                     <Form.Control

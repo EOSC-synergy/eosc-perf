@@ -1,16 +1,24 @@
 import React, { ReactElement, useState } from 'react';
 import { Card, Container, Toast, ToastContainer } from 'react-bootstrap';
-import { ResultSubmitForm } from 'components/forms/resultSubmitForm';
+import { SiteSubmitForm } from 'components/forms/siteSubmitForm';
 
-function ResultSubmission(): ReactElement {
+/**
+ * Page allowing users to submit new sites.
+ *
+ * This is essentially just a page wrapper around SiteSubmitForm.
+ *
+ * @returns {React.ReactElement}
+ * @constructor
+ */
+function SiteSubmission(): ReactElement {
     const [showSuccessToast, setShowSuccessToast] = useState(false);
 
     return (
         <Container>
-            <h1>Upload Result</h1>
+            <h1>Add Site</h1>
             <Card className='mb-2'>
                 <Card.Body>
-                    <ResultSubmitForm
+                    <SiteSubmitForm
                         onSuccess={() => {
                             setShowSuccessToast(true);
                         }}
@@ -35,4 +43,4 @@ function ResultSubmission(): ReactElement {
     );
 }
 
-export default ResultSubmission;
+export default SiteSubmission;

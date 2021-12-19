@@ -3,6 +3,12 @@ import { Container } from 'react-bootstrap';
 import template from 'components/benchmarkJsonSchemaExample.json';
 import { JsonHighlight } from 'components/jsonHighlight';
 
+/**
+ * Guidelines page for developers creating and submitting new benchmarks to the site.
+ *
+ * @returns {React.ReactElement}
+ * @constructor
+ */
 function CodeGuidelines(): ReactElement {
     return (
         <Container>

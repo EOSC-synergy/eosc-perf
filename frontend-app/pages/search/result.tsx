@@ -30,6 +30,11 @@ type QueryParams = {
     flavorId?: string;
 };
 
+/**
+ * Search page for ran benchmarks
+ * @returns {React.ReactElement}
+ * @constructor
+ */
 function ResultSearch(): ReactElement {
     const [queryParams, setQueryParams] = useState<QueryParams>({});
     useEffect(() => {
@@ -91,6 +96,9 @@ function ResultSearch(): ReactElement {
 
     const [previewResult, setPreviewResult] = useState<Result | null>(null);
     const [reportedResult, setReportedResult] = useState<Result | null>(null);
+
+    //
+    const [customColumns, setCustomColumns] = useState<string[]>([]);
 
     function setResultsPerPage(results: number) {
         setResultsPerPage_(results);
@@ -334,6 +342,8 @@ function ResultSearch(): ReactElement {
                                 setSorting={(sort) => {
                                     setSorting(sort);
                                 }}
+                                customColumns={customColumns}
+                                setCustomColumns={setCustomColumns}
                             />
                         )}
                         {results.isSuccess && results.data.data.total === 0 && (

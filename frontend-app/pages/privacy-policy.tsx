@@ -1,6 +1,12 @@
 import React, { ReactElement } from 'react';
 import { Container } from 'react-bootstrap';
 
+/**
+ * Page containing the privacy policy.
+ *
+ * @returns {React.ReactElement}
+ * @constructor
+ */
 function PrivacyPolicy(): ReactElement {
     return (
         <Container>

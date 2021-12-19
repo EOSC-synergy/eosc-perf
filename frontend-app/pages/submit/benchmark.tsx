@@ -1,16 +1,24 @@
 import React, { ReactElement, useState } from 'react';
 import { Card, Container, Toast, ToastContainer } from 'react-bootstrap';
-import { SiteSubmitForm } from 'components/forms/siteSubmitForm';
+import { BenchmarkSubmitForm } from 'components/forms/benchmarkSubmitForm';
 
-function SiteSubmission(): ReactElement {
+/**
+ * Page allowing users to submit new benchmarks.
+ *
+ * This is essentially just a page wrapper around BenchmarkSubmitForm.
+ *
+ * @returns {React.ReactElement}
+ * @constructor
+ */
+function BenchmarkSubmission(): ReactElement {
     const [showSuccessToast, setShowSuccessToast] = useState(false);
 
     return (
         <Container>
-            <h1>Add Site</h1>
+            <h1>Add Benchmark</h1>
             <Card className='mb-2'>
                 <Card.Body>
-                    <SiteSubmitForm
+                    <BenchmarkSubmitForm
                         onSuccess={() => {
                             setShowSuccessToast(true);
                         }}
@@ -35,4 +43,4 @@ function SiteSubmission(): ReactElement {
     );
 }
 
-export default SiteSubmission;
+export default BenchmarkSubmission;
