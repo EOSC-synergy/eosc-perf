@@ -10,7 +10,7 @@ import {
     SiteFlavorColumn,
     TagsColumn
 } from 'components/resultSearch/columns';
-import { ResultOps } from 'components/resultSearch/resultOps';
+import { ResultCallbacks } from 'components/resultSearch/resultCallbacks';
 import { ChevronDown, ChevronUp, Pencil } from 'react-bootstrap-icons';
 import { ColumnSelectModal } from 'components/resultSearch/columnSelectModal';
 import actionable from 'styles/actionable.module.css';
@@ -56,7 +56,7 @@ function SortingTableHeader(props: {
 export function ResultTable(props: {
     results: Result[];
     pageOffset: number;
-    ops: ResultOps;
+    ops: ResultCallbacks;
     suggestions?: string[];
     sorting: Sorting;
     setSorting: (sort: Sorting) => void;
@@ -142,7 +142,7 @@ export function ResultTable(props: {
                     return (
                         <tr key={r.id}>
                             <td>
-                                <CheckboxColumn result={r} ops={props.ops} />
+                                <CheckboxColumn result={r} callbacks={props.ops} />
                             </td>
                             {benchmarkColumnEnabled && (
                                 <td>
@@ -170,7 +170,7 @@ export function ResultTable(props: {
                                 </td>
                             ))}
                             <td>
-                                <ActionColumn result={r} ops={props.ops} />
+                                <ActionColumn result={r} callbacks={props.ops} />
                             </td>
                         </tr>
                     );

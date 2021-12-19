@@ -1,7 +1,7 @@
 import { Result } from 'model';
 import { Ordered } from 'components/ordered';
 
-export interface ResultOps {
+export interface ResultCallbacks {
     select: (result: Ordered<Result>) => void;
     selectMultiple: (result: Ordered<Result>[]) => void;
     unselect: (result: Result) => void;
