@@ -1,5 +1,5 @@
 import React, { ChangeEvent, ReactElement, useState } from 'react';
-import { Result } from 'model';
+import { Benchmark, Result } from 'model';
 import { Form } from 'react-bootstrap';
 import { Line } from 'react-chartjs-2';
 import { fetchSubkey, getSubkeyName } from 'components/resultSearch/jsonKeyHelpers';
@@ -52,14 +52,16 @@ const BACKGROUND_COLORS = [
  * Chart displaying a line diagram following the results' ordering
  * @param {Ordered<Result>[]} results
  * @param {string[]} suggestions List of diagram keys to suggest to user for axes
+ * @param {Benchmark} benchmark
  * @returns {React.ReactElement}
  * @constructor
  */
 function LineChart(
     {
         results,
-        suggestions
-    }: { results: Ordered<Result>[]; suggestions?: string[]; }
+        suggestions,
+        benchmark
+    }: { results: Ordered<Result>[]; suggestions?: string[]; benchmark?: Benchmark }
 ): ReactElement {
     const [displayMode, setDisplayMode] = useState(Mode.Simple);
 
