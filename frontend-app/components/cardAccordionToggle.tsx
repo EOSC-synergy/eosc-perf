@@ -3,7 +3,7 @@ import { Col, Row, useAccordionButton } from 'react-bootstrap';
 import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
 
 /**
- * Custom accordion toggle to not provide special highlighting and be similar to old look
+ * Custom accordion toggle to mimic old Bootstrap 4 look
  * @param props { children: JSX child elements, eventKey: accordion event key}
  * @constructor
  */
