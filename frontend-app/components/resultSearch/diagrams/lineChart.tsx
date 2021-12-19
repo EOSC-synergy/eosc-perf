@@ -1,5 +1,5 @@
 import React, { ChangeEvent, ReactElement, useState } from 'react';
-import { Benchmark, Result } from 'model';
+import { Result } from 'model';
 import { Form } from 'react-bootstrap';
 import { Line } from 'react-chartjs-2';
 import { fetchSubkey, getSubkeyName } from 'components/resultSearch/jsonKeyHelpers';
@@ -48,14 +48,22 @@ const BACKGROUND_COLORS = [
     'rgba(201, 203, 207, 0.5)' // gray
 ];
 
-function LineChart(props: {
-    results: Ordered<Result>[];
-    benchmark?: Benchmark;
-    suggestions?: string[];
-}): ReactElement {
-    const [mode, setMode] = useState(Mode.Simple);
+/**
+ * Chart displaying a line diagram following the results' ordering
+ * @param {Ordered<Result>[]} results
+ * @param {string[]} suggestions List of diagram keys to suggest to user for axes
+ * @returns {React.ReactElement}
+ * @constructor
+ */
+function LineChart(
+    {
+        results,
+        suggestions
+    }: { results: Ordered<Result>[]; suggestions?: string[]; }
+): ReactElement {
+    const [displayMode, setDisplayMode] = useState(Mode.Simple);
 
-    const [grouping, setGrouping] = useState(false);
+    const [groupBySite, setGroupBySite] = useState(false);
 
     const [xAxis, setXAxis] = useState('');
     const [yAxis, setYAxis] = useState('');
@@ -84,17 +92,16 @@ function LineChart(props: {
         };
     }
 
-    const properties = analyzeData(props.results);
+    const properties = analyzeData(results);
 
-    function processInput(
-        results: Ordered<Result>[]
-    ): ChartData<'line', (number | ScatterDataPoint | null)[], unknown> {
+    function processInput(results: Ordered<Result>[]): ChartData<'line', (number | ScatterDataPoint | null)[]> {
         const labels = []; // labels below graph
-        const dataPoints = [];
 
         // grouping-by-site behaviour
         // Linear and Logarithmic mode require numeric x / column values
-        if (grouping && (mode === Mode.Linear || mode === Mode.Logarithmic)) {
+        // splits results from different sites into different datasets
+        if (groupBySite && (displayMode === Mode.Linear || displayMode === Mode.Logarithmic)) {
+            // map site.id => object with array of data points
             const datasets = new Map<string,
                 { siteName: string; data: { x: number; y: number }[] }>();
             const labelSet = new Set<number>();
@@ -109,10 +116,10 @@ function LineChart(props: {
                     });
                 }
                 datasets.get(result.site.id)?.data.push({ x, y });
-                dataPoints.push({ x, y });
                 labelSet.add(x);
             }
 
+            // generate datasets
             const data: ChartDataset<'line'>[] = [];
             let colorIndex = 0;
             datasets.forEach(function(dataMeta, site, _) {
@@ -133,7 +140,9 @@ function LineChart(props: {
             };
         }
 
-        // default behaviour
+        const dataPoints = [];
+
+        // display all results as a single dataset
         for (const result of results) {
             const x = fetchSubkey(result.json, xAxis) as number;
             const y = fetchSubkey(result.json, yAxis) as number;
@@ -168,7 +177,7 @@ function LineChart(props: {
             <Form.Group className='mb-1'>
                 <Form.Select
                     onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                        setMode(parseInt(e.target.value));
+                        setDisplayMode(parseInt(e.target.value));
                     }}
                 >
                     <option value={Mode.Simple}>Simple</option>
@@ -187,28 +196,28 @@ function LineChart(props: {
                 <Form.Check
                     type='switch'
                     label='Group values by site (only in linear & logarithmic mode)'
-                    onChange={(e) => setGrouping(e.target.checked)}
-                    disabled={mode !== Mode.Linear && mode !== Mode.Logarithmic}
+                    onChange={(e) => setGroupBySite(e.target.checked)}
+                    disabled={displayMode !== Mode.Linear && displayMode !== Mode.Logarithmic}
                 />
             </Form.Group>
             <Form.Group className='mb-1'>
                 <InputWithSuggestions
-                    placeholder='x axis'
+                    placeholder='X axis'
                     setInput={(i) => setXAxis(i)}
-                    suggestions={props.suggestions}
+                    suggestions={suggestions}
                 />
             </Form.Group>
             <Form.Group>
                 <InputWithSuggestions
-                    placeholder='y axis'
+                    placeholder='Y axis'
                     setInput={(i) => setYAxis(i)}
-                    suggestions={props.suggestions}
+                    suggestions={suggestions}
                 />
             </Form.Group>
 
             {xAxis.length > 0 && yAxis.length > 0 && (
                 <Line
-                    data={processInput(props.results)}
+                    data={processInput(results)}
                     options={{
                         animation: false,
                         responsive: true,
@@ -241,7 +250,7 @@ function LineChart(props: {
                                     display: true,
                                     text: yAxis
                                 },
-                                type: mode === Mode.Logarithmic ? 'logarithmic' : 'linear'
+                                type: displayMode === Mode.Logarithmic ? 'logarithmic' : 'linear'
                             }
                         },
                         elements: {
