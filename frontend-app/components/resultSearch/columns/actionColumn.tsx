@@ -1,23 +1,30 @@
 import React, { ReactElement, useContext } from 'react';
 import { Result } from 'model';
 import { Button, ButtonGroup } from 'react-bootstrap';
-import { ResultOps } from 'components/resultSearch/resultOps';
+import { ResultCallbacks } from 'components/resultSearch/resultCallbacks';
 import { Envelope, Exclamation, Hash, Trash } from 'react-bootstrap-icons';
 import { UserContext } from 'components/userContext';
 import { Ordered } from 'components/ordered';
 import { useMutation } from 'react-query';
 import { deleteHelper } from 'components/api-helpers';
 
-export function ActionColumn(props: {
-    result: Ordered<Result>;
-    ops: ResultOps;
-}): ReactElement {
+/**
+ * Column with buttons to interact with result
+ * @param {Result & {orderIndex: number}} result
+ * @param {ResultCallbacks} callbacks Callbacks for the operations
+ * @returns {React.ReactElement}
+ * @constructor
+ */
+export function ActionColumn({
+                                 result,
+                                 callbacks
+                             }: { result: Ordered<Result>; callbacks: ResultCallbacks; }): ReactElement {
     // TODO: CSS: figure out why button group taller than it should be
 
     const auth = useContext(UserContext);
 
     const { mutate: deleteResult } = useMutation(() =>
-        deleteHelper('/results/' + props.result.id, auth.token)
+        deleteHelper('/results/' + result.id, auth.token)
     );
 
     return (
@@ -25,7 +32,7 @@ export function ActionColumn(props: {
             <Button
                 variant='primary'
                 onClick={() => {
-                    props.ops.display(props.result);
+                    callbacks.display(result);
                 }}
             >
                 <Hash />
@@ -34,7 +41,7 @@ export function ActionColumn(props: {
                 <Button
                     variant='warning'
                     onClick={() => {
-                        props.ops.report(props.result);
+                        callbacks.report(result);
                     }}
                 >
                     <Exclamation />

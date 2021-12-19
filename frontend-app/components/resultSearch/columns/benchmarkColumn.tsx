@@ -2,14 +2,18 @@ import React, { ReactElement } from 'react';
 import { Result } from 'model';
 import { Ordered } from 'components/ordered';
 
-export function BenchmarkColumn(props: {
-    result: Ordered<Result>;
-}): ReactElement {
+/**
+ * Column to display benchmark docker image and version tag
+ * @param {Result & {orderIndex: number}} result
+ * @returns {React.ReactElement}
+ * @constructor
+ */
+export function BenchmarkColumn({ result }: { result: Ordered<Result>; }): ReactElement {
     return (
         <>
-            {props.result.benchmark.docker_image +
+            {result.benchmark.docker_image +
                 ':' +
-                props.result.benchmark.docker_tag}
+                result.benchmark.docker_tag}
         </>
     );
 }

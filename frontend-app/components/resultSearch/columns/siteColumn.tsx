@@ -2,6 +2,12 @@ import React, { ReactElement } from 'react';
 import { Result } from 'model';
 import { Ordered } from 'components/ordered';
 
-export function SiteColumn(props: { result: Ordered<Result> }): ReactElement {
-    return <>{props.result.site.name}</>;
+/**
+ * Column to display execution site
+ * @param {Result & {orderIndex: number}} result
+ * @returns {React.ReactElement}
+ * @constructor
+ */
+export function SiteColumn({ result }: { result: Ordered<Result> }): ReactElement {
+    return <>{result.site.name}</>;
 }
