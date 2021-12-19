@@ -182,6 +182,7 @@ export function ResultTable(props: {
                 closeModal={() => setShowColumnSelection(false)}
                 columns={customColumns}
                 setColumns={setCustomColumns}
+                suggestions={props.suggestions}
             />
         </>
     );

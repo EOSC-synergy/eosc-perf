@@ -1,11 +1,13 @@
 import React, { ReactElement, useState } from 'react';
-import { Button, CloseButton, Col, FormControl, InputGroup, ListGroup, Modal, Row } from 'react-bootstrap';
+import { Button, CloseButton, Col, ListGroup, Modal, Row } from 'react-bootstrap';
+import { InputWithSuggestions } from 'components/inputWithSuggestions';
 
 export function ColumnSelectModal(props: {
     show: boolean;
     closeModal: () => void;
     columns: string[];
     setColumns: (columns: string[]) => void;
+    suggestions?: string[]
 }): ReactElement {
     const [newColumn, setNewColumn] = useState('');
     const [activeColumns, setActiveColumns] = useState(props.columns);
@@ -50,16 +52,12 @@ export function ColumnSelectModal(props: {
                 <Row className='mt-2'>
                     <Col>
                         Add column
-                        <InputGroup>
-                            <FormControl
-                                placeholder='JSON.path.to'
-                                aria-label='New Column'
-                                onChange={(e) => setNewColumn(e.target.value)}
-                            />
+                        <InputWithSuggestions setInput={(input) => setNewColumn(input)} placeholder='JSON.path.to'
+                                              suggestions={props.suggestions}>
                             <Button variant='outline-success' onClick={addColumn}>
                                 +
                             </Button>
-                        </InputGroup>
+                        </InputWithSuggestions>
                     </Col>
                 </Row>
             </Modal.Body>
