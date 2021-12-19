@@ -11,6 +11,7 @@ import { UserContextWrapper } from 'components/userContextWrapper';
 import { NavHeader } from 'components/navHeader';
 import { Footer } from 'components/footer';
 import { useRouter } from 'next/router';
+import { SSRProvider } from 'react-bootstrap';
 
 
 const oidcConfig: AuthProviderProps = {
@@ -28,7 +29,7 @@ const oidcConfig: AuthProviderProps = {
 function MyApp({ Component, pageProps }: AppProps) {
     const router = useRouter();
 
-    return (<QueryClientWrapper>
+    return (<SSRProvider><QueryClientWrapper>
         <AuthProvider {...oidcConfig} onSigninCallback={() => {
             router.push('/');
         }}>
@@ -38,7 +39,8 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <Footer />
             </UserContextWrapper>
         </AuthProvider>
-    </QueryClientWrapper>);
+    </QueryClientWrapper>
+    </SSRProvider>);
 }
 
 export default MyApp;
