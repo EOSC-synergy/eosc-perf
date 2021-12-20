@@ -1,6 +1,13 @@
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-    enabled: process.env.ANALYZE === 'true'
-});
+let withBundleAnalyzer = undefined;
+try {
+    withBundleAnalyzer = require('@next/bundle-analyzer')({
+        enabled: process.env.ANALYZE === 'true'
+    });
+} catch (e) {
+    console.log('No @next/bundle-analyzer, assuming production');
+    withBundleAnalyzer = () => {
+    };
+}
 
 /** @type {import('next').NextConfig} */
 module.exports = {
