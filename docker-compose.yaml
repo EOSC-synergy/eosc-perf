@@ -12,6 +12,10 @@ services:
       - frontend-net
     #volumes:
     #  - ./service_frontend/:/app
+    volumes:
+      - ./service_frontend/components:/app/components
+      - ./service_frontend/pages:/app/pages
+      - ./service_frontend/styles:/app/styles
 
   backend_v1:
     container_name: backend_v1
