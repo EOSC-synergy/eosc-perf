@@ -1,12 +1,15 @@
 import React, { ReactElement } from 'react';
 
+import style from './loadingOverlay.module.css';
+
+/**
+ * Space filling loading overlay including a spinner or equivalent
+ * @constructor
+ */
 export function LoadingOverlay(): ReactElement {
     return (
-        <div
-            className='overlay loading-background loading center-contents'
-            id='loadingIcon'
-        >
-            <div className='lds-ellipsis'>
+        <div className={style.loading}>
+            <div className={style.ldsEllipsis}>
                 <div />
                 <div />
                 <div />
