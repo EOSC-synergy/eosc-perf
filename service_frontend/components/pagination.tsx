@@ -2,36 +2,66 @@ import React, { ReactElement } from 'react';
 import { Pagination } from 'react-bootstrap';
 
 /**
- * Page navigation based on flask pagination
+ * Representation of an OpenAPI pagination object
  */
-
 export interface Paginatable {
-    // index of next page
+    /**
+     * Page index of next page
+     */
     readonly next_num: number;
-    // index of previous page
+
+    /**
+     * Page index of previous page
+     */
     readonly prev_num: number;
-    // total page count
+
+    /**
+     * Total number of pages
+     */
     readonly total: number;
-    // items per page
+
+    /**
+     * Maximum number of items per page
+     */
     per_page?: number;
-    // whether there is a next page
+
+    /**
+     * Whether there is a next page
+     */
     readonly has_next: boolean;
-    // whether there is a previous page
+
+    /**
+     * Whether there is a previous page
+     */
     readonly has_prev: boolean;
-    // number of pages
+
+    /**
+     * Total number of pages available
+     */
     readonly pages: number;
-    // current page
+
+    /**
+     * The current page
+     */
     page?: number;
 }
 
+/**
+ * Generic for pagination of a specific object type
+ */
 export type Paginated<Type> = { items: Type[] } & Paginatable;
 
+/**
+ * Component to navigate between pages of a pagination object
+ * @param {Paginatable} props.pagination paginatable object to navigate through
+ * @param {(pageIndex: number) => void} props.navigateTo callback to navigate to another page in the pagination
+ * @constructor
+ */
 export function Paginator(props: {
     pagination: Paginatable;
     navigateTo: (pageIndex: number) => void;
 }): ReactElement {
     return (
-        /* <nav aria-label="Page navigation" className={props.className}> */
         <Pagination className='align-items-center mb-0'>
             <Pagination.First
                 disabled={props.pagination.pages !== 0 && props.pagination.page === 1}
