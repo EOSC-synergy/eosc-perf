@@ -1,15 +1,25 @@
+.loading {
+    background-color: rgba(52, 58, 64, 0.6);
+    transition: opacity .5s ease-in-out;
+    opacity: 1;
+    pointer-events: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 /**
     'ellipsis' from loading.io, in public domain (https://loading.io/license/)
  */
 
-.lds-ellipsis {
+.ldsEllipsis {
     display: inline-block;
     position: relative;
     width: 80px;
     height: 80px;
 }
 
-.lds-ellipsis div {
+.ldsEllipsis div {
     position: absolute;
     top: 33px;
     width: 13px;
@@ -19,22 +29,22 @@
     animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 
-.lds-ellipsis div:nth-child(1) {
+.ldsEllipsis div:nth-child(1) {
     left: 8px;
     animation: lds-ellipsis1 0.6s infinite;
 }
 
-.lds-ellipsis div:nth-child(2) {
+.ldsEllipsis div:nth-child(2) {
     left: 8px;
     animation: lds-ellipsis2 0.6s infinite;
 }
 
-.lds-ellipsis div:nth-child(3) {
+.ldsEllipsis div:nth-child(3) {
     left: 32px;
     animation: lds-ellipsis2 0.6s infinite;
 }
 
-.lds-ellipsis div:nth-child(4) {
+.ldsEllipsis div:nth-child(4) {
     left: 56px;
     animation: lds-ellipsis3 0.6s infinite;
 }
