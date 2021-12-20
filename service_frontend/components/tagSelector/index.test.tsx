@@ -2,23 +2,12 @@ import React from 'react';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { rest } from 'msw';
-import { Tag, Tags } from 'model';
-import { TagSelector } from 'components/tagSelector';
+import { Tags } from 'model';
+import TagSelector from 'components/tagSelector';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { API_BASE_ROUTE } from 'components/configuration';
 
-const tag: Tag = { id: 'test', name: 'testTag', description: null };
-const tags: Tags = {
-    has_next: true,
-    has_prev: false,
-    next_num: 2,
-    items: [tag],
-    page: 1,
-    pages: 2,
-    per_page: 1,
-    prev_num: 1,
-    total: 2
-};
+import { tag, tags } from '../testData';
 
 const server = setupServer();
 

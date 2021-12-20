@@ -15,7 +15,7 @@ import { getErrorMessage } from 'components/forms/getErrorMessage';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { RegistrationCheck } from 'components/registrationCheck';
-import { TagSelector } from 'components/tagSelector';
+import TagSelector from 'components/tagSelector';
 
 export function ResultSubmitForm(props: {
     onSuccess: () => void;
