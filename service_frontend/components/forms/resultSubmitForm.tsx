@@ -140,8 +140,8 @@ export function ResultSubmitForm(props: {
                 <Row className='align-items-center'>
                     <Col>
                         <TermsOfServiceCheck
-                            termsOfServiceAccepted={termsOfServiceAccepted}
-                            setTermsOfServiceAccepted={setTermsOfServiceAccepted}
+                            accepted={termsOfServiceAccepted}
+                            setAccepted={setTermsOfServiceAccepted}
                         />
                     </Col>
                     <Col md='auto'>
