@@ -1,84 +1,14 @@
-import React, { ReactElement, useContext, useState } from 'react';
-import { useMutation, useQuery } from 'react-query';
-import { getHelper, postHelper } from 'components/api-helpers';
-import { CreateTag, Tag, Tags } from 'model';
-import { Button, Card, Col, Form, InputGroup, Placeholder, Row } from 'react-bootstrap';
+import React, { ReactElement, useState } from 'react';
+import { useQuery } from 'react-query';
+import { getHelper } from 'components/api-helpers';
+import { Tag, Tags } from 'model';
+import { Card, Col, Form, Row } from 'react-bootstrap';
+import { PlaceholderTag } from './placeholderTag';
+import { UnselectedTag } from './unselectedTag';
+import { SelectedTag } from './selectedTag';
+import { NewTag } from './newTag';
 
-import actionable from 'styles/actionable.module.css';
-import style from './tagSelector.module.css';
-import { UserContext } from 'components/userContext';
-import { InlineCloseButton } from 'components/inlineCloseButton';
-
-function PlaceholderTag() {
-    return (
-        <div className={style.tagBadge + 'p-1'}>
-            <Placeholder xs={12} style={{ width: '2em' }} />
-        </div>
-    );
-}
-
-function UnselectedTag(props: { tag: Tag; select: (tag: Tag) => void }) {
-    return (
-        <div
-            className={style.tagBadge + 'p-1' + actionable.actionable}
-            onClick={() => props.select(props.tag)}
-        >
-            {props.tag.name}
-        </div>
-    );
-}
-
-function SelectedTag(props: { tag: Tag; unselect: (tag: Tag) => void }) {
-    return (
-        <div className={style.tagBadge + 'p-1'}>
-            {props.tag.name}
-            <InlineCloseButton onClose={() => props.unselect(props.tag)} />
-        </div>
-    );
-}
-
-function NewTag(props: { onSubmit: () => void }) {
-    const [customTagName, setCustomTagName] = useState('');
-    const auth = useContext(UserContext);
-
-    const { mutate } = useMutation(
-        (data: CreateTag) => postHelper<CreateTag>('/tags', data, auth.token),
-        {
-            onSuccess: () => {
-                props.onSubmit();
-            }
-        }
-    );
-
-    function addTag() {
-        mutate({
-            name: customTagName,
-            description: ''
-        });
-    }
-
-    return (
-        <Form.Group>
-            <InputGroup>
-                <Form.Control
-                    id='custom-tag'
-                    placeholder='tensor'
-                    onChange={(e) => setCustomTagName(e.target.value)}
-                />
-                <Button
-                    variant='success'
-                    disabled={!auth.token || customTagName.length < 1}
-                    onClick={() => addTag()}
-                    className='reset-z-index'
-                >
-                    Add Tag
-                </Button>
-            </InputGroup>
-        </Form.Group>
-    );
-}
-
-export function TagSelector(props: {
+function Index(props: {
     selected: Tag[];
     setSelected: (tags: Tag[]) => void;
 }): ReactElement {
@@ -129,6 +59,10 @@ export function TagSelector(props: {
                                 <SelectedTag tag={tag} unselect={unselect} key={tag.id} />
                             ))}
                         </div>
+                        {props.selected.length === 0 &&
+                            <div className='text-muted' style={{ display: 'inline' }}>
+                                No tags selected
+                            </div>}
                         <hr />
                         {tags.isPreviousData && tags.data && (
                             <>
@@ -160,6 +94,10 @@ export function TagSelector(props: {
                                             <UnselectedTag tag={tag} select={select} key={tag.id} />
                                         ))}
                                 </div>
+                                {tags.data.data.total === 0 &&
+                                    <div className='text-muted' style={{ display: 'inline' }}>
+                                        No tags available
+                                    </div>}
                                 {tags.data.data.has_next && (
                                     <div className='text-muted'>
                                         <small>More tags hidden, use search terms</small>
@@ -174,3 +112,5 @@ export function TagSelector(props: {
         </Card>
     );
 }
+
+export default Index;
