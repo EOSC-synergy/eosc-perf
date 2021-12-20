@@ -10,8 +10,8 @@ services:
       target: development
     networks:
       - frontend-net
-    volumes:
-      - ./service_frontend/:/app
+    #volumes:
+    #  - ./service_frontend/:/app
 
   backend_v1:
     container_name: backend_v1
