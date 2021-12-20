@@ -43,7 +43,7 @@ pipeline {
 
         stage('SQA baseline dynamic stages (backend)') {
             // may execute this action, only when "service_backend" is changed
-            when { changeset 'service_backend/*'}
+            //when { changeset 'service_backend/*'}
             steps {
                 script {
                     projectConfig = pipelineConfig(configFile: env.sqa_config_backend)
@@ -58,7 +58,7 @@ pipeline {
         }
         stage('SQA baseline dynamic stages (frontend)') {
             // may execute this action, only when "frontend-js" is changed
-            when { changeset 'frontend-js/*'}
+            //when { changeset 'frontend-js/*'}
             steps {
                 script {
                     projectConfig = pipelineConfig(configFile: env.sqa_config_frontend)
@@ -98,43 +98,6 @@ pipeline {
                 cleanup {
                     cleanWs()
                 }
-            }
-        }
-        stage('Snyk Security Test') {
-            parallel {
-                stage('BE - Snyk Test') {
-                    steps{
-                        dir('service_backend/') {
-                            sh "pip3 install --user -e ."
-                            // needs Snyk Security Plugin
-                            snykSecurity(
-                            snykInstallation: 'snyk@jenkins',
-                            snykTokenId: 'vykozlov-snyk-api-token',
-                            severity: 'high',
-                            failOnIssues: 'true',
-                            additionalArguments: '--command=python3'
-                            )
-                        }
-                    }    
-                }
-                stage('FE - Snyk Test') {
-                    steps{
-                        dir('frontend-js/') {
-                            // needs Snyk Security Plugin
-                            snykSecurity(
-                                snykInstallation: 'snyk@jenkins',
-                                snykTokenId: 'vykozlov-snyk-api-token',
-                                severity: 'high',
-                                failOnIssues: 'true'
-                            )
-                        }
-                    }
-                }
-            }
-            post {
-                cleanup {
-                    cleanWs()
-                }            
             }
         }
     }
