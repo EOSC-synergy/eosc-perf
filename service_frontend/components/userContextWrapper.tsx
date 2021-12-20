@@ -5,7 +5,12 @@ import { getHelper } from 'components/api-helpers';
 import { useAuth } from 'react-oidc-context';
 import { User } from 'model';
 
-export function UserContextWrapper(props: {
+/**
+ * Wrapper to provide authentication info about the current user, such as email or token
+ * @param children
+ * @constructor
+ */
+export function UserContextWrapper({children}: {
     children: ReactNode;
 }): ReactElement {
     const authentication = useAuth();
@@ -47,7 +52,7 @@ export function UserContextWrapper(props: {
                     : emptyUser
             }
         >
-            {props.children}
+            {children}
         </UserContext.Provider>
     );
 }
