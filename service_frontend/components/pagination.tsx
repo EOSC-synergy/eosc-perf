@@ -64,7 +64,7 @@ export function Paginator(props: {
     return (
         <Pagination className='align-items-center mb-0'>
             <Pagination.First
-                disabled={props.pagination.pages !== 0 && props.pagination.page === 1}
+                disabled={props.pagination.pages === 0 || props.pagination.page === 1}
                 onClick={() => props.navigateTo(1)}
             />
             <Pagination.Prev
@@ -87,7 +87,7 @@ export function Paginator(props: {
             />
             <Pagination.Last
                 disabled={
-                    props.pagination.pages !== 0 && props.pagination.page === props.pagination.pages
+                    props.pagination.pages === 0 || props.pagination.page === props.pagination.pages
                 }
                 onClick={() => props.navigateTo(props.pagination.pages)}
             />
