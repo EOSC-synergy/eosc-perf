@@ -1,4 +1,3 @@
-import '../styles/globals.css';
 import 'prismjs/themes/prism-dark.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
