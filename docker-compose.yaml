@@ -81,7 +81,6 @@ services:
       context: ./service_rproxy
       target: development
     depends_on:
-      - frontend-auth
       - backend_v1
       - certificate
     env_file: .env
