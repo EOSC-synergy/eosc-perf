@@ -41,8 +41,8 @@ pipeline {
                                      name: 'BE - CheckStyle')
                     )
                     // publish cobertura report:
-                    publishCoverage(adapters: [coberturaAdapter('service_backend/be-coverage.xml')],
-                                    tag: 'BE+FE - Coverage',  
+                    publishCoverage(adapters: [coberturaAdapter(mergeToOneReport: true, path: '**/*-coverage.xml')],
+                                    tag: 'Coverage',  
                                     failUnhealthy: false, failUnstable: false
                     )
                     // publish bandit report:
@@ -88,8 +88,8 @@ pipeline {
                     //    enableNewApi: true,
                     //    failUnhealthy: false, failUnstable: false, onlyStable: false
                     //)
-                    publishCoverage(adapters: [coberturaAdapter('frontend-js/coverage/fe-cobertura-coverage.xml')],
-                                    tag: 'BE+FE - Coverage', 
+                    publishCoverage(adapters: [coberturaAdapter(mergeToOneReport: true, path: '**/*-coverage.xml')],
+                                    tag: 'Coverage', 
                                     failUnhealthy: false, failUnstable: false
                     )
                     // publish the output of npm audit:
