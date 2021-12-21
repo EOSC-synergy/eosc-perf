@@ -16,36 +16,42 @@ pipeline {
 
     stages {
 
-        stage('SQA baseline dynamic stages (backend)') {
-            // may execute this action, only when "service_backend" is changed
-            //when { changeset 'service_backend/*'}
+        stage('SQA baseline dynamic stages') {
             environment {
+                // get jenkins user id and group
                 jenkins_user_id = sh (returnStdout: true, script: 'id -u').trim()
                 jenkins_user_group = sh (returnStdout: true, script: 'id -g').trim()            
             }
             steps {
+                // execute 'backend' pipeline
                 script {
-                    echo env.jenkins_user_id
-                    echo env.jenkins_user_group
                     projectConfig = pipelineConfig(configFile: env.sqa_config_backend)
+                    buildStages(projectConfig)
+                }
+                // execute 'frontend' pipeline
+                script {
+                    projectConfig = pipelineConfig(configFile: env.sqa_config_frontend)
                     buildStages(projectConfig)
                 }
             }
             post {
                 always {
-                    // publish stylecheck (flake8) report:
+                    // BE: publish stylecheck (flake8) report:
                     recordIssues(
                         enabledForFailure: true, aggregatingResults: true,
                         tool: pyLint(pattern: 'service_backend/tmp/flake8.log', 
                                      reportEncoding:'UTF-8',
                                      name: 'BE - CheckStyle')
                     )
-                    // publish cobertura report:
-                    publishCoverage(adapters: [coberturaAdapter(mergeToOneReport: true, path: '**/*-coverage.xml')],
-                                    tag: 'Coverage',  
-                                    failUnhealthy: false, failUnstable: false
+
+                    // BE: publish coverage report (only BE, works??):
+                    cobertura(
+                        coberturaReportFile: 'service_backend/tmp/be-coverage.xml', 
+                        enableNewApi: true,
+                        failUnhealthy: false, failUnstable: false, onlyStable: false
                     )
-                    // publish bandit report:
+
+                    // BE: publish bandit report:
                     // according to https://vdwaa.nl/openstack-bandit-jenkins-integration.html
                     // XML output of bandit can be parsed as JUnit
                     recordIssues(
@@ -54,24 +60,7 @@ pipeline {
                                            reportEncoding:'UTF-8',
                                            name: 'BE - Bandit')
                     )
-                }                 
-                cleanup {
-                    cleanWs()
-                }
-            }
-        }
-        stage('SQA baseline dynamic stages (frontend)') {
-            // may execute this action, only when "frontend-js" is changed
-            //when { changeset 'frontend-js/*'}
-            steps {
-                script {
-                    projectConfig = pipelineConfig(configFile: env.sqa_config_frontend)
-                    buildStages(projectConfig)
-                }
-            }
-            post {
-                always {
-                    // publish codestyle:
+                    // FE: publish codestyle:
                     // replace path in the docker container with relative path
                     sh "sed -i 's/\\/perf-testing/./gi' frontend-js/eslint-codestyle.xml"
                     recordIssues(
@@ -81,27 +70,20 @@ pipeline {
                                          name: 'FE - CheckStyle')
                     )
 
-                    // publish cobertura report:
+                    // publish BE+FE coverage reports:
+                    // service_backend/tmp/be-coverage.xml +
+                    // frontend-js/coverage/fe-cobertura-coverage.xml:
                     sh "cd frontend-js/coverage && mv cobertura-coverage.xml fe-cobertura-coverage.xml && cd -"
-                    //cobertura(
-                    //    coberturaReportFile: 'frontend-js/coverage/fe-cobertura-coverage.xml', 
-                    //    enableNewApi: true,
-                    //    failUnhealthy: false, failUnstable: false, onlyStable: false
-                    //)
-                    publishCoverage(adapters: [coberturaAdapter(mergeToOneReport: true, path: '**/*-coverage.xml')],
+                    publishCoverage(adapters: [coberturaAdapter(path: '**/*-coverage.xml')],
                                     tag: 'Coverage', 
                                     failUnhealthy: false, failUnstable: false
                     )
-                    // publish the output of npm audit:
+                    // FE: publish the output of npm audit:
                     recordIssues(
                         enabledForFailure: true, aggregatingResults: true,
                         tool: issues(name: 'FE - NPM Audit', pattern:'frontend-js/npm-audit.json'),
-                        //qualityGates: [
-                        //   [threshold: 100, type: 'TOTAL', unstable: true],
-                        //   [threshold: 1, type: 'TOTAL_ERROR', unstable: false]
-                        //]
                     )
-                }          
+                }                 
                 cleanup {
                     cleanWs()
                 }
