@@ -32,6 +32,29 @@ pipeline {
                 }
             }
             post {
+                always {
+                    // publish stylecheck (flake8) report:
+                    recordIssues(
+                        enabledForFailure: true, aggregatingResults: true,
+                        tool: pyLint(pattern: 'service_backend/tmp/flake8.log', 
+                                     reportEncoding:'UTF-8',
+                                     name: 'BE - CheckStyle')
+                    )
+                    // publish cobertura report:
+                    publishCoverage(adapters: [coberturaAdapter('service_backend/be-coverage.xml')],
+                                    tag: 'BE+FE - Coverage',  
+                                    failUnhealthy: false, failUnstable: false
+                    )
+                    // publish bandit report:
+                    // according to https://vdwaa.nl/openstack-bandit-jenkins-integration.html
+                    // XML output of bandit can be parsed as JUnit
+                    recordIssues(
+                        enabledForFailure: true, aggregatingResults: true,
+                        tool: junitParser(pattern: 'service_backend/tmp/bandit.xml', 
+                                           reportEncoding:'UTF-8',
+                                           name: 'BE - Bandit')
+                    )
+                }                 
                 cleanup {
                     cleanWs()
                 }
@@ -60,12 +83,15 @@ pipeline {
 
                     // publish cobertura report:
                     sh "cd frontend-js/coverage && mv cobertura-coverage.xml fe-cobertura-coverage.xml && cd -"
-                    cobertura(
-                        coberturaReportFile: 'frontend-js/coverage/fe-cobertura-coverage.xml', 
-                        enableNewApi: true,
-                        failUnhealthy: false, failUnstable: false, onlyStable: false
+                    //cobertura(
+                    //    coberturaReportFile: 'frontend-js/coverage/fe-cobertura-coverage.xml', 
+                    //    enableNewApi: true,
+                    //    failUnhealthy: false, failUnstable: false, onlyStable: false
+                    //)
+                    publishCoverage(adapters: [coberturaAdapter('frontend-js/coverage/fe-cobertura-coverage.xml')],
+                                    tag: 'BE+FE - Coverage', 
+                                    failUnhealthy: false, failUnstable: false
                     )
-
                     // publish the output of npm audit:
                     recordIssues(
                         enabledForFailure: true, aggregatingResults: true,
