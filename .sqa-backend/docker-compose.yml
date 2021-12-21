@@ -20,9 +20,11 @@ services:
     build:
       context: ./service_backend
       target: production
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.cicd
       args:
         INSTALL_PYTHON_VERSION: 3.8
+        USER_ID: ${jenkins_user_id}
+        USER_GROUP: ${jenkins_user_group}
     environment:
       FLASK_ENV: production
       BACKEND_URL: /api/v1
