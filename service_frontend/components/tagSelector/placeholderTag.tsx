@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import style from '../tagSelector.module.css';
+import style from 'styles/tagSelector.module.css';
 import { Placeholder } from 'react-bootstrap';
 
 /**
