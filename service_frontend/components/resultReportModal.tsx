@@ -1,4 +1,4 @@
-import React, { ReactElement, useContext, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { CreateClaim, Result } from 'model';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { useMutation } from 'react-query';
@@ -10,7 +10,7 @@ export function ResultReportModal(props: {
     result: Result | null;
     show: boolean;
     closeModal: () => void;
-}): ReactElement {
+}) {
     const [message, setMessage] = useState('');
 
     const auth = useContext(UserContext);

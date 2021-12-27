@@ -3,6 +3,10 @@ import { UserContext } from 'components/userContext';
 import { Alert } from 'react-bootstrap';
 import Link from 'next/link';
 
+/**
+ * Warning banner that displays if the user has not completed registration
+ * @constructor
+ */
 export function RegistrationCheck(): ReactElement {
     const auth = useContext(UserContext);
 

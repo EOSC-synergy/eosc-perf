@@ -6,14 +6,13 @@ import { JsonHighlight } from 'components/jsonHighlight';
 /**
  * Modal to view the JSON data of a result
  * @param {{result: Result | null, show: boolean, closeModal: () => void}} props
- * @returns {React.ReactElement}
  * @constructor
  */
 export function JsonPreviewModal(props: {
     result: Result | null;
     show: boolean;
     closeModal: () => void;
-}): ReactElement {
+}) {
     return (
         <Modal
             show={props.show}

@@ -1,9 +1,19 @@
 import React, { ReactNode } from 'react';
 
+/**
+ * Flex container component
+ * @param props
+ * @constructor
+ */
 function Flex(props: { className?: string; children?: ReactNode }) {
     return <div className={'d-flex ' + (props.className ?? '')}>{props.children}</div>;
 }
 
+/**
+ * Flex float-left component
+ * @param props
+ * @constructor
+ */
 function FloatLeft(props: { className?: string; children?: ReactNode }) {
     return (
         <div
@@ -15,6 +25,11 @@ function FloatLeft(props: { className?: string; children?: ReactNode }) {
     );
 }
 
+/**
+ * Flex float center component
+ * @param props
+ * @constructor
+ */
 function Center(props: { className?: string; children?: ReactNode }) {
     return (
         <div
@@ -26,6 +41,11 @@ function Center(props: { className?: string; children?: ReactNode }) {
     );
 }
 
+/**
+ * Flex float right component
+ * @param props
+ * @constructor
+ */
 function FloatRight(props: { className?: string; children?: ReactNode }) {
     return (
         <div

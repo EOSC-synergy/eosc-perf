@@ -24,7 +24,6 @@ export function truthyOrNoneTag(
 /**
  * Display a label for a benchmark with image and tag, with a link to the docker hub
  * @param {Benchmark} benchmark Benchmark to display label for
- * @returns {JSX.Element} Label
  */
 export function benchmarkLinkDisplay(benchmark: Benchmark) {
     const dockerHubLink = 'https://hub.docker.com/r/' + benchmark.docker_image;
