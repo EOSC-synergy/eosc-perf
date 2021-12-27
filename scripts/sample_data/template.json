@@ -13,20 +13,25 @@
           "properties": {
             "arch": {
               "type": "string",
-              "suggestToUser": true
+              "suggestToUser": true,
+              "description": "Processor architecture"
             },
             "bits": {
-              "type": "number"
+              "type": "number",
+              "description": "Processor address size"
             },
             "brand_raw": {
-              "type": "string"
+              "type": "string",
+              "description": "Human-readable processor branding"
             },
             "count": {
               "type": "number",
-              "suggestToUser": true
+              "suggestToUser": true,
+              "description": "Processor core count"
             },
             "hz_actual_friendly": {
-              "type": "string"
+              "type": "string",
+              "description": "Human-readable maximum processor frequency"
             }
           },
           "required": [
@@ -40,11 +45,13 @@
       "type": "object",
       "properties": {
         "all_results": {
-          "type": "string"
+          "type": "string",
+          "description": "Concatenated string of all scores"
         },
         "score": {
           "type": "number",
-          "suggestToUser": true
+          "suggestToUser": true,
+          "description": "Average time in seconds for benchmark completion (lower is better)"
         }
       },
       "required": [

@@ -19,6 +19,7 @@ import {
     Tooltip,
     TooltipItem
 } from 'chart.js';
+import { Suggestion } from '../jsonSchema';
 
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, PointElement);
 
@@ -61,7 +62,7 @@ function LineChart(
         results,
         suggestions,
         benchmark
-    }: { results: Ordered<Result>[]; suggestions?: string[]; benchmark?: Benchmark }
+    }: { results: Ordered<Result>[]; suggestions?: Suggestion[]; benchmark?: Benchmark }
 ): ReactElement {
     const [displayMode, setDisplayMode] = useState(Mode.Simple);
 

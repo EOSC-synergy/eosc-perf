@@ -16,7 +16,7 @@ import { Filter } from 'components/resultSearch/filter';
 import { FilterEdit } from 'components/resultSearch/filterEdit';
 
 import { Ordered, orderedComparator } from 'components/ordered';
-import { determineNotableKeys } from 'components/resultSearch/jsonSchema';
+import { parseSuggestions } from 'components/resultSearch/jsonSchema';
 import Flex from 'components/flex';
 import { SiteSearchPopover } from 'components/searchSelectors/siteSearchPopover';
 import { BenchmarkSearchSelect } from 'components/searchSelectors/benchmarkSearchSelect';
@@ -73,7 +73,7 @@ function ResultSearch(): ReactElement {
     }
 
     const suggestedFields = benchmark
-        ? determineNotableKeys(benchmark)
+        ? parseSuggestions(benchmark)
         : undefined;
 
     const [resultsPerPage, setResultsPerPage_] = useState(20);

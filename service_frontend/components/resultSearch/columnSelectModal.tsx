@@ -1,13 +1,14 @@
 import React, { ReactElement, useState } from 'react';
 import { Button, CloseButton, Col, ListGroup, Modal, Row } from 'react-bootstrap';
 import { InputWithSuggestions } from 'components/inputWithSuggestions';
+import { Suggestion } from './jsonSchema';
 
 export function ColumnSelectModal(props: {
     show: boolean;
     closeModal: () => void;
     columns: string[];
     setColumns: (columns: string[]) => void;
-    suggestions?: string[]
+    suggestions?: Suggestion[]
 }): ReactElement {
     const [newColumn, setNewColumn] = useState('');
     const [activeColumns, setActiveColumns] = useState(props.columns);

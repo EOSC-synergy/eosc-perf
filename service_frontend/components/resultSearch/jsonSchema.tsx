@@ -3,23 +3,31 @@ import { Benchmark } from 'model';
 export interface SchemaField {
     type?: string;
     suggestToUser?: boolean;
+    description?: string;
 }
 
 export interface SchemaObject extends SchemaField {
     properties: { [key: string]: SchemaField };
 }
 
-export function determineNotableKeys(benchmark: Benchmark): string[] {
-    function recurser([key, field]: [string, SchemaField]): string[] {
+export type Suggestion = {
+    field: string;
+    description?: string;
+}
+
+export function parseSuggestions(benchmark: Benchmark): Suggestion[] {
+    function recurser([key, field]: [string, SchemaField]): Suggestion[] {
         if (field.suggestToUser && field.type !== 'object') {
-            return [key];
+            return [{ field: key, description: field.description }];
         }
 
         if (field.type === 'object') {
             return Object.entries((field as SchemaObject).properties)
                 .map(recurser) // get all interesting children
-                .reduce((acc: string[], arr: string[]) => [...acc, ...arr]) // make one array
-                .map((path: string) => key + '.' + path); // prefix current key
+                .reduce((acc: Suggestion[], arr: Suggestion[]) => [...acc, ...arr]) // make one array
+                .map((suggestion: Suggestion) => {
+                    return { ...suggestion, field: key + '.' + suggestion.field };
+                }); // prefix current key
         }
         return [];
     }
@@ -32,5 +40,5 @@ export function determineNotableKeys(benchmark: Benchmark): string[] {
 
     return Object.entries(schema.properties)
         .map(recurser)
-        .reduce((acc: string[], arr: string[]) => [...acc, ...arr]);
+        .reduce((acc: Suggestion[], arr: Suggestion[]) => [...acc, ...arr]);
 }
