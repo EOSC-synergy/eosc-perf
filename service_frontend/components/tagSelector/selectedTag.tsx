@@ -1,5 +1,5 @@
 import { Tag } from '../../model';
-import style from '../tagSelector.module.css';
+import style from 'styles/tagSelector.module.css';
 import { InlineCloseButton } from '../inlineCloseButton';
 import React from 'react';
 

@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 
-import style from './loadingOverlay.module.css';
+import style from 'styles/loadingOverlay.module.css';
 
 /**
  * Space filling loading overlay including a spinner or equivalent

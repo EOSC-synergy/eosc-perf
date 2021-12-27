@@ -1,7 +1,7 @@
-import {Tag} from "../../model";
-import React, {ReactElement} from "react";
-import style from "../tagSelector.module.css";
-import actionable from "../../styles/actionable.module.css";
+import { Tag } from '../../model';
+import React, { ReactElement } from 'react';
+import style from 'styles/tagSelector.module.css';
+import actionable from 'styles/actionable.module.css';
 
 export function UnselectedTag(props: { tag: Tag; select: (tag: Tag) => void }): ReactElement {
     return (
