@@ -1,9 +1,11 @@
 import React, { ReactElement, ReactNode, useState } from 'react';
 import { Dropdown, FormControl, InputGroup } from 'react-bootstrap';
+import { Suggestion } from './resultSearch/jsonSchema';
+import { truthyOrNoneTag } from './utility';
 
 export function InputWithSuggestions(props: {
     setInput: (input: string) => void;
-    suggestions?: string[];
+    suggestions?: Suggestion[];
     placeholder?: string;
     children?: ReactNode;
 }): ReactElement {
@@ -34,8 +36,9 @@ export function InputWithSuggestions(props: {
                     <Dropdown.Toggle split variant='outline-secondary' />
                     <Dropdown.Menu>
                         {props.suggestions.map((suggestion) => (
-                            <Dropdown.Item key={suggestion} eventKey={suggestion}>
-                                {suggestion}
+                            <Dropdown.Item key={suggestion.field} eventKey={suggestion.field}>
+                                {suggestion.field}<br />
+                                <small>{truthyOrNoneTag(suggestion.description, 'No description given.')}</small>
                             </Dropdown.Item>
                         ))}
                     </Dropdown.Menu>

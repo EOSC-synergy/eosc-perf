@@ -16,6 +16,7 @@ import { ColumnSelectModal } from 'components/resultSearch/columnSelectModal';
 import actionable from 'styles/actionable.module.css';
 import { Ordered } from 'components/ordered';
 import { Sorting, SortMode } from 'components/resultSearch/sorting';
+import { Suggestion } from './jsonSchema';
 
 function SortingTableHeader(props: {
     label: string;
@@ -57,7 +58,7 @@ export function ResultTable(props: {
     results: Result[];
     pageOffset: number;
     ops: ResultCallbacks;
-    suggestions?: string[];
+    suggestions?: Suggestion[];
     sorting: Sorting;
     setSorting: (sort: Sorting) => void;
     customColumns: string[];

@@ -2,12 +2,13 @@ import React, { ChangeEvent, ReactElement, useState } from 'react';
 import { Filter } from 'components/resultSearch/filter';
 import { CloseButton, Col, Form, Row } from 'react-bootstrap';
 import { InputWithSuggestions } from 'components/inputWithSuggestions';
+import { Suggestion } from './jsonSchema';
 
 export function FilterEdit(props: {
     filter: Filter;
     setFilter: (id: string, key: string, mode: string, value: string) => void;
     deleteFilter: (id: string) => void;
-    suggestions?: string[];
+    suggestions?: Suggestion[];
 }): ReactElement {
     const [key, setKey] = useState(props.filter.key);
     const [mode, setMode] = useState(props.filter.mode);

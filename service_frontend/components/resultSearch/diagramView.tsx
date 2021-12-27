@@ -3,11 +3,12 @@ import { Benchmark, Result } from 'model';
 import { Badge, Form } from 'react-bootstrap';
 import charts from 'components/resultSearch/diagrams';
 import { Ordered } from 'components/ordered';
+import { Suggestion } from './jsonSchema';
 
 export function DiagramView(props: {
     results: Ordered<Result>[];
     benchmark?: Benchmark;
-    suggestions?: string[];
+    suggestions?: Suggestion[];
 }): ReactElement {
     const [selectedDiagram, setSelectedDiagram] = useState(
         charts.LineChartMeta.id
