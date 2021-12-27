@@ -7,7 +7,7 @@ import Link from 'next/link';
  * Warning banner that displays if the user has not completed registration
  * @constructor
  */
-export function RegistrationCheck(): ReactElement {
+export function RegistrationCheck() {
     const auth = useContext(UserContext);
 
     return (

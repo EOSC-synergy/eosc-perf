@@ -10,9 +10,9 @@ import { User } from 'model';
  * @param children
  * @constructor
  */
-export function UserContextWrapper({children}: {
+export function UserContextWrapper({ children }: {
     children: ReactNode;
-}): ReactElement {
+}) {
     const authentication = useAuth();
 
     const amIRegistered = useQuery(
@@ -20,7 +20,7 @@ export function UserContextWrapper({children}: {
         () => getHelper<User>('/users/self', authentication.user?.access_token),
         {
             retry: false,
-            enabled: authentication.user != null
+            enabled: authentication.isAuthenticated
         }
     );
 
