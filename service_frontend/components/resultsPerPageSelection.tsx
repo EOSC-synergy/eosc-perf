@@ -10,7 +10,7 @@ import { Col, Form, Row } from 'react-bootstrap';
 export function ResultsPerPageSelection(props: {
     onChange: (resultsPerPage: number) => void;
     currentSelection: number;
-}): ReactElement {
+}) {
     const options = [10, 15, 20, 50, 100];
 
     return (

@@ -8,7 +8,7 @@ import Link from 'next/link';
  * @param {(accepted: boolean) => void} props.setAccepted set new acceptance state
  * @constructor
  */
-export function TermsOfServiceCheck(props: {accepted: boolean, setAccepted: (accepted: boolean) => void}): ReactElement {
+export function TermsOfServiceCheck(props: { accepted: boolean, setAccepted: (accepted: boolean) => void }) {
     return (
         <Form.Check
             type='switch'
