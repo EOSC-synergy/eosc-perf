@@ -62,14 +62,16 @@ export function Paginator(props: {
     navigateTo: (pageIndex: number) => void;
 }): ReactElement {
     return (
-        <Pagination className='align-items-center mb-0'>
+        <Pagination className='align-items-center mb-0' data-testid='paginator'>
             <Pagination.First
                 disabled={props.pagination.pages === 0 || props.pagination.page === 1}
                 onClick={() => props.navigateTo(1)}
+                data-testid='paginator-first'
             />
             <Pagination.Prev
                 disabled={!props.pagination.has_prev}
                 onClick={() => props.navigateTo(props.pagination.prev_num)}
+                data-testid='paginator-prev'
             />
             {/* TODO: don't show all pages, only nearby 3-5? */}
             {[...Array(props.pagination.pages).keys()].map((n: number) => (
@@ -84,12 +86,14 @@ export function Paginator(props: {
             <Pagination.Next
                 disabled={!props.pagination.has_next}
                 onClick={() => props.navigateTo(props.pagination.next_num)}
+                data-testid='paginator-next'
             />
             <Pagination.Last
                 disabled={
                     props.pagination.pages === 0 || props.pagination.page === props.pagination.pages
                 }
                 onClick={() => props.navigateTo(props.pagination.pages)}
+                data-testid='paginator-last'
             />
         </Pagination>
     );
