@@ -12,6 +12,7 @@ import {
     ChartDataset,
     Legend,
     LinearScale,
+    LogarithmicScale,
     LineElement,
     PointElement,
     ScatterDataPoint,
@@ -21,7 +22,7 @@ import {
 } from 'chart.js';
 import { Suggestion } from '../jsonSchema';
 
-ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, PointElement);
+ChartJS.register(CategoryScale, LinearScale, LogarithmicScale, LineElement, Title, Tooltip, Legend, PointElement);
 
 enum Mode {
     Simple,
