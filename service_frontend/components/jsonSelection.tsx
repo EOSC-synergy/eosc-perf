@@ -1,6 +1,12 @@
 import React, { ChangeEvent, ReactElement, useState } from 'react';
 import { Form, ProgressBar } from 'react-bootstrap';
 
+/**
+ * Form component to select a JSON file for upload
+ * @param props.fileContents string containing the json file
+ * @param props.setFileContents callback to update the string containing the json
+ * @constructor
+ */
 export function JsonSelection(props: {
     fileContents?: string;
     setFileContents: (file?: string) => void;

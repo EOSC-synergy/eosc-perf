@@ -1,6 +1,12 @@
 import React, { ChangeEvent, ReactElement } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 
+/**
+ * Dropdown component to select the number of items to display in a page
+ * @param props.onChange callback to be called with the new number of items per page
+ * @param props.currentSelection the current number of items displayed per page
+ * @constructor
+ */
 export function ResultsPerPageSelection(props: {
     onChange: (resultsPerPage: number) => void;
     currentSelection: number;

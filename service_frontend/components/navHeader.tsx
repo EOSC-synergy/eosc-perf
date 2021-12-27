@@ -7,7 +7,11 @@ import { Wrench } from 'react-bootstrap-icons';
 import Link from 'next/link';
 import Image from 'next/image';
 
-export function NavHeader(props: {}): ReactElement {
+/**
+ * Navigation header rendered at the top of every page
+ * @constructor
+ */
+export function NavHeader(): ReactElement {
     const auth = useContext(UserContext);
     const authentication = useAuth();
 

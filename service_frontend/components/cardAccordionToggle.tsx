@@ -5,6 +5,7 @@ import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
 /**
  * Custom accordion toggle to mimic old Bootstrap 4 look
  * @param props { children: JSX child elements, eventKey: accordion event key}
+ * @param props.eventKey event key to toggle on accordion toggle
  * @constructor
  */
 export function CardAccordionToggle(props: {
