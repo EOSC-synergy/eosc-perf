@@ -6,7 +6,7 @@ server {
   listen       80;
   listen       [::]:80;
   
-  server_name ${DOMAIN};
+  server_name ${domains};
 
   location /nginx/reload {
     auth_basic 'Access restriction';
@@ -26,14 +26,14 @@ server {
 server {
   listen       443 http2 ssl default_server;
   listen       [::]:443 http2 ssl default_server;
+
+  server_name ${domains};
   
-  ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
-  ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
+  ssl_certificate /etc/letsencrypt/live/${nginx_domain}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/${nginx_domain}/privkey.pem;
 
-  server_name ${DOMAIN};
-
-  include /etc/letsencrypt/options-ssl-nginx.conf;
-  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+  include /etc/nginx/letsencrypt/options-ssl-nginx.conf;
+  ssl_dhparam /etc/nginx/letsencrypt/ssl-dhparams.pem;
 
   add_header 'Access-Control-Allow-Origin' *;
 

@@ -1,6 +1,7 @@
 FROM nginx:1.19-alpine as base
 
-RUN apk add --no-cache apache2-utils curl bash netcat-openbsd openssl \
+RUN set -x \
+&&  apk add --no-cache apache2-utils curl bash netcat-openbsd openssl \
 &&  mkdir -p /etc/nginx/letsencrypt \
 &&  curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf > "/etc/nginx/letsencrypt/options-ssl-nginx.conf" \
 &&  curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem > "/etc/nginx/letsencrypt/ssl-dhparams.pem" \
@@ -10,9 +11,9 @@ RUN apk add --no-cache apache2-utils curl bash netcat-openbsd openssl \
 RUN curl -s https://raw.githubusercontent.com/nginxinc/docker-nginx/master/mainline/alpine/docker-entrypoint.sh > "/nginx-entrypoint.sh" \
 &&  chmod +x /nginx-entrypoint.sh
 COPY docker-entrypoint.sh /
-ENTRYPOINT ["/bin/bash", "/docker-entrypoint.sh"]
-RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx.conf.template /etc/nginx/templates/app.conf.template
+ENTRYPOINT ["/docker-entrypoint.sh"]
+RUN ["chmod", "+x", "/docker-entrypoint.sh"]
+
 CMD ["nginx", "-g", "daemon off;"]
 
 FROM base as production

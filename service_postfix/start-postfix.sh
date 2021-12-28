@@ -24,10 +24,11 @@ if [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; then
 fi
 ###
 
-if [ ${#DOMAIN} -gt 2 ]; then
-   PERF_HOSTNAME=$DOMAIN
+domains=(${DOMAINS})
+if (( ${#domains[@]} )); then
+    PERF_HOSTNAME="${domains[0]}"
 else
-   PERF_HOSTNAME="perf.test.fedcloud.eu"
+    PERF_HOSTNAME="localhost"
 fi
 
 echo "$PERF_HOSTNAME" > /etc/mailname
