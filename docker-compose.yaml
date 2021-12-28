@@ -151,7 +151,9 @@ services:
       - smtp-net
 
   database_backup:
-    image: postgres_backup
+    image: database_backup
+    restart: unless-stopped
+    container_name: database_backup
     build:
       context: service_backup
     volumes:
