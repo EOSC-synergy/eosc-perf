@@ -84,21 +84,27 @@ services:
     build:
       context: ./service_rproxy
       target: development
+    healthcheck:
+      test: [ "CMD", "curl", "--silent", "--fail", "http://localhost" ]
+      interval: 45s
+      timeout: 5s
+      retries: 3
     depends_on:
       - backend_v1
-      - certificate
     env_file: .env
     environment:
-      DOMAIN: ${DOMAIN}
+      DOMAINS: ${DOMAINS}
+      CERT_KEY_SIZE: ${CERT_KEY_SIZE}
       BACKEND_URL: /api
     volumes:
-      - ./service_certificate/conf:/etc/letsencrypt
-      - ./service_certificate/www:/var/www/certbot/
+      - ssl:/etc/letsencrypt
+      - ssl:/var/www/certbot
     secrets:
       - nginx_api_credentials
     networks:
       - frontend-net
       - smtp-net
+      - certbot-net
     ports:
       - "80:80"
       - "443:443"
@@ -109,12 +115,21 @@ services:
     image: certificate
     build:
       context: ./service_certificate
+    depends_on:
+      reverse_proxy:
+        condition: service_healthy
     env_file: .env
+    networks:
+      - certbot-net
     environment:
+      DOMAINS: ${DOMAINS}
       NGINX_CREDENTIALS: /run/secrets/nginx_api_credentials
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
+      LETSENCRYPT_STAGING: ${LETSENCRYPT_STAGING}
+      CERT_KEY_SIZE: ${CERT_KEY_SIZE}
     volumes:
-      - ./service_certificate/conf:/etc/letsencrypt
-      - ./service_certificate/www:/var/www/certbot
+      - ssl:/etc/letsencrypt
+      - ssl:/var/www/certbot
     secrets:
       - nginx_api_credentials
 
@@ -129,7 +144,7 @@ services:
       - ./logs/postfix:/var/log
     env_file: .env
     environment:
-      DOMAIN: ${DOMAIN}
+      DOMAINS: ${DOMAINS}
     ports:
       - "25:25"
     networks:
@@ -156,9 +171,11 @@ networks:
   frontend-net:
   backend-net:
   smtp-net:
+  certbot-net:
 
 volumes:
   postgres:
+  ssl: { }
 
 secrets:
   cookie_secret:
