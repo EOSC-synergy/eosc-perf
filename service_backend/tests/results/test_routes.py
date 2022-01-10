@@ -37,6 +37,7 @@ class TestList:
         {'sort_by': "+site_name,+flavor_name"},
         {'sort_by': "+json.type"},
         {'sort_by': "+json.time"},
+        {'sort_by': "+json.s1.t2"},
         {'sort_by': "+json.other"},
         {'sort_by': "+id"}
     ])
