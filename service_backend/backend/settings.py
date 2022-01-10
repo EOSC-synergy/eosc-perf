@@ -130,8 +130,7 @@ SQLALCHEMY_DATABASE_URI = f'{DB_CONNECTION}/{DB_NAME}'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
-# Cache and crypt configuration
-CACHE_TYPE = "flask_caching.backends.SimpleCache"
+# Crypt configuration
 BCRYPT_LOG_ROUNDS = int("BCRYPT_LOG_ROUNDS", default=12)
 """| Value to determine the complexity of the encryption.
 | See bcrypt for more details; default value is 12.
