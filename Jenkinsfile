@@ -62,18 +62,18 @@ pipeline {
                     )
                     // FE: publish codestyle:
                     // replace path in the docker container with relative path
-                    sh "sed -i 's/\\/perf-testing/./gi' frontend-js/eslint-codestyle.xml"
+                    sh "sed -i 's/\\/perf-testing/./gi' service_frontend/eslint-codestyle.xml"
                     recordIssues(
                         enabledForFailure: true, aggregatingResults: true,
-                        tool: checkStyle(pattern: 'frontend-js/eslint-codestyle.xml', 
+                        tool: checkStyle(pattern: 'service_frontend/eslint-codestyle.xml', 
                                          reportEncoding:'UTF-8',
                                          name: 'FE - CheckStyle')
                     )
 
                     // publish BE+FE coverage reports:
                     // service_backend/tmp/be-coverage.xml +
-                    // frontend-js/coverage/fe-cobertura-coverage.xml:
-                    sh "cd frontend-js/coverage && mv cobertura-coverage.xml fe-cobertura-coverage.xml && cd -"
+                    // service_frontend/coverage/fe-cobertura-coverage.xml:
+                    sh "cd service_frontend/coverage && mv cobertura-coverage.xml fe-cobertura-coverage.xml && cd -"
                     publishCoverage(adapters: [coberturaAdapter(path: '**/*-coverage.xml')],
                                     tag: 'Coverage', 
                                     failUnhealthy: false, failUnstable: false
@@ -81,9 +81,9 @@ pipeline {
                     // FE: publish the output of npm audit:
                     recordIssues(
                         enabledForFailure: true, aggregatingResults: true,
-                        tool: issues(name: 'FE - NPM Audit', pattern:'frontend-js/npm-audit.json'),
+                        tool: issues(name: 'FE - NPM Audit', pattern:'service_frontend/npm-audit.json'),
                     )
-                }                 
+                }
                 cleanup {
                     cleanWs()
                 }

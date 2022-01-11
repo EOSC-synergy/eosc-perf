@@ -16,14 +16,14 @@ sqa_criteria:
       eosc-perf-frontend:
         container: perf-frontend-testing
         commands: 
-        - bash -c "cd /perf-testing/frontend-js && npm ci --audit=false && ./node_modules/.bin/eslint ./ -f checkstyle -o eslint-codestyle.xml"
+        - bash -c "cd /perf-testing/service_frontend && npm ci --audit=false && ./node_modules/.bin/eslint ./ -f checkstyle -o eslint-codestyle.xml"
         #- bash -c "cd /perf-frontend-testing && npm ci --audit=false && ./node_modules/.bin/eslint ./ -f stylish"
   qc_coverage:
     repos:
       eosc-perf-frontend:
         container: perf-frontend-testing
         commands:
-        - bash -c "cd /perf-testing/frontend-js && npm run test:coverage"
+        - bash -c "cd /perf-testing/service_frontend && npm run test:coverage"
   qc_security:
     repos:
       eosc-perf-frontend:
@@ -33,7 +33,7 @@ sqa_criteria:
           # npm audit --json : to produce json output
           # transform-audit.js: parse the output for Warnings-NG plugin
           # npm audit --audit-level=high: fail an audit if a vulnerability of a level 'high' or higher (may result in exit 1 + printout)
-        - bash -c "cd /perf-testing/frontend-js && npm config set omit=dev production=true && 
+        - bash -c "cd /perf-testing/service_frontend && npm config set omit=dev production=true && 
                    npm audit --json | node ../.sqa-frontend/transform-audit.js > npm-audit.json
                    && npm audit --audit-level=high"
 

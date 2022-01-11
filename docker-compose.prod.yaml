@@ -2,8 +2,11 @@ version: "3.5"
 
 services:
   frontend-app:
-    profiles:
-      - disabled
+    #profiles:
+    #  - disabled
+    build:
+      context: service_frontend
+      target: production
 
   backend_v1:
     build:

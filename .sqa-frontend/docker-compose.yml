@@ -14,6 +14,6 @@ services:
 
   perf-frontend:
      build:
-        context: "./frontend-js"
+        context: "./service_frontend"
         dockerfile: "Dockerfile"
-     image: "perf/perf-frontend-js"
+     image: "perf/perf-frontend"
