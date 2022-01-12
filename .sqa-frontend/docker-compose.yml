@@ -3,7 +3,8 @@ version: "3.7"
 services:
   perf-frontend-testing:
     image: "node:latest"
-    #container_name: "perf-frontend-testing-${GIT_BRANCH}"
+    # node image has 'node' user, Cypress seems only to work with non-root!
+    user: node:node
     # add the code and build container
     volumes:
      - type: bind

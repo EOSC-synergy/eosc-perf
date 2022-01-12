@@ -29,7 +29,6 @@ pipeline {
                     buildStages(projectConfig)
                 }
                 // execute 'frontend' pipeline
-                sh "echo 'NEXT_PUBLIC_OIDC_REDIRECT_HOST=localhost' > service_frontend/.env.local"
                 script {
                     projectConfig = pipelineConfig(configFile: env.sqa_config_frontend)
                     buildStages(projectConfig)
