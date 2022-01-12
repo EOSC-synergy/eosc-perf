@@ -1,10 +1,10 @@
 config:
   node_agent: 'docker_compose'
-  deploy_template: '.sqa-frontend/docker-compose.yml'
+  deploy_template: '.sqa/docker-compose.yml'
 #  project_repos:
 #    eosc-perf:
 #      repo: 'https://github.com/EOSC-synergy/eosc-perf.git'
-#      branch: 'frontend'
+#      branch: 'backend'
 
 environment:
   JPL_DOCKERFORCEBUILD: 'true'
@@ -13,19 +13,38 @@ environment:
 sqa_criteria:
   qc_style:
     repos:
+      eosc-perf-backend:
+        container: perf-backend-testing
+        tox:
+          tox_file: /app/tox.ini
+          testenv:
+            - stylecheck
       eosc-perf-frontend:
         container: perf-frontend-testing
         commands: 
         - bash -c "cd /perf-testing/service_frontend && npm ci --audit=false && ./node_modules/.bin/eslint ./ -f checkstyle -o eslint-codestyle.xml"
-        #- bash -c "cd /perf-frontend-testing && npm ci --audit=false && ./node_modules/.bin/eslint ./ -f stylish"
-  qc_coverage:
+
+  qc_functional:
     repos:
+      eosc-perf-backend:
+        container: perf-backend-testing
+        tox:
+          tox_file: /app/tox.ini
+          testenv: 
+            - functional
       eosc-perf-frontend:
         container: perf-frontend-testing
         commands:
         - bash -c "cd /perf-testing/service_frontend && npm run test:coverage"
+
   qc_security:
     repos:
+      eosc-perf-backend:
+        container: perf-backend-testing
+        tox:
+          tox_file: /app/tox.ini
+          testenv:
+            - bandit
       eosc-perf-frontend:
         container: perf-frontend-testing
         commands:
@@ -34,8 +53,7 @@ sqa_criteria:
           # transform-audit.js: parse the output for Warnings-NG plugin
           # npm audit --audit-level=high: fail an audit if a vulnerability of a level 'high' or higher (may result in exit 1 + printout)
         - bash -c "cd /perf-testing/service_frontend && npm config set production=true && 
-                   npm audit --json | node ../.sqa-frontend/transform-audit.js > npm-audit.json
+                   npm audit --json | node ../.sqa/transform-audit.js > npm-audit.json
                    && npm audit --audit-level=high"
 
 timeout: 900
-

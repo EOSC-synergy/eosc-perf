@@ -8,29 +8,20 @@ pipeline {
     agent any
 
     environment {
-        sqa_config_backend = ".sqa-backend/config.yml"
-        dockerhub_cicd_backend = "eoscperf/cicd-images:backend-1.0.1"
-        sqa_config_frontend = ".sqa-frontend/config.yml"
         dockerhub_credentials = "o3as-dockerhub-vykozlov"
     }
 
     stages {
-
         stage('SQA baseline dynamic stages') {
             environment {
                 // get jenkins user id and group
                 jenkins_user_id = sh (returnStdout: true, script: 'id -u').trim()
-                jenkins_user_group = sh (returnStdout: true, script: 'id -g').trim()            
+                jenkins_user_group = sh (returnStdout: true, script: 'id -g').trim()
             }
             steps {
-                // execute 'backend' pipeline
+                // execute 'backend'+'frontend' pipeline
                 script {
-                    projectConfig = pipelineConfig(configFile: env.sqa_config_backend)
-                    buildStages(projectConfig)
-                }
-                // execute 'frontend' pipeline
-                script {
-                    projectConfig = pipelineConfig(configFile: env.sqa_config_frontend)
+                    projectConfig = pipelineConfig()
                     buildStages(projectConfig)
                 }
             }
@@ -39,14 +30,14 @@ pipeline {
                     // BE: publish stylecheck (flake8) report:
                     recordIssues(
                         enabledForFailure: true, aggregatingResults: true,
-                        tool: pyLint(pattern: 'service_backend/tmp/flake8.log', 
+                        tool: pyLint(pattern: 'service_backend/tmp/flake8.log',
                                      reportEncoding:'UTF-8',
                                      name: 'BE - CheckStyle')
                     )
 
                     // BE: publish coverage report (only BE, works??):
                     cobertura(
-                        coberturaReportFile: 'service_backend/tmp/be-coverage.xml', 
+                        coberturaReportFile: 'service_backend/tmp/be-coverage.xml',
                         enableNewApi: true,
                         failUnhealthy: false, failUnstable: false, onlyStable: false
                     )
@@ -56,7 +47,7 @@ pipeline {
                     // XML output of bandit can be parsed as JUnit
                     recordIssues(
                         enabledForFailure: true, aggregatingResults: true,
-                        tool: junitParser(pattern: 'service_backend/tmp/bandit.xml', 
+                        tool: junitParser(pattern: 'service_backend/tmp/bandit.xml',
                                            reportEncoding:'UTF-8',
                                            name: 'BE - Bandit')
                     )
@@ -65,7 +56,7 @@ pipeline {
                     sh "sed -i 's/\\/perf-testing/./gi' service_frontend/eslint-codestyle.xml"
                     recordIssues(
                         enabledForFailure: true, aggregatingResults: true,
-                        tool: checkStyle(pattern: 'service_frontend/eslint-codestyle.xml', 
+                        tool: checkStyle(pattern: 'service_frontend/eslint-codestyle.xml',
                                          reportEncoding:'UTF-8',
                                          name: 'FE - CheckStyle')
                     )
