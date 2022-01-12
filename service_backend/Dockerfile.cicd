@@ -1,21 +1,4 @@
 # Docker image for running CI/CD tests of the backend using JePL
-#ARG CICD_IMAGE=eoscperf/cicd-images:backend-1.0.1
-#FROM ${CICD_IMAGE}
-#
-#COPY backend backend
-#COPY autoapp.py ./
-#COPY requirements requirements
-#COPY factories factories
-#COPY tests tests
-## package installation is described in tox.ini
-#COPY tox.ini tox.ini
-#
-#ENV FLASK_ENV="production"
-#
-## to be on the save side, install dependencies
-##RUN pip install --no-cache -r requirements/prod.txt
-##RUN pip install --no-cache -r requirements/dev.txt
-
 # ================================== BUILDER ===================================
 ARG INSTALL_PYTHON_VERSION=3.8
 ARG PYTHON_IMAGE_TAG=slim-buster

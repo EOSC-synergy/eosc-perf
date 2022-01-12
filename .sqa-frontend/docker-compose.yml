@@ -2,9 +2,12 @@ version: "3.7"
 
 services:
   perf-frontend-testing:
-    image: "node:latest"
-    # node image has 'node' user, Cypress seems only to work with non-root!
-    user: ${jenkins_user_id}:${jenkins_user_group}
+    build:
+      context: ./service_frontend
+      dockerfile: Dockerfile.cicd
+      args:
+        USER_ID: ${jenkins_user_id}
+        USER_GROUP: ${jenkins_user_group}
     # add the code and build container
     volumes:
      - type: bind
