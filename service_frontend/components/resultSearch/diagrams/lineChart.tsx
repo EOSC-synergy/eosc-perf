@@ -1,26 +1,30 @@
 import React, { ChangeEvent, ReactElement, useState } from 'react';
-import { Benchmark, Result } from 'model';
+import { Benchmark, Result, Site } from 'model';
 import { Alert, Form } from 'react-bootstrap';
 import { Line } from 'react-chartjs-2';
-import { fetchSubkey, getSubkeyName } from 'components/resultSearch/jsonKeyHelpers';
 import { Ordered } from 'components/ordered';
-import { InputWithSuggestions } from 'components/inputWithSuggestions';
 import {
     CategoryScale,
     Chart as ChartJS,
-    ChartData,
     ChartDataset,
     Legend,
     LinearScale,
     LineElement,
     LogarithmicScale,
     PointElement,
-    ScatterDataPoint,
     Title,
     Tooltip,
     TooltipItem,
 } from 'chart.js';
 import { Suggestion } from '../jsonSchema';
+import {
+    DataPoint,
+    DataPointCollection,
+    generateDataPoints,
+    RejectedResult,
+    XAxis,
+    YAxis,
+} from './helpers';
 
 ChartJS.register(
     CategoryScale,
@@ -34,7 +38,6 @@ ChartJS.register(
 );
 
 enum Mode {
-    Simple,
     Linear,
     Logarithmic,
 }
@@ -76,51 +79,32 @@ function LineChart({
     suggestions?: Suggestion[];
     benchmark?: Benchmark;
 }): ReactElement {
-    const [displayMode, setDisplayMode] = useState(Mode.Simple);
+    const [displayMode, setDisplayMode] = useState(Mode.Linear);
 
     const [xAxis, setXAxis] = useState('');
     const [yAxis, setYAxis] = useState('');
 
-    // grouping-by-site behaviour
-    // Linear and Logarithmic mode require numeric x / column values
-    // splits results from different sites into different datasets
-    // map site.id => object with array of data points
-    type DataPoint = { x: number; y: number };
-    const data = new Map<string, { siteName: string; data: DataPoint[] }>();
     const labelSet = new Set<number>();
 
-    let rejectedResults: { result: Ordered<Result>; reason: string }[] = [];
+    let dataPoints: DataPointCollection = new Map<string, { site: Site; data: DataPoint[] }>();
+    let rejected: RejectedResult[] = [];
 
+    // if axes entered, parse data by x and y
     if (xAxis.length && yAxis.length) {
-        for (const result of results) {
-            const x = fetchSubkey(result.json, xAxis);
-            const y = fetchSubkey(result.json, yAxis);
-
-            if (typeof fetchSubkey(result.json, xAxis) !== 'number') {
-                rejectedResults.push({ result, reason: 'X axis value not numeric' });
-                continue;
+        [dataPoints, rejected] = generateDataPoints(results, xAxis, yAxis);
+        for (const site of dataPoints.values()) {
+            for (const dataPoint of site.data) {
+                labelSet.add(dataPoint.x);
             }
-            if (typeof fetchSubkey(result.json, yAxis) !== 'number') {
-                rejectedResults.push({ result, reason: 'Y axis value not numeric' });
-                continue;
-            }
-            if (data.get(result.site.id) === undefined) {
-                data.set(result.site.id, {
-                    siteName: result.site.name,
-                    data: [],
-                });
-            }
-            data.get(result.site.id)?.data.push({ x: x as number, y: y as number });
-            labelSet.add(x as number);
         }
     }
 
     // generate datasets
     const datasets: ChartDataset<'line'>[] = [];
     let colorIndex = 0;
-    data.forEach(function (dataMeta, site, _) {
+    dataPoints.forEach(function (dataMeta, siteId, _) {
         datasets.push({
-            label: dataMeta.siteName,
+            label: dataMeta.site.name,
             backgroundColor: BACKGROUND_COLORS[colorIndex],
             borderColor: CHART_COLORS[colorIndex],
             borderWidth: 1,
@@ -145,27 +129,13 @@ function LineChart({
                     <option value={Mode.Logarithmic}>Logarithmic</option>
                 </Form.Select>
             </Form.Group>
-            <Form.Group className="mb-1">
-                <Form.Label>X Axis:</Form.Label>
-                <InputWithSuggestions
-                    placeholder="machine.cpu.count"
-                    setInput={(i) => setXAxis(i)}
-                    suggestions={suggestions}
-                />
-            </Form.Group>
-            <Form.Group>
-                <Form.Label>Y Axis:</Form.Label>
-                <InputWithSuggestions
-                    placeholder="result.score"
-                    setInput={(i) => setYAxis(i)}
-                    suggestions={suggestions}
-                />
-            </Form.Group>
+            <XAxis setXAxis={setXAxis} suggestions={suggestions} />
+            <YAxis setYAxis={setYAxis} suggestions={suggestions} />
 
-            {rejectedResults.length > 0 && (
+            {rejected.length > 0 && (
                 <div className="my-1">
                     {datasets.length > 0 &&
-                        rejectedResults.map((rejected) => (
+                        rejected.map((rejected) => (
                             <Alert variant="warning" key={rejected.result.id}>
                                 Result {rejected.result.id} not displayed due to: {rejected.reason}
                             </Alert>
