@@ -1,6 +1,6 @@
 import React, { ChangeEvent, ReactElement, useState } from 'react';
 import { Benchmark, Result } from 'model';
-import { Form } from 'react-bootstrap';
+import { Alert, Form } from 'react-bootstrap';
 import { Line } from 'react-chartjs-2';
 import { fetchSubkey, getSubkeyName } from 'components/resultSearch/jsonKeyHelpers';
 import { Ordered } from 'components/ordered';
@@ -78,117 +78,59 @@ function LineChart({
 }): ReactElement {
     const [displayMode, setDisplayMode] = useState(Mode.Simple);
 
-    const [groupBySite, setGroupBySite] = useState(false);
-
     const [xAxis, setXAxis] = useState('');
     const [yAxis, setYAxis] = useState('');
 
-    function analyzeData(results: Ordered<Result>[]) {
-        let sameSite = true;
-        let columnsAreNumbers = true;
+    // grouping-by-site behaviour
+    // Linear and Logarithmic mode require numeric x / column values
+    // splits results from different sites into different datasets
+    // map site.id => object with array of data points
+    type DataPoint = { x: number; y: number };
+    const data = new Map<string, { siteName: string; data: DataPoint[] }>();
+    const labelSet = new Set<number>();
 
-        // test if sites are the same all across and if it's an integer range
-        if (results.length !== 0) {
-            const siteId = results[0].site.id;
-            for (const result of results) {
-                sameSite = sameSite && result.site.id === siteId;
-                columnsAreNumbers =
-                    columnsAreNumbers && typeof fetchSubkey(result.json, xAxis) === 'number';
-            }
-        } else {
-            sameSite = false;
-            columnsAreNumbers = false;
-        }
+    let rejectedResults: { result: Ordered<Result>; reason: string }[] = [];
 
-        return {
-            sameSite,
-            columnsAreNumbers,
-        };
-    }
-
-    const properties = analyzeData(results);
-
-    function processInput(
-        results: Ordered<Result>[]
-    ): ChartData<'line', (number | ScatterDataPoint | null)[]> {
-        const labels = []; // labels below graph
-
-        // grouping-by-site behaviour
-        // Linear and Logarithmic mode require numeric x / column values
-        // splits results from different sites into different datasets
-        if (groupBySite && (displayMode === Mode.Linear || displayMode === Mode.Logarithmic)) {
-            // map site.id => object with array of data points
-            const datasets = new Map<
-                string,
-                { siteName: string; data: { x: number; y: number }[] }
-            >();
-            const labelSet = new Set<number>();
-
-            for (const result of results) {
-                const x = fetchSubkey(result.json, xAxis) as number;
-                const y = fetchSubkey(result.json, yAxis) as number;
-                if (datasets.get(result.site.id) === undefined) {
-                    datasets.set(result.site.id, {
-                        siteName: result.site.name,
-                        data: [],
-                    });
-                }
-                datasets.get(result.site.id)?.data.push({ x, y });
-                labelSet.add(x);
-            }
-
-            // generate datasets
-            const data: ChartDataset<'line'>[] = [];
-            let colorIndex = 0;
-            datasets.forEach(function (dataMeta, site, _) {
-                data.push({
-                    label: dataMeta.siteName,
-                    backgroundColor: BACKGROUND_COLORS[colorIndex],
-                    borderColor: CHART_COLORS[colorIndex],
-                    borderWidth: 1,
-                    data: dataMeta.data,
-                    spanGaps: true,
-                });
-                colorIndex++;
-            });
-
-            return {
-                labels: Array.from(labelSet).sort((a, b) => a - b),
-                datasets: data,
-            };
-        }
-
-        const dataPoints = [];
-
-        // display all results as a single dataset
+    if (xAxis.length && yAxis.length) {
         for (const result of results) {
-            const x = fetchSubkey(result.json, xAxis) as number;
-            const y = fetchSubkey(result.json, yAxis) as number;
-            if (x === undefined || y === undefined) {
+            const x = fetchSubkey(result.json, xAxis);
+            const y = fetchSubkey(result.json, yAxis);
+
+            if (typeof fetchSubkey(result.json, xAxis) !== 'number') {
+                rejectedResults.push({ result, reason: 'X axis value not numeric' });
                 continue;
             }
-            let label = x.toString();
-            if (!properties.sameSite) {
-                label += ' (' + result.site.name + ')';
+            if (typeof fetchSubkey(result.json, yAxis) !== 'number') {
+                rejectedResults.push({ result, reason: 'Y axis value not numeric' });
+                continue;
             }
-            dataPoints.push({ x, y });
-            labels.push(label);
+            if (data.get(result.site.id) === undefined) {
+                data.set(result.site.id, {
+                    siteName: result.site.name,
+                    data: [],
+                });
+            }
+            data.get(result.site.id)?.data.push({ x: x as number, y: y as number });
+            labelSet.add(x as number);
         }
-
-        return {
-            labels: labels,
-            datasets: [
-                {
-                    label: getSubkeyName(yAxis),
-                    backgroundColor: BACKGROUND_COLORS[0],
-                    borderColor: CHART_COLORS[0],
-                    borderWidth: 1,
-                    data: dataPoints,
-                    spanGaps: true,
-                },
-            ],
-        };
     }
+
+    // generate datasets
+    const datasets: ChartDataset<'line'>[] = [];
+    let colorIndex = 0;
+    data.forEach(function (dataMeta, site, _) {
+        datasets.push({
+            label: dataMeta.siteName,
+            backgroundColor: BACKGROUND_COLORS[colorIndex],
+            borderColor: CHART_COLORS[colorIndex],
+            borderWidth: 1,
+            data: dataMeta.data.sort((a: DataPoint, b: DataPoint) => a.x - b.x),
+            spanGaps: true,
+        });
+        colorIndex++;
+    });
+
+    const labels = Array.from(labelSet).sort((a, b) => a - b);
 
     return (
         <>
@@ -198,22 +140,9 @@ function LineChart({
                         setDisplayMode(parseInt(e.target.value));
                     }}
                 >
-                    <option value={Mode.Simple}>Simple</option>
-                    <option value={Mode.Linear} disabled={!properties.columnsAreNumbers}>
-                        Linear
-                    </option>
-                    <option value={Mode.Logarithmic} disabled={!properties.columnsAreNumbers}>
-                        Logarithmic
-                    </option>
+                    <option value={Mode.Linear}>Linear</option>
+                    <option value={Mode.Logarithmic}>Logarithmic</option>
                 </Form.Select>
-            </Form.Group>
-            <Form.Group className="mb-1">
-                <Form.Check
-                    type="switch"
-                    label="Group values by site (only in linear & logarithmic mode)"
-                    onChange={(e) => setGroupBySite(e.target.checked)}
-                    disabled={displayMode !== Mode.Linear && displayMode !== Mode.Logarithmic}
-                />
             </Form.Group>
             <Form.Group className="mb-1">
                 <InputWithSuggestions
@@ -230,9 +159,25 @@ function LineChart({
                 />
             </Form.Group>
 
-            {xAxis.length > 0 && yAxis.length > 0 && (
+            {rejectedResults.length > 0 && (
+                <div className="my-1">
+                    {datasets.length > 0 &&
+                        rejectedResults.map((rejected) => (
+                            <Alert variant="warning" key={rejected.result.id}>
+                                Result {rejected.result.id} not displayed due to: {rejected.reason}
+                            </Alert>
+                        ))}
+                    {datasets.length === 0 && (
+                        <Alert variant="danger">
+                            No displayable result selected. One of your axes may not be referencing
+                            numeric data!
+                        </Alert>
+                    )}
+                </div>
+            )}
+            {xAxis.length > 0 && yAxis.length > 0 && datasets.length > 0 && (
                 <Line
-                    data={processInput(results)}
+                    data={{ labels, datasets }}
                     options={{
                         animation: false,
                         responsive: true,
