@@ -14,7 +14,7 @@ export function ResultInfo(props: { id: string }): ReactElement {
             return getHelper<Result>('/results/' + props.id);
         },
         {
-            refetchOnWindowFocus: false // do not spam queries
+            refetchOnWindowFocus: false, // do not spam queries
         }
     );
 
@@ -32,16 +32,9 @@ export function ResultInfo(props: { id: string }): ReactElement {
                     <br />
                     Benchmark: {benchmarkLinkDisplay(result.data.data.benchmark)}
                     <br />
-                    Tags:{' '}
-                    {truthyOrNoneTag(
-                        result.data.data.tags.map((tag) => tag.name).join(', ')
-                    )}
+                    Tags: {truthyOrNoneTag(result.data.data.tags.map((tag) => tag.name).join(', '))}
                     <br />
-                    <Button
-                        onClick={() => setShowPreview(true)}
-                        size='sm'
-                        className='mb-1'
-                    >
+                    <Button onClick={() => setShowPreview(true)} size="sm" className="mb-1">
                         View JSON
                     </Button>
                     <br />

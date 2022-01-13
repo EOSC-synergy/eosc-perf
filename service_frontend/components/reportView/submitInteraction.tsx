@@ -17,22 +17,22 @@ export function SubmitInteraction(props: {
         [Submit.resource_type.BENCHMARK, '/benchmarks/'],
         [Submit.resource_type.SITE, '/sites/'],
         [Submit.resource_type.FLAVOR, '/flavors/'],
-        [Submit.resource_type.CLAIM, '/reports/claims/']
+        [Submit.resource_type.CLAIM, '/reports/claims/'],
     ]);
 
     const { mutate: approve } = useMutation(
         () =>
             postHelper<never>(
                 (endpoints.get(props.submit.resource_type) ?? '/reports/claims') +
-                props.submit.resource_id +
-                ':approve',
+                    props.submit.resource_id +
+                    ':approve',
                 undefined,
                 auth.token
             ),
         {
             onSuccess: () => {
                 props.refetch();
-            }
+            },
         }
     );
 
@@ -40,31 +40,31 @@ export function SubmitInteraction(props: {
         () =>
             postHelper<never>(
                 (endpoints.get(props.submit.resource_type) ?? '/reports/claims') +
-                props.submit.resource_id +
-                ':reject',
+                    props.submit.resource_id +
+                    ':reject',
                 undefined,
                 auth.token
             ),
         {
             onSuccess: () => {
                 props.refetch();
-            }
+            },
         }
     );
 
     return (
-        <div className='mt-2'>
+        <div className="mt-2">
             <Button
-                variant='success'
+                variant="success"
                 onClick={() => {
                     approve();
                 }}
-                className='me-1'
+                className="me-1"
             >
                 {props.approveText || 'Approve'}
             </Button>
             <Button
-                variant='danger'
+                variant="danger"
                 onClick={() => {
                     reject();
                 }}

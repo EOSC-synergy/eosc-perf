@@ -8,7 +8,7 @@ export function ColumnSelectModal(props: {
     closeModal: () => void;
     columns: string[];
     setColumns: (columns: string[]) => void;
-    suggestions?: Suggestion[]
+    suggestions?: Suggestion[];
 }): ReactElement {
     const [newColumn, setNewColumn] = useState('');
     const [activeColumns, setActiveColumns] = useState(props.columns);
@@ -36,14 +36,14 @@ export function ColumnSelectModal(props: {
                             {/* TODO: draggable/sortable */}
                             {activeColumns.length === 0 && (
                                 <ListGroup.Item>
-                                    <div className='text-muted'>No columns</div>
+                                    <div className="text-muted">No columns</div>
                                 </ListGroup.Item>
                             )}
                             {activeColumns.map((column) => (
                                 <ListGroup.Item key={column}>
                                     <Row>
                                         <Col>{column}</Col>
-                                        <Col md='auto'>
+                                        <Col md="auto">
                                             <CloseButton onClick={() => removeColumn(column)} />
                                         </Col>
                                     </Row>
@@ -52,12 +52,15 @@ export function ColumnSelectModal(props: {
                         </ListGroup>
                     </Col>
                 </Row>
-                <Row className='mt-2'>
+                <Row className="mt-2">
                     <Col>
                         Add column
-                        <InputWithSuggestions setInput={(input) => setNewColumn(input)} placeholder='JSON.path.to'
-                                              suggestions={props.suggestions}>
-                            <Button variant='outline-success' onClick={addColumn}>
+                        <InputWithSuggestions
+                            setInput={(input) => setNewColumn(input)}
+                            placeholder="JSON.path.to"
+                            suggestions={props.suggestions}
+                        >
+                            <Button variant="outline-success" onClick={addColumn}>
                                 +
                             </Button>
                         </InputWithSuggestions>
@@ -66,9 +69,9 @@ export function ColumnSelectModal(props: {
             </Modal.Body>
             <Modal.Footer>
                 <button
-                    type='button'
-                    className='btn btn-secondary'
-                    data-dismiss='modal'
+                    type="button"
+                    className="btn btn-secondary"
+                    data-dismiss="modal"
                     onClick={() => {
                         props.closeModal();
                         props.setColumns(activeColumns);

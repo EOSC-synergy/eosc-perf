@@ -11,7 +11,13 @@ import { truthyOrNoneTag } from 'components/utility';
  * @returns {React.ReactElement}
  * @constructor
  */
-export function CustomColumn({ result, jsonKey }: { result: Ordered<Result>; jsonKey: string; }): ReactElement {
+export function CustomColumn({
+    result,
+    jsonKey,
+}: {
+    result: Ordered<Result>;
+    jsonKey: string;
+}): ReactElement {
     const value = fetchSubkey(result.json, jsonKey) as string | number;
     return <>{truthyOrNoneTag(value?.toString(), 'Not found!')}</>;
 }

@@ -2,7 +2,7 @@ import LineChartMeta from 'components/resultSearch/diagrams/lineChart';
 
 const ChartTypes = {
     all: [LineChartMeta],
-    LineChartMeta
+    LineChartMeta,
 };
 
 export default ChartTypes;

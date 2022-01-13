@@ -26,7 +26,7 @@ export function FlavorSearchSelect(props: {
                 } else {
                     props.setFlavor(data.data);
                 }
-            }
+            },
         }
     );
 
@@ -37,7 +37,7 @@ export function FlavorSearchSelect(props: {
                 {flavor ? (
                     <>{flavor.name}</>
                 ) : (
-                    <div className='text-muted' style={{ display: 'inline-block' }}>
+                    <div className="text-muted" style={{ display: 'inline-block' }}>
                         None
                     </div>
                 )}
@@ -65,7 +65,7 @@ export function FlavorSearchSelect(props: {
                 <>
                     <SearchingSelector<Flavor>
                         queryKeyPrefix={'flavor-for-' + props.site.id}
-                        tableName='Flavor'
+                        tableName="Flavor"
                         endpoint={'/sites/' + props.site.id + '/flavors:search'}
                         item={props.flavor}
                         setItem={props.setFlavor}

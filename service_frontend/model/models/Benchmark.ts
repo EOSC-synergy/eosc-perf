@@ -24,4 +24,4 @@ export type Benchmark = {
      * UUID resource unique identification
      */
     readonly id: string;
-}
+};

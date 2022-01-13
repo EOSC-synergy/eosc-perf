@@ -13,5 +13,9 @@ export function JsonHighlight(props: { children: React.ReactNode }): ReactElemen
     useEffect(() => {
         prism.highlightAll();
     }, []);
-    return (<pre><code className='language-json'>{props.children}</code></pre>);
+    return (
+        <pre>
+            <code className="language-json">{props.children}</code>
+        </pre>
+    );
 }

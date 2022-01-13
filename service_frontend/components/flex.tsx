@@ -60,5 +60,5 @@ function FloatRight(props: { className?: string; children?: ReactNode }) {
 export default Object.assign(Flex, {
     FloatLeft,
     Center,
-    FloatRight
+    FloatRight,
 });

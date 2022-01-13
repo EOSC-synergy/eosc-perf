@@ -21,9 +21,7 @@ export function FlavorSubmitForm(props: {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
 
-    const [errorMessage, setErrorMessage] = useState<ReactNode | undefined>(
-        undefined
-    );
+    const [errorMessage, setErrorMessage] = useState<ReactNode | undefined>(undefined);
 
     // clear error message on load
     useEffect(() => {
@@ -32,11 +30,7 @@ export function FlavorSubmitForm(props: {
 
     const { mutate } = useMutation(
         (data: CreateFlavor) =>
-            postHelper<CreateFlavor>(
-                '/sites/' + props.site.id + '/flavors',
-                data,
-                auth.token
-            ),
+            postHelper<CreateFlavor>('/sites/' + props.site.id + '/flavors', data, auth.token),
         {
             onSuccess: () => {
                 props.onSuccess();
@@ -44,7 +38,7 @@ export function FlavorSubmitForm(props: {
             onError: (error: Error | AxiosError) => {
                 setErrorMessage(getErrorMessage(error));
                 props.onError();
-            }
+            },
         }
     );
 
@@ -62,26 +56,22 @@ export function FlavorSubmitForm(props: {
         }
         mutate({
             name,
-            description: description.length ? description : null
+            description: description.length ? description : null,
         });
     }
 
     return (
         <>
             {auth.token === undefined && (
-                <Alert variant='danger'>
-                    You must be logged in to submit new site flavors!
-                </Alert>
+                <Alert variant="danger">You must be logged in to submit new site flavors!</Alert>
             )}
-            {errorMessage !== undefined && (
-                <Alert variant='danger'>Error: {errorMessage}</Alert>
-            )}
+            {errorMessage !== undefined && <Alert variant="danger">Error: {errorMessage}</Alert>}
             <RegistrationCheck />
             <Form>
-                <Form.Group className='mb-3'>
+                <Form.Group className="mb-3">
                     <Form.Label>Name:</Form.Label>
                     <Form.Control
-                        placeholder='standard-medium'
+                        placeholder="standard-medium"
                         onChange={(e) => setName(e.target.value)}
                         isInvalid={!isNameValid()}
                     />
@@ -90,17 +80,17 @@ export function FlavorSubmitForm(props: {
                 <Form.Group>
                     <Form.Label>Description (optional):</Form.Label>
                     <Form.Control
-                        placeholder='Add a description here.'
+                        placeholder="Add a description here."
                         onChange={(e) => setDescription(e.target.value)}
-                        as='textarea'
+                        as="textarea"
                     />
                 </Form.Group>
 
                 <Button
-                    variant='success'
+                    variant="success"
                     onClick={onSubmit}
                     disabled={!isFormValid()}
-                    className='mt-1'
+                    className="mt-1"
                 >
                     Submit
                 </Button>

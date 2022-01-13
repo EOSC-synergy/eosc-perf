@@ -26,12 +26,12 @@ function SubmitView(props: { submit: Submit; refetch: () => void }) {
                     setOpened(!opened);
                 }}
             >
-                <div className='w-100 d-flex justify-content-between'>
-                    <h5 className='mb-1'>{props.submit.resource_type}</h5>
+                <div className="w-100 d-flex justify-content-between">
+                    <h5 className="mb-1">{props.submit.resource_type}</h5>
                     <small>{props.submit.upload_datetime}</small>
                 </div>
-                <p className='mb-1'>{/*props.submit.message*/}</p>
-                <small className='text-muted'>For {props.submit.resource_id}</small>
+                <p className="mb-1">{/*props.submit.message*/}</p>
+                <small className="text-muted">For {props.submit.resource_id}</small>
             </div>
             {opened && (
                 <>
@@ -68,12 +68,12 @@ function ClaimView(props: { claim: Claim; refetch: () => void }) {
                     setOpened(!opened);
                 }}
             >
-                <div className='w-100 d-flex justify-content-between'>
-                    <h5 className='mb-1'>{props.claim.resource_type}</h5>
+                <div className="w-100 d-flex justify-content-between">
+                    <h5 className="mb-1">{props.claim.resource_type}</h5>
                     <small>{props.claim.upload_datetime}</small>
                 </div>
-                <p className='mb-1'>{props.claim.message}</p>
-                <small className='text-muted'>For {props.claim.resource_id}</small>
+                <p className="mb-1">{props.claim.message}</p>
+                <small className="text-muted">For {props.claim.resource_id}</small>
             </div>
             {opened && (
                 <>
@@ -103,7 +103,7 @@ function ReportsView(): ReactElement {
         },
         {
             enabled: !!auth.token,
-            refetchOnWindowFocus: false // do not spam queries
+            refetchOnWindowFocus: false, // do not spam queries
         }
     );
     const claims = useQuery(
@@ -113,18 +113,18 @@ function ReportsView(): ReactElement {
         },
         {
             enabled: !!auth.token,
-            refetchOnWindowFocus: false // do not spam queries
+            refetchOnWindowFocus: false, // do not spam queries
         }
     );
 
     return (
         <Container>
             {auth.token === undefined && (
-                <Alert variant='danger' className='mt-3'>
+                <Alert variant="danger" className="mt-3">
                     You must be logged in to use this page!
                 </Alert>
             )}
-            <Row className='my-3'>
+            <Row className="my-3">
                 <Col>
                     <h1>Submits</h1>
                     <ListGroup>

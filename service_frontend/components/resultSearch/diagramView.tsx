@@ -10,22 +10,20 @@ export function DiagramView(props: {
     benchmark?: Benchmark;
     suggestions?: Suggestion[];
 }): ReactElement {
-    const [selectedDiagram, setSelectedDiagram] = useState(
-        charts.LineChartMeta.id
-    );
+    const [selectedDiagram, setSelectedDiagram] = useState(charts.LineChartMeta.id);
 
     return (
         <>
-            <Form.Group className='mb-1'>
-                <Form.Label htmlFor='diagramDropdown'>Select diagram type:</Form.Label>{' '}
+            <Form.Group className="mb-1">
+                <Form.Label htmlFor="diagramDropdown">Select diagram type:</Form.Label>{' '}
                 {props.benchmark === undefined && (
-                    <Badge bg='danger'>Please select a benchmark first</Badge>
+                    <Badge bg="danger">Please select a benchmark first</Badge>
                 )}
                 <Form.Select
                     onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                         setSelectedDiagram(e.target.value);
                     }}
-                    className='custom-select'
+                    className="custom-select"
                     disabled={props.benchmark === undefined}
                 >
                     {charts.all.map((chart) => (

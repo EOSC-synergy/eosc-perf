@@ -10,7 +10,5 @@ import { truthyOrNoneTag } from 'components/utility';
  * @constructor
  */
 export function TagsColumn({ result }: { result: Ordered<Result> }): ReactElement {
-    return (
-        <>{truthyOrNoneTag(result.tags.map((tag) => tag.name).join(', '))}</>
-    );
+    return <>{truthyOrNoneTag(result.tags.map((tag) => tag.name).join(', '))}</>;
 }

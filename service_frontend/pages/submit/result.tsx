@@ -16,7 +16,7 @@ function ResultSubmission(): ReactElement {
     return (
         <Container>
             <h1>Upload Result</h1>
-            <Card className='mb-2'>
+            <Card className="mb-2">
                 <Card.Body>
                     <ResultSubmitForm
                         onSuccess={() => {
@@ -26,7 +26,7 @@ function ResultSubmission(): ReactElement {
                     />
                 </Card.Body>
             </Card>
-            <ToastContainer position='middle-center'>
+            <ToastContainer position="middle-center">
                 <Toast
                     show={showSuccessToast}
                     onClose={() => setShowSuccessToast(false)}
@@ -34,7 +34,7 @@ function ResultSubmission(): ReactElement {
                     autohide
                 >
                     <Toast.Header>
-                        <strong className='me-auto'>eosc-perf</strong>
+                        <strong className="me-auto">eosc-perf</strong>
                     </Toast.Header>
                     <Toast.Body>Submission successful.</Toast.Body>
                 </Toast>

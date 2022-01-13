@@ -15,10 +15,9 @@ export type Submit = {
      * UUID resource unique identification
      */
     resource_id: string;
-}
+};
 
 export namespace Submit {
-
     /**
      * Resource type discriminator
      */
@@ -28,6 +27,4 @@ export namespace Submit {
         SITE = 'site',
         FLAVOR = 'flavor',
     }
-
-
 }

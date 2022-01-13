@@ -4,4 +4,4 @@
 
 export type TagsIds = {
     tags_ids?: Array<string>;
-}
+};

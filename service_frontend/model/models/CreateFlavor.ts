@@ -11,4 +11,4 @@ export type CreateFlavor = {
      * String with an statement about the object
      */
     description: string | null;
-}
+};

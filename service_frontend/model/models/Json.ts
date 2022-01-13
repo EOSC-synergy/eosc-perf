@@ -2,4 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type Json = {}
+export type Json = {};

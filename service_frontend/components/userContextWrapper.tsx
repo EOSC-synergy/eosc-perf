@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { useQuery } from 'react-query';
 import { emptyUser, UserContext } from 'components/userContext';
 import { getHelper } from 'components/api-helpers';
@@ -10,9 +10,7 @@ import { User } from 'model';
  * @param children
  * @constructor
  */
-export function UserContextWrapper({ children }: {
-    children: ReactNode;
-}) {
+export function UserContextWrapper({ children }: { children: ReactNode }) {
     const authentication = useAuth();
 
     const amIRegistered = useQuery(
@@ -20,21 +18,18 @@ export function UserContextWrapper({ children }: {
         () => getHelper<User>('/users/self', authentication.user?.access_token),
         {
             retry: false,
-            enabled: authentication.isAuthenticated
+            enabled: authentication.isAuthenticated,
         }
     );
 
     const amIAdmin = useQuery(
         'is_admin',
         () => {
-            return getHelper<void>(
-                '/users/self:try_admin',
-                authentication.user?.access_token
-            );
+            return getHelper<void>('/users/self:try_admin', authentication.user?.access_token);
         },
         {
             retry: false,
-            enabled: authentication.user != null
+            enabled: authentication.user != null,
         }
     );
 
@@ -43,12 +38,12 @@ export function UserContextWrapper({ children }: {
             value={
                 authentication.user
                     ? {
-                        token: authentication.user.access_token,
-                        email: amIRegistered.data?.data.email,
-                        registered: amIRegistered.isSuccess,
-                        admin: amIAdmin.isSuccess,
-                        loggedIn: true
-                    }
+                          token: authentication.user.access_token,
+                          email: amIRegistered.data?.data.email,
+                          registered: amIRegistered.isSuccess,
+                          admin: amIAdmin.isSuccess,
+                          loggedIn: true,
+                      }
                     : emptyUser
             }
         >

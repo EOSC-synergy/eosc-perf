@@ -11,7 +11,10 @@ import { Ordered } from 'components/ordered';
  * @returns {React.ReactElement}
  * @constructor
  */
-export function CheckboxColumn({ result, callbacks }: {
+export function CheckboxColumn({
+    result,
+    callbacks,
+}: {
     result: Ordered<Result>;
     callbacks: ResultCallbacks;
 }): ReactElement {
@@ -19,7 +22,7 @@ export function CheckboxColumn({ result, callbacks }: {
     return (
         <Form>
             <Form.Check
-                type='switch'
+                type="switch"
                 onChange={() => {
                     callbacks.isSelected(result)
                         ? callbacks.unselect(result)

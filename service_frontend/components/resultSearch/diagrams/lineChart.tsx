@@ -12,17 +12,26 @@ import {
     ChartDataset,
     Legend,
     LinearScale,
-    LogarithmicScale,
     LineElement,
+    LogarithmicScale,
     PointElement,
     ScatterDataPoint,
     Title,
     Tooltip,
-    TooltipItem
+    TooltipItem,
 } from 'chart.js';
 import { Suggestion } from '../jsonSchema';
 
-ChartJS.register(CategoryScale, LinearScale, LogarithmicScale, LineElement, Title, Tooltip, Legend, PointElement);
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    LogarithmicScale,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+    PointElement
+);
 
 enum Mode {
     Simple,
@@ -37,7 +46,7 @@ const CHART_COLORS = [
     'rgb(75, 192, 192)', // green
     'rgb(54, 162, 235)', // blue
     'rgb(153, 102, 255)', // purple
-    'rgb(201, 203, 207)' // gray
+    'rgb(201, 203, 207)', // gray
 ];
 
 const BACKGROUND_COLORS = [
@@ -47,7 +56,7 @@ const BACKGROUND_COLORS = [
     'rgba(75, 192, 192, 0.5)', // green
     'rgba(54, 162, 235, 0.5)', // blue
     'rgba(153, 102, 255, 0.5)', // purple
-    'rgba(201, 203, 207, 0.5)' // gray
+    'rgba(201, 203, 207, 0.5)', // gray
 ];
 
 /**
@@ -58,13 +67,15 @@ const BACKGROUND_COLORS = [
  * @returns {React.ReactElement}
  * @constructor
  */
-function LineChart(
-    {
-        results,
-        suggestions,
-        benchmark
-    }: { results: Ordered<Result>[]; suggestions?: Suggestion[]; benchmark?: Benchmark }
-): ReactElement {
+function LineChart({
+    results,
+    suggestions,
+    benchmark,
+}: {
+    results: Ordered<Result>[];
+    suggestions?: Suggestion[];
+    benchmark?: Benchmark;
+}): ReactElement {
     const [displayMode, setDisplayMode] = useState(Mode.Simple);
 
     const [groupBySite, setGroupBySite] = useState(false);
@@ -82,8 +93,7 @@ function LineChart(
             for (const result of results) {
                 sameSite = sameSite && result.site.id === siteId;
                 columnsAreNumbers =
-                    columnsAreNumbers &&
-                    typeof fetchSubkey(result.json, xAxis) === 'number';
+                    columnsAreNumbers && typeof fetchSubkey(result.json, xAxis) === 'number';
             }
         } else {
             sameSite = false;
@@ -92,13 +102,15 @@ function LineChart(
 
         return {
             sameSite,
-            columnsAreNumbers
+            columnsAreNumbers,
         };
     }
 
     const properties = analyzeData(results);
 
-    function processInput(results: Ordered<Result>[]): ChartData<'line', (number | ScatterDataPoint | null)[]> {
+    function processInput(
+        results: Ordered<Result>[]
+    ): ChartData<'line', (number | ScatterDataPoint | null)[]> {
         const labels = []; // labels below graph
 
         // grouping-by-site behaviour
@@ -106,8 +118,10 @@ function LineChart(
         // splits results from different sites into different datasets
         if (groupBySite && (displayMode === Mode.Linear || displayMode === Mode.Logarithmic)) {
             // map site.id => object with array of data points
-            const datasets = new Map<string,
-                { siteName: string; data: { x: number; y: number }[] }>();
+            const datasets = new Map<
+                string,
+                { siteName: string; data: { x: number; y: number }[] }
+            >();
             const labelSet = new Set<number>();
 
             for (const result of results) {
@@ -116,7 +130,7 @@ function LineChart(
                 if (datasets.get(result.site.id) === undefined) {
                     datasets.set(result.site.id, {
                         siteName: result.site.name,
-                        data: []
+                        data: [],
                     });
                 }
                 datasets.get(result.site.id)?.data.push({ x, y });
@@ -126,21 +140,21 @@ function LineChart(
             // generate datasets
             const data: ChartDataset<'line'>[] = [];
             let colorIndex = 0;
-            datasets.forEach(function(dataMeta, site, _) {
+            datasets.forEach(function (dataMeta, site, _) {
                 data.push({
                     label: dataMeta.siteName,
                     backgroundColor: BACKGROUND_COLORS[colorIndex],
                     borderColor: CHART_COLORS[colorIndex],
                     borderWidth: 1,
                     data: dataMeta.data,
-                    spanGaps: true
+                    spanGaps: true,
                 });
                 colorIndex++;
             });
 
             return {
                 labels: Array.from(labelSet).sort((a, b) => a - b),
-                datasets: data
+                datasets: data,
             };
         }
 
@@ -170,15 +184,15 @@ function LineChart(
                     borderColor: CHART_COLORS[0],
                     borderWidth: 1,
                     data: dataPoints,
-                    spanGaps: true
-                }
-            ]
+                    spanGaps: true,
+                },
+            ],
         };
     }
 
     return (
         <>
-            <Form.Group className='mb-1'>
+            <Form.Group className="mb-1">
                 <Form.Select
                     onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                         setDisplayMode(parseInt(e.target.value));
@@ -188,32 +202,29 @@ function LineChart(
                     <option value={Mode.Linear} disabled={!properties.columnsAreNumbers}>
                         Linear
                     </option>
-                    <option
-                        value={Mode.Logarithmic}
-                        disabled={!properties.columnsAreNumbers}
-                    >
+                    <option value={Mode.Logarithmic} disabled={!properties.columnsAreNumbers}>
                         Logarithmic
                     </option>
                 </Form.Select>
             </Form.Group>
-            <Form.Group className='mb-1'>
+            <Form.Group className="mb-1">
                 <Form.Check
-                    type='switch'
-                    label='Group values by site (only in linear & logarithmic mode)'
+                    type="switch"
+                    label="Group values by site (only in linear & logarithmic mode)"
                     onChange={(e) => setGroupBySite(e.target.checked)}
                     disabled={displayMode !== Mode.Linear && displayMode !== Mode.Logarithmic}
                 />
             </Form.Group>
-            <Form.Group className='mb-1'>
+            <Form.Group className="mb-1">
                 <InputWithSuggestions
-                    placeholder='X axis'
+                    placeholder="X axis"
                     setInput={(i) => setXAxis(i)}
                     suggestions={suggestions}
                 />
             </Form.Group>
             <Form.Group>
                 <InputWithSuggestions
-                    placeholder='Y axis'
+                    placeholder="Y axis"
                     setInput={(i) => setYAxis(i)}
                     suggestions={suggestions}
                 />
@@ -227,41 +238,41 @@ function LineChart(
                         responsive: true,
                         plugins: {
                             legend: {
-                                position: 'bottom'
+                                position: 'bottom',
                             },
                             title: {
                                 display: true,
-                                text: 'Line Graph'
+                                text: 'Line Graph',
                             },
                             tooltip: {
                                 callbacks: {
-                                    title: function(tooltipItem: TooltipItem<'line'>[]) {
+                                    title: function (tooltipItem: TooltipItem<'line'>[]) {
                                         return tooltipItem[0].label;
-                                    }
-                                }
-                            }
+                                    },
+                                },
+                            },
                         },
                         scales: {
                             x: {
                                 title: {
                                     display: true,
-                                    text: xAxis
-                                }
+                                    text: xAxis,
+                                },
                             },
                             y: {
                                 beginAtZero: true,
                                 title: {
                                     display: true,
-                                    text: yAxis
+                                    text: yAxis,
                                 },
-                                type: displayMode === Mode.Logarithmic ? 'logarithmic' : 'linear'
-                            }
+                                type: displayMode === Mode.Logarithmic ? 'logarithmic' : 'linear',
+                            },
                         },
                         elements: {
                             line: {
-                                tension: 0
-                            }
-                        }
+                                tension: 0,
+                            },
+                        },
                     }}
                 />
             )}
@@ -274,7 +285,7 @@ function LineChart(
 const LineChartMeta = {
     element: LineChart,
     name: 'Line Chart',
-    id: '0'
+    id: '0',
 };
 
 export default LineChartMeta;
