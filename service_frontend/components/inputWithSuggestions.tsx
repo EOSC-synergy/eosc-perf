@@ -33,12 +33,18 @@ export function InputWithSuggestions(props: {
             />
             {props.suggestions !== undefined && props.suggestions.length > 0 && (
                 <>
-                    <Dropdown.Toggle split variant='outline-secondary' />
+                    <Dropdown.Toggle split variant="outline-secondary" />
                     <Dropdown.Menu>
                         {props.suggestions.map((suggestion) => (
                             <Dropdown.Item key={suggestion.field} eventKey={suggestion.field}>
-                                {suggestion.field}<br />
-                                <small>{truthyOrNoneTag(suggestion.description, 'No description given.')}</small>
+                                {suggestion.field}
+                                <br />
+                                <small>
+                                    {truthyOrNoneTag(
+                                        suggestion.description,
+                                        'No description given.'
+                                    )}
+                                </small>
                             </Dropdown.Item>
                         ))}
                     </Dropdown.Menu>

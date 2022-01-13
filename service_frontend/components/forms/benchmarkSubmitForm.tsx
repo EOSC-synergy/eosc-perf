@@ -24,9 +24,7 @@ export function BenchmarkSubmitForm(props: {
     const [template, setTemplate] = useState('');
     const [description, setDescription] = useState('');
 
-    const [errorMessage, setErrorMessage] = useState<ReactNode | undefined>(
-        undefined
-    );
+    const [errorMessage, setErrorMessage] = useState<ReactNode | undefined>(undefined);
 
     // clear error message on load
     useEffect(() => {
@@ -34,8 +32,7 @@ export function BenchmarkSubmitForm(props: {
     }, []);
 
     const { mutate } = useMutation(
-        (data: CreateBenchmark) =>
-            postHelper<CreateBenchmark>('/benchmarks', data, auth.token),
+        (data: CreateBenchmark) => postHelper<CreateBenchmark>('/benchmarks', data, auth.token),
         {
             onSuccess: () => {
                 props.onSuccess();
@@ -43,7 +40,7 @@ export function BenchmarkSubmitForm(props: {
             onError: (error: Error | AxiosError) => {
                 setErrorMessage(getErrorMessage(error));
                 props.onError();
-            }
+            },
         }
     );
 
@@ -87,74 +84,68 @@ export function BenchmarkSubmitForm(props: {
             docker_image: dockerName,
             docker_tag: dockerTag,
             description: description_,
-            json_schema: template_ ? JSON.parse(template_) : undefined
+            json_schema: template_ ? JSON.parse(template_) : undefined,
         });
     }
 
     return (
         <>
             {auth.token === undefined && (
-                <Alert variant='danger'>
-                    You must be logged in to submit new benchmarks!
-                </Alert>
+                <Alert variant="danger">You must be logged in to submit new benchmarks!</Alert>
             )}
-            {errorMessage !== undefined && (
-                <Alert variant='danger'>Error: {errorMessage}</Alert>
-            )}
+            {errorMessage !== undefined && <Alert variant="danger">Error: {errorMessage}</Alert>}
             <RegistrationCheck />
             <Form>
-                <Form.Group className='mb-3'>
-                    <Form.Label htmlFor='benchmark'>Benchmark:</Form.Label>
+                <Form.Group className="mb-3">
+                    <Form.Label htmlFor="benchmark">Benchmark:</Form.Label>
                     <InputGroup>
                         <Form.Control
-                            placeholder='user/image'
+                            placeholder="user/image"
                             onChange={(e) => setDockerName(e.target.value)}
                             isInvalid={!isDockerNameValid()}
-                            aria-label='Docker image name including username'
-                            id='benchmark'
+                            aria-label="Docker image name including username"
+                            id="benchmark"
                         />
                         <InputGroup.Text>:</InputGroup.Text>
                         <Form.Control
-                            placeholder='tag'
+                            placeholder="tag"
                             onChange={(e) => setDockerTag(e.target.value)}
                             isInvalid={!isDockerTagValid()}
-                            aria-label='Tag or version of the docker image to use'
+                            aria-label="Tag or version of the docker image to use"
                         />
                     </InputGroup>
                 </Form.Group>
 
-                <Form.Group className='mb-3'>
-                    <Form.Label htmlFor='description'>
-                        Benchmark description (optional):
-                    </Form.Label>
+                <Form.Group className="mb-3">
+                    <Form.Label htmlFor="description">Benchmark description (optional):</Form.Label>
                     <Form.Control
-                        id='description'
-                        placeholder='Enter a description of the new benchmark here.'
+                        id="description"
+                        placeholder="Enter a description of the new benchmark here."
                         onChange={(e) => setDescription(e.target.value)}
-                        as='textarea'
+                        as="textarea"
                     />
                 </Form.Group>
 
                 <Form.Group>
-                    <Form.Label htmlFor='template'>
+                    <Form.Label htmlFor="template">
                         Benchmark result JSON schema (optional,{' '}
-                        <Link href='/code-guidelines#json'>example here</Link>
+                        <Link href="/code-guidelines#json">example here</Link>
                         ):
                     </Form.Label>
                     <Form.Control
-                        id='template'
+                        id="template"
                         placeholder={JSON.stringify(benchmarkJsonSchema, null, 4)}
                         onChange={(e) => setTemplate(e.target.value)}
-                        as='textarea'
+                        as="textarea"
                         isInvalid={!isTemplateValid()}
                     />
                 </Form.Group>
 
                 <Button
-                    variant='success'
+                    variant="success"
                     onClick={onSubmit}
                     disabled={!isFormValid()}
-                    className='mt-1'
+                    className="mt-1"
                 >
                     Submit
                 </Button>

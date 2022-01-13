@@ -50,9 +50,7 @@ test('unselect', async () => {
 
     await waitFor(() => expect(screen.getByText(tag.name)).toBeInTheDocument(), {});
     act(() => {
-        (
-            screen.getByText(tag.name).querySelector('div') as HTMLElement | null
-        )?.click();
+        (screen.getByText(tag.name).querySelector('div') as HTMLElement | null)?.click();
     });
     expect(setSelected).toHaveBeenCalledWith([]);
 });

@@ -8,7 +8,7 @@ import {
     CustomColumn,
     SiteColumn,
     SiteFlavorColumn,
-    TagsColumn
+    TagsColumn,
 } from 'components/resultSearch/columns';
 import { ResultCallbacks } from 'components/resultSearch/resultCallbacks';
 import { ChevronDown, ChevronUp, Pencil } from 'react-bootstrap-icons';
@@ -74,114 +74,114 @@ export function ResultTable(props: {
 
     return (
         <>
-            <Table className='mb-0'>
+            <Table className="mb-0">
                 <thead>
-                <tr>
-                    <th>
-                        <Form>
-                            <Form.Check
-                                type='switch'
-                                onChange={() => {
-                                    props.results.every((r) => props.ops.isSelected(r))
-                                        ? props.ops.unselectMultiple(props.results)
-                                        : props.ops.selectMultiple(
-                                            props.results.map((r, i) => {
-                                                return {
-                                                    ...r,
-                                                    orderIndex: i + props.pageOffset
-                                                };
-                                            })
-                                        );
-                                }}
-                                checked={props.results.every((r) => props.ops.isSelected(r))}
+                    <tr>
+                        <th>
+                            <Form>
+                                <Form.Check
+                                    type="switch"
+                                    onChange={() => {
+                                        props.results.every((r) => props.ops.isSelected(r))
+                                            ? props.ops.unselectMultiple(props.results)
+                                            : props.ops.selectMultiple(
+                                                  props.results.map((r, i) => {
+                                                      return {
+                                                          ...r,
+                                                          orderIndex: i + props.pageOffset,
+                                                      };
+                                                  })
+                                              );
+                                    }}
+                                    checked={props.results.every((r) => props.ops.isSelected(r))}
+                                />
+                            </Form>
+                        </th>
+                        {benchmarkColumnEnabled && (
+                            <SortingTableHeader
+                                label="Benchmark"
+                                sortKey="benchmark_name"
+                                sorting={props.sorting}
+                                setSorting={props.setSorting}
                             />
-                        </Form>
-                    </th>
-                    {benchmarkColumnEnabled && (
-                        <SortingTableHeader
-                            label='Benchmark'
-                            sortKey='benchmark_name'
-                            sorting={props.sorting}
-                            setSorting={props.setSorting}
-                        />
-                    )}
-                    {siteColumnEnabled && (
-                        <SortingTableHeader
-                            label='Site'
-                            sortKey='site_name'
-                            sorting={props.sorting}
-                            setSorting={props.setSorting}
-                        />
-                    )}
-                    {siteFlavorColumnEnabled && (
-                        <SortingTableHeader
-                            label='Site flavor'
-                            sortKey='flavor_name'
-                            sorting={props.sorting}
-                            setSorting={props.setSorting}
-                        />
-                    )}
-                    {tagsColumnEnabled && <th>Tags</th>}
-                    {/* TODO: hover */}
-                    {props.customColumns.map((column) => (
-                        <SortingTableHeader
-                            label={column}
-                            sortKey={'json.' + column}
-                            sorting={props.sorting}
-                            setSorting={props.setSorting}
-                            key={column}
-                        />
-                    ))}
-                    <th>
-                        <a href='#' onClick={() => setShowColumnSelection(true)}>
-                            <Pencil className={actionable.actionable} />
-                        </a>
-                    </th>
-                </tr>
+                        )}
+                        {siteColumnEnabled && (
+                            <SortingTableHeader
+                                label="Site"
+                                sortKey="site_name"
+                                sorting={props.sorting}
+                                setSorting={props.setSorting}
+                            />
+                        )}
+                        {siteFlavorColumnEnabled && (
+                            <SortingTableHeader
+                                label="Site flavor"
+                                sortKey="flavor_name"
+                                sorting={props.sorting}
+                                setSorting={props.setSorting}
+                            />
+                        )}
+                        {tagsColumnEnabled && <th>Tags</th>}
+                        {/* TODO: hover */}
+                        {props.customColumns.map((column) => (
+                            <SortingTableHeader
+                                label={column}
+                                sortKey={'json.' + column}
+                                sorting={props.sorting}
+                                setSorting={props.setSorting}
+                                key={column}
+                            />
+                        ))}
+                        <th>
+                            <a href="#" onClick={() => setShowColumnSelection(true)}>
+                                <Pencil className={actionable.actionable} />
+                            </a>
+                        </th>
+                    </tr>
                 </thead>
 
                 <tbody>
-                {props.results.map((result, index) => {
-                    const r: Ordered<Result> = {
-                        ...result,
-                        orderIndex: index + props.pageOffset
-                    };
-                    return (
-                        <tr key={r.id}>
-                            <td>
-                                <CheckboxColumn result={r} callbacks={props.ops} />
-                            </td>
-                            {benchmarkColumnEnabled && (
+                    {props.results.map((result, index) => {
+                        const r: Ordered<Result> = {
+                            ...result,
+                            orderIndex: index + props.pageOffset,
+                        };
+                        return (
+                            <tr key={r.id}>
                                 <td>
-                                    <BenchmarkColumn result={r} />
+                                    <CheckboxColumn result={r} callbacks={props.ops} />
                                 </td>
-                            )}
-                            {siteColumnEnabled && (
+                                {benchmarkColumnEnabled && (
+                                    <td>
+                                        <BenchmarkColumn result={r} />
+                                    </td>
+                                )}
+                                {siteColumnEnabled && (
+                                    <td>
+                                        <SiteColumn result={r} />
+                                    </td>
+                                )}
+                                {siteFlavorColumnEnabled && (
+                                    <td>
+                                        <SiteFlavorColumn result={r} />
+                                    </td>
+                                )}
+                                {tagsColumnEnabled && (
+                                    <td>
+                                        <TagsColumn result={r} />
+                                    </td>
+                                )}
+                                {props.customColumns.map((column) => (
+                                    <td key={column}>
+                                        <CustomColumn result={r} jsonKey={column} />
+                                    </td>
+                                ))}
                                 <td>
-                                    <SiteColumn result={r} />
+                                    <ActionColumn result={r} callbacks={props.ops} />
                                 </td>
-                            )}
-                            {siteFlavorColumnEnabled && (
-                                <td>
-                                    <SiteFlavorColumn result={r} />
-                                </td>
-                            )}
-                            {tagsColumnEnabled && (
-                                <td>
-                                    <TagsColumn result={r} />
-                                </td>
-                            )}
-                            {props.customColumns.map((column) => (
-                                <td key={column}>
-                                    <CustomColumn result={r} jsonKey={column} />
-                                </td>
-                            ))}
-                            <td>
-                                <ActionColumn result={r} callbacks={props.ops} />
-                            </td>
-                        </tr>
-                    );
-                })}
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </Table>
             <ColumnSelectModal

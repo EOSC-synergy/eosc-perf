@@ -4,7 +4,11 @@ import { act, render, screen } from '@testing-library/react';
 describe('terms of service check', () => {
     test('check', () => {
         const onClick = jest.fn();
-        render(<><TermsOfServiceCheck accepted={false} setAccepted={onClick} /></>);
+        render(
+            <>
+                <TermsOfServiceCheck accepted={false} setAccepted={onClick} />
+            </>
+        );
         act(() => {
             screen.getByRole('checkbox').click();
         });
@@ -12,7 +16,11 @@ describe('terms of service check', () => {
     });
     test('uncheck', () => {
         const onClick = jest.fn();
-        render(<><TermsOfServiceCheck accepted={true} setAccepted={onClick} /></>);
+        render(
+            <>
+                <TermsOfServiceCheck accepted={true} setAccepted={onClick} />
+            </>
+        );
         act(() => {
             screen.getByRole('checkbox').click();
         });

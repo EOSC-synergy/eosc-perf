@@ -17,76 +17,63 @@ export function NavHeader(): ReactElement {
 
     return (
         <header>
-            <Navbar bg='dark' expand='lg' variant='dark'>
-                <Navbar.Brand href='/' className='ms-2'>
-                    <Image src={logo} height='40' alt='EOSC-Performance' />
+            <Navbar bg="dark" expand="lg" variant="dark">
+                <Navbar.Brand href="/" className="ms-2">
+                    <Image src={logo} height="40" alt="EOSC-Performance" />
                 </Navbar.Brand>
-                <Navbar.Toggle aria-controls='basic-navbar-nav' />
-                <Navbar.Collapse id='basic-navbar-nav'>
-                    <Nav className='me-auto'>
-                        <Link href='/search/result' passHref>
-                            <Nav.Link>
-                                Search
-                            </Nav.Link>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="me-auto">
+                        <Link href="/search/result" passHref>
+                            <Nav.Link>Search</Nav.Link>
                         </Link>
-                        <NavDropdown title='Submit' id='base-submit-dropdown'>
-                            <Link href='/submit/result' passHref>
-                                <NavDropdown.Item>
-                                    Results
-                                </NavDropdown.Item>
+                        <NavDropdown title="Submit" id="base-submit-dropdown">
+                            <Link href="/submit/result" passHref>
+                                <NavDropdown.Item>Results</NavDropdown.Item>
                             </Link>
-                            <Link href='/submit/benchmark' passHref>
-                                <NavDropdown.Item>
-                                    Benchmarks
-                                </NavDropdown.Item>
+                            <Link href="/submit/benchmark" passHref>
+                                <NavDropdown.Item>Benchmarks</NavDropdown.Item>
                             </Link>
-                            <Link href='/submit/site' passHref>
-                                <NavDropdown.Item>
-                                    Sites
-                                </NavDropdown.Item>
+                            <Link href="/submit/site" passHref>
+                                <NavDropdown.Item>Sites</NavDropdown.Item>
                             </Link>
                         </NavDropdown>
-                        <NavDropdown title='Instructions' id='base-instructions-dropdown'>
-                            <Link href='/code-guidelines' passHref>
-                                <NavDropdown.Item>
-                                    Code guidelines
-                                </NavDropdown.Item>
+                        <NavDropdown title="Instructions" id="base-instructions-dropdown">
+                            <Link href="/code-guidelines" passHref>
+                                <NavDropdown.Item>Code guidelines</NavDropdown.Item>
                             </Link>
                         </NavDropdown>
                         {auth.admin && (
-                            <NavDropdown title='Admin' id='base-admin-dropdown'>
-                                <Link href='/report-view' passHref>
-                                    <NavDropdown.Item>
-                                        Report view
-                                    </NavDropdown.Item>
+                            <NavDropdown title="Admin" id="base-admin-dropdown">
+                                <Link href="/report-view" passHref>
+                                    <NavDropdown.Item>Report view</NavDropdown.Item>
                                 </Link>
-                                <Link href='/site-editor' passHref>
-                                    <NavDropdown.Item>
-                                        Site editor
-                                    </NavDropdown.Item>
+                                <Link href="/site-editor" passHref>
+                                    <NavDropdown.Item>Site editor</NavDropdown.Item>
                                 </Link>
                             </NavDropdown>
                         )}
-                        <Link href='https://appsgrycap.i3m.upv.es:31443/im-dashboard/login' passHref>
-                            <Nav.Link>
-                                Infrastructure Manager
-                            </Nav.Link>
+                        <Link
+                            href="https://appsgrycap.i3m.upv.es:31443/im-dashboard/login"
+                            passHref
+                        >
+                            <Nav.Link>Infrastructure Manager</Nav.Link>
                         </Link>
                     </Nav>
                     <Nav>
                         <NavDropdown
-                            id='base-login-dropdown'
+                            id="base-login-dropdown"
                             title={
                                 <>
                                     {auth.email ?? 'Not logged in'}{' '}
                                     {auth.admin && (
-                                        <div title='Administrator' style={{ display: 'inline' }}>
+                                        <div title="Administrator" style={{ display: 'inline' }}>
                                             <Wrench style={{ color: 'red' }} />
                                         </div>
                                     )}
                                 </>
                             }
-                            className='justify-content-end'
+                            className="justify-content-end"
                         >
                             {auth.loggedIn ? (
                                 <>
@@ -94,7 +81,7 @@ export function NavHeader(): ReactElement {
                                         Logout
                                     </NavDropdown.Item>
                                     {!auth.registered && (
-                                        <NavDropdown.Item href='/register'>
+                                        <NavDropdown.Item href="/register">
                                             Register
                                         </NavDropdown.Item>
                                     )}

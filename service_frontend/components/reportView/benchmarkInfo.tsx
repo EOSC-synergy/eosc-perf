@@ -12,7 +12,7 @@ export function BenchmarkInfo(props: { id: string }): ReactElement {
             return getHelper<Benchmark>('/benchmarks/' + props.id);
         },
         {
-            refetchOnWindowFocus: false // do not spam queries
+            refetchOnWindowFocus: false, // do not spam queries
         }
     );
 

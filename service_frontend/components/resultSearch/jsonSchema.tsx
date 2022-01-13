@@ -13,7 +13,7 @@ export interface SchemaObject extends SchemaField {
 export type Suggestion = {
     field: string;
     description?: string;
-}
+};
 
 export function parseSuggestions(benchmark: Benchmark): Suggestion[] {
     function recurser([key, field]: [string, SchemaField]): Suggestion[] {

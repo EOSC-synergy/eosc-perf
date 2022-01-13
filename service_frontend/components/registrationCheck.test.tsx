@@ -8,14 +8,13 @@ const legalUser: UserInfo = {
     email: 'email@example.com',
     registered: true,
     admin: true,
-    loggedIn: true
+    loggedIn: true,
 };
 
 describe('registration check', () => {
     test('no token', async () => {
         render(
-            <UserContext.Provider
-                value={{ ...legalUser, token: undefined }}>
+            <UserContext.Provider value={{ ...legalUser, token: undefined }}>
                 <RegistrationCheck />
             </UserContext.Provider>
         );
@@ -26,8 +25,7 @@ describe('registration check', () => {
 
     test('registered', async () => {
         render(
-            <UserContext.Provider
-                value={{ ...legalUser, registered: true }}>
+            <UserContext.Provider value={{ ...legalUser, registered: true }}>
                 <RegistrationCheck />
             </UserContext.Provider>
         );
@@ -38,8 +36,7 @@ describe('registration check', () => {
 
     test('not registered', () => {
         render(
-            <UserContext.Provider
-                value={{ ...legalUser, registered: false }}>
+            <UserContext.Provider value={{ ...legalUser, registered: false }}>
                 <RegistrationCheck />
             </UserContext.Provider>
         );

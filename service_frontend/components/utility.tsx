@@ -7,13 +7,10 @@ import { Benchmark } from 'model';
  * @param {string} altText Text to display instead of "None"
  * @returns {JSX.Element | string} Either a div with gray None text or the original string.
  */
-export function truthyOrNoneTag(
-    value: string | undefined | null,
-    altText = 'None'
-) {
+export function truthyOrNoneTag(value: string | undefined | null, altText = 'None') {
     if (!value) {
         return (
-            <div className='text-muted' style={{ display: 'inline' }}>
+            <div className="text-muted" style={{ display: 'inline' }}>
                 {altText}
             </div>
         );

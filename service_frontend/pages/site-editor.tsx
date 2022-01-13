@@ -6,17 +6,14 @@ import { getHelper } from 'components/api-helpers';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { SiteEditor } from 'components/siteEditor/siteEditor';
 
-function SiteSelect(props: {
-    site: Site;
-    setActiveSite: (site: Site) => void;
-}): ReactElement {
+function SiteSelect(props: { site: Site; setActiveSite: (site: Site) => void }): ReactElement {
     return (
         <ListGroup.Item onClick={() => props.setActiveSite(props.site)} action>
-            <div className='d-flex w-100 justify-content-between'>
-                <h5 className='mb-1'>{props.site.name}</h5>
+            <div className="d-flex w-100 justify-content-between">
+                <h5 className="mb-1">{props.site.name}</h5>
                 <small>{props.site.id}</small>
             </div>
-            <p className='mb-1'>{props.site.description}</p>
+            <p className="mb-1">{props.site.description}</p>
             <small>{props.site.address}</small>
         </ListGroup.Item>
     );
@@ -35,7 +32,7 @@ function SitesEditor(): ReactElement {
             return getHelper<Sites>('/sites');
         },
         {
-            refetchOnWindowFocus: false // do not spam queries
+            refetchOnWindowFocus: false, // do not spam queries
         }
     );
 
@@ -66,11 +63,7 @@ function SitesEditor(): ReactElement {
                 </Col>
                 <Col>
                     {activeSite != null && (
-                        <SiteEditor
-                            key={activeSite.id}
-                            site={activeSite}
-                            refetch={sites.refetch}
-                        />
+                        <SiteEditor key={activeSite.id} site={activeSite} refetch={sites.refetch} />
                     )}
                 </Col>
             </Row>

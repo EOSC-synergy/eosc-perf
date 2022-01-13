@@ -25,7 +25,7 @@ export function SiteSearchPopover(props: {
                 } else {
                     props.setSite(data.data);
                 }
-            }
+            },
         }
     );
 
@@ -36,7 +36,7 @@ export function SiteSearchPopover(props: {
                 {site ? (
                     <>{site.name}</>
                 ) : (
-                    <div className='text-muted' style={{ display: 'inline-block' }}>
+                    <div className="text-muted" style={{ display: 'inline-block' }}>
                         None
                     </div>
                 )}
@@ -61,19 +61,16 @@ export function SiteSearchPopover(props: {
     return (
         <>
             <SearchingSelector<Site>
-                queryKeyPrefix='site'
-                tableName='Site'
-                endpoint='/sites:search'
+                queryKeyPrefix="site"
+                tableName="Site"
+                endpoint="/sites:search"
                 item={props.site}
                 setItem={props.setSite}
                 display={display}
                 displayRow={displayRow}
                 submitNew={() => setShowSubmitModal(true)}
             />
-            <SiteSubmissionModal
-                show={showSubmitModal}
-                onHide={() => setShowSubmitModal(false)}
-            />
+            <SiteSubmissionModal show={showSubmitModal} onHide={() => setShowSubmitModal(false)} />
         </>
     );
 }

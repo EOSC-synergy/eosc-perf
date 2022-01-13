@@ -23,4 +23,4 @@ export type Site = {
      * UUID resource unique identification
      */
     readonly id: string;
-}
+};

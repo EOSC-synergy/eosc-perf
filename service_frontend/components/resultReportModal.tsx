@@ -17,18 +17,13 @@ export function ResultReportModal(props: {
 
     const { mutate } = useMutation(
         (data: CreateClaim) =>
-            postHelper<CreateClaim>(
-                '/results/' + props.result?.id + ':claim',
-                data,
-                auth.token,
-                {
-                    result_id: props.result?.id
-                }
-            ),
+            postHelper<CreateClaim>('/results/' + props.result?.id + ':claim', data, auth.token, {
+                result_id: props.result?.id,
+            }),
         {
             onSuccess: () => {
                 props.closeModal();
-            }
+            },
         }
     );
 
@@ -37,38 +32,31 @@ export function ResultReportModal(props: {
     }
 
     return (
-        <Modal
-            show={props.show}
-            scrollable={true}
-            size='lg'
-            onHide={props.closeModal}
-        >
+        <Modal show={props.show} scrollable={true} size="lg" onHide={props.closeModal}>
             <Modal.Header>
                 <Modal.Title>Report result</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 {props.result !== null && (
-                    <JsonHighlight>
-                        {JSON.stringify(props.result.json, null, 4)}
-                    </JsonHighlight>
+                    <JsonHighlight>{JSON.stringify(props.result.json, null, 4)}</JsonHighlight>
                 )}
-                {props.result == null && <div className='text-muted'>Loading...</div>}
+                {props.result == null && <div className="text-muted">Loading...</div>}
                 <Form>
                     <Form.Group>
                         <Form.Label>Report message</Form.Label>
                         <Form.Control
-                            type='text'
-                            placeholder='Unrealistic results'
+                            type="text"
+                            placeholder="Unrealistic results"
                             onChange={(e) => setMessage(e.target.value)}
                         />
                     </Form.Group>
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant='danger' onClick={submitReport}>
+                <Button variant="danger" onClick={submitReport}>
                     Submit
                 </Button>
-                <Button variant='secondary' onClick={props.closeModal}>
+                <Button variant="secondary" onClick={props.closeModal}>
                     Close
                 </Button>
             </Modal.Footer>

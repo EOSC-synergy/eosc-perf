@@ -35,7 +35,7 @@ export const emptyUser: UserInfo = {
     email: undefined,
     admin: false,
     registered: false,
-    loggedIn: false
+    loggedIn: false,
 };
 
 export const UserContext = React.createContext(emptyUser);

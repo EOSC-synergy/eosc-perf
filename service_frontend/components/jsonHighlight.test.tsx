@@ -5,7 +5,11 @@ import jsonSchemaExample from './benchmarkJsonSchemaExample.json';
 
 describe('json highlight', () => {
     test('contains expected data', () => {
-        render(<><JsonHighlight>{JSON.stringify(jsonSchemaExample)}</JsonHighlight></>);
+        render(
+            <>
+                <JsonHighlight>{JSON.stringify(jsonSchemaExample)}</JsonHighlight>
+            </>
+        );
         expect(screen.getByText('hz_actual_friendly', { exact: false })).toBeInTheDocument();
     });
 });

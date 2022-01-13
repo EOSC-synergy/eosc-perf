@@ -15,4 +15,4 @@ export type Tag = {
      * UUID resource unique identification
      */
     readonly id: string;
-}
+};

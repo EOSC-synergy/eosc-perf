@@ -1,17 +1,16 @@
 import { benchmarkLinkDisplay, truthyOrNoneTag } from './utility';
 import { render, screen } from '@testing-library/react';
-import { Benchmark } from '../model';
 import { benchmark } from './testData';
 
 describe('truthy or none tag', () => {
     test('truthy', () => {
-        render(<div data-testid='contents'>{truthyOrNoneTag('toothpaste')}</div>);
+        render(<div data-testid="contents">{truthyOrNoneTag('toothpaste')}</div>);
 
         const content = screen.getByText('toothpaste');
         expect(content).toBeInTheDocument();
     });
     test('falsy', () => {
-        render(<div data-testid='contents'>{truthyOrNoneTag('')}</div>);
+        render(<div data-testid="contents">{truthyOrNoneTag('')}</div>);
 
         const content = screen.getByText('None');
         expect(content).toBeInTheDocument();

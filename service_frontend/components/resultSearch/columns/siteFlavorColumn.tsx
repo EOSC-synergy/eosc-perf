@@ -8,8 +8,6 @@ import { Ordered } from 'components/ordered';
  * @returns {React.ReactElement}
  * @constructor
  */
-export function SiteFlavorColumn({ result }: {
-    result: Ordered<Result>;
-}): ReactElement {
+export function SiteFlavorColumn({ result }: { result: Ordered<Result> }): ReactElement {
     return <>{result.flavor.name}</>;
 }

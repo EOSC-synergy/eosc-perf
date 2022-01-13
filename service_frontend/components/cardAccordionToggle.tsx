@@ -18,10 +18,10 @@ export function CardAccordionToggle(props: {
     });
 
     return (
-        <div role='button' onClick={decoratedOnClick}>
+        <div role="button" onClick={decoratedOnClick}>
             <Row>
                 <Col>{props.children}</Col>
-                <Col md='auto'>{(toggled && <ChevronUp />) || <ChevronDown />}</Col>
+                <Col md="auto">{(toggled && <ChevronUp />) || <ChevronDown />}</Col>
             </Row>
         </div>
     );

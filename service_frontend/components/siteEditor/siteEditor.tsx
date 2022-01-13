@@ -7,21 +7,18 @@ import { Description, NetAddress, SiteId, SiteName } from 'components/siteEditor
 import { FlavorList } from 'components/siteEditor/flavorList';
 import { UserContext } from 'components/userContext';
 
-export function SiteEditor(props: {
-    site: Site;
-    refetch: () => void;
-}): ReactElement {
+export function SiteEditor(props: { site: Site; refetch: () => void }): ReactElement {
     const auth = useContext(UserContext);
 
     const { mutate } = useMutation(
         (data: Site) =>
             putHelper<Site>('/sites/' + props.site.id, data, auth.token, {
-                site_id: props.site.id
+                site_id: props.site.id,
             }),
         {
             onSuccess: () => {
                 props.refetch();
-            }
+            },
         }
     );
 
@@ -39,20 +36,17 @@ export function SiteEditor(props: {
                 site={props.site}
                 update={(description: string) => setDescription(description)}
             />
-            <NetAddress
-                site={props.site}
-                update={(address: string) => setAddress(address)}
-            />
-            <Form.Group className='mb-3'>
+            <NetAddress site={props.site} update={(address: string) => setAddress(address)} />
+            <Form.Group className="mb-3">
                 <Button
-                    variant='success'
+                    variant="success"
                     onClick={() => {
                         mutate({
                             name,
                             description: description.length ? description : null,
                             address,
                             id: props.site.id,
-                            upload_datetime: props.site.upload_datetime
+                            upload_datetime: props.site.upload_datetime,
                         });
                     }}
                 >

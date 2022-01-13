@@ -13,7 +13,7 @@ export function BenchmarkSubmissionModal(props: {
 
     return (
         <>
-            <Modal size='lg' show={props.show} onHide={props.onHide}>
+            <Modal size="lg" show={props.show} onHide={props.onHide}>
                 <Modal.Header closeButton>Add Benchmark</Modal.Header>
                 <Modal.Body>
                     <BenchmarkSubmitForm
@@ -33,7 +33,7 @@ export function BenchmarkSubmissionModal(props: {
                     autohide
                 >
                     <Toast.Header>
-                        <strong className='me-auto'>eosc-perf</strong>
+                        <strong className="me-auto">eosc-perf</strong>
                     </Toast.Header>
                     <Toast.Body>Submission successful.</Toast.Body>
                 </Toast>

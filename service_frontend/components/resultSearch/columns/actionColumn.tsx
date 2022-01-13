@@ -16,9 +16,12 @@ import { deleteHelper } from 'components/api-helpers';
  * @constructor
  */
 export function ActionColumn({
-                                 result,
-                                 callbacks
-                             }: { result: Ordered<Result>; callbacks: ResultCallbacks; }): ReactElement {
+    result,
+    callbacks,
+}: {
+    result: Ordered<Result>;
+    callbacks: ResultCallbacks;
+}): ReactElement {
     // TODO: CSS: figure out why button group taller than it should be
 
     const auth = useContext(UserContext);
@@ -28,9 +31,9 @@ export function ActionColumn({
     );
 
     return (
-        <ButtonGroup size='sm'>
+        <ButtonGroup size="sm">
             <Button
-                variant='primary'
+                variant="primary"
                 onClick={() => {
                     callbacks.display(result);
                 }}
@@ -39,7 +42,7 @@ export function ActionColumn({
             </Button>
             {auth.token !== undefined && (
                 <Button
-                    variant='warning'
+                    variant="warning"
                     onClick={() => {
                         callbacks.report(result);
                     }}
@@ -50,14 +53,14 @@ export function ActionColumn({
             {auth.admin && (
                 <>
                     <Button
-                        variant='secondary'
+                        variant="secondary"
                         onClick={() => undefined /* TODO: mail button */}
                         disabled
                     >
                         <Envelope />
                     </Button>
                     {/* TODO: visual feedback */}
-                    <Button variant='danger' onClick={() => deleteResult()}>
+                    <Button variant="danger" onClick={() => deleteResult()}>
                         <Trash />
                     </Button>
                 </>

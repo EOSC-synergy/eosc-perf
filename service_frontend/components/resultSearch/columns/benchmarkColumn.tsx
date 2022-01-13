@@ -8,12 +8,6 @@ import { Ordered } from 'components/ordered';
  * @returns {React.ReactElement}
  * @constructor
  */
-export function BenchmarkColumn({ result }: { result: Ordered<Result>; }): ReactElement {
-    return (
-        <>
-            {result.benchmark.docker_image +
-                ':' +
-                result.benchmark.docker_tag}
-        </>
-    );
+export function BenchmarkColumn({ result }: { result: Ordered<Result> }): ReactElement {
+    return <>{result.benchmark.docker_image + ':' + result.benchmark.docker_tag}</>;
 }

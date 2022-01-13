@@ -7,8 +7,8 @@ export function NewFlavor(props: { site: Site }) {
     const [showSubmitModal, setShowSubmitModal] = useState(false);
 
     return (
-        <ListGroup.Item key='new-flavor'>
-            <Button variant='success' onClick={() => setShowSubmitModal(true)}>
+        <ListGroup.Item key="new-flavor">
+            <Button variant="success" onClick={() => setShowSubmitModal(true)}>
                 New
             </Button>
             <FlavorSubmissionModal
