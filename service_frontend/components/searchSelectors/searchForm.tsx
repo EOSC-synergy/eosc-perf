@@ -7,18 +7,18 @@ export function SearchForm(props: { setSearchString: (params: string) => void })
     return (
         <Form>
             <Form.Group as={Row}>
-                <Form.Label className='visually-hidden' column>
+                <Form.Label className="visually-hidden" column>
                     Query
                 </Form.Label>
                 <Col>
                     <Form.Control
-                        type='text'
-                        placeholder='Enter your query here, keywords separated by spaces'
+                        type="text"
+                        placeholder="Enter your query here, keywords separated by spaces"
                         onChange={(e) => setMessage(e.target.value)}
                     />
                 </Col>
-                <Col md='auto'>
-                    <Button variant='info' onClick={() => props.setSearchString(message)}>
+                <Col md="auto">
+                    <Button variant="info" onClick={() => props.setSearchString(message)}>
                         Search
                     </Button>
                 </Col>

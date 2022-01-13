@@ -10,4 +10,4 @@ export type PaginationMetadata = {
     page?: number;
     previous_page?: number;
     next_page?: number;
-}
+};

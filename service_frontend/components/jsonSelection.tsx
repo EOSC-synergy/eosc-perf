@@ -41,7 +41,7 @@ export function JsonSelection(props: {
             <Form.Group>
                 <Form.Label>Please select result JSON file</Form.Label>
                 <Form.Control
-                    type='file'
+                    type="file"
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
                         loadFile(e.target.files ? e.target.files[0] : undefined)
                     }

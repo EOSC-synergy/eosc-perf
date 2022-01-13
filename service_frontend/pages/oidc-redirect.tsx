@@ -9,7 +9,7 @@ import { ReactElement } from 'react';
  * @constructor
  */
 function OidcRedirect(): ReactElement {
-    return (<>Logging you in...</>);
+    return <>Logging you in...</>;
 }
 
 export default OidcRedirect;

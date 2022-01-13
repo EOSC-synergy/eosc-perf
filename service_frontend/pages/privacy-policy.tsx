@@ -21,9 +21,9 @@ function PrivacyPolicy(): ReactElement {
             <ul>
                 <li>
                     <p>
-                        <a href='https://www.bfdi.bund.de/DE/Home/home_node.html'>German DPA</a>.
+                        <a href="https://www.bfdi.bund.de/DE/Home/home_node.html">German DPA</a>.
                         Details for raising concerns for the German DPA can be found{' '}
-                        <a href='https://www.bfdi.bund.de/DE/Service/Datenschutzerklaerung/datenschutzerklaerung-node.html'>
+                        <a href="https://www.bfdi.bund.de/DE/Service/Datenschutzerklaerung/datenschutzerklaerung-node.html">
                             here
                         </a>
                         .
@@ -31,11 +31,11 @@ function PrivacyPolicy(): ReactElement {
                 </li>
                 <li>
                     <p>
-                        <a href='https://www.baden-wuerttemberg.datenschutz.de/'>
+                        <a href="https://www.baden-wuerttemberg.datenschutz.de/">
                             Baden-W&uuml;rttemberg DPA
                         </a>
                         .{' '}
-                        <a href='https://www.baden-wuerttemberg.datenschutz.de/online-beschwerde/'>
+                        <a href="https://www.baden-wuerttemberg.datenschutz.de/online-beschwerde/">
                             Link
                         </a>{' '}
                         to file a complaint.
@@ -73,7 +73,7 @@ function PrivacyPolicy(): ReactElement {
             <h2>Access, correction and deletion of data</h2>
             If you wish to have your Personal Data collected by the Service deleted or changed,
             please collect the Data Protection Officer at{' '}
-            <a href='mailto:perf-support@lists.kit.edu' className='uri'>
+            <a href="mailto:perf-support@lists.kit.edu" className="uri">
                 perf-support@lists.kit.edu
             </a>
             . If you wish to correct inaccurate data provided by your Home Organisation, please
@@ -81,7 +81,7 @@ function PrivacyPolicy(): ReactElement {
             <h2>Withdrawal of consent</h2>
             If you wish to withdraw your consent with regard to processing your user-provided
             Personal Data, please contact the Data Protection Officer at{' '}
-            <a href='mailto:perf-support@lists.kit.edu' className='uri'>
+            <a href="mailto:perf-support@lists.kit.edu" className="uri">
                 perf-support@lists.kit.edu
             </a>{' '}
             to have it deleted from the Service. Note that your results are still subject to the
@@ -95,16 +95,16 @@ function PrivacyPolicy(): ReactElement {
             Your Personal Data will be protected according to the Code of Conduct for Service
             Providers, a common standard for the research and higher education sector to protect
             your privacy.
-            <h2 id='contact-information'>Contact information</h2>
+            <h2 id="contact-information">Contact information</h2>
             <p>
                 Service managers:{' '}
-                <a href='mailto:perf-support@lists.kit.edu' className='uri'>
+                <a href="mailto:perf-support@lists.kit.edu" className="uri">
                     perf-support@lists.kit.edu
                 </a>
             </p>
             <p>
                 Data controller:{' '}
-                <a href='mailto:perf-support@lists.kit.edu' className='uri'>
+                <a href="mailto:perf-support@lists.kit.edu" className="uri">
                     perf-support@lists.kit.edu
                 </a>
             </p>

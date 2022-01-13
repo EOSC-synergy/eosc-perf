@@ -21,12 +21,12 @@ function TermsOfService(): ReactElement {
                 conditions that govern your access to and use (including transmission, processing,
                 and storage of data) of the resources and services (“Services”) as granted by the
                 department{' '}
-                <a href='https://www.scc.kit.edu/en/aboutus/d3a.php'>
+                <a href="https://www.scc.kit.edu/en/aboutus/d3a.php">
                     Data Analytics, Access and Applications
                 </a>{' '}
                 (D3A) from the{' '}
-                <a href='https://www.scc.kit.edu/en/'>Steinbuch Centre for Computing</a> (SCC) of{' '}
-                <a href='https://www.kit.edu/english/index.php'>
+                <a href="https://www.scc.kit.edu/en/">Steinbuch Centre for Computing</a> (SCC) of{' '}
+                <a href="https://www.kit.edu/english/index.php">
                     Karlsruhe Institute of Technology
                 </a>{' '}
                 (KIT), located at Hermann-von-Helmholtz-Platz 1, 76344 Eggenstein-Leopoldshafen (the
@@ -48,7 +48,7 @@ function TermsOfService(): ReactElement {
                 <li>
                     You shall respect intellectual property and confidentiality agreements, e.g.:
                 </li>
-                <ol type='a'>
+                <ol type="a">
                     <li>
                         You are solely responsible for the content of, and for any harm resulting
                         from, any content created or uploaded by you (&quot;Content&quot;) to the
@@ -103,18 +103,18 @@ function TermsOfService(): ReactElement {
             <h2>Contact information</h2>
             <p>
                 The administrative contact for this AUP is:{' '}
-                <a href='mailto:perf-support@lists.kit.edu'>perf-support@lists.kit.edu</a>
+                <a href="mailto:perf-support@lists.kit.edu">perf-support@lists.kit.edu</a>
             </p>
             <p>
                 The security contact for this AUP is:{' '}
-                <a href='mailto:scc-secteam@lists.kit.edu'>scc-secteam@lists.kit.edu</a>
+                <a href="mailto:scc-secteam@lists.kit.edu">scc-secteam@lists.kit.edu</a>
             </p>
             <p>
                 The privacy statements (e.g. Privacy Notices) are located at:{' '}
-                <Link href='/privacy-policy'>Privacy Policy</Link>
+                <Link href="/privacy-policy">Privacy Policy</Link>
             </p>
             <p>
-                The KIT Impressum is found here: <a href='https://www.kit.edu/legals.php'>Legals</a>
+                The KIT Impressum is found here: <a href="https://www.kit.edu/legals.php">Legals</a>
             </p>
         </Container>
     );

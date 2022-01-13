@@ -19,4 +19,4 @@ export type Error = {
      * Error message
      */
     message?: string;
-}
+};

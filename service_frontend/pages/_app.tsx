@@ -10,7 +10,6 @@ import { Footer } from 'components/footer';
 import { useRouter } from 'next/router';
 import { SSRProvider } from 'react-bootstrap';
 
-
 const oidcConfig: AuthProviderProps = {
     authority:
         process.env.NODE_ENV === 'development'
@@ -20,24 +19,30 @@ const oidcConfig: AuthProviderProps = {
     redirect_uri: 'https://' + process.env.NEXT_PUBLIC_OIDC_REDIRECT_HOST + '/oidc-redirect',
     scope: 'openid email profile eduperson_entitlement offline_access',
     //autoSignIn: false,
-    response_type: 'code'
+    response_type: 'code',
 };
 
 function MyApp({ Component, pageProps }: AppProps) {
     const router = useRouter();
 
-    return (<SSRProvider><QueryClientWrapper>
-        <AuthProvider {...oidcConfig} onSigninCallback={() => {
-            router.push('/');
-        }}>
-            <UserContextWrapper>
-                <NavHeader />
-                <Component {...pageProps} />
-                <Footer />
-            </UserContextWrapper>
-        </AuthProvider>
-    </QueryClientWrapper>
-    </SSRProvider>);
+    return (
+        <SSRProvider>
+            <QueryClientWrapper>
+                <AuthProvider
+                    {...oidcConfig}
+                    onSigninCallback={() => {
+                        router.push('/');
+                    }}
+                >
+                    <UserContextWrapper>
+                        <NavHeader />
+                        <Component {...pageProps} />
+                        <Footer />
+                    </UserContextWrapper>
+                </AuthProvider>
+            </QueryClientWrapper>
+        </SSRProvider>
+    );
 }
 
 export default MyApp;

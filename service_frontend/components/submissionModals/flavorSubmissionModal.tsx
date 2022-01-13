@@ -12,7 +12,7 @@ export function FlavorSubmissionModal(props: {
 
     return (
         <>
-            <Modal size='lg' show={props.show} onHide={props.onHide}>
+            <Modal size="lg" show={props.show} onHide={props.onHide}>
                 <Modal.Header closeButton>Add Site</Modal.Header>
                 <Modal.Body>
                     <FlavorSubmitForm
@@ -33,7 +33,7 @@ export function FlavorSubmissionModal(props: {
                     autohide
                 >
                     <Toast.Header>
-                        <strong className='me-auto'>eosc-perf</strong>
+                        <strong className="me-auto">eosc-perf</strong>
                     </Toast.Header>
                     <Toast.Body>Submission successful.</Toast.Body>
                 </Toast>

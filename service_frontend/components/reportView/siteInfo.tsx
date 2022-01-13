@@ -12,7 +12,7 @@ export function SiteInfo(props: { id: string }): ReactElement {
             return getHelper<Site>('/sites/' + props.id);
         },
         {
-            refetchOnWindowFocus: false // do not spam queries
+            refetchOnWindowFocus: false, // do not spam queries
         }
     );
 

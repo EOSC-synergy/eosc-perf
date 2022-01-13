@@ -10,7 +10,7 @@ export const tags: Tags = {
     pages: 2,
     per_page: 1,
     prev_num: 1,
-    total: 2
+    total: 2,
 };
 
 export const benchmark: Benchmark = {
@@ -19,5 +19,5 @@ export const benchmark: Benchmark = {
     docker_tag: '__bench_tag__',
     id: '42069',
     json_schema: undefined,
-    upload_datetime: ''
+    upload_datetime: '',
 };

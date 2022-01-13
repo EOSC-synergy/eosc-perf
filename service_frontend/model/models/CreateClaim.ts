@@ -7,4 +7,4 @@ export type CreateClaim = {
      * Resource type discriminator
      */
     message: string;
-}
+};

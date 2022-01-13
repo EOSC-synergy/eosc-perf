@@ -13,7 +13,7 @@ export function FlavorInfo(props: { id: string }): ReactElement {
             return getHelper<Flavor>('/flavors/' + props.id);
         },
         {
-            refetchOnWindowFocus: false // do not spam queries
+            refetchOnWindowFocus: false, // do not spam queries
         }
     );
 
@@ -24,7 +24,7 @@ export function FlavorInfo(props: { id: string }): ReactElement {
         },
         {
             refetchOnWindowFocus: false, // do not spam queries,
-            enabled: flavor.isSuccess
+            enabled: flavor.isSuccess,
         }
     );
 

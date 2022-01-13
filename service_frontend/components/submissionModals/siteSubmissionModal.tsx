@@ -7,7 +7,7 @@ export function SiteSubmissionModal(props: { show: boolean; onHide: () => void }
 
     return (
         <>
-            <Modal size='lg' show={props.show} onHide={props.onHide}>
+            <Modal size="lg" show={props.show} onHide={props.onHide}>
                 <Modal.Header closeButton>Add Site</Modal.Header>
                 <Modal.Body>
                     <SiteSubmitForm
@@ -27,7 +27,7 @@ export function SiteSubmissionModal(props: { show: boolean; onHide: () => void }
                     autohide
                 >
                     <Toast.Header>
-                        <strong className='me-auto'>eosc-perf</strong>
+                        <strong className="me-auto">eosc-perf</strong>
                     </Toast.Header>
                     <Toast.Body>Submission successful.</Toast.Body>
                 </Toast>

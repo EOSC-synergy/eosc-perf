@@ -28,15 +28,11 @@ export function ResultSubmitForm(props: {
     const [flavor, setFlavor] = useState<Flavor | undefined>(undefined);
     const [tags, setTags] = useState<Tag[]>([]);
     const [termsOfServiceAccepted, setTermsOfServiceAccepted] = useState(false);
-    const [fileContents, setFileContents] = useState<string | undefined>(
-        undefined
-    );
+    const [fileContents, setFileContents] = useState<string | undefined>(undefined);
 
     const [execDate, setExecDate] = useState<Date | null>(new Date());
 
-    const [errorMessage, setErrorMessage] = useState<ReactNode | undefined>(
-        undefined
-    );
+    const [errorMessage, setErrorMessage] = useState<ReactNode | undefined>(undefined);
 
     const { mutate } = useMutation(
         (data: Result) =>
@@ -45,7 +41,7 @@ export function ResultSubmitForm(props: {
                 benchmark_id: benchmark?.id,
                 //site_id: site?.id,
                 flavor_id: flavor?.id,
-                tags_ids: tags.map((tag) => tag.id)
+                tags_ids: tags.map((tag) => tag.id),
             }),
         {
             onSuccess: () => {
@@ -54,7 +50,7 @@ export function ResultSubmitForm(props: {
             onError: (error: Error | AxiosError) => {
                 setErrorMessage(getErrorMessage(error));
                 props.onError();
-            }
+            },
         }
     );
 
@@ -81,75 +77,57 @@ export function ResultSubmitForm(props: {
     return (
         <>
             {auth.token === undefined && (
-                <Alert variant='danger'>
-                    You must be logged in to submit new results!
-                </Alert>
+                <Alert variant="danger">You must be logged in to submit new results!</Alert>
             )}
-            {errorMessage !== undefined && (
-                <Alert variant='danger'>Error: {errorMessage}</Alert>
-            )}
+            {errorMessage !== undefined && <Alert variant="danger">Error: {errorMessage}</Alert>}
             <RegistrationCheck />
             <Form>
-                <Form.Group className='mb-3'>
-                    <JsonSelection
-                        fileContents={fileContents}
-                        setFileContents={setFileContents}
-                    />{' '}
+                <Form.Group className="mb-3">
+                    <JsonSelection fileContents={fileContents} setFileContents={setFileContents} />{' '}
                 </Form.Group>
 
-                <Form.Group className='mb-3'>
-                    <BenchmarkSearchSelect
-                        benchmark={benchmark}
-                        setBenchmark={setBenchmark}
-                    />
+                <Form.Group className="mb-3">
+                    <BenchmarkSearchSelect benchmark={benchmark} setBenchmark={setBenchmark} />
                 </Form.Group>
 
-                <Form.Group className='mb-3'>
+                <Form.Group className="mb-3">
                     <SiteSearchPopover site={site} setSite={setSite} />
                 </Form.Group>
 
-                <Form.Group className='mb-3'>
-                    <FlavorSearchSelect
-                        site={site}
-                        flavor={flavor}
-                        setFlavor={setFlavor}
-                    />
+                <Form.Group className="mb-3">
+                    <FlavorSearchSelect site={site} flavor={flavor} setFlavor={setFlavor} />
                 </Form.Group>
 
-                <Form.Group className='mb-3'>
+                <Form.Group className="mb-3">
                     <Row>
                         <Col>Execution date:</Col>
-                        <Col md='auto'>
+                        <Col md="auto">
                             <DatePicker
                                 selected={execDate}
                                 onChange={(date: Date | null) => setExecDate(date as Date | null)}
                                 showTimeSelect
                                 timeIntervals={15}
-                                dateFormat='MMMM d, yyyy HH:mm'
-                                timeFormat='HH:mm'
+                                dateFormat="MMMM d, yyyy HH:mm"
+                                timeFormat="HH:mm"
                             />
                         </Col>
                     </Row>
                     {/* dateFormat="Pp"*/}
                 </Form.Group>
 
-                <div className='mb-1'>
+                <div className="mb-1">
                     <TagSelector selected={tags} setSelected={setTags} />
                 </div>
 
-                <Row className='align-items-center'>
+                <Row className="align-items-center">
                     <Col>
                         <TermsOfServiceCheck
                             accepted={termsOfServiceAccepted}
                             setAccepted={setTermsOfServiceAccepted}
                         />
                     </Col>
-                    <Col md='auto'>
-                        <Button
-                            variant='success'
-                            disabled={!isFormValid()}
-                            onClick={submit}
-                        >
+                    <Col md="auto">
+                        <Button variant="success" disabled={!isFormValid()} onClick={submit}>
                             Submit
                         </Button>
                     </Col>

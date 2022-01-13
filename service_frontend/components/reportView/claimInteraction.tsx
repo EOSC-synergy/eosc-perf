@@ -16,27 +16,27 @@ export function ClaimInteraction(props: {
         [Submit.resource_type.BENCHMARK, '/benchmarks/'],
         [Submit.resource_type.SITE, '/sites/'],
         [Submit.resource_type.FLAVOR, '/flavors/'],
-        [Submit.resource_type.CLAIM, '/reports/claims/']
+        [Submit.resource_type.CLAIM, '/reports/claims/'],
     ]);
 
     const { mutate: deleteClaim } = useMutation(
         () =>
             deleteHelper(
                 (endpoints.get(props.claim.resource_type) ?? '/reports/claims') +
-                props.claim.resource_id,
+                    props.claim.resource_id,
                 auth.token
             ),
         {
             onSuccess: () => {
                 props.refetch();
-            }
+            },
         }
     );
 
     return (
-        <div className='mt-2'>
+        <div className="mt-2">
             <Button
-                variant='danger'
+                variant="danger"
                 onClick={() => {
                     deleteClaim();
                 }}

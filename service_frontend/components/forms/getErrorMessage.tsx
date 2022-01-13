@@ -26,7 +26,7 @@ export function getErrorMessage(error: Error | AxiosError): ReactNode {
                             Your input may be malformed or wrong, please verify if everything is
                             correct. If you believe this to be a bug, please submit an issue about
                             it on{' '}
-                            <a href='https://github.com/EOSC-synergy/eosc-perf/issues'>GitHub</a>!
+                            <a href="https://github.com/EOSC-synergy/eosc-perf/issues">GitHub</a>!
                         </>
                     );
             }
@@ -39,7 +39,7 @@ export function getErrorMessage(error: Error | AxiosError): ReactNode {
     return (
         <>
             Unknown error, please check the console and open an issue at{' '}
-            <a href='https://github.com/EOSC-synergy/eosc-perf/issues'>GitHub</a>!
+            <a href="https://github.com/EOSC-synergy/eosc-perf/issues">GitHub</a>!
         </>
     );
 }

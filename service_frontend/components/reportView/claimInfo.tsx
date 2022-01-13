@@ -16,7 +16,7 @@ export function ClaimInfo(props: { id: string }): ReactElement {
             return getHelper<Claim>('/reports/claims/' + props.id, auth.token);
         },
         {
-            refetchOnWindowFocus: false // do not spam queries
+            refetchOnWindowFocus: false, // do not spam queries
         }
     );
 

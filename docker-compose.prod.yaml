@@ -17,5 +17,3 @@ services:
   reverse_proxy:
     build:
       target: production
-    volumes:
-      - ./frontend-js/build/:/var/www/web/

@@ -6,10 +6,7 @@ import { Button, Form, InputGroup, ListGroup } from 'react-bootstrap';
 import { Check, PencilSquare } from 'react-bootstrap-icons';
 import { UserContext } from 'components/userContext';
 
-export function FlavorEditor(props: {
-    flavor: Flavor;
-    refetch: () => void;
-}): ReactElement {
+export function FlavorEditor(props: { flavor: Flavor; refetch: () => void }): ReactElement {
     const [name, setName] = useState<string>(props.flavor.name);
     const [desc, setDesc] = useState<string>(
         props.flavor.description ? props.flavor.description : ''
@@ -30,13 +27,13 @@ export function FlavorEditor(props: {
     const { mutate } = useMutation(
         (data: Flavor) =>
             putHelper<Flavor>('/sites/flavors/' + props.flavor.id, data, auth.token, {
-                flavor_id: props.flavor.id
+                flavor_id: props.flavor.id,
             }),
         {
             onSuccess: () => {
                 setEditing(false);
                 props.refetch();
-            }
+            },
         }
     );
 
@@ -54,7 +51,7 @@ export function FlavorEditor(props: {
                             name,
                             description: desc.length ? desc : null,
                             id: props.flavor.id,
-                            upload_datetime: props.flavor.upload_datetime
+                            upload_datetime: props.flavor.upload_datetime,
                         });
                     }}
                     disabled={!editing}
@@ -66,7 +63,7 @@ export function FlavorEditor(props: {
                 </Button>
             </InputGroup>
             <Form.Control
-                as='textarea'
+                as="textarea"
                 onChange={(e) => setDesc(e.target.value)}
                 readOnly={!editing}
                 value={desc}

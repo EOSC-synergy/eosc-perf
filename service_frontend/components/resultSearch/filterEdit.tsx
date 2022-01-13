@@ -23,7 +23,7 @@ export function FilterEdit(props: {
                         setKey(e);
                         props.setFilter(props.filter.id, e, mode, value);
                     }}
-                    placeholder='JSON Key'
+                    placeholder="JSON Key"
                 >
                     <Form.Select
                         value={mode}
@@ -33,15 +33,15 @@ export function FilterEdit(props: {
                             props.setFilter(props.filter.id, key, e.target.value, value);
                         }}
                     >
-                        <option value='>'>&gt;</option>
-                        <option value='>='>≥</option>
-                        <option value='=='>=</option>
-                        <option value='<='>≤</option>
-                        <option value='<'>&lt;</option>
+                        <option value=">">&gt;</option>
+                        <option value=">=">≥</option>
+                        <option value="==">=</option>
+                        <option value="<=">≤</option>
+                        <option value="<">&lt;</option>
                     </Form.Select>
                     <Form.Control
-                        aria-label='Value'
-                        placeholder='Value'
+                        aria-label="Value"
+                        placeholder="Value"
                         value={value}
                         onChange={(e) => {
                             setValue(e.target.value);
@@ -50,7 +50,7 @@ export function FilterEdit(props: {
                     />
                 </InputWithSuggestions>
             </Col>
-            <Col md='auto'>
+            <Col md="auto">
                 <CloseButton onClick={() => props.deleteFilter(props.filter.id)} />
             </Col>
         </Row>

@@ -19,4 +19,4 @@ export type User = {
      * Time when the user was registered
      */
     registration_datetime: string;
-}
+};

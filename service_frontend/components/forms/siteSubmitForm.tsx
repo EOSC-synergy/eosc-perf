@@ -21,9 +21,7 @@ export function SiteSubmitForm(props: {
     const [address, setAddress] = useState('');
     const [description, setDescription] = useState('');
 
-    const [errorMessage, setErrorMessage] = useState<ReactNode | undefined>(
-        undefined
-    );
+    const [errorMessage, setErrorMessage] = useState<ReactNode | undefined>(undefined);
 
     useEffect(() => {
         setErrorMessage(undefined);
@@ -38,7 +36,7 @@ export function SiteSubmitForm(props: {
             onError: (error: Error | AxiosError) => {
                 setErrorMessage(getErrorMessage(error));
                 props.onError();
-            }
+            },
         }
     );
 
@@ -61,54 +59,50 @@ export function SiteSubmitForm(props: {
         mutate({
             name,
             address,
-            description: description.length ? description : null
+            description: description.length ? description : null,
         });
     }
 
     return (
         <>
             {auth.token === undefined && (
-                <Alert variant='danger'>
-                    You must be logged in to submit new sites!
-                </Alert>
+                <Alert variant="danger">You must be logged in to submit new sites!</Alert>
             )}
-            {errorMessage !== undefined && (
-                <Alert variant='danger'>Error: {errorMessage}</Alert>
-            )}
+            {errorMessage !== undefined && <Alert variant="danger">Error: {errorMessage}</Alert>}
             <RegistrationCheck />
             <Form>
                 <Form.Group>
                     <Form.Label>Name:</Form.Label>
                     <Form.Control
-                        placeholder='KIT SCC'
+                        placeholder="KIT SCC"
                         onChange={(e) => setName(e.target.value)}
                         isInvalid={!isNameValid()}
                     />
                 </Form.Group>
 
-                <Form.Group className='mt-3'>
+                <Form.Group className="mt-3">
                     <Form.Label>Address</Form.Label>
                     <Form.Control
-                        placeholder='https://www.scc.kit.edu/'
+                        placeholder="https://www.scc.kit.edu/"
                         onChange={(e) => setAddress(e.target.value)}
                         isInvalid={!isAddressValid()}
                     />
                 </Form.Group>
 
-                <Form.Group className='mt-3'>
+                <Form.Group className="mt-3">
                     <Form.Label>Description (optional):</Form.Label>
                     <Form.Control
-                        placeholder='Add a description here.'
+                        placeholder="Add a description here."
                         onChange={(e) => setDescription(e.target.value)}
-                        as='textarea'
+                        as="textarea"
                     />
                 </Form.Group>
 
                 <Button
-                    variant='success'
+                    variant="success"
                     onClick={onSubmit}
                     disabled={!isFormValid()}
-                    className='mt-1'
+                    className="mt-1"
                 >
                     Submit
                 </Button>

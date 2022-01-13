@@ -8,21 +8,18 @@ import { UnselectedTag } from './unselectedTag';
 import { SelectedTag } from './selectedTag';
 import { NewTag } from './newTag';
 
-function Index(props: {
-    selected: Tag[];
-    setSelected: (tags: Tag[]) => void;
-}): ReactElement {
+function Index(props: { selected: Tag[]; setSelected: (tags: Tag[]) => void }): ReactElement {
     const [searchString, setSearchString] = useState<string>('');
     const tags = useQuery(
         ['tags', searchString],
         () => {
             return getHelper<Tags>('/tags:search', undefined, {
-                terms: searchString.split(' ')
+                terms: searchString.split(' '),
             });
         },
         {
             refetchOnWindowFocus: false, // do not spam queries
-            keepPreviousData: true
+            keepPreviousData: true,
         }
     );
 
@@ -38,35 +35,36 @@ function Index(props: {
     }
 
     return (
-        <Card className='d-inline-block'>
+        <Card className="d-inline-block">
             <Card.Body>
-                <Form.Group className='mb-1' as={Row}>
+                <Form.Group className="mb-1" as={Row}>
                     <Form.Label column sm={3}>
                         Search
                     </Form.Label>
                     <Col sm={9}>
                         <Form.Control
-                            type='text'
-                            placeholder='Keywords...'
+                            type="text"
+                            placeholder="Keywords..."
                             onChange={(search) => setSearchString(search.target.value)}
                         />
                     </Col>
                 </Form.Group>
-                <Card className='mb-1'>
+                <Card className="mb-1">
                     <Card.Body>
-                        <div className='d-flex'>
+                        <div className="d-flex">
                             {props.selected.map((tag) => (
                                 <SelectedTag tag={tag} unselect={unselect} key={tag.id} />
                             ))}
                         </div>
-                        {props.selected.length === 0 &&
-                            <div className='text-muted' style={{ display: 'inline' }}>
+                        {props.selected.length === 0 && (
+                            <div className="text-muted" style={{ display: 'inline' }}>
                                 No tags selected
-                            </div>}
+                            </div>
+                        )}
                         <hr />
                         {tags.isPreviousData && tags.data && (
                             <>
-                                <div className='d-flex'>
+                                <div className="d-flex">
                                     {tags.data.data.items
                                         .filter(
                                             (tag) =>
@@ -82,7 +80,7 @@ function Index(props: {
                         )}
                         {tags.isSuccess && !tags.isPreviousData && tags.data && (
                             <>
-                                <div className='d-flex'>
+                                <div className="d-flex">
                                     {tags.data.data.items
                                         .filter(
                                             (tag) =>
@@ -94,12 +92,13 @@ function Index(props: {
                                             <UnselectedTag tag={tag} select={select} key={tag.id} />
                                         ))}
                                 </div>
-                                {tags.data.data.total === 0 &&
-                                    <div className='text-muted' style={{ display: 'inline' }}>
+                                {tags.data.data.total === 0 && (
+                                    <div className="text-muted" style={{ display: 'inline' }}>
                                         No tags available
-                                    </div>}
+                                    </div>
+                                )}
                                 {tags.data.data.has_next && (
-                                    <div className='text-muted'>
+                                    <div className="text-muted">
                                         <small>More tags hidden, use search terms</small>
                                     </div>
                                 )}

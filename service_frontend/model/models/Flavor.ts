@@ -19,4 +19,4 @@ export type Flavor = {
      * UUID resource unique identification
      */
     readonly id: string;
-}
+};

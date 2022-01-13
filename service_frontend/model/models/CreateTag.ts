@@ -11,4 +11,4 @@ export type CreateTag = {
      * String with an statement about the object
      */
     description: string | null;
-}
+};

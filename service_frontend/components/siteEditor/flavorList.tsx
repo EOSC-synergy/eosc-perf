@@ -15,23 +15,19 @@ export function FlavorList(props: { site: Site }): ReactElement {
         },
         {
             refetchOnWindowFocus: false, // do not spam queries
-            refetchOnMount: 'always'
+            refetchOnMount: 'always',
         }
     );
 
     return (
-        <Form.Group className='mb-3'>
+        <Form.Group className="mb-3">
             <Form.Label>Flavors:</Form.Label>
-            <Card style={{ maxHeight: '16rem' }} className='overflow-auto'>
+            <Card style={{ maxHeight: '16rem' }} className="overflow-auto">
                 {flavors.isLoading && <LoadingOverlay />}
                 {flavors.isSuccess &&
                     flavors.data &&
                     flavors.data.data.items.map((flavor: Flavor) => (
-                        <FlavorEditor
-                            flavor={flavor}
-                            key={flavor.id}
-                            refetch={flavors.refetch}
-                        />
+                        <FlavorEditor flavor={flavor} key={flavor.id} refetch={flavors.refetch} />
                     ))}
                 <NewFlavor site={props.site} />
             </Card>

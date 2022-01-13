@@ -4,7 +4,7 @@ import { API_BASE_PATH } from 'components/configuration';
 import qs from 'qs';
 
 const defaultOptions = {
-    paramsSerializer: (params: unknown) => qs.stringify(params, { arrayFormat: 'repeat' })
+    paramsSerializer: (params: unknown) => qs.stringify(params, { arrayFormat: 'repeat' }),
 };
 
 export function getHelper<Type>(
@@ -16,11 +16,11 @@ export function getHelper<Type>(
         headers:
             accessToken !== undefined
                 ? {
-                    Authorization: 'Bearer ' + accessToken
-                }
+                      Authorization: 'Bearer ' + accessToken,
+                  }
                 : undefined,
         params: params,
-        ...defaultOptions
+        ...defaultOptions,
     });
 }
 
@@ -34,11 +34,11 @@ export function postHelper<Type>(
         headers:
             accessToken !== undefined
                 ? {
-                    Authorization: 'Bearer ' + accessToken
-                }
+                      Authorization: 'Bearer ' + accessToken,
+                  }
                 : undefined,
         params: params,
-        ...defaultOptions
+        ...defaultOptions,
     });
 }
 
@@ -52,11 +52,11 @@ export function putHelper<Type>(
         headers:
             accessToken !== undefined
                 ? {
-                    Authorization: 'Bearer ' + accessToken
-                }
+                      Authorization: 'Bearer ' + accessToken,
+                  }
                 : undefined,
         params: params,
-        ...defaultOptions
+        ...defaultOptions,
     });
 }
 
@@ -65,18 +65,18 @@ export function patchHelper<Type>(
     {
         data,
         accessToken,
-        params
+        params,
     }: { data?: Type; accessToken?: string; params?: Record<string, unknown> }
 ): Promise<AxiosResponse<Type>> {
     return axios.patch<Type>(API_BASE_PATH + endpoint, data, {
         headers:
             accessToken !== undefined
                 ? {
-                    Authorization: 'Bearer ' + accessToken
-                }
+                      Authorization: 'Bearer ' + accessToken,
+                  }
                 : undefined,
         params: params,
-        ...defaultOptions
+        ...defaultOptions,
     });
 }
 
@@ -85,9 +85,9 @@ export function deleteHelper(endpoint: string, accessToken?: string): Promise<Ax
         headers:
             accessToken !== undefined
                 ? {
-                    Authorization: 'Bearer ' + accessToken
-                }
+                      Authorization: 'Bearer ' + accessToken,
+                  }
                 : undefined,
-        ...defaultOptions
+        ...defaultOptions,
     });
 }

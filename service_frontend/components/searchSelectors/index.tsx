@@ -30,11 +30,11 @@ export function SearchingSelector<Item extends Identifiable>(props: {
         () => {
             return getHelper<Paginated<Item>>(props.endpoint, undefined, {
                 // split here so we can add searchString to key to fetch automatically
-                terms: searchString.split(' ')
+                terms: searchString.split(' '),
             });
         },
         {
-            refetchOnWindowFocus: false // do not spam queries
+            refetchOnWindowFocus: false, // do not spam queries
         }
     );
 
@@ -48,8 +48,8 @@ export function SearchingSelector<Item extends Identifiable>(props: {
     }
 
     const popover = (
-        <Popover id='benchmarkSelect' style={{ maxWidth: '576px', width: 'auto' }}>
-            <Popover.Header as='h3'>{props.tableName} Search</Popover.Header>
+        <Popover id="benchmarkSelect" style={{ maxWidth: '576px', width: 'auto' }}>
+            <Popover.Header as="h3">{props.tableName} Search</Popover.Header>
             <Popover.Body>
                 <SearchForm setSearchString={setSearchString} />
                 <div style={{ position: 'relative' }}>
@@ -82,17 +82,17 @@ export function SearchingSelector<Item extends Identifiable>(props: {
                             <Paginator pagination={items.data.data} navigateTo={setPage} />
                         </Col>
                     )}
-                    <Col md='auto'>
+                    <Col md="auto">
                         <Button
-                            className='m-1'
-                            variant='secondary'
+                            className="m-1"
+                            variant="secondary"
                             onClick={() => setItem(undefined)}
                         >
                             Deselect
                         </Button>
                         {/* TODO: hide popover if submit button is pressed */}
                         {props.submitNew && (
-                            <Button className='m-1' onClick={props.submitNew}>
+                            <Button className="m-1" onClick={props.submitNew}>
                                 + New
                             </Button>
                         )}
@@ -103,19 +103,19 @@ export function SearchingSelector<Item extends Identifiable>(props: {
     );
 
     return (
-        <div className='my-1'>
+        <div className="my-1">
             <Row>
                 <Col>{props.display(props.item)} </Col>
-                <Col md='auto'>
+                <Col md="auto">
                     <OverlayTrigger
-                        trigger='click'
-                        placement='bottom'
+                        trigger="click"
+                        placement="bottom"
                         overlay={popover}
                         rootClose
                         show={show}
                         onToggle={onToggle}
                     >
-                        <Button variant='success' size='sm'>
+                        <Button variant="success" size="sm">
                             Select
                         </Button>
                     </OverlayTrigger>

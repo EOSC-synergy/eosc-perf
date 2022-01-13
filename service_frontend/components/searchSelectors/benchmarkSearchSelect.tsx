@@ -25,7 +25,7 @@ export function BenchmarkSearchSelect(props: {
                 } else {
                     props.setBenchmark(data.data);
                 }
-            }
+            },
         }
     );
 
@@ -38,7 +38,7 @@ export function BenchmarkSearchSelect(props: {
                         {benchmark.docker_image + ':' + benchmark.docker_tag}
                     </a>
                 ) : (
-                    <div className='text-muted' style={{ display: 'inline-block' }}>
+                    <div className="text-muted" style={{ display: 'inline-block' }}>
                         None
                     </div>
                 )}
@@ -63,9 +63,9 @@ export function BenchmarkSearchSelect(props: {
     return (
         <>
             <SearchingSelector<Benchmark>
-                queryKeyPrefix='benchmark'
-                tableName='Benchmark'
-                endpoint='/benchmarks:search'
+                queryKeyPrefix="benchmark"
+                tableName="Benchmark"
+                endpoint="/benchmarks:search"
                 item={props.benchmark}
                 setItem={props.setBenchmark}
                 display={display}

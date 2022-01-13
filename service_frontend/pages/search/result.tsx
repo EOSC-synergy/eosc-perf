@@ -40,7 +40,7 @@ function ResultSearch(): ReactElement {
 
     const [sorting, setSorting] = useState<Sorting>({
         mode: SortMode.Disabled,
-        key: ''
+        key: '',
     });
 
     function addFilter() {
@@ -50,7 +50,7 @@ function ResultSearch(): ReactElement {
             id,
             key: '',
             mode: '>',
-            value: ''
+            value: '',
         });
         setFilters(newMap);
     }
@@ -61,7 +61,7 @@ function ResultSearch(): ReactElement {
             id,
             key,
             mode,
-            value
+            value,
         });
         setFilters(newMap);
     }
@@ -72,9 +72,7 @@ function ResultSearch(): ReactElement {
         setFilters(newMap);
     }
 
-    const suggestedFields = benchmark
-        ? parseSuggestions(benchmark)
-        : undefined;
+    const suggestedFields = benchmark ? parseSuggestions(benchmark) : undefined;
 
     const [resultsPerPage, setResultsPerPage_] = useState(20);
     const [page, setPage] = useState(1);
@@ -98,45 +96,42 @@ function ResultSearch(): ReactElement {
 
     // helpers for subelements
     const resultOps = {
-        select: function(result: Ordered<Result>) {
+        select: function (result: Ordered<Result>) {
             if (!this.isSelected(result)) {
                 // cannot call setSelectedResults directly, need to put in variable first
                 const arr = [...selectedResults, result].sort(orderedComparator);
                 setSelectedResults(arr);
             }
         },
-        selectMultiple: function(results: Ordered<Result>[]) {
+        selectMultiple: function (results: Ordered<Result>[]) {
             const newResults = results.filter((r) => !resultOps.isSelected(r));
             if (newResults.length === 0) {
                 return;
             }
-            const combined = [...selectedResults, ...newResults].sort(
-                orderedComparator
-            );
+            const combined = [...selectedResults, ...newResults].sort(orderedComparator);
             setSelectedResults(combined);
         },
-        unselect: function(result: Result) {
+        unselect: function (result: Result) {
             setSelectedResults(selectedResults.filter((r) => r.id !== result.id));
         },
-        unselectMultiple: function(results: Result[]) {
+        unselectMultiple: function (results: Result[]) {
             setSelectedResults(
                 selectedResults.filter(
-                    (selected) =>
-                        !results.some((unselected) => unselected.id === selected.id)
+                    (selected) => !results.some((unselected) => unselected.id === selected.id)
                 )
             );
         },
-        isSelected: function(result: Result) {
+        isSelected: function (result: Result) {
             return selectedResults.some((r) => r.id === result.id);
         },
-        display: function(result: Result) {
+        display: function (result: Result) {
             setPreviewResult(result);
             setShowJSONPreview(true);
         },
-        report: function(result: Result) {
+        report: function (result: Result) {
             setReportedResult(result);
             setShowReportModal(true);
-        }
+        },
     };
 
     // hash used for queryKey to not have to add a dozen strings
@@ -151,8 +146,8 @@ function ResultSearch(): ReactElement {
             sorting.mode === SortMode.Ascending
                 ? '+' + sorting.key
                 : sorting.mode === SortMode.Descending
-                    ? '-' + sorting.key
-                    : undefined
+                ? '-' + sorting.key
+                : undefined,
         ],
         () => {
             return getHelper<Results>('/results', undefined, {
@@ -180,16 +175,20 @@ function ResultSearch(): ReactElement {
                     sorting.mode === SortMode.Ascending
                         ? '+' + sorting.key
                         : sorting.mode === SortMode.Descending
-                            ? '-' + sorting.key
-                            : undefined
+                        ? '-' + sorting.key
+                        : undefined,
             });
         },
         {
-            refetchOnWindowFocus: false // do not spam queries
+            refetchOnWindowFocus: false, // do not spam queries
         }
     );
 
-    function refreshLocation(benchmark: Benchmark | undefined, site: Site | undefined, flavor: Flavor | undefined) {
+    function refreshLocation(
+        benchmark: Benchmark | undefined,
+        site: Site | undefined,
+        flavor: Flavor | undefined
+    ) {
         let query = {};
         if (benchmark && benchmark.id) {
             query = { ...query, benchmarkId: benchmark.id };
@@ -200,10 +199,14 @@ function ResultSearch(): ReactElement {
         if (flavor && flavor.id) {
             query = { ...query, flavorId: flavor.id };
         }
-        router.push({
-            pathname: '/search/result',
-            query
-        }, undefined, { shallow: true });
+        router.push(
+            {
+                pathname: '/search/result',
+                query,
+            },
+            undefined,
+            { shallow: true }
+        );
     }
 
     function updateBenchmark(benchmark?: Benchmark) {
@@ -228,41 +231,51 @@ function ResultSearch(): ReactElement {
 
     return (
         <>
-            <Container fluid='xl'>
-                <Row className='mb-2'>
+            <Container fluid="xl">
+                <Row className="mb-2">
                     <Col>
-                        <Accordion defaultActiveKey='filters'>
+                        <Accordion defaultActiveKey="filters">
                             <Card>
                                 <Card.Header>
-                                    <CardAccordionToggle eventKey='filters'>
+                                    <CardAccordionToggle eventKey="filters">
                                         Filters
                                     </CardAccordionToggle>
                                 </Card.Header>
-                                <Accordion.Collapse eventKey='filters'>
+                                <Accordion.Collapse eventKey="filters">
                                     <Card.Body>
-                                        {router.isReady && <>
-                                            <BenchmarkSearchSelect
-                                                benchmark={benchmark}
-                                                initBenchmark={(b) => setBenchmark(b)}
-                                                setBenchmark={updateBenchmark}
-                                                initialBenchmarkId={router.query.benchmarkId as string | undefined}
-                                            />
-                                            <SiteSearchPopover
-                                                site={site}
-                                                initSite={(s) => setSite(s)}
-                                                setSite={updateSite}
-                                                initialSiteId={router.query.siteId as string | undefined}
-                                            />
-                                            <FlavorSearchSelect
-                                                site={site}
-                                                flavor={flavor}
-                                                initFlavor={(f) => setFlavor(f)}
-                                                setFlavor={updateFlavor}
-                                                initialFlavorId={router.query.flavorId as string | undefined}
-                                            />
-                                        </>}
+                                        {router.isReady && (
+                                            <>
+                                                <BenchmarkSearchSelect
+                                                    benchmark={benchmark}
+                                                    initBenchmark={(b) => setBenchmark(b)}
+                                                    setBenchmark={updateBenchmark}
+                                                    initialBenchmarkId={
+                                                        router.query.benchmarkId as
+                                                            | string
+                                                            | undefined
+                                                    }
+                                                />
+                                                <SiteSearchPopover
+                                                    site={site}
+                                                    initSite={(s) => setSite(s)}
+                                                    setSite={updateSite}
+                                                    initialSiteId={
+                                                        router.query.siteId as string | undefined
+                                                    }
+                                                />
+                                                <FlavorSearchSelect
+                                                    site={site}
+                                                    flavor={flavor}
+                                                    initFlavor={(f) => setFlavor(f)}
+                                                    setFlavor={updateFlavor}
+                                                    initialFlavorId={
+                                                        router.query.flavorId as string | undefined
+                                                    }
+                                                />
+                                            </>
+                                        )}
                                         <hr />
-                                        <ListGroup variant='flush'>
+                                        <ListGroup variant="flush">
                                             {[...filters.keys()].flatMap((key) => {
                                                 const filter = filters.get(key);
                                                 if (filter === undefined) {
@@ -277,17 +290,17 @@ function ResultSearch(): ReactElement {
                                                             deleteFilter={deleteFilter}
                                                             suggestions={suggestedFields}
                                                         />
-                                                    </ListGroup.Item>
+                                                    </ListGroup.Item>,
                                                 ];
                                             })}
                                         </ListGroup>
                                         <Flex>
                                             <Flex.FloatLeft>
-                                                <Button variant='success' onClick={addFilter}>
+                                                <Button variant="success" onClick={addFilter}>
                                                     Add filter
                                                 </Button>
                                             </Flex.FloatLeft>
-                                            <Flex.FloatRight className='d-flex'>
+                                            <Flex.FloatRight className="d-flex">
                                                 <Button onClick={() => results.refetch()}>
                                                     Apply filters
                                                 </Button>
@@ -299,14 +312,14 @@ function ResultSearch(): ReactElement {
                         </Accordion>
                     </Col>
                     <Col>
-                        <Accordion defaultActiveKey='diagram'>
+                        <Accordion defaultActiveKey="diagram">
                             <Card>
                                 <Card.Header>
-                                    <CardAccordionToggle eventKey='diagram'>
+                                    <CardAccordionToggle eventKey="diagram">
                                         Comparison diagram
                                     </CardAccordionToggle>
                                 </Card.Header>
-                                <Accordion.Collapse eventKey='diagram'>
+                                <Accordion.Collapse eventKey="diagram">
                                     <Card.Body>
                                         <DiagramView
                                             results={selectedResults}
@@ -336,27 +349,24 @@ function ResultSearch(): ReactElement {
                             />
                         )}
                         {results.isSuccess && results.data.data.total === 0 && (
-                            <div className='text-muted m-2'>No results found! :(</div>
+                            <div className="text-muted m-2">No results found! :(</div>
                         )}
                         {results.isError && 'Error while loading results'}
                         {results.isLoading && <LoadingOverlay />}
                     </div>
                     {/* fuck flexbox & CSS spacing */}
                     {results.isSuccess && (
-                        <Flex className='m-2'>
+                        <Flex className="m-2">
                             <Flex.FloatLeft>
                                 <ResultsPerPageSelection
                                     onChange={setResultsPerPage}
                                     currentSelection={resultsPerPage}
                                 />
                             </Flex.FloatLeft>
-                            <Flex.Center className='d-flex'>
-                                <Paginator
-                                    pagination={results.data.data}
-                                    navigateTo={setPage}
-                                />
+                            <Flex.Center className="d-flex">
+                                <Paginator pagination={results.data.data} navigateTo={setPage} />
                             </Flex.Center>
-                            <Flex.FloatRight className='d-flex' />
+                            <Flex.FloatRight className="d-flex" />
                         </Flex>
                     )}
                 </Card>
