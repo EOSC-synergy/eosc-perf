@@ -135,6 +135,7 @@ function LineChart({
     return (
         <>
             <Form.Group className="mb-1">
+                <Form.Label>Mode:</Form.Label>
                 <Form.Select
                     onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                         setDisplayMode(parseInt(e.target.value));
@@ -145,15 +146,17 @@ function LineChart({
                 </Form.Select>
             </Form.Group>
             <Form.Group className="mb-1">
+                <Form.Label>X Axis:</Form.Label>
                 <InputWithSuggestions
-                    placeholder="X axis"
+                    placeholder="machine.cpu.count"
                     setInput={(i) => setXAxis(i)}
                     suggestions={suggestions}
                 />
             </Form.Group>
             <Form.Group>
+                <Form.Label>Y Axis:</Form.Label>
                 <InputWithSuggestions
-                    placeholder="Y axis"
+                    placeholder="result.score"
                     setInput={(i) => setYAxis(i)}
                     suggestions={suggestions}
                 />
