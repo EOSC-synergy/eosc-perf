@@ -1,6 +1,6 @@
 import React, { ChangeEvent, ReactElement, useState } from 'react';
 import { Benchmark, Result, Site } from 'model';
-import { Alert, Form } from 'react-bootstrap';
+import { Alert, Col, Form, Row } from 'react-bootstrap';
 import { Ordered } from 'components/ordered';
 import { Suggestion } from '../jsonSchema';
 import {
@@ -21,6 +21,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 // TODO: remove ts ignore if this gets ever fixed
 // @ts-ignore
 import { transform } from 'echarts-stat';
+import { getSubkeyName } from '../jsonKeyHelpers';
 
 echarts.use([
     TooltipComponent,
@@ -54,7 +55,8 @@ function Scatter({
     suggestions?: Suggestion[];
     benchmark?: Benchmark;
 }): ReactElement {
-    const [displayMode, setDisplayMode] = useState(Mode.Linear);
+    const [xAxisMode, setXAxisMode] = useState(Mode.Linear);
+    const [yAxisMode, setYAxisMode] = useState(Mode.Linear);
 
     const [xAxis, setXAxis] = useState('');
     const [yAxis, setYAxis] = useState('');
@@ -111,6 +113,8 @@ function Scatter({
                     type: 'dashed',
                 },
             },
+            type: xAxisMode === Mode.Logarithmic ? 'log' : 'value',
+            name: getSubkeyName(xAxis),
         },
         yAxis: {
             splitLine: {
@@ -118,6 +122,9 @@ function Scatter({
                     type: 'dashed',
                 },
             },
+            type: yAxisMode === Mode.Logarithmic ? 'log' : 'value',
+            name: getSubkeyName(yAxis),
+            nameRotate: 90,
         },
         series: [
             ...series,
@@ -137,17 +144,48 @@ function Scatter({
 
     return (
         <>
-            <Form.Group className="mb-1">
-                <Form.Label>Mode:</Form.Label>
-                <Form.Select
-                    onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                        setDisplayMode(parseInt(e.target.value));
-                    }}
-                >
-                    <option value={Mode.Linear}>Linear</option>
-                    <option value={Mode.Logarithmic}>Logarithmic</option>
-                </Form.Select>
-            </Form.Group>
+            <Row>
+                <Col>
+                    <Form.Group className="my-1">
+                        <Row>
+                            <Col sm="auto" className="align-self-center">
+                                <Form.Label style={{ marginBottom: 0 }}>X Scale</Form.Label>
+                            </Col>
+                            <Col>
+                                <Form.Select
+                                    onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                                        setXAxisMode(parseInt(e.target.value));
+                                    }}
+                                    size="sm"
+                                >
+                                    <option value={Mode.Linear}>Linear</option>
+                                    <option value={Mode.Logarithmic}>Logarithmic</option>
+                                </Form.Select>
+                            </Col>
+                        </Row>
+                    </Form.Group>
+                </Col>
+                <Col>
+                    <Form.Group className="my-1">
+                        <Row>
+                            <Col sm="auto" className="align-self-center">
+                                <Form.Label style={{ marginBottom: 0 }}>Y Scale</Form.Label>
+                            </Col>
+                            <Col>
+                                <Form.Select
+                                    onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                                        setYAxisMode(parseInt(e.target.value));
+                                    }}
+                                    size="sm"
+                                >
+                                    <option value={Mode.Linear}>Linear</option>
+                                    <option value={Mode.Logarithmic}>Logarithmic</option>
+                                </Form.Select>
+                            </Col>
+                        </Row>
+                    </Form.Group>
+                </Col>
+            </Row>
             <XAxis setXAxis={setXAxis} suggestions={suggestions} />
             <YAxis setYAxis={setYAxis} suggestions={suggestions} />
 
