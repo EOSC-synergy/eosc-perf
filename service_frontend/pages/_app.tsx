@@ -36,7 +36,9 @@ function MyApp({ Component, pageProps }: AppProps) {
                 >
                     <UserContextWrapper>
                         <NavHeader />
-                        <Component {...pageProps} />
+                        <div className="my-2">
+                            <Component {...pageProps} />
+                        </div>
                         <Footer />
                     </UserContextWrapper>
                 </AuthProvider>
