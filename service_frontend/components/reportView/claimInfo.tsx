@@ -39,6 +39,7 @@ export function ClaimInfo(props: { id?: string; claim?: Claim }): ReactElement {
             {claim.isSuccess && claimData && (
                 <>
                     Message: {truthyOrNoneTag(claimData.message)} <br />
+                    Claimant: {claimData.uploader.email} <br />
                     {claimData.resource_type === 'result' && (
                         <ResultInfo id={claimData.resource_id} />
                     )}
