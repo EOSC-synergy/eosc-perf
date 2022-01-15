@@ -232,86 +232,76 @@ function ResultSearch(): ReactElement {
     return (
         <>
             <Container fluid="xl">
-                <Row className="mb-2">
-                    <Col>
-                        <Accordion defaultActiveKey="filters">
-                            <Card>
-                                <Card.Header>
-                                    <CardAccordionToggle eventKey="filters">
-                                        Filters
-                                    </CardAccordionToggle>
-                                </Card.Header>
-                                <Accordion.Collapse eventKey="filters">
-                                    <Card.Body>
-                                        {router.isReady && (
-                                            <>
-                                                <BenchmarkSearchSelect
-                                                    benchmark={benchmark}
-                                                    initBenchmark={(b) => setBenchmark(b)}
-                                                    setBenchmark={updateBenchmark}
-                                                    initialBenchmarkId={
-                                                        router.query.benchmarkId as
-                                                            | string
-                                                            | undefined
-                                                    }
-                                                />
-                                                <SiteSearchPopover
-                                                    site={site}
-                                                    initSite={(s) => setSite(s)}
-                                                    setSite={updateSite}
-                                                    initialSiteId={
-                                                        router.query.siteId as string | undefined
-                                                    }
-                                                />
-                                                <FlavorSearchSelect
-                                                    site={site}
-                                                    flavor={flavor}
-                                                    initFlavor={(f) => setFlavor(f)}
-                                                    setFlavor={updateFlavor}
-                                                    initialFlavorId={
-                                                        router.query.flavorId as string | undefined
-                                                    }
-                                                />
-                                            </>
-                                        )}
-                                        <hr />
-                                        <ListGroup variant="flush">
-                                            {[...filters.keys()].flatMap((key) => {
-                                                const filter = filters.get(key);
-                                                if (filter === undefined) {
-                                                    return [];
-                                                }
+                <Row>
+                    <Col md={true} className="mb-2">
+                        <Card>
+                            <Card.Header>Filters</Card.Header>
+                            <Card.Body>
+                                {router.isReady && (
+                                    <>
+                                        <BenchmarkSearchSelect
+                                            benchmark={benchmark}
+                                            initBenchmark={(b) => setBenchmark(b)}
+                                            setBenchmark={updateBenchmark}
+                                            initialBenchmarkId={
+                                                router.query.benchmarkId as string | undefined
+                                            }
+                                        />
+                                        <SiteSearchPopover
+                                            site={site}
+                                            initSite={(s) => setSite(s)}
+                                            setSite={updateSite}
+                                            initialSiteId={
+                                                router.query.siteId as string | undefined
+                                            }
+                                        />
+                                        <FlavorSearchSelect
+                                            site={site}
+                                            flavor={flavor}
+                                            initFlavor={(f) => setFlavor(f)}
+                                            setFlavor={updateFlavor}
+                                            initialFlavorId={
+                                                router.query.flavorId as string | undefined
+                                            }
+                                        />
+                                    </>
+                                )}
+                                <hr />
+                                <ListGroup variant="flush">
+                                    {[...filters.keys()].flatMap((key) => {
+                                        const filter = filters.get(key);
+                                        if (filter === undefined) {
+                                            return [];
+                                        }
 
-                                                return [
-                                                    <ListGroup.Item key={key}>
-                                                        <FilterEdit
-                                                            filter={filter}
-                                                            setFilter={setFilter}
-                                                            deleteFilter={deleteFilter}
-                                                            suggestions={suggestedFields}
-                                                        />
-                                                    </ListGroup.Item>,
-                                                ];
-                                            })}
-                                        </ListGroup>
-                                        <Flex>
-                                            <Flex.FloatLeft>
-                                                <Button variant="success" onClick={addFilter}>
-                                                    Add filter
-                                                </Button>
-                                            </Flex.FloatLeft>
-                                            <Flex.FloatRight className="d-flex">
-                                                <Button onClick={() => results.refetch()}>
-                                                    Apply filters
-                                                </Button>
-                                            </Flex.FloatRight>
-                                        </Flex>
-                                    </Card.Body>
-                                </Accordion.Collapse>
-                            </Card>
-                        </Accordion>
+                                        return [
+                                            <ListGroup.Item key={key}>
+                                                <FilterEdit
+                                                    filter={filter}
+                                                    setFilter={setFilter}
+                                                    deleteFilter={deleteFilter}
+                                                    suggestions={suggestedFields}
+                                                />
+                                            </ListGroup.Item>,
+                                        ];
+                                    })}
+                                </ListGroup>
+                                <Flex>
+                                    <Flex.FloatLeft>
+                                        <Button variant="success" onClick={addFilter}>
+                                            Add filter
+                                        </Button>
+                                    </Flex.FloatLeft>
+                                    <Flex.FloatRight className="d-flex">
+                                        <Button onClick={() => results.refetch()}>
+                                            Apply filters
+                                        </Button>
+                                    </Flex.FloatRight>
+                                </Flex>
+                            </Card.Body>
+                        </Card>
                     </Col>
-                    <Col>
+                    <Col className="mb-2">
                         <DiagramCard
                             results={selectedResults}
                             benchmark={benchmark}
@@ -320,7 +310,7 @@ function ResultSearch(): ReactElement {
                     </Col>
                 </Row>
                 <Card>
-                    <div>
+                    <div style={{ overflowX: 'auto' }}>
                         {results.isSuccess && results.data && results.data.data.total > 0 && (
                             <ResultTable
                                 results={results.data.data.items}
@@ -343,18 +333,18 @@ function ResultSearch(): ReactElement {
                     </div>
                     {/* fuck flexbox & CSS spacing */}
                     {results.isSuccess && (
-                        <Flex className="m-2">
-                            <Flex.FloatLeft>
+                        <Row className="mt-2 mx-2">
+                            <Col xs={true} sm={7} md={5} xl={4} xxl={3} className="mb-2">
                                 <ResultsPerPageSelection
                                     onChange={setResultsPerPage}
                                     currentSelection={resultsPerPage}
                                 />
-                            </Flex.FloatLeft>
-                            <Flex.Center className="d-flex">
+                            </Col>
+                            <Col />
+                            <Col sm={true} md="auto" className="mb-2">
                                 <Paginator pagination={results.data.data} navigateTo={setPage} />
-                            </Flex.Center>
-                            <Flex.FloatRight className="d-flex" />
-                        </Flex>
+                            </Col>
+                        </Row>
                     )}
                 </Card>
             </Container>
