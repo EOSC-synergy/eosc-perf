@@ -5,6 +5,7 @@ import { useQuery } from 'react-query';
 import { getHelper } from 'components/api-helpers';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { SiteEditor } from 'components/siteEditor/siteEditor';
+import { Paginator } from '../components/pagination';
 
 function SiteSelect(props: { site: Site; setActiveSite: (site: Site) => void }): ReactElement {
     return (
@@ -26,10 +27,14 @@ function SiteSelect(props: { site: Site; setActiveSite: (site: Site) => void }):
  * @constructor
  */
 function SitesEditor(): ReactElement {
+    const [page, setPage] = useState(1);
+
     const sites = useQuery(
         'sites',
         () => {
-            return getHelper<Sites>('/sites');
+            return getHelper<Sites>('/sites', undefined, {
+                page,
+            });
         },
         {
             refetchOnWindowFocus: false, // do not spam queries
@@ -37,8 +42,6 @@ function SitesEditor(): ReactElement {
     );
 
     const [activeSite, setActiveSite] = useState<Site | null>(null);
-
-    // TODO: pagination
 
     return (
         <Container>
@@ -60,6 +63,14 @@ function SitesEditor(): ReactElement {
                                 />
                             ))}
                     </ListGroup>
+                    {sites.isSuccess && sites.data && sites.data.data.pages > 0 && (
+                        <div className="mt-2">
+                            <Paginator
+                                pagination={sites.data.data}
+                                navigateTo={(p) => setPage(p)}
+                            />
+                        </div>
+                    )}
                 </Col>
                 <Col>
                     {activeSite != null && (

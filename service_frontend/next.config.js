@@ -1,25 +1,26 @@
 let withBundleAnalyzer = undefined;
 try {
     withBundleAnalyzer = require('@next/bundle-analyzer')({
-        enabled: process.env.ANALYZE === 'true'
+        enabled: process.env.ANALYZE === 'true',
     });
 } catch (e) {
     console.log('No @next/bundle-analyzer, assuming production');
-    withBundleAnalyzer = () => {
-    };
+    withBundleAnalyzer = () => {};
 }
 
+const withTM = require('next-transpile-modules')(['echarts', 'zrender']);
+
 /** @type {import('next').NextConfig} */
-module.exports = {
+module.exports = withTM({
     reactStrictMode: true,
     async redirects() {
         return [
             {
                 source: '/',
                 destination: '/search/result',
-                permanent: true
-            }
+                permanent: true,
+            },
         ];
     },
-    ...withBundleAnalyzer({})
-};
+    ...withBundleAnalyzer({}),
+});

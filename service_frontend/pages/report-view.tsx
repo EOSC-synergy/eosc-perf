@@ -12,11 +12,10 @@ import { UserContext } from 'components/userContext';
 import { ClaimInteraction } from 'components/reportView/claimInteraction';
 import { SubmitInteraction } from 'components/reportView/submitInteraction';
 import { ClaimInfo } from 'components/reportView/claimInfo';
+import { Paginator } from '../components/pagination';
 
 function SubmitView(props: { submit: Submit; refetch: () => void }) {
     const [opened, setOpened] = useState(false);
-
-    // TODO: pagination
 
     return (
         <ListGroup.Item>
@@ -36,6 +35,7 @@ function SubmitView(props: { submit: Submit; refetch: () => void }) {
             {opened && (
                 <>
                     <hr />
+                    {/* TODO: submitter? */}
                     {props.submit.resource_type === 'site' && (
                         <SiteInfo id={props.submit.resource_id} />
                     )}
@@ -58,8 +58,6 @@ function SubmitView(props: { submit: Submit; refetch: () => void }) {
 function ClaimView(props: { claim: Claim; refetch: () => void }) {
     const [opened, setOpened] = useState(false);
 
-    // TODO: pagination
-
     return (
         <ListGroup.Item>
             <div
@@ -78,8 +76,7 @@ function ClaimView(props: { claim: Claim; refetch: () => void }) {
             {opened && (
                 <>
                     <hr />
-                    {/* TODO: reuse claim data from props instead of id */}
-                    <ClaimInfo id={props.claim.id} />
+                    <ClaimInfo claim={props.claim} />
                     <ClaimInteraction claim={props.claim} refetch={props.refetch} />
                 </>
             )}
@@ -96,10 +93,13 @@ function ClaimView(props: { claim: Claim; refetch: () => void }) {
 function ReportsView(): ReactElement {
     const auth = useContext(UserContext);
 
+    const [submitsPage, setSubmitsPage] = useState(1);
+    const [claimsPage, setClaimsPage] = useState(1);
+
     const submits = useQuery(
-        'submits',
+        ['submits', submitsPage],
         () => {
-            return getHelper<Submits>('/reports/submits', auth.token, {});
+            return getHelper<Submits>('/reports/submits', auth.token, { page: submitsPage });
         },
         {
             enabled: !!auth.token,
@@ -107,9 +107,9 @@ function ReportsView(): ReactElement {
         }
     );
     const claims = useQuery(
-        'claims',
+        ['claims', claimsPage],
         () => {
-            return getHelper<Claims>('/reports/claims', auth.token, {});
+            return getHelper<Claims>('/reports/claims', auth.token, { page: claimsPage });
         },
         {
             enabled: !!auth.token,
@@ -142,6 +142,14 @@ function ReportsView(): ReactElement {
                         )}
                         {submits.isError && <>Failed to fetch submits!</>}
                     </ListGroup>
+                    {submits.isSuccess && submits.data && submits.data.data.pages > 0 && (
+                        <div className="mt-2">
+                            <Paginator
+                                pagination={submits.data.data}
+                                navigateTo={(p) => setSubmitsPage(p)}
+                            />
+                        </div>
+                    )}
                 </Col>
                 <Col>
                     <h1>Claims</h1>
@@ -160,6 +168,14 @@ function ReportsView(): ReactElement {
                         )}
                         {claims.isError && <>Failed to fetch claims!</>}
                     </ListGroup>
+                    {claims.isSuccess && claims.data && claims.data.data.pages > 0 && (
+                        <div className="mt-2">
+                            <Paginator
+                                pagination={claims.data.data}
+                                navigateTo={(p) => setClaimsPage(p)}
+                            />
+                        </div>
+                    )}
                 </Col>
             </Row>
         </Container>
