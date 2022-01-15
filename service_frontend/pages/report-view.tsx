@@ -78,8 +78,7 @@ function ClaimView(props: { claim: Claim; refetch: () => void }) {
             {opened && (
                 <>
                     <hr />
-                    {/* TODO: reuse claim data from props instead of id */}
-                    <ClaimInfo id={props.claim.id} />
+                    <ClaimInfo claim={props.claim} />
                     <ClaimInteraction claim={props.claim} refetch={props.refetch} />
                 </>
             )}
