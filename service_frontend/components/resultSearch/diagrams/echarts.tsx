@@ -46,7 +46,7 @@ enum Mode {
  * @returns {React.ReactElement}
  * @constructor
  */
-function Scatter({
+function EChartsDiagram({
     results,
     suggestions,
     benchmark,
@@ -214,10 +214,10 @@ function Scatter({
     );
 }
 
-const ScatterMeta = {
-    element: Scatter,
-    name: 'Scatter',
-    id: 'scatter',
+const EChartsMeta = {
+    element: EChartsDiagram,
+    name: 'Apache ECharts',
+    id: 'apache-echarts',
 };
 
-export default ScatterMeta;
+export default EChartsMeta;

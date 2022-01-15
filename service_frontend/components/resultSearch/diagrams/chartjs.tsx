@@ -70,7 +70,7 @@ const BACKGROUND_COLORS = [
  * @returns {React.ReactElement}
  * @constructor
  */
-function LineChart({
+function ChartJSDiagram({
     results,
     suggestions,
     benchmark,
@@ -200,10 +200,10 @@ function LineChart({
     );
 }
 
-const LineChartMeta = {
-    element: LineChart,
-    name: 'Line Chart',
-    id: '0',
+const ChartJSMeta = {
+    element: ChartJSDiagram,
+    name: 'Chart.js',
+    id: 'chart-js',
 };
 
-export default LineChartMeta;
+export default ChartJSMeta;
