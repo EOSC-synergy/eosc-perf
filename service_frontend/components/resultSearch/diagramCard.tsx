@@ -30,14 +30,11 @@ export function DiagramCard(props: {
                                             }}
                                             className="custom-select"
                                             size="sm"
+                                            value={selectedDiagram}
                                         >
                                             <option>None</option>
                                             {charts.all.map((chart) => (
-                                                <option
-                                                    value={chart.id}
-                                                    key={chart.id}
-                                                    selected={chart.id === selectedDiagram}
-                                                >
+                                                <option value={chart.id} key={chart.id}>
                                                     {chart.name}
                                                 </option>
                                             ))}
