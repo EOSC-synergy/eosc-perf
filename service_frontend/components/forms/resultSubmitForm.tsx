@@ -82,42 +82,56 @@ export function ResultSubmitForm(props: {
             {errorMessage !== undefined && <Alert variant="danger">Error: {errorMessage}</Alert>}
             <RegistrationCheck />
             <Form>
-                <Form.Group className="mb-3">
-                    <JsonSelection fileContents={fileContents} setFileContents={setFileContents} />{' '}
-                </Form.Group>
+                <Row>
+                    <Col lg={true}>
+                        <Form.Group className="mb-3">
+                            <JsonSelection
+                                fileContents={fileContents}
+                                setFileContents={setFileContents}
+                            />{' '}
+                        </Form.Group>
 
-                <Form.Group className="mb-3">
-                    <BenchmarkSearchSelect benchmark={benchmark} setBenchmark={setBenchmark} />
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                    <SiteSearchPopover site={site} setSite={setSite} />
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                    <FlavorSearchSelect site={site} flavor={flavor} setFlavor={setFlavor} />
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                    <Row>
-                        <Col>Execution date:</Col>
-                        <Col md="auto">
-                            <DatePicker
-                                selected={execDate}
-                                onChange={(date: Date | null) => setExecDate(date as Date | null)}
-                                showTimeSelect
-                                timeIntervals={15}
-                                dateFormat="MMMM d, yyyy HH:mm"
-                                timeFormat="HH:mm"
+                        <Form.Group className="mb-3">
+                            <BenchmarkSearchSelect
+                                benchmark={benchmark}
+                                setBenchmark={setBenchmark}
                             />
-                        </Col>
-                    </Row>
-                    {/* dateFormat="Pp"*/}
-                </Form.Group>
+                        </Form.Group>
 
-                <div className="mb-1">
-                    <TagSelector selected={tags} setSelected={setTags} />
-                </div>
+                        <Form.Group className="mb-3">
+                            <SiteSearchPopover site={site} setSite={setSite} />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <FlavorSearchSelect site={site} flavor={flavor} setFlavor={setFlavor} />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Row>
+                                <Col>Execution date:</Col>
+                                <Col md="auto">
+                                    <DatePicker
+                                        selected={execDate}
+                                        onChange={(date: Date | null) =>
+                                            setExecDate(date as Date | null)
+                                        }
+                                        showTimeSelect
+                                        timeIntervals={15}
+                                        dateFormat="MMMM d, yyyy HH:mm"
+                                        timeFormat="HH:mm"
+                                    />
+                                </Col>
+                            </Row>
+                            {/* dateFormat="Pp"*/}
+                        </Form.Group>
+                    </Col>
+
+                    <Col lg="auto">
+                        <div className="mb-1">
+                            <TagSelector selected={tags} setSelected={setTags} />
+                        </div>
+                    </Col>
+                </Row>
 
                 <Row className="align-items-center">
                     <Col>
