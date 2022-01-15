@@ -1,5 +1,5 @@
 import React, { ReactElement, useState } from 'react';
-import { Accordion, Button, Card, Col, Container, ListGroup, Row } from 'react-bootstrap';
+import { Accordion, Button, Card, Col, Container, ListGroup, Row, Form } from 'react-bootstrap';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { useQuery } from 'react-query';
 import { JsonPreviewModal } from 'components/jsonPreviewModal';
@@ -9,7 +9,7 @@ import { getHelper } from 'components/api-helpers';
 import { ResultTable } from 'components/resultSearch/resultTable';
 import { Benchmark, Flavor, Result, Results, Site } from 'model';
 import { Paginator } from 'components/pagination';
-import { DiagramView } from 'components/resultSearch/diagramView';
+import { DiagramCard } from 'components/resultSearch/diagramCard';
 import { ResultReportModal } from 'components/resultReportModal';
 import { v4 as uuidv4 } from 'uuid';
 import { Filter } from 'components/resultSearch/filter';
@@ -312,24 +312,11 @@ function ResultSearch(): ReactElement {
                         </Accordion>
                     </Col>
                     <Col>
-                        <Accordion defaultActiveKey="diagram">
-                            <Card>
-                                <Card.Header>
-                                    <CardAccordionToggle eventKey="diagram">
-                                        Comparison diagram
-                                    </CardAccordionToggle>
-                                </Card.Header>
-                                <Accordion.Collapse eventKey="diagram">
-                                    <Card.Body>
-                                        <DiagramView
-                                            results={selectedResults}
-                                            benchmark={benchmark}
-                                            suggestions={suggestedFields}
-                                        />
-                                    </Card.Body>
-                                </Accordion.Collapse>
-                            </Card>
-                        </Accordion>
+                        <DiagramCard
+                            results={selectedResults}
+                            benchmark={benchmark}
+                            suggestions={suggestedFields}
+                        />
                     </Col>
                 </Row>
                 <Card>
