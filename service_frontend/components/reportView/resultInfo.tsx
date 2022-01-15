@@ -25,9 +25,6 @@ export function ResultInfo(props: { id: string }): ReactElement {
             {result.isLoading && <LoadingOverlay />}
             {result.isSuccess && result.data && (
                 <>
-                    {/* TODO: *reporter* info */}
-                    {/* Reported by: {{ reporter_name }} ({{ reporter_mail }})<br /> */}
-                    {/* Uploader: {{ uploader_name }} ({{ uploader_mail }})<br /> */}
                     Site: {result.data.data.site.name}
                     <br />
                     Benchmark: {benchmarkLinkDisplay(result.data.data.benchmark)}

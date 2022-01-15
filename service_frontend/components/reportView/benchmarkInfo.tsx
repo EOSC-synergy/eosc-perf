@@ -21,16 +21,10 @@ export function BenchmarkInfo(props: { id: string }): ReactElement {
             {benchmark.isLoading && <LoadingOverlay />}
             {benchmark.isSuccess && benchmark.data && (
                 <>
-                    {/* TODO: uploader */}
-                    {/*Uploader: {{ uploader_name }} ({{ uploader_mail }})<br /> */}
                     Image: {benchmarkLinkDisplay(benchmark.data.data)}
                     <br />
                     Description: {truthyOrNoneTag(benchmark.data.data.description)}
                     <br />
-                    {/* TODO: markdown parser */}
-                    {/*<div id="docker_desc" className="jumbotron" style="overflow:scroll;height:60%">
-                          {{ docker_desc | safe}}
-                      </div> */}
                 </>
             )}
         </>

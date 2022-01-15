@@ -35,6 +35,7 @@ function SubmitView(props: { submit: Submit; refetch: () => void }) {
             {opened && (
                 <>
                     <hr />
+                    {/* TODO: submitter? */}
                     {props.submit.resource_type === 'site' && (
                         <SiteInfo id={props.submit.resource_id} />
                     )}
