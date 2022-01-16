@@ -1,7 +1,7 @@
 import { Flavor, Flavors, Site } from 'model';
 import { useQuery } from 'react-query';
 import { getHelper } from 'components/api-helpers';
-import { Card, Form, ListGroup, Row, Col } from 'react-bootstrap';
+import { Card, Col, Form, ListGroup, Row } from 'react-bootstrap';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { FlavorEditor } from 'components/siteEditor/flavorEditor';
 import React, { ReactElement, useState } from 'react';
