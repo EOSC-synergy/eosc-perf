@@ -8,6 +8,8 @@ export interface ResultCallbacks {
     unselectMultiple: (result: Result[]) => void;
     isSelected: (result: Result) => boolean;
 
+    reload: () => void;
+
     // show pop up with result info & json
     display: (result: Result) => void;
     report: (result: Result) => void;
