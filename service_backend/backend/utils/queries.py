@@ -1,5 +1,6 @@
 """Module with tools to unify query common operations."""
 import functools
+
 import flask_smorest
 
 
@@ -42,23 +43,18 @@ def add_sorting(model):
             sort_by = query_args.pop('sort_by')
             sort_by = sort_by if sort_by is not None else ""
             query = func(*args, **kwargs)
-            sorting = [parse_sort(model, x)
-                       for x in sort_by.split(',') if x != ""]
+            sorting = [parse_sort(model, x) for x in sort_by.split(',') if x != ""]
             return query.order_by(*sorting)
         return decorator
     return decorator_add_sorting
 
 
 def parse_sort(model, control_field):
-    try:
-        field = model.__dict__[control_field[1:]]
-        operator = control_field[0]
-    except KeyError as err:
-        flask_smorest.abort(422, message={
-            'KeyError': f"Unexpected field '{err.args[0]}'",
-            'hint': "Use ',' to separate fields",
-            'possible_fields': [x.name for x in model.__table__.columns]
-        })
+    if hasattr(model, 'json') and control_field[1:6] == 'json.':
+        field = json_field(model, control_field)
+    else:
+        field = generic_field(model, control_field)
+    operator = control_field[0]
     if operator == '+':
         return field.asc()
     if operator == '-':
@@ -67,6 +63,21 @@ def parse_sort(model, control_field):
         flask_smorest.abort(422, message={
             'KeyError': f"Unknown order operator '{operator}'",
             'hint': "Use '+'(asc) or '-'(desc) before sort field"
+        })
+
+
+def json_field(model, control_field):
+    path=control_field[6:]
+    return model.json[path]
+
+
+def generic_field(model, control_field):
+    try:
+        return model.__dict__[control_field[1:]]
+    except KeyError as err:
+        flask_smorest.abort(422, message={
+            'KeyError': f"Unexpected field '{err.args[0]}'",
+            'hint': "Use ',' to separate fields"
         })
 
 

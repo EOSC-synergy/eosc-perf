@@ -1,13 +1,12 @@
 version: "3.5"
 
 services:
-  frontend-auth:
-    build:
-      target: production
-
   frontend-app:
-    profiles:
-      - disabled
+    #profiles:
+    #  - disabled
+    build:
+      context: service_frontend
+      target: production
 
   backend_v1:
     build:
@@ -18,5 +17,3 @@ services:
   reverse_proxy:
     build:
       target: production
-    volumes:
-      - ./frontend-js/build/:/var/www/web/

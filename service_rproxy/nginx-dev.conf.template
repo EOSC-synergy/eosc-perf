@@ -6,7 +6,7 @@ server {
   listen       80;
   listen       [::]:80;
   
-  server_name ${DOMAIN};
+  server_name ${domains};
 
   location /nginx/reload {
     auth_basic 'Access restriction';
@@ -26,35 +26,18 @@ server {
 server {
   listen       443 http2 ssl default_server;
   listen       [::]:443 http2 ssl default_server;
+
+  server_name ${domains};
   
-  ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
-  ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
+  ssl_certificate /etc/letsencrypt/live/${nginx_domain}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/${nginx_domain}/privkey.pem;
 
-  server_name ${DOMAIN};
-
-  include /etc/letsencrypt/options-ssl-nginx.conf;
-  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+  include /etc/nginx/letsencrypt/options-ssl-nginx.conf;
+  ssl_dhparam /etc/nginx/letsencrypt/ssl-dhparams.pem;
 
   add_header 'Access-Control-Allow-Origin' *;
 
-  # Add support for javascript modules
   include mime.types;
-  types
-  {
-    application/javascript mjs;
-  }
-
-  location /auth {
-    autoindex off;
-    include uwsgi_params;
-    uwsgi_pass frontend-auth:5000;
-  }
-
-  location /oidc-redirect {
-    autoindex off;
-    include uwsgi_params;
-    uwsgi_pass frontend-auth:5000;
-  }
 
   location ${BACKEND_URL}/v1 {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -69,13 +52,13 @@ server {
   # This is required: the webapp tries connecting to the webpack server for updates,
   # it sees https:// and attempts wss://, but the dev server is running http:// (ws://), so
   # some special rules are required
-  location /sockjs-node {
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
-    proxy_http_version 1.1;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header Host $host;
+  location /_next/webpack-hmr {
     proxy_pass http://frontend-app:3000;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "Upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
   }
 
   location / {

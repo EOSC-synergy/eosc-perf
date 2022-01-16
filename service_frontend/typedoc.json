@@ -1,0 +1,4 @@
+{
+    "entryPoints": ["./components", "./model", "./pages"],
+    "entryPointStrategy": "Expand"
+}

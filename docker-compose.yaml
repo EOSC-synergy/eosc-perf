@@ -1,38 +1,21 @@
 version: "3.5"
 
 services:
-  frontend-auth:
-    container_name: frontend-auth
-    restart: unless-stopped
-    image: frontend-auth
-    build:
-      context: service_frontend_auth
-      target: development
-    env_file: .env
-    environment:
-      COOKIE_KEY_FILE: /run/secrets/cookie_secret
-      OIDC_CLIENT_SECRET_FILE: /run/secrets/oidc_secret
-      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
-      DOMAIN: ${DOMAIN}
-      ADMIN_ENTITLEMENTS: ${ADMIN_ENTITLEMENTS}
-    networks:
-      - frontend-net
-      - backend-net
-      - smtp-net
-    secrets:
-      - cookie_secret
-      - oidc_secret
-
   frontend-app:
     container_name: frontend-app
     restart: unless-stopped
     image: frontend-app
     build:
-      context: frontend-js
+      context: service_frontend
+      target: development
     networks:
       - frontend-net
     #volumes:
-    #  - ./frontend-js/:/app
+    #  - ./service_frontend/:/app
+    volumes:
+      - ./service_frontend/components:/app/components
+      - ./service_frontend/pages:/app/pages
+      - ./service_frontend/styles:/app/styles
 
   backend_v1:
     container_name: backend_v1
@@ -101,22 +84,27 @@ services:
     build:
       context: ./service_rproxy
       target: development
+    healthcheck:
+      test: [ "CMD", "curl", "--silent", "--fail", "http://localhost" ]
+      interval: 45s
+      timeout: 5s
+      retries: 3
     depends_on:
-      - frontend-auth
       - backend_v1
-      - certificate
     env_file: .env
     environment:
-      DOMAIN: ${DOMAIN}
+      DOMAINS: ${DOMAINS}
+      CERT_KEY_SIZE: ${CERT_KEY_SIZE}
       BACKEND_URL: /api
     volumes:
-      - ./service_certificate/conf:/etc/letsencrypt
-      - ./service_certificate/www:/var/www/certbot/
+      - ssl:/etc/letsencrypt
+      - ssl:/var/www/certbot
     secrets:
       - nginx_api_credentials
     networks:
       - frontend-net
       - smtp-net
+      - certbot-net
     ports:
       - "80:80"
       - "443:443"
@@ -127,12 +115,21 @@ services:
     image: certificate
     build:
       context: ./service_certificate
+    depends_on:
+      reverse_proxy:
+        condition: service_healthy
     env_file: .env
+    networks:
+      - certbot-net
     environment:
+      DOMAINS: ${DOMAINS}
       NGINX_CREDENTIALS: /run/secrets/nginx_api_credentials
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
+      LETSENCRYPT_STAGING: ${LETSENCRYPT_STAGING}
+      CERT_KEY_SIZE: ${CERT_KEY_SIZE}
     volumes:
-      - ./service_certificate/conf:/etc/letsencrypt
-      - ./service_certificate/www:/var/www/certbot
+      - ssl:/etc/letsencrypt
+      - ssl:/var/www/certbot
     secrets:
       - nginx_api_credentials
 
@@ -147,14 +144,16 @@ services:
       - ./logs/postfix:/var/log
     env_file: .env
     environment:
-      DOMAIN: ${DOMAIN}
+      DOMAINS: ${DOMAINS}
     ports:
       - "25:25"
     networks:
       - smtp-net
 
   database_backup:
-    image: postgres_backup
+    image: database_backup
+    restart: unless-stopped
+    container_name: database_backup
     build:
       context: service_backup
     volumes:
@@ -174,9 +173,11 @@ networks:
   frontend-net:
   backend-net:
   smtp-net:
+  certbot-net:
 
 volumes:
   postgres:
+  ssl: { }
 
 secrets:
   cookie_secret:

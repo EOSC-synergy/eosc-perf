@@ -51,9 +51,12 @@ class UserFilter(Pagination, Schema):
 
     #: (Str):
     #: Order to return the results separated by coma
-    # TODO: Try fields.DelimitedList
+    # TODO: Check https://github.com/marshmallow-code/flask-smorest/issues/302
     sort_by = fields.String(
-        description="Order to return the results (coma separated)",
+        description="{}<br>{}".format(
+            "Order to return the results (coma separated).",
+            "Specific fields: [sub,iss,email,registration_datetime]",
+        ),
         example="+registration_datetime", load_default="+iss,+sub"
     )
 
@@ -80,7 +83,11 @@ class SubmitFilter(Pagination, UploadFilter, Schema):
     #: (Str):
     #: Order to return the results separated by coma
     sort_by = fields.String(
-        description="Order to return the results (coma separated)",
+        description="{}<br>{}<br>{}".format(
+            "Order to return the results (coma separated).",
+            "Generic fields: [id,upload_datetime]",
+            "Specific fields: [resource_type]",
+        ),
         example="+resource_type", load_default="+resource_type"
     )
 
@@ -90,7 +97,11 @@ class ClaimFilter(Pagination, UploadFilter, Status, Schema):
     #: (Str):
     #: Order to return the results separated by coma
     sort_by = fields.String(
-        description="Order to return the results (coma separated)",
+        description="{}<br>{}<br>{}".format(
+            "Order to return the results (coma separated).",
+            "Generic fields: [id,status,upload_datetime]",
+            "Specific fields: [resource_type]",
+        ),
         example="+upload_datetime", load_default="+upload_datetime"
     )
 
@@ -107,7 +118,11 @@ class TagFilter(Pagination, Schema):
     #: (Str):
     #: Order to return the results separated by coma
     sort_by = fields.String(
-        description="Order to return the results (coma separated)",
+        description="{}<br>{}<br>{}".format(
+            "Order to return the results (coma separated).",
+            "Generic fields: [id,upload_datetime]",
+            "Specific fields: [name]",
+        ),
         example="+name", load_default="+name"
     )
 
@@ -135,7 +150,11 @@ class BenchmarkFilter(Pagination, UploadFilter, Status, Schema):
     #: (Str):
     #: Order to return the results separated by coma
     sort_by = fields.String(
-        description="Order to return the results (coma separated)",
+        description="{}<br>{}<br>{}".format(
+            "Order to return the results (coma separated).",
+            "Generic fields: [id,upload_datetime]",
+            "Specific fields: [docker_image,docker_tag]",
+        ),
         example="+docker_image,-docker_tag", load_default="+docker_image"
     )
 
@@ -163,7 +182,11 @@ class SiteFilter(Pagination, UploadFilter, Status, Schema):
     #: (Str):
     #: Order to return the results separated by coma
     sort_by = fields.String(
-        description="Order to return the results (coma separated)",
+        description="{}<br>{}<br>{}".format(
+            "Order to return the results (coma separated).",
+            "Generic fields: [id,upload_datetime]",
+            "Specific fields: [name,address]",
+        ),
         example="+name,+address", load_default="+name"
     )
 
@@ -184,7 +207,11 @@ class FlavorFilter(Pagination, UploadFilter, Status, Schema):
     #: (Str):
     #: Order to return the results separated by coma
     sort_by = fields.String(
-        description="Order to return the results (coma separated)",
+        description="{}<br>{}<br>{}".format(
+            "Order to return the results (coma separated).",
+            "Generic fields: [id,upload_datetime]",
+            "Specific fields: [name]",
+        ),
         example="+name", load_default="+name"
     )
 
@@ -255,7 +282,14 @@ class ResultFilter(Pagination, UploadFilter, Schema):
     #: (Str):
     #: Order to return the results separated by coma
     sort_by = fields.String(
-        description="Order to return the results (coma separated)",
+        description="{}<br>{}<br>{}<br>{}<br>{}".format(
+            "Order to return the results (coma separated).",
+            "Generic fields: [id,execution_datetime,upload_datetime].",
+            "Benchmark fields: [benchmark_id,benchmark_name].",
+            "Site fields: [site_id,site_name,site_address].",
+            "Flavor fields: [flavor_id,flavor_name].",
+            "Custom json fields using 'json' and '.' as json field delimiter."
+        ),
         example="+execution_datetime", load_default="+execution_datetime"
     )
 
