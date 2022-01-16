@@ -13,6 +13,7 @@ import { ClaimInteraction } from 'components/reportView/claimInteraction';
 import { SubmitInteraction } from 'components/reportView/submitInteraction';
 import { ClaimInfo } from 'components/reportView/claimInfo';
 import { Paginator } from '../components/pagination';
+import Head from 'next/head';
 
 function SubmitView(props: { submit: Submit; refetch: () => void }) {
     const [opened, setOpened] = useState(false);
@@ -118,67 +119,72 @@ function ReportsView(): ReactElement {
     );
 
     return (
-        <Container>
-            {auth.token === undefined && (
-                <Alert variant="danger" className="mt-3">
-                    You must be logged in to use this page!
-                </Alert>
-            )}
-            <Row className="my-3">
-                <Col>
-                    <h1>Submits</h1>
-                    <ListGroup>
-                        {submits.isSuccess &&
-                            submits.data &&
-                            submits.data.data.items.map((submit) => (
-                                <SubmitView
-                                    submit={submit}
-                                    key={submit.resource_id}
-                                    refetch={submits.refetch}
+        <>
+            <Head>
+                <title>Reports View</title>
+            </Head>
+            <Container>
+                {auth.token === undefined && (
+                    <Alert variant="danger" className="mt-3">
+                        You must be logged in to use this page!
+                    </Alert>
+                )}
+                <Row className="my-3">
+                    <Col>
+                        <h1>Submits</h1>
+                        <ListGroup>
+                            {submits.isSuccess &&
+                                submits.data &&
+                                submits.data.data.items.map((submit) => (
+                                    <SubmitView
+                                        submit={submit}
+                                        key={submit.resource_id}
+                                        refetch={submits.refetch}
+                                    />
+                                ))}
+                            {submits.isSuccess && submits.data.data.total === 0 && (
+                                <>No submits to display!</>
+                            )}
+                            {submits.isError && <>Failed to fetch submits!</>}
+                        </ListGroup>
+                        {submits.isSuccess && submits.data && submits.data.data.pages > 0 && (
+                            <div className="mt-2">
+                                <Paginator
+                                    pagination={submits.data.data}
+                                    navigateTo={(p) => setSubmitsPage(p)}
                                 />
-                            ))}
-                        {submits.isSuccess && submits.data.data.total === 0 && (
-                            <>No submits to display!</>
+                            </div>
                         )}
-                        {submits.isError && <>Failed to fetch submits!</>}
-                    </ListGroup>
-                    {submits.isSuccess && submits.data && submits.data.data.pages > 0 && (
-                        <div className="mt-2">
-                            <Paginator
-                                pagination={submits.data.data}
-                                navigateTo={(p) => setSubmitsPage(p)}
-                            />
-                        </div>
-                    )}
-                </Col>
-                <Col>
-                    <h1>Claims</h1>
-                    <ListGroup>
-                        {claims.isSuccess &&
-                            claims.data &&
-                            claims.data.data.items.map((claim) => (
-                                <ClaimView
-                                    claim={claim}
-                                    key={claim.resource_id}
-                                    refetch={claims.refetch}
+                    </Col>
+                    <Col>
+                        <h1>Claims</h1>
+                        <ListGroup>
+                            {claims.isSuccess &&
+                                claims.data &&
+                                claims.data.data.items.map((claim) => (
+                                    <ClaimView
+                                        claim={claim}
+                                        key={claim.resource_id}
+                                        refetch={claims.refetch}
+                                    />
+                                ))}
+                            {claims.isSuccess && claims.data.data.total === 0 && (
+                                <>No claims to display!</>
+                            )}
+                            {claims.isError && <>Failed to fetch claims!</>}
+                        </ListGroup>
+                        {claims.isSuccess && claims.data && claims.data.data.pages > 0 && (
+                            <div className="mt-2">
+                                <Paginator
+                                    pagination={claims.data.data}
+                                    navigateTo={(p) => setClaimsPage(p)}
                                 />
-                            ))}
-                        {claims.isSuccess && claims.data.data.total === 0 && (
-                            <>No claims to display!</>
+                            </div>
                         )}
-                        {claims.isError && <>Failed to fetch claims!</>}
-                    </ListGroup>
-                    {claims.isSuccess && claims.data && claims.data.data.pages > 0 && (
-                        <div className="mt-2">
-                            <Paginator
-                                pagination={claims.data.data}
-                                navigateTo={(p) => setClaimsPage(p)}
-                            />
-                        </div>
-                    )}
-                </Col>
-            </Row>
-        </Container>
+                    </Col>
+                </Row>
+            </Container>
+        </>
     );
 }
 

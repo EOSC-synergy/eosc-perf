@@ -1,4 +1,5 @@
-import { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
+import Head from 'next/head';
 
 /**
  * Dummy page for oidc-redirect route.
@@ -9,7 +10,14 @@ import { ReactElement } from 'react';
  * @constructor
  */
 function OidcRedirect(): ReactElement {
-    return <>Logging you in...</>;
+    return (
+        <>
+            <Head>
+                <title>Redirecting</title>
+            </Head>
+            Logging you in...
+        </>
+    );
 }
 
 export default OidcRedirect;
