@@ -37,13 +37,9 @@ export function ResultReportModal(props: {
                 <Modal.Title>Report result</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                {props.result !== null && (
-                    <JsonHighlight>{JSON.stringify(props.result.json, null, 4)}</JsonHighlight>
-                )}
-                {props.result == null && <div className="text-muted">Loading...</div>}
                 <Form>
                     <Form.Group>
-                        <Form.Label>Report message</Form.Label>
+                        <Form.Label>Reason:</Form.Label>
                         <Form.Control
                             type="text"
                             placeholder="Unrealistic results"
@@ -51,6 +47,10 @@ export function ResultReportModal(props: {
                         />
                     </Form.Group>
                 </Form>
+                {props.result !== null && (
+                    <JsonHighlight>{JSON.stringify(props.result.json, null, 4)}</JsonHighlight>
+                )}
+                {props.result == null && <div className="text-muted">Loading...</div>}
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="danger" onClick={submitReport}>
