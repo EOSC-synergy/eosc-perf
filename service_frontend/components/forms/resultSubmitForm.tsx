@@ -74,6 +74,10 @@ export function ResultSubmitForm(props: {
         }
     }
 
+    function noFuture(d: Date) {
+        return d < new Date();
+    }
+
     return (
         <>
             {auth.token === undefined && (
@@ -119,6 +123,8 @@ export function ResultSubmitForm(props: {
                                         timeIntervals={15}
                                         dateFormat="MMMM d, yyyy HH:mm"
                                         timeFormat="HH:mm"
+                                        filterDate={noFuture}
+                                        filterTime={noFuture}
                                     />
                                 </Col>
                             </Row>
