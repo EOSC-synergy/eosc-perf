@@ -1,5 +1,5 @@
 import React, { ReactElement, useState } from 'react';
-import { Accordion, Button, Card, Col, Container, ListGroup, Row, Form } from 'react-bootstrap';
+import { Button, Card, Col, Container, ListGroup, Row } from 'react-bootstrap';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { useQuery } from 'react-query';
 import { JsonPreviewModal } from 'components/jsonPreviewModal';

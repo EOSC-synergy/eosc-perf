@@ -1,6 +1,6 @@
 import { Site } from 'model';
 import React, { useState } from 'react';
-import { Button, ListGroup } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { FlavorSubmissionModal } from 'components/submissionModals/flavorSubmissionModal';
 
 export function NewFlavor(props: { site: Site }) {

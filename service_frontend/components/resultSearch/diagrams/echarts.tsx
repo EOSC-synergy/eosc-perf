@@ -14,8 +14,8 @@ import {
 
 import ReactEChartsCore from 'echarts-for-react/lib/core';
 import * as echarts from 'echarts/core';
-import { ScatterChart, LineChart, BarChart } from 'echarts/charts';
-import { GridComponent, TooltipComponent, DatasetComponent } from 'echarts/components';
+import { BarChart, LineChart, ScatterChart } from 'echarts/charts';
+import { DatasetComponent, GridComponent, TooltipComponent } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
 
 // TODO: remove ts ignore if this gets ever fixed
