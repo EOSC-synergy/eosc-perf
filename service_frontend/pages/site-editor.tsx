@@ -6,6 +6,7 @@ import { getHelper } from 'components/api-helpers';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { SiteEditor } from 'components/siteEditor/siteEditor';
 import { Paginator } from '../components/pagination';
+import Head from 'next/head';
 
 function SiteSelect(props: { site: Site; setActiveSite: (site: Site) => void }): ReactElement {
     return (
@@ -44,41 +45,50 @@ function SitesEditor(): ReactElement {
     const [activeSite, setActiveSite] = useState<Site | null>(null);
 
     return (
-        <Container>
-            <Row>
-                <Col>
-                    <ListGroup>
-                        {sites.isLoading && <LoadingOverlay />}
-                        {sites.isSuccess &&
-                            sites.data &&
-                            sites.data.data.items.length === 0 &&
-                            'No sites found!'}
-                        {sites.isSuccess &&
-                            sites.data &&
-                            sites.data.data.items.map((site: Site) => (
-                                <SiteSelect
-                                    site={site}
-                                    setActiveSite={setActiveSite}
-                                    key={site.id}
+        <>
+            <Head>
+                <title>Site Editor</title>
+            </Head>
+            <Container>
+                <Row>
+                    <Col>
+                        <ListGroup>
+                            {sites.isLoading && <LoadingOverlay />}
+                            {sites.isSuccess &&
+                                sites.data &&
+                                sites.data.data.items.length === 0 &&
+                                'No sites found!'}
+                            {sites.isSuccess &&
+                                sites.data &&
+                                sites.data.data.items.map((site: Site) => (
+                                    <SiteSelect
+                                        site={site}
+                                        setActiveSite={setActiveSite}
+                                        key={site.id}
+                                    />
+                                ))}
+                        </ListGroup>
+                        {sites.isSuccess && sites.data && sites.data.data.pages > 0 && (
+                            <div className="mt-2">
+                                <Paginator
+                                    pagination={sites.data.data}
+                                    navigateTo={(p) => setPage(p)}
                                 />
-                            ))}
-                    </ListGroup>
-                    {sites.isSuccess && sites.data && sites.data.data.pages > 0 && (
-                        <div className="mt-2">
-                            <Paginator
-                                pagination={sites.data.data}
-                                navigateTo={(p) => setPage(p)}
+                            </div>
+                        )}
+                    </Col>
+                    <Col>
+                        {activeSite != null && (
+                            <SiteEditor
+                                key={activeSite.id}
+                                site={activeSite}
+                                refetch={sites.refetch}
                             />
-                        </div>
-                    )}
-                </Col>
-                <Col>
-                    {activeSite != null && (
-                        <SiteEditor key={activeSite.id} site={activeSite} refetch={sites.refetch} />
-                    )}
-                </Col>
-            </Row>
-        </Container>
+                        )}
+                    </Col>
+                </Row>
+            </Container>
+        </>
     );
 }
 

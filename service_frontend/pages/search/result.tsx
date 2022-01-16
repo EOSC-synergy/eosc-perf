@@ -4,7 +4,7 @@ import { LoadingOverlay } from 'components/loadingOverlay';
 import { useQuery } from 'react-query';
 import { JsonPreviewModal } from 'components/jsonPreviewModal';
 import { ResultsPerPageSelection } from 'components/resultsPerPageSelection';
-import { CardAccordionToggle } from 'components/cardAccordionToggle';
+import Head from 'next/head';
 import { getHelper } from 'components/api-helpers';
 import { ResultTable } from 'components/resultSearch/resultTable';
 import { Benchmark, Flavor, Result, Results, Site } from 'model';
@@ -231,6 +231,9 @@ function ResultSearch(): ReactElement {
 
     return (
         <>
+            <Head>
+                <title>Search</title>
+            </Head>
             <Container fluid="xl">
                 <Row>
                     <Col md={true} className="mb-2">
