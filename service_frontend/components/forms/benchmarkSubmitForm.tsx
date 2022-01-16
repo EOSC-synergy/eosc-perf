@@ -55,7 +55,7 @@ export function BenchmarkSubmitForm(props: {
 
     function isTemplateValid() {
         if (template.length === 0) {
-            return true;
+            return false;
         }
         try {
             JSON.parse(template);
@@ -96,15 +96,14 @@ export function BenchmarkSubmitForm(props: {
             {errorMessage !== undefined && <Alert variant="danger">Error: {errorMessage}</Alert>}
             <RegistrationCheck />
             <Form>
-                <Form.Group className="mb-3">
-                    <Form.Label htmlFor="benchmark">Benchmark:</Form.Label>
+                <Form.Group className="mb-3" controlId="benchmark">
+                    <Form.Label>Benchmark:</Form.Label>
                     <InputGroup>
                         <Form.Control
                             placeholder="user/image"
                             onChange={(e) => setDockerName(e.target.value)}
                             isInvalid={!isDockerNameValid()}
                             aria-label="Docker image name including username"
-                            id="benchmark"
                         />
                         <InputGroup.Text>:</InputGroup.Text>
                         <Form.Control
@@ -112,28 +111,27 @@ export function BenchmarkSubmitForm(props: {
                             onChange={(e) => setDockerTag(e.target.value)}
                             isInvalid={!isDockerTagValid()}
                             aria-label="Tag or version of the docker image to use"
+                            defaultValue="latest"
                         />
                     </InputGroup>
                 </Form.Group>
 
-                <Form.Group className="mb-3">
-                    <Form.Label htmlFor="description">Benchmark description (optional):</Form.Label>
+                <Form.Group className="mb-3" controlId="description">
+                    <Form.Label>Benchmark description (optional):</Form.Label>
                     <Form.Control
-                        id="description"
                         placeholder="Enter a description of the new benchmark here."
                         onChange={(e) => setDescription(e.target.value)}
                         as="textarea"
                     />
                 </Form.Group>
 
-                <Form.Group>
-                    <Form.Label htmlFor="template">
-                        Benchmark result JSON schema (optional,{' '}
+                <Form.Group controlId="template">
+                    <Form.Label>
+                        Benchmark result JSON schema (
                         <Link href="/code-guidelines#json">example here</Link>
                         ):
                     </Form.Label>
                     <Form.Control
-                        id="template"
                         placeholder={JSON.stringify(benchmarkJsonSchema, null, 4)}
                         onChange={(e) => setTemplate(e.target.value)}
                         as="textarea"
