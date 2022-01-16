@@ -124,6 +124,9 @@ function ResultSearch(): ReactElement {
         isSelected: function (result: Result) {
             return selectedResults.some((r) => r.id === result.id);
         },
+        reload: function () {
+            results.refetch();
+        },
         display: function (result: Result) {
             setPreviewResult(result);
             setShowJSONPreview(true);
