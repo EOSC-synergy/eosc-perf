@@ -10,7 +10,8 @@
     "export": "next build && next export",
     "cypress": "cypress open",
     "test": "jest --watch",
-    "test:ci": "jest --ci"
+    "test:ci": "jest --ci",
+    "test:coverage": "jest --coverage --watchAll=false --coverageDirectory=coverage --verbose"
   },
   "dependencies": {
     "axios": "^0.24.0",
@@ -36,6 +37,7 @@
     "@babel/core": "^7.16.7",
     "@babel/preset-env": "^7.16.8",
     "@next/bundle-analyzer": "^12.0.7",
+    "@next/eslint-plugin-next": "^12.0.8",
     "@stoplight/prism-cli": "^4.6.1",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
@@ -48,8 +50,10 @@
     "@types/uuid": "^8.3.3",
     "cross-env": "^7.0.3",
     "cypress": "^9.1.1",
-    "eslint": "8.5.0",
+    "eslint": "^8.6.0",
     "eslint-config-next": "12.0.7",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "jest": "^27.4.5",
     "msw": "^0.36.3",
     "prettier": "^2.5.1",
