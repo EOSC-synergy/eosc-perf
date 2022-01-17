@@ -139,6 +139,20 @@ pytest  # Run tests using pytest
 ```
 
 
+# Autostart database
+The file `autoapp.py` is a script which automatically generates an 
+app from factory function `create_app` and upgrades the database with
+the last migration version.
 
-
+To use it, make sure that the `FLASK_APP` env variable points to it.
+For example, if using docker-compose file:
+```yaml
+services:
+  ...
+  backend_service_name:
+    ...
+    environment:
+      FLASK_APP: autoapp.py
+      ...
+```
 
