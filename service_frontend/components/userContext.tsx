@@ -38,4 +38,4 @@ export const emptyUser: UserInfo = {
     loggedIn: false,
 };
 
-export const UserContext = React.createContext(emptyUser)
+export const UserContext = React.createContext(emptyUser);
