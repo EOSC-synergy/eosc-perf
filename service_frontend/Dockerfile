@@ -4,7 +4,8 @@ WORKDIR /app
 COPY ["package.json", "package-lock.json*", "next.config.js", "next-env.d.ts", "tsconfig.json", ".eslintrc.json", ".prettierrc", "./"]
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm install --development
-COPY [".env", ".env.local", "./"]
+# copy necessary files. special case: .env.local is copied if exists; vk@220112
+COPY [".env", ".env.loca[l]", "./"]
 COPY public public
 COPY styles styles
 COPY model model
