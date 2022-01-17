@@ -6,10 +6,10 @@ By default, Flask does not provide database or specific web abstraction
 layers. API and any other functionality such database or authentication
 are handled by independent libraries and extension.
 """
-from .app import create_app
+from .app import create_app, db
 import flask.blueprints
 
-__all__ = ["create_app"]
+__all__ = ["create_app", "db"]
 
 
 class MyBlueprintSetupState(flask.blueprints.BlueprintSetupState):
