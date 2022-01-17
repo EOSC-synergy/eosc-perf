@@ -1,6 +1,9 @@
 """Results URL routes. Collection of controller methods to create and
 operate existing benchmark results on the database.
 """
+import datetime as dt
+
+import pytz
 from flask_smorest import Blueprint, abort
 from sqlalchemy import and_, or_
 from sqlalchemy.exc import IntegrityError
@@ -8,7 +11,7 @@ from sqlalchemy.exc import IntegrityError
 from .. import models, notifications
 from ..extensions import auth, db
 from ..schemas import args, schemas
-from ..utils import queries, filters
+from ..utils import filters, queries
 
 blp = Blueprint(
     'results', __name__, description='Operations on results'
@@ -155,6 +158,10 @@ def __create(query_args, body_args):
             abort(422, messages={'error': error_msg})
         else:
             return item
+
+    if query_args['execution_datetime'] > dt.datetime.now(pytz.utc):
+        error_msg = f"execution date in future"
+        abort(422, messages={'error': error_msg})
 
     result = models.Result.create(dict(
         benchmark=get(models.Benchmark, query_args.pop('benchmark_id')),
