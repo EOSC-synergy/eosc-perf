@@ -125,7 +125,8 @@ class TestCreate:
     @mark.parametrize('query', indirect=True, argvalues=[
         {k: post_query[k] for k in post_query.keys() - {'execution_datetime'}},
         {k: post_query[k] for k in post_query.keys() - {'benchmark_id'}},
-        {k: post_query[k] for k in post_query.keys() - {'flavor_id'}}
+        {k: post_query[k] for k in post_query.keys() - {'flavor_id'}},
+        {**post_query, 'execution_datetime': "9999-01-01T00:00:00.000Z"}
     ])
     @mark.parametrize('body', indirect=True, argvalues=[
         {'json_field_1': "Content", 'time': 10}
