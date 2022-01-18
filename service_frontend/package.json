@@ -11,7 +11,7 @@
     "cypress": "cypress open",
     "test": "jest --watch",
     "test:ci": "jest --ci",
-    "test:coverage": "jest --coverage --watchAll=false --coverageDirectory=coverage --verbose"
+    "test:coverage": "jest --coverage --watchAll=false --coverageDirectory=coverage --collectCoverageFrom=**/*.{js,jsx,tsx} --verbose "
   },
   "dependencies": {
     "axios": "^0.24.0",
