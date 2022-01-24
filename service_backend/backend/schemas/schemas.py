@@ -70,6 +70,13 @@ class Submit(UploadDatetime, Schema):
         example=str(uuid.uuid4()), required=True
     )
 
+    #: (User, required):
+    #: Resource uploader/creator
+    uploader = fields.Nested(
+        User, attribute = "resource.uploader",
+        required=True, dump_only=True,
+    )
+
     @post_dump
     def aggregate_claims(self, data, **kwargs):
         data = super().remove_skip_values(data, **kwargs)
