@@ -1,8 +1,7 @@
 import React, { ReactElement, useContext, useState } from 'react';
 import { Result } from 'model';
-import { Button, ButtonGroup, Modal } from 'react-bootstrap';
+import { Button, Dropdown, Modal, SplitButton } from 'react-bootstrap';
 import { ResultCallbacks } from 'components/resultSearch/resultCallbacks';
-import { Envelope, Exclamation, Hash, Trash } from 'react-bootstrap-icons';
 import { UserContext } from 'components/userContext';
 import { Ordered } from 'components/ordered';
 import { useMutation } from 'react-query';
@@ -22,9 +21,9 @@ function ResultDeleter({ result, onDelete }: { result: Result; onDelete: () => v
 
     return (
         <>
-            <Button variant="danger" onClick={() => setShowModal(true)}>
-                <Trash />
-            </Button>
+            <Dropdown.Item as="button" onClick={() => setShowModal(true)}>
+                Delete
+            </Dropdown.Item>
             <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Delete result</Modal.Title>
@@ -75,7 +74,38 @@ export function ActionColumn({
     const auth = useContext(UserContext);
 
     return (
-        <ButtonGroup size="sm">
+        <SplitButton variant="secondary" title="View" size="sm">
+            {auth.loggedIn && (
+                <Dropdown.Item
+                    as="button"
+                    onClick={() => {
+                        callbacks.report(result);
+                    }}
+                >
+                    Report
+                </Dropdown.Item>
+            )}
+            {auth.loggedIn && auth.admin && (
+                <ResultDeleter result={result} onDelete={callbacks.reload} />
+            )}
+        </SplitButton>
+    );
+    /*<Dropdown as={ButtonGroup}>
+            <Button
+                variant="primary"
+                onClick={() => {
+                    callbacks.display(result);
+                }}
+            >
+                <Hash /> View
+            </Button>
+
+            <Dropdown.Toggle split variant="secondary" />
+            <Dropdown.Menu>
+
+            </Dropdown.Menu>
+        </Dropdown>*/
+    /*<ButtonGroup size="sm">
             <Button
                 variant="primary"
                 onClick={() => {
@@ -97,15 +127,7 @@ export function ActionColumn({
             {auth.admin && (
                 <>
                     <ResultDeleter result={result} onDelete={callbacks.reload} />
-                    <Button
-                        variant="secondary"
-                        onClick={() => undefined /* TODO: mail button */}
-                        disabled
-                    >
-                        <Envelope />
-                    </Button>
                 </>
             )}
-        </ButtonGroup>
-    );
+        </ButtonGroup>*/
 }

@@ -1,5 +1,5 @@
 import React, { ReactElement, useState } from 'react';
-import { Button, Card, Col, Container, ListGroup, Row } from 'react-bootstrap';
+import { Button, Card, Col, Collapse, Container, Row, Stack } from 'react-bootstrap';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { useQuery } from 'react-query';
 import { JsonPreviewModal } from 'components/jsonPreviewModal';
@@ -17,12 +17,12 @@ import { FilterEdit } from 'components/resultSearch/filterEdit';
 
 import { Ordered, orderedComparator } from 'components/ordered';
 import { parseSuggestions } from 'components/resultSearch/jsonSchema';
-import Flex from 'components/flex';
 import { SiteSearchPopover } from 'components/searchSelectors/siteSearchPopover';
 import { BenchmarkSearchSelect } from 'components/searchSelectors/benchmarkSearchSelect';
 import { FlavorSearchSelect } from 'components/searchSelectors/flavorSearchSelect';
 import { Sorting, SortMode } from 'components/resultSearch/sorting';
 import { useRouter } from 'next/router';
+import { Funnel, Save2 } from 'react-bootstrap-icons';
 
 /**
  * Search page for ran benchmarks
@@ -37,6 +37,8 @@ function ResultSearch(): ReactElement {
     const [flavor, setFlavor] = useState<Flavor | undefined>(undefined);
 
     const [filters, setFilters] = useState<Map<string, Filter>>(new Map());
+
+    const [showFilters, setShowFilters] = useState<boolean>(true);
 
     const [sorting, setSorting] = useState<Sorting>({
         mode: SortMode.Disabled,
@@ -238,121 +240,145 @@ function ResultSearch(): ReactElement {
                 <title>Search</title>
             </Head>
             <Container fluid="xl">
-                <Row>
-                    <Col md={true} className="mb-2">
-                        <Card>
-                            <Card.Header>Filters</Card.Header>
-                            <Card.Body>
-                                {router.isReady && (
-                                    <>
-                                        <BenchmarkSearchSelect
-                                            benchmark={benchmark}
-                                            initBenchmark={(b) => setBenchmark(b)}
-                                            setBenchmark={updateBenchmark}
-                                            initialBenchmarkId={
-                                                router.query.benchmarkId as string | undefined
-                                            }
-                                        />
-                                        <SiteSearchPopover
-                                            site={site}
-                                            initSite={(s) => setSite(s)}
-                                            setSite={updateSite}
-                                            initialSiteId={
-                                                router.query.siteId as string | undefined
-                                            }
-                                        />
-                                        <FlavorSearchSelect
-                                            site={site}
-                                            flavor={flavor}
-                                            initFlavor={(f) => setFlavor(f)}
-                                            setFlavor={updateFlavor}
-                                            initialFlavorId={
-                                                router.query.flavorId as string | undefined
-                                            }
-                                        />
-                                    </>
-                                )}
-                                <hr />
-                                <ListGroup variant="flush">
-                                    {[...filters.keys()].flatMap((key) => {
-                                        const filter = filters.get(key);
-                                        if (filter === undefined) {
-                                            return [];
-                                        }
-
-                                        return [
-                                            <ListGroup.Item key={key}>
-                                                <FilterEdit
-                                                    filter={filter}
-                                                    setFilter={setFilter}
-                                                    deleteFilter={deleteFilter}
-                                                    suggestions={suggestedFields}
+                <Stack gap={2}>
+                    <DiagramCard
+                        results={selectedResults}
+                        benchmark={benchmark}
+                        suggestions={suggestedFields}
+                    />
+                    <Card>
+                        <Card.Body>
+                            <Stack gap={2}>
+                                <Collapse in={showFilters}>
+                                    <div>
+                                        {router.isReady && (
+                                            <>
+                                                <BenchmarkSearchSelect
+                                                    benchmark={benchmark}
+                                                    initBenchmark={(b) => setBenchmark(b)}
+                                                    setBenchmark={updateBenchmark}
+                                                    initialBenchmarkId={
+                                                        router.query.benchmarkId as
+                                                            | string
+                                                            | undefined
+                                                    }
                                                 />
-                                            </ListGroup.Item>,
-                                        ];
-                                    })}
-                                </ListGroup>
-                                <Flex>
-                                    <Flex.FloatLeft>
-                                        <Button variant="success" onClick={addFilter}>
-                                            Add filter
-                                        </Button>
-                                    </Flex.FloatLeft>
-                                    <Flex.FloatRight className="d-flex">
-                                        <Button onClick={() => results.refetch()}>
-                                            Apply filters
-                                        </Button>
-                                    </Flex.FloatRight>
-                                </Flex>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                    <Col className="mb-2">
-                        <DiagramCard
-                            results={selectedResults}
-                            benchmark={benchmark}
-                            suggestions={suggestedFields}
-                        />
-                    </Col>
-                </Row>
-                <Card>
-                    <div style={{ overflowX: 'auto' }}>
-                        {results.isSuccess && results.data && results.data.data.total > 0 && (
-                            <ResultTable
-                                results={results.data.data.items}
-                                pageOffset={results.data.data.per_page * results.data.data.page}
-                                ops={resultOps}
-                                suggestions={suggestedFields}
-                                sorting={sorting}
-                                setSorting={(sort) => {
-                                    setSorting(sort);
-                                }}
-                                customColumns={customColumns}
-                                setCustomColumns={setCustomColumns}
-                            />
-                        )}
-                        {results.isSuccess && results.data.data.total === 0 && (
-                            <div className="text-muted m-2">No results found! :(</div>
-                        )}
-                        {results.isError && 'Error while loading results'}
-                        {results.isLoading && <LoadingOverlay />}
-                    </div>
-                    {/* fuck flexbox & CSS spacing */}
-                    {results.isSuccess && (
-                        <Row className="mt-2 mx-2">
-                            <Col xs={true} sm={7} md={5} xl={4} xxl={3} className="mb-2">
-                                <ResultsPerPageSelection
-                                    onChange={setResultsPerPage}
-                                    currentSelection={resultsPerPage}
-                                />
-                            </Col>
-                            <Col />
-                            <Col sm={true} md="auto" className="mb-2">
-                                <Paginator pagination={results.data.data} navigateTo={setPage} />
-                            </Col>
-                        </Row>
-                    )}
-                </Card>
+                                                <SiteSearchPopover
+                                                    site={site}
+                                                    initSite={(s) => setSite(s)}
+                                                    setSite={updateSite}
+                                                    initialSiteId={
+                                                        router.query.siteId as string | undefined
+                                                    }
+                                                />
+                                                <FlavorSearchSelect
+                                                    site={site}
+                                                    flavor={flavor}
+                                                    initFlavor={(f) => setFlavor(f)}
+                                                    setFlavor={updateFlavor}
+                                                    initialFlavorId={
+                                                        router.query.flavorId as string | undefined
+                                                    }
+                                                />
+                                            </>
+                                        )}
+                                        <Stack gap={1}>
+                                            {[...filters.keys()].flatMap((key) => {
+                                                const filter = filters.get(key);
+                                                if (filter === undefined) {
+                                                    return [];
+                                                }
+
+                                                return [
+                                                    <FilterEdit
+                                                        key={filter.key + filter.mode}
+                                                        filter={filter}
+                                                        setFilter={setFilter}
+                                                        deleteFilter={deleteFilter}
+                                                        suggestions={suggestedFields}
+                                                    />,
+                                                ];
+                                            })}
+                                        </Stack>
+                                        <hr />
+                                    </div>
+                                </Collapse>
+                                <Row>
+                                    <Col />
+                                    <Col md="auto">
+                                        <Stack direction="horizontal" gap={2}>
+                                            <Button
+                                                variant="secondary"
+                                                disabled={selectedResults.length === 0}
+                                            >
+                                                <Save2 /> Export
+                                            </Button>
+                                            <Button variant="success" onClick={addFilter}>
+                                                + Add filter
+                                            </Button>
+                                            <Button
+                                                variant="warning"
+                                                onClick={() => results.refetch()}
+                                            >
+                                                <Funnel /> Apply Filters
+                                            </Button>
+                                        </Stack>
+                                    </Col>
+                                </Row>
+                                <div style={{ overflowX: 'auto' }}>
+                                    {results.isSuccess &&
+                                        results.data &&
+                                        results.data.data.total > 0 && (
+                                            <ResultTable
+                                                results={results.data.data.items}
+                                                pageOffset={
+                                                    results.data.data.per_page *
+                                                    results.data.data.page
+                                                }
+                                                ops={resultOps}
+                                                suggestions={suggestedFields}
+                                                sorting={sorting}
+                                                setSorting={(sort) => {
+                                                    setSorting(sort);
+                                                }}
+                                                customColumns={customColumns}
+                                                setCustomColumns={setCustomColumns}
+                                            />
+                                        )}
+                                    {results.isSuccess && results.data.data.total === 0 && (
+                                        <div className="text-muted m-2">No results found! :(</div>
+                                    )}
+                                    {results.isError && 'Error while loading results'}
+                                    {results.isLoading && <LoadingOverlay />}
+                                </div>
+                                {results.isSuccess && (
+                                    <Row className="mt-2 mx-2">
+                                        <Col
+                                            xs={true}
+                                            sm={7}
+                                            md={5}
+                                            xl={4}
+                                            xxl={3}
+                                            className="mb-2"
+                                        >
+                                            <ResultsPerPageSelection
+                                                onChange={setResultsPerPage}
+                                                currentSelection={resultsPerPage}
+                                            />
+                                        </Col>
+                                        <Col />
+                                        <Col sm={true} md="auto" className="mb-2">
+                                            <Paginator
+                                                pagination={results.data.data}
+                                                navigateTo={setPage}
+                                            />
+                                        </Col>
+                                    </Row>
+                                )}
+                            </Stack>
+                        </Card.Body>
+                    </Card>
+                </Stack>
             </Container>
             {previewResult && (
                 <JsonPreviewModal
