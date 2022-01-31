@@ -3,9 +3,9 @@ import { Alert, Button, Container } from 'react-bootstrap';
 import { useMutation } from 'react-query';
 import { postHelper } from 'components/api-helpers';
 import { UserContext } from 'components/userContext';
-import Link from 'next/link';
 import { JsonHighlight } from 'components/jsonHighlight';
 import Head from 'next/head';
+import { TermsOfServiceCheck } from '../components/termsOfServiceCheck';
 
 /**
  * Page handling first-time user registration.
@@ -20,6 +20,7 @@ function Registration(): ReactElement {
     const auth = useContext(UserContext);
 
     const [error, setError] = useState<unknown | undefined>(undefined);
+    const [termsOfServiceAccepted, setTermsOfServiceAccepted] = useState(false);
 
     const registration = useMutation(() => postHelper('/users:register', undefined, auth.token), {
         onSuccess: () => {
@@ -47,9 +48,14 @@ function Registration(): ReactElement {
                         <JsonHighlight>{JSON.stringify(error, null, 4)}</JsonHighlight>
                     </Alert>
                 )}
-                I hereby acknowledge I have read and accepted the{' '}
-                <Link href="/terms-of-service">Terms of Use</Link>.<br />
-                <Button onClick={() => registration.mutate()} disabled={registration.isSuccess}>
+                <TermsOfServiceCheck
+                    accepted={termsOfServiceAccepted}
+                    setAccepted={setTermsOfServiceAccepted}
+                />
+                <Button
+                    onClick={() => registration.mutate()}
+                    disabled={registration.isSuccess || !termsOfServiceAccepted}
+                >
                     Register
                 </Button>
             </Container>
