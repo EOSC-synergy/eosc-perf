@@ -283,7 +283,7 @@ function ResultSearch(): ReactElement {
                                             </>
                                         )}
                                         <Stack gap={1}>
-                                            {[...filters.keys()].flatMap((key) => {
+                                            {[...filters.keys()].flatMap((key, index) => {
                                                 const filter = filters.get(key);
                                                 if (filter === undefined) {
                                                     return [];
@@ -291,7 +291,7 @@ function ResultSearch(): ReactElement {
 
                                                 return [
                                                     <FilterEdit
-                                                        key={filter.key + filter.mode}
+                                                        key={index}
                                                         filter={filter}
                                                         setFilter={setFilter}
                                                         deleteFilter={deleteFilter}
