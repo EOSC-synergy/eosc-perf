@@ -282,7 +282,7 @@ class ResultFilter(Pagination, UploadFilter, Schema):
     #: (Str):
     #: Order to return the results separated by coma
     sort_by = fields.String(
-        description="{}<br>{}<br>{}<br>{}<br>{}".format(
+        description="{}<br>{}<br>{}<br>{}<br>{}<br>{}".format(
             "Order to return the results (coma separated).",
             "Generic fields: [id,execution_datetime,upload_datetime].",
             "Benchmark fields: [benchmark_id,benchmark_name].",
