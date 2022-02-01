@@ -159,7 +159,14 @@ def __create(query_args, body_args):
         else:
             return item
 
-    if query_args['execution_datetime'] > dt.datetime.now(pytz.utc):
+    # # TODO: Move to args and decide if to accept execution datetime without tz
+    # if not query_args['execution_datetime'].tzinfo:
+    #     execution_datetime = pytz.utc.localize(query_args['execution_datetime'])
+    # else:
+    #     execution_datetime = query_args['execution_datetime']
+
+    # if execution_datetime > dt.datetime.now(pytz.utc):
+    if query_args['execution_datetime'] > dt.datetime.now():
         error_msg = f"execution date in future"
         abort(422, messages={'error': error_msg})
 
