@@ -227,7 +227,7 @@ def get(*args, **kwargs):
     return __get(*args, **kwargs)
 
 
-def __get(id):
+def __get(id) -> Result:
     """Returns the id matching result.
 
     If no result exists with the indicated id, then 404 NotFound
@@ -325,7 +325,7 @@ def __claim(body_args, id):
 
 @blp.route(resource_url + '/tags', methods=["PUT"])
 @blp.doc(operationId='UpdateResult')
-@auth.login_required()
+@auth.inject_is_admin()
 @blp.arguments(schemas.TagsIds)
 @blp.response(204)
 def update_tags(*args, **kwargs):
@@ -336,7 +336,7 @@ def update_tags(*args, **kwargs):
     return __update_tags(*args, **kwargs)
 
 
-def __update_tags(body_args, id):
+def __update_tags(body_args, id, is_admin=False):
     """Updates a result specific fields.
 
     If no result exists with the indicated id, then 404 NotFound
@@ -358,7 +358,7 @@ def __update_tags(body_args, id):
         body_args['tags'] = [models.Tag.read(id) for id in tags_ids]
 
     try:
-        result.update(body_args, force=auth.valid_admin())
+        result.update(body_args, force=is_admin)
     except PermissionError:
         abort(403)
 
@@ -371,7 +371,8 @@ def __update_tags(body_args, id):
 
 @blp.route(resource_url + "/claims", methods=["GET"])
 @blp.doc(operationId='ListResultClaims')
-@auth.login_required()
+@auth.inject_is_admin()
+@auth.inject_user()
 @blp.arguments(args.ClaimFilter, location='query')
 @blp.response(200, schemas.Claims)
 @queries.to_pagination()
@@ -385,7 +386,7 @@ def list_claims(*args, **kwargs):
     return __list_claims(*args, **kwargs)
 
 
-def __list_claims(query_args, id):
+def __list_claims(query_args, id, user=None, is_admin=False):
     """Returns the result claims filtered by the query args.
 
     :param query_args: The request query arguments as python dictionary
@@ -397,9 +398,7 @@ def __list_claims(query_args, id):
     """
     result = __get(id)
 
-    if auth.valid_admin():
-        pass
-    elif models.User.current_user() == result.uploader:
+    if is_admin or user == result.uploader:
         pass
     else:
         abort(403)

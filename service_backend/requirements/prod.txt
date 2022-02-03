@@ -25,7 +25,7 @@ supervisor~=4.2.2
 
 # Auth
 flask-bcrypt~=0.7.1
-flaat~=0.14.5
+git+https://github.com/indigo-dc/flaat.git@rework
 requests~=2.26.0
 
 # Caching
