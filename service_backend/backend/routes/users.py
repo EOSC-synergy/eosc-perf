@@ -1,8 +1,11 @@
 """Users URL routes. Collection of controller methods to create and
 operate existing users on the database.
 """
+from flaat.user_infos import UserInfos
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import IntegrityError
+
+from backend.models.models.user import User
 
 from .. import models, notifications
 from ..extensions import auth, db
@@ -54,7 +57,7 @@ def __list(query_args):
 
 @blp.route(collection_url + ':register', methods=["POST"])
 @blp.doc(operationId='RegisterSelf')
-@auth.token_required()
+@auth.inject_user_infos(strict=True)
 @blp.response(201, schemas.User)
 def register(*args, **kwargs):
     """(OIDC Token) Registers the logged in user
@@ -69,21 +72,18 @@ def register(*args, **kwargs):
     return __register(*args, **kwargs)
 
 
-def __register():
+def __register(user_infos: UserInfos):
     """Registers the current request user.
 
     :raises Unauthorized: The server could not verify your identity
     :raises Forbidden: You are not registered
     """
-    tokeninfo = auth.current_tokeninfo()
-    user_info = auth.current_userinfo()
-    if not user_info:
-        error_msg = "No user info received from 'OP endpoint'"
-        abort(500, messages={'error': error_msg})
-    elif 'email' not in user_info:
+    user_info = user_infos.user_info
+    if user_info is None or 'email' not in user_info:
         abort(422, messages={'error': "No scope for email in oidc token"})
+        return
 
-    user_properties = {k: tokeninfo[k] for k in ['iss', 'sub']}
+    user_properties = {'sub': user_infos.subject, 'iss': user_infos.issuer}
     user_properties['email'] = user_info['email']
     user = models.User.create(user_properties)
 
@@ -178,35 +178,20 @@ def __search(query_args):
 
 @blp.route(resource_url, methods=["GET"])
 @blp.doc(operationId='GetSelf')
-@auth.login_required()
+@auth.inject_user()
 @blp.response(200, schemas.User)
-def get(*args, **kwargs):
+def get(*args, user: User, **kwargs):
     """(Users) Retrieves the logged in user info
 
     Use this method to retrieve your user data stored in the database.
     """
-    return __get(*args, **kwargs)
-
-
-def __get():
-    """Retrieves the current request user.
-
-    :raises Unauthorized: The server could not verify your identity
-    :raises Forbidden: You are not registered
-    :return: The database user matching the oidc token information
-    :rtype: :class:`models.User`
-    """
-    user = models.User.current_user()
-    if user is None:
-        error_msg = "User not registered"
-        abort(404, messages={'error': error_msg})
-    else:
-        return user
+    return user
 
 
 @blp.route(resource_url + ':update', methods=["POST"])
 @blp.doc(operationId='UpdateSelf')
-@auth.login_required()
+@auth.inject_user_infos()
+@auth.inject_user()
 @blp.response(204)
 def update(*args, **kwargs):
     """(Users) Updates the logged in user info
@@ -218,17 +203,17 @@ def update(*args, **kwargs):
     return __update(*args, **kwargs)
 
 
-def __update():
+def __update(user: User, user_infos: UserInfos):
     """ Updates the user information from introspection endpoint.
 
     :raises Unauthorized: The server could not verify your identity
     :raises Forbidden: You are not registered
     """
-    user = __get()
-    user_info = auth.current_userinfo()
+    user_info = user_infos.user_info
     if not user_info:
         error_msg = "No user info received from 'introspection endpoint'"
         abort(500, messages={'error': error_msg})
+        return
     elif 'email' not in user_info:
         abort(422, messages={'error': "No scope for email in oidc token"})
 
@@ -262,7 +247,7 @@ def try_admin():
 
 @blp.route(resource_url + "/results", methods=["GET"])
 @blp.doc(operationId='ListUserResults')
-@auth.login_required()
+@auth.inject_user()
 @blp.arguments(args.ResultFilter, location='query')
 @blp.response(200, schemas.Results)
 @queries.to_pagination()
@@ -278,20 +263,19 @@ def results(*args, **kwargs):
     return __results(*args, **kwargs)
 
 
-def __results(query_args):
+def __results(query_args, user: User):
     """Returns the user uploaded results filtered by the query args.
 
     :raises Unauthorized: The server could not verify your identity
     :raises Forbidden: You don't have the administrator rights
     """
-    user = __get()
     query = results_routes.__list(query_args)
     return query.with_deleted().filter_by(uploader=user)
 
 
 @blp.route(resource_url + "/claims", methods=["GET"])
 @blp.doc(operationId='ListUserClaims')
-@auth.login_required()
+@auth.inject_user()
 @blp.arguments(args.ClaimFilter, location='query')
 @blp.response(200, schemas.Claims)
 @queries.to_pagination()
@@ -305,12 +289,11 @@ def claims(*args, **kwargs):
     return __claims(*args, **kwargs)
 
 
-def __claims(query_args):
+def __claims(query_args, user: User):
     """Returns the user uploaded claims filtered by the query args.
 
     :raises Unauthorized: The server could not verify your identity
     :raises Forbidden: You don't have the administrator rights
     """
-    user = __get()
     query = models.Claim.query
     return query.filter_by(uploader=user, **query_args)

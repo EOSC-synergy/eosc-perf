@@ -1,5 +1,6 @@
 """Models module package for main models definition."""
 from datetime import datetime as dt
+from flaat.user_infos import UserInfos
 
 from sqlalchemy import Column, DateTime, ForeignKey, Text, UniqueConstraint
 from sqlalchemy.ext.declarative import declared_attr
@@ -40,9 +41,8 @@ class User(TokenModel):
         return "<{} {}>".format(self.__class__.__name__, self.email)
 
     @classmethod
-    def current_user(cls):
-        tokeninfo = auth.current_tokeninfo()
-        return cls.read((tokeninfo['sub'], tokeninfo['iss']))
+    def get_user(cls, user_infos: UserInfos):
+        return cls.read((user_infos.subject, user_infos.issuer))
 
 
 class HasUploader(object):

@@ -5,6 +5,8 @@ from flask_smorest import Blueprint, abort
 from sqlalchemy import or_
 from sqlalchemy.exc import IntegrityError
 
+from backend.models.models.site import Site
+
 from .. import models, notifications
 from ..extensions import auth, db
 from ..schemas import args, schemas
@@ -137,7 +139,7 @@ def get(*args, **kwargs):
     return __get(*args, **kwargs)
 
 
-def __get(id):
+def __get(id) -> Site:
     """Returns the id matching site.
 
     If no site exists with the indicated id, then 404 NotFound
