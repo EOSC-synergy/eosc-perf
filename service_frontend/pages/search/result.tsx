@@ -280,23 +280,25 @@ function ResultSearch(): ReactElement {
                                 </Stack>
                             )}
                             <hr />
-                            <Stack gap={1}>
-                                {[...filters.keys()].flatMap((key, index) => {
-                                    const filter = filters.get(key);
-                                    if (filter === undefined) {
-                                        return [];
-                                    }
+                            <Stack gap={2}>
+                                <Stack gap={1}>
+                                    {[...filters.keys()].flatMap((key, index) => {
+                                        const filter = filters.get(key);
+                                        if (filter === undefined) {
+                                            return [];
+                                        }
 
-                                    return [
-                                        <FilterEdit
-                                            key={index}
-                                            filter={filter}
-                                            setFilter={setFilter}
-                                            deleteFilter={deleteFilter}
-                                            suggestions={suggestedFields}
-                                        />,
-                                    ];
-                                })}
+                                        return [
+                                            <FilterEdit
+                                                key={index}
+                                                filter={filter}
+                                                setFilter={setFilter}
+                                                deleteFilter={deleteFilter}
+                                                suggestions={suggestedFields}
+                                            />,
+                                        ];
+                                    })}
+                                </Stack>
                                 <Row>
                                     <Col />
                                     <Col md="auto">
@@ -319,56 +321,53 @@ function ResultSearch(): ReactElement {
                                         </Stack>
                                     </Col>
                                 </Row>
-                                <div style={{ overflowX: 'auto' }}>
-                                    {results.isSuccess &&
-                                        results.data &&
-                                        results.data.data.total > 0 && (
-                                            <ResultTable
-                                                results={results.data.data.items}
-                                                pageOffset={
-                                                    results.data.data.per_page *
-                                                    results.data.data.page
-                                                }
-                                                ops={resultOps}
-                                                suggestions={suggestedFields}
-                                                sorting={sorting}
-                                                setSorting={(sort) => {
-                                                    setSorting(sort);
-                                                }}
-                                                customColumns={customColumns}
-                                                setCustomColumns={setCustomColumns}
-                                            />
+                                <Stack gap={2}>
+                                    <div style={{ overflowX: 'auto' }}>
+                                        {results.isSuccess &&
+                                            results.data &&
+                                            results.data.data.total > 0 && (
+                                                <ResultTable
+                                                    results={results.data.data.items}
+                                                    pageOffset={
+                                                        results.data.data.per_page *
+                                                        results.data.data.page
+                                                    }
+                                                    ops={resultOps}
+                                                    suggestions={suggestedFields}
+                                                    sorting={sorting}
+                                                    setSorting={(sort) => {
+                                                        setSorting(sort);
+                                                    }}
+                                                    customColumns={customColumns}
+                                                    setCustomColumns={setCustomColumns}
+                                                />
+                                            )}
+                                        {results.isSuccess && results.data.data.total === 0 && (
+                                            <div className="text-muted m-2">
+                                                No results found! :(
+                                            </div>
                                         )}
-                                    {results.isSuccess && results.data.data.total === 0 && (
-                                        <div className="text-muted m-2">No results found! :(</div>
+                                        {results.isError && 'Error while loading results'}
+                                        {results.isLoading && <LoadingOverlay />}
+                                    </div>
+                                    {results.isSuccess && (
+                                        <Row className="mx-2">
+                                            <Col xs={true} sm={7} md={5} xl={4} xxl={3}>
+                                                <ResultsPerPageSelection
+                                                    onChange={setResultsPerPage}
+                                                    currentSelection={resultsPerPage}
+                                                />
+                                            </Col>
+                                            <Col />
+                                            <Col sm={true} md="auto">
+                                                <Paginator
+                                                    pagination={results.data.data}
+                                                    navigateTo={setPage}
+                                                />
+                                            </Col>
+                                        </Row>
                                     )}
-                                    {results.isError && 'Error while loading results'}
-                                    {results.isLoading && <LoadingOverlay />}
-                                </div>
-                                {results.isSuccess && (
-                                    <Row className="mx-2">
-                                        <Col
-                                            xs={true}
-                                            sm={7}
-                                            md={5}
-                                            xl={4}
-                                            xxl={3}
-                                            className="mb-2"
-                                        >
-                                            <ResultsPerPageSelection
-                                                onChange={setResultsPerPage}
-                                                currentSelection={resultsPerPage}
-                                            />
-                                        </Col>
-                                        <Col />
-                                        <Col sm={true} md="auto">
-                                            <Paginator
-                                                pagination={results.data.data}
-                                                navigateTo={setPage}
-                                            />
-                                        </Col>
-                                    </Row>
-                                )}
+                                </Stack>
                             </Stack>
                         </Card.Body>
                     </Card>
