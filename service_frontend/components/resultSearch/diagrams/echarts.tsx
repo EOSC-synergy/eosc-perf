@@ -343,10 +343,14 @@ function EChartsDiagram({
                 </div>
             )}
             {xAxis.length > 0 && yAxis.length > 0 && datasets.length > 0 && (
-                <ReactEChartsCore echarts={echarts} option={options} />
+                <div style={{ resize: 'vertical', overflow: 'auto', height: '20em' }}>
+                    <ReactEChartsCore
+                        echarts={echarts}
+                        option={options}
+                        style={{ height: '100%' }}
+                    />
+                </div>
             )}
-
-            {/* TODO: download png / csv buttons */}
         </>
     );
 }
