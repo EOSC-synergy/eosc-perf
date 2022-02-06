@@ -17,6 +17,7 @@ export function SearchingSelector<Item extends Identifiable>(props: {
     display: (item?: Item) => ReactNode;
     displayRow: (item: Item) => ReactNode;
     submitNew?: () => void;
+    disabled?: boolean;
 }): ReactElement {
     //const [resultsPerPage, setResultsPerPage] = useState(10);
     const [page, setPage] = useState(0);
@@ -115,7 +116,7 @@ export function SearchingSelector<Item extends Identifiable>(props: {
                         show={show}
                         onToggle={onToggle}
                     >
-                        <Button variant="success" size="sm">
+                        <Button variant="success" size="sm" disabled={props.disabled}>
                             Select
                         </Button>
                     </OverlayTrigger>
