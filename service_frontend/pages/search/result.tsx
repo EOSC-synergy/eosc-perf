@@ -1,5 +1,5 @@
-import React, { ReactElement, useState } from 'react';
-import { Button, Card, Col, Collapse, Container, Row, Stack } from 'react-bootstrap';
+import React, { ReactElement, useEffect, useState } from 'react';
+import { Button, Card, Col, Container, Row, Stack } from 'react-bootstrap';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { useQuery } from 'react-query';
 import { JsonPreviewModal } from 'components/jsonPreviewModal';
@@ -38,7 +38,11 @@ function ResultSearch(): ReactElement {
 
     const [filters, setFilters] = useState<Map<string, Filter>>(new Map());
 
-    const [showFilters, setShowFilters] = useState<boolean>(true);
+    const [browserLoaded, setBrowserLoaded] = useState<boolean>(false);
+
+    useEffect(() => {
+        setBrowserLoaded(true);
+    }, []);
 
     const [sorting, setSorting] = useState<Sorting>({
         mode: SortMode.Disabled,
@@ -248,61 +252,51 @@ function ResultSearch(): ReactElement {
                     />
                     <Card>
                         <Card.Body>
-                            <Stack gap={2}>
-                                <Collapse in={showFilters}>
-                                    <div>
-                                        {router.isReady && (
-                                            <>
-                                                <BenchmarkSearchSelect
-                                                    benchmark={benchmark}
-                                                    initBenchmark={(b) => setBenchmark(b)}
-                                                    setBenchmark={updateBenchmark}
-                                                    initialBenchmarkId={
-                                                        router.query.benchmarkId as
-                                                            | string
-                                                            | undefined
-                                                    }
-                                                />
-                                                <SiteSearchPopover
-                                                    site={site}
-                                                    initSite={(s) => setSite(s)}
-                                                    setSite={updateSite}
-                                                    initialSiteId={
-                                                        router.query.siteId as string | undefined
-                                                    }
-                                                />
-                                                <FlavorSearchSelect
-                                                    site={site}
-                                                    flavor={flavor}
-                                                    initFlavor={(f) => setFlavor(f)}
-                                                    setFlavor={updateFlavor}
-                                                    initialFlavorId={
-                                                        router.query.flavorId as string | undefined
-                                                    }
-                                                />
-                                            </>
-                                        )}
-                                        <Stack gap={1}>
-                                            {[...filters.keys()].flatMap((key, index) => {
-                                                const filter = filters.get(key);
-                                                if (filter === undefined) {
-                                                    return [];
-                                                }
+                            {browserLoaded && router.isReady && (
+                                <Stack gap={2}>
+                                    <BenchmarkSearchSelect
+                                        benchmark={benchmark}
+                                        initBenchmark={(b) => setBenchmark(b)}
+                                        setBenchmark={updateBenchmark}
+                                        initialBenchmarkId={
+                                            router.query.benchmarkId as string | undefined
+                                        }
+                                    />
+                                    <SiteSearchPopover
+                                        site={site}
+                                        initSite={(s) => setSite(s)}
+                                        setSite={updateSite}
+                                        initialSiteId={router.query.siteId as string | undefined}
+                                    />
+                                    <FlavorSearchSelect
+                                        site={site}
+                                        flavor={flavor}
+                                        initFlavor={(f) => setFlavor(f)}
+                                        setFlavor={updateFlavor}
+                                        initialFlavorId={
+                                            router.query.flavorId as string | undefined
+                                        }
+                                    />
+                                </Stack>
+                            )}
+                            <hr />
+                            <Stack gap={1}>
+                                {[...filters.keys()].flatMap((key, index) => {
+                                    const filter = filters.get(key);
+                                    if (filter === undefined) {
+                                        return [];
+                                    }
 
-                                                return [
-                                                    <FilterEdit
-                                                        key={index}
-                                                        filter={filter}
-                                                        setFilter={setFilter}
-                                                        deleteFilter={deleteFilter}
-                                                        suggestions={suggestedFields}
-                                                    />,
-                                                ];
-                                            })}
-                                        </Stack>
-                                        <hr />
-                                    </div>
-                                </Collapse>
+                                    return [
+                                        <FilterEdit
+                                            key={index}
+                                            filter={filter}
+                                            setFilter={setFilter}
+                                            deleteFilter={deleteFilter}
+                                            suggestions={suggestedFields}
+                                        />,
+                                    ];
+                                })}
                                 <Row>
                                     <Col />
                                     <Col md="auto">
@@ -352,7 +346,7 @@ function ResultSearch(): ReactElement {
                                     {results.isLoading && <LoadingOverlay />}
                                 </div>
                                 {results.isSuccess && (
-                                    <Row className="mt-2 mx-2">
+                                    <Row className="mx-2">
                                         <Col
                                             xs={true}
                                             sm={7}
@@ -367,7 +361,7 @@ function ResultSearch(): ReactElement {
                                             />
                                         </Col>
                                         <Col />
-                                        <Col sm={true} md="auto" className="mb-2">
+                                        <Col sm={true} md="auto">
                                             <Paginator
                                                 pagination={results.data.data}
                                                 navigateTo={setPage}

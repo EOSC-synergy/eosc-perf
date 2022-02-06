@@ -35,6 +35,7 @@ export function SearchingSelector<Item extends Identifiable>(props: {
             });
         },
         {
+            enabled: !props.disabled,
             refetchOnWindowFocus: false, // do not spam queries
         }
     );
@@ -104,24 +105,22 @@ export function SearchingSelector<Item extends Identifiable>(props: {
     );
 
     return (
-        <div className="my-1">
-            <Row>
-                <Col>{props.display(props.item)} </Col>
-                <Col md="auto">
-                    <OverlayTrigger
-                        trigger="click"
-                        placement="bottom"
-                        overlay={popover}
-                        rootClose
-                        show={show}
-                        onToggle={onToggle}
-                    >
-                        <Button variant="success" size="sm" disabled={props.disabled}>
-                            Select
-                        </Button>
-                    </OverlayTrigger>
-                </Col>
-            </Row>
-        </div>
+        <Row>
+            <Col>{props.display(props.item)} </Col>
+            <Col md="auto">
+                <OverlayTrigger
+                    trigger="click"
+                    placement="bottom"
+                    overlay={popover}
+                    rootClose
+                    show={show}
+                    onToggle={onToggle}
+                >
+                    <Button variant="success" size="sm" disabled={props.disabled}>
+                        Select
+                    </Button>
+                </OverlayTrigger>
+            </Col>
+        </Row>
     );
 }
