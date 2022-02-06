@@ -33,6 +33,11 @@ export function UserContextWrapper({ children }: { children: ReactNode }) {
         }
     );
 
+    const callbacks = {
+        login: () => authentication.signinRedirect(),
+        logout: () => authentication.removeUser(),
+    };
+
     return (
         <UserContext.Provider
             value={
@@ -43,8 +48,9 @@ export function UserContextWrapper({ children }: { children: ReactNode }) {
                           registered: amIRegistered.isSuccess,
                           admin: amIAdmin.isSuccess,
                           loggedIn: true,
+                          ...callbacks,
                       }
-                    : emptyUser
+                    : { ...emptyUser, ...callbacks }
             }
         >
             {children}

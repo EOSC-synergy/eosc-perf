@@ -74,17 +74,24 @@ export function ActionColumn({
     const auth = useContext(UserContext);
 
     return (
-        <SplitButton variant="secondary" title="View" size="sm">
-            {auth.loggedIn && (
-                <Dropdown.Item
-                    as="button"
-                    onClick={() => {
+        <SplitButton
+            variant="secondary"
+            title="View"
+            size="sm"
+            onClick={() => callbacks.display(result)}
+        >
+            <Dropdown.Item
+                as="button"
+                onClick={() => {
+                    if (auth.loggedIn) {
                         callbacks.report(result);
-                    }}
-                >
-                    Report
-                </Dropdown.Item>
-            )}
+                    } else {
+                        auth.login();
+                    }
+                }}
+            >
+                Report {!auth.loggedIn && ' (login required)'}
+            </Dropdown.Item>
             {auth.loggedIn && auth.admin && (
                 <ResultDeleter result={result} onDelete={callbacks.reload} />
             )}
