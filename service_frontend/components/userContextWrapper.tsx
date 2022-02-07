@@ -41,7 +41,7 @@ export function UserContextWrapper({ children }: { children: ReactNode }) {
     return (
         <UserContext.Provider
             value={
-                authentication.user
+                authentication.isAuthenticated && authentication.user
                     ? {
                           token: authentication.user.access_token,
                           email: amIRegistered.data?.data.email,
