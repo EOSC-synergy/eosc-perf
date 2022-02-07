@@ -26,6 +26,9 @@ export type UserInfo = {
      */
     loggedIn: boolean;
 
+    /**
+     * Callbacks to log the user in or out
+     */
     login: () => void;
     logout: () => void;
 };
