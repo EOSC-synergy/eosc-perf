@@ -32,9 +32,11 @@ author = 'Christophe Laures, Moritz Behr, Jonas Blahut, Marc Falkenberg'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx_copybutton',
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'sphinx.ext.todo',
+    'nbsphinx'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -64,9 +66,32 @@ html_theme = 'sphinx_rtd_theme'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+html_logo = '../../service_frontend/public/images/eosc-perf-logo.svg'
+
+html_css_files = [
+    'css/custom.css',
+]
+
 # -- Extension configuration -------------------------------------------------
 
 # -- Options for todo extension ----------------------------------------------
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
+
+# A string of reStructuredText that will be included at the end of every source file that is read.
+# Add substitutions here that should be available in every file
+rst_epilog = """
+.. |br| raw:: html
+
+   <br/>
+
+.. |contact-us| replace:: `contact us <mailto:perf-support@lists.kit.edu>`__
+
+.. |perf-web-url| replace:: `https://performance.services.fedcloud.eu/ <https://performance.services.fedcloud.eu/>`__
+
+.. |perf-swagger-url| replace:: `https://performance.services.fedcloud.eu/api/v1/ <https://performance.services.fedcloud.eu/api/v1/>`__
+
+.. |perf-github| replace:: `EOSC-Perf github repository <https://github.com/EOSC-synergy/eosc-perf>`__
+
+"""
