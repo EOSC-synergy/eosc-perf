@@ -43,6 +43,12 @@ export function NavHeader(): ReactElement {
                                 <NavDropdown.Item>Code guidelines</NavDropdown.Item>
                             </Link>
                         </NavDropdown>
+                        <Link
+                            href="https://appsgrycap.i3m.upv.es:31443/im-dashboard/login"
+                            passHref
+                        >
+                            <Nav.Link>Infrastructure Manager</Nav.Link>
+                        </Link>
                         {auth.admin && (
                             <NavDropdown title="Admin" id="base-admin-dropdown">
                                 <Link href="/report-view" passHref>
@@ -53,12 +59,6 @@ export function NavHeader(): ReactElement {
                                 </Link>
                             </NavDropdown>
                         )}
-                        <Link
-                            href="https://appsgrycap.i3m.upv.es:31443/im-dashboard/login"
-                            passHref
-                        >
-                            <Nav.Link>Infrastructure Manager</Nav.Link>
-                        </Link>
                     </Nav>
                     <Nav>
                         <NavDropdown
