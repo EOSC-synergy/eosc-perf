@@ -8,7 +8,7 @@ from tests import asserts
 from tests.db_instances import benchmarks, flavors, results, sites, tags, users
 
 post_query = {
-    'execution_datetime': "2020-05-21T10:31:00.000Z",
+    'execution_datetime': "2020-05-21T10:31:00.000+03:00",
     'benchmark_id': benchmarks[0]['id'],
     'flavor_id': flavors[0]['id'],
     'tags_ids': [tag['id'] for tag in [tags[0], tags[1]]]

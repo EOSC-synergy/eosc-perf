@@ -299,8 +299,8 @@ class ResultContext(Schema):
     #: (ISO8601, required) :
     #: Benchmark execution **START**
     execution_datetime = fields.DateTime(
-        description="START execution datetime of the result",
-        example="2021-09-08 20:37:10.192459", required=True,
+        description="START execution datetime and timezone of the result",
+        example='2020-05-21T10:31:00.000+01:00', required=True,
     )
 
     #: (Benchmark.id, required):
