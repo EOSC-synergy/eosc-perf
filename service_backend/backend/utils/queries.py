@@ -43,7 +43,8 @@ def add_sorting(model):
             sort_by = query_args.pop("sort_by")
             sort_by = sort_by if sort_by is not None else ""
             query = func(*args, **kwargs)
-            sorting = [parse_sort(model, x) for x in sort_by.split(",") if x != ""]
+            split = sort_by.split(",")
+            sorting = [parse_sort(model, x) for x in split if x != ""]
             return query.order_by(*sorting)
         return decorator
     return decorator_add_sorting

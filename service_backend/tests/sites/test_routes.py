@@ -302,7 +302,7 @@ class TestListFlavors:
         {'upload_after': "1000-01-01"},
         {},  # Multiple results
         {'sort_by': "+name"},
-        {'sort_by': "+upload_datetime"},        
+        {'sort_by': "+upload_datetime"},
         {'sort_by': "+id"}
     ])
     def test_200(self, response_GET, url):

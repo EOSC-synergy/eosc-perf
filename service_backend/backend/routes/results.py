@@ -125,12 +125,12 @@ def create(*args, **kwargs):
 
     Use this method to create a new result in the database so it can
     be accessed by the application users. The method returns the complete
-    created result (if succeeds). 
+    created result (if succeeds).
 
     The uploaded result must pass the benchmark JSON Schema to be
     accepted, otherwise 422 UnprocessableEntity is produced.
     In addition, an execution_datetime must be provided in order to indicate
-    the time when the benchmark was executed. It should be in ISO8601 
+    the time when the benchmark was executed. It should be in ISO8601
     format and include the timezone.
     """
     return __create(*args, **kwargs)
@@ -152,10 +152,10 @@ def __create(query_args, body_args):
     :rtype: :class:`models.Result`
     """
     if query_args['execution_datetime'].tzinfo is None:
-        error_msg = f"Execution date must include timezone"
+        error_msg = "Execution date must include timezone"
         abort(422, messages={'error': error_msg})
     if query_args['execution_datetime'] > dt.datetime.now(pytz.utc):
-        error_msg = f"Execution date cannot be in future"
+        error_msg = "Execution date cannot be in future"
         abort(422, messages={'error': error_msg})
 
     def get(model, id):
