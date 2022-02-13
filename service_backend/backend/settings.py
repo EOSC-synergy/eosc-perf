@@ -130,8 +130,7 @@ SQLALCHEMY_DATABASE_URI = f'{DB_CONNECTION}/{DB_NAME}'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
-# Cache and crypt configuration
-CACHE_TYPE = "flask_caching.backends.SimpleCache"
+# Crypt configuration
 BCRYPT_LOG_ROUNDS = int("BCRYPT_LOG_ROUNDS", default=12)
 """| Value to determine the complexity of the encryption.
 | See bcrypt for more details; default value is 12.
@@ -151,12 +150,12 @@ OIDC_CLIENT_ID = str("OIDC_CLIENT_ID", dev_default="not-defined")
 :meta hide-value:
 """
 
-OIDC_CLIENT_SECRET = str("OIDC_CLIENT_SECRET", default="", dev_default="not-defined")
+OIDC_CLIENT_SECRET = str("OIDC_CLIENT_SECRET", default="", dev_default=".")
 """| Secret to validate the application identify on the Authorization Server.
 | See https://openid.net/specs/openid-connect-core-1_0.html
 
 | When ENV is set to `production`, a configuration value is required.
-| When ENV is set to `development`, the default value stands to: "not-defined".
+| When ENV is set to `development`, the default value stands to: ".".
 
 :meta hide-value:
 """

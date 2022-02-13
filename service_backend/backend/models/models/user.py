@@ -1,7 +1,7 @@
 """Models module package for main models definition."""
 from datetime import datetime as dt
 
-from sqlalchemy import Column, DateTime, ForeignKey, Text, UniqueConstraint
+from sqlalchemy import Column, DateTime, Text
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import backref, relationship
 
