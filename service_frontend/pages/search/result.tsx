@@ -23,6 +23,7 @@ import { FlavorSearchSelect } from 'components/searchSelectors/flavorSearchSelec
 import { Sorting, SortMode } from 'components/resultSearch/sorting';
 import { useRouter } from 'next/router';
 import { Funnel, Save2 } from 'react-bootstrap-icons';
+import { fetchSubkey } from '../../components/resultSearch/jsonKeyHelpers';
 
 /**
  * Search page for ran benchmarks
@@ -234,6 +235,43 @@ function ResultSearch(): ReactElement {
         refreshLocation(benchmark, site, flavor);
     }
 
+    function exportResults() {
+        let lines = [];
+        // TODO: include other ids? they can be retrieved using result id
+        // let header = 'id,site_id,flavor_id,benchmark_id';
+        // let header = 'id';
+        let header = 'id,site,flavor,benchmark';
+        if (customColumns.length !== 0) {
+            header = header.concat(',', customColumns.join(','));
+        }
+        lines.push(header);
+        for (const result of selectedResults) {
+            // let entry = `${result.id},${result.site.id},${result.flavor.id},${result.benchmark.id}`;
+            // let entry = `${result.id}`;
+            let entry = `${result.id},${result.site.name},${result.flavor.name},${
+                result.benchmark.docker_image + ':' + result.benchmark.docker_tag
+            }`;
+            for (const column of customColumns) {
+                // .map.join?
+                entry = entry.concat(',' + fetchSubkey(result.json, column));
+            }
+            lines.push(entry);
+        }
+
+        // TODO: more elemgant way to save stuff?
+        const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+        let a = document.createElement('a'),
+            url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download = 'export.csv';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 0);
+    }
+
     return (
         <>
             <Head>
@@ -302,6 +340,7 @@ function ResultSearch(): ReactElement {
                                             <Button
                                                 variant="secondary"
                                                 disabled={selectedResults.length === 0}
+                                                onClick={exportResults}
                                             >
                                                 <Save2 /> Export
                                             </Button>
