@@ -165,21 +165,17 @@ function ResultSearch(): ReactElement {
                 benchmark_id: benchmark?.id,
                 site_id: site?.id,
                 flavor_id: site !== undefined ? flavor?.id : undefined,
-                filters: [...filters.keys()]
-                    .map((k) => {
-                        const filter = filters.get(k);
-                        if (
-                            filter === undefined ||
-                            filter.key.length === 0 ||
-                            filter.value.length === 0
-                        ) {
-                            return undefined;
-                        }
-                        return filter.key + ' ' + filter.mode + ' ' + filter.value;
-                    })
-                    .filter((v?: string) => {
-                        return v !== undefined;
-                    }),
+                filters: [...filters.keys()].flatMap((k) => {
+                    const filter = filters.get(k);
+                    if (
+                        filter === undefined ||
+                        filter.key.length === 0 ||
+                        filter.value.length === 0
+                    ) {
+                        return [];
+                    }
+                    return [filter.key + ' ' + filter.mode + ' ' + filter.value];
+                }),
                 sort_by:
                     sorting.mode === SortMode.Ascending
                         ? '+' + sorting.key
