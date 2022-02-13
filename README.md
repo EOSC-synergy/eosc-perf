@@ -12,13 +12,20 @@ server clusters.
 
 ## Instructions
 
+#### If you do not have an up-to-date version of docker-compose (e.g. Ubuntu)
+
+1. Create a python venv `python -m venv venv`
+2. Activate it `. ./venv/bin/activate`
+3. Install docker-compose `python -m pip install docker-compose`
+4. Whenever you need to use docker-compose, run `./venv/bin/docker-compose` instead
+
 #### To deploy the application:
 
 1. Set up a `.env` file: `cp .env-example .env`, configure it following the comments
-1. Set up a `service_frontend/.env.local` file containing `NEXT_PUBLIC_OIDC_REDIRECT_HOST=<your server host>`
-1. Configure your EGI-AAI OIDC client secret in `oidc_secret.txt`
-1. Configure flask cookie encryption key in `cookie_secret.txt`
-1. Configure NGINX API credentials in `nginx_api_credentials.txt` in the following format:
+2. Set up a `service_frontend/.env.local` file containing `NEXT_PUBLIC_OIDC_REDIRECT_HOST=<your server host>`
+3. Configure your EGI-AAI OIDC client secret in `oidc_secret.txt`
+4. Configure flask cookie encryption key in `cookie_secret.txt`
+5. Configure NGINX API credentials in `nginx_api_credentials.txt` in the following format:
 
 ```
 USERNAME
