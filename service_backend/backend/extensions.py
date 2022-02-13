@@ -9,7 +9,6 @@ lately initialized in the application factory using the settings and
 configurations from the environment.
 """
 from flask_bcrypt import Bcrypt
-from flask_caching import Cache
 from flask_mailman import Mail
 from flask_migrate import Migrate
 from flask_smorest import Api
@@ -22,9 +21,6 @@ auth = Authorization()
 
 #: Flask extension that provides bcrypt hashing utilities
 bcrypt = Bcrypt()
-
-#: Flask extension that adds caching support for various backends
-cache = Cache()
 
 #: Flask framework library for creating REST APIs (i.e. OpenAPI)
 api = Api()

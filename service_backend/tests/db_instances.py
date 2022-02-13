@@ -144,26 +144,26 @@ results[1]["flavor__id"] = flavors[2]["id"]
 results[1]["uploader__email"] = users[0]["email"]
 results[1]["upload_datetime"] = datetime(2020, 1, 1)
 
-results[2]["json"] = {"time": 11}
+results[2]["json"] = {"time": 11, "s1": {"t2": 11}}
 results[2]["benchmark__id"] = benchmarks[1]["id"]
 results[2]["flavor__id"] = flavors[2]["id"]
 results[2]["uploader__email"] = users[1]["email"]
 results[2]["upload_datetime"] = datetime(2020, 1, 1)
 
-results[3]["json"] = {"time": 11.0}
+results[3]["json"] = {"time": 11.0, "s1": {"t2": 11.0}}
 results[3]["benchmark__id"] = benchmarks[0]["id"]
 results[3]["flavor__id"] = flavors[0]["id"]
 results[3]["uploader__email"] = users[0]["email"]
 results[3]["upload_datetime"] = datetime(2020, 1, 1)
 results[3]["claims"] = ["Claim 1", "Claim 2"]
 
-results[4]["json"] = {"time": 2, "other": 1.0}
+results[4]["json"] = {"time": 2, "s1": {"t2": 2}, "other": 1.0}
 results[4]["benchmark__id"] = benchmarks[0]["id"]
 results[4]["flavor__id"] = flavors[0]["id"]
 results[4]["uploader__email"] = users[0]["email"]
 results[4]["upload_datetime"] = datetime(2020, 1, 1)
 
-results[5]["json"] = {"time": -2, "other": "two"}
+results[5]["json"] = {"time": -2, "s1": {"t2": -2}, "other": "two"}
 results[5]["benchmark__id"] = benchmarks[0]["id"]
 results[5]["flavor__id"] = flavors[0]["id"]
 results[5]["uploader__email"] = users[0]["email"]

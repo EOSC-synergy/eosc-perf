@@ -8,7 +8,7 @@ from tests import asserts
 from tests.db_instances import benchmarks, flavors, results, sites, tags, users
 
 post_query = {
-    'execution_datetime': "2020-05-21T10:31:00.000Z",
+    'execution_datetime': "2020-05-21T10:31:00.000+03:00",
     'benchmark_id': benchmarks[0]['id'],
     'flavor_id': flavors[0]['id'],
     'tags_ids': [tag['id'] for tag in [tags[0], tags[1]]]
@@ -37,6 +37,7 @@ class TestList:
         {'sort_by': "+site_name,+flavor_name"},
         {'sort_by': "+json.type"},
         {'sort_by': "+json.time"},
+        {'sort_by': "+json.s1.t2"},
         {'sort_by': "+json.other"},
         {'sort_by': "+id"}
     ])
@@ -125,7 +126,8 @@ class TestCreate:
     @mark.parametrize('query', indirect=True, argvalues=[
         {k: post_query[k] for k in post_query.keys() - {'execution_datetime'}},
         {k: post_query[k] for k in post_query.keys() - {'benchmark_id'}},
-        {k: post_query[k] for k in post_query.keys() - {'flavor_id'}}
+        {k: post_query[k] for k in post_query.keys() - {'flavor_id'}},
+        {**post_query, 'execution_datetime': "9999-01-01T00:00:00.000Z"}
     ])
     @mark.parametrize('body', indirect=True, argvalues=[
         {'json_field_1': "Content", 'time': 10}

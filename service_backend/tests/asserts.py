@@ -69,6 +69,9 @@ def match_submit(json):
     # Check the report has a resource_id
     assert 'resource_id' in json and type(json['resource_id']) is str
 
+    # Check the submit has a uploader
+    assert 'uploader' in json  # Submits should only be accessible by admins
+
     return True
 
 

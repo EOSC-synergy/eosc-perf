@@ -10,9 +10,8 @@ different association types.
 """
 from datetime import datetime as dt
 
-from backend.models.models.user import HasUploader
-from sqlalchemy import (Column, DateTime, ForeignKey, String, Text,
-                        ForeignKeyConstraint)
+from sqlalchemy import (Column, DateTime, ForeignKey, ForeignKeyConstraint,
+                        String, Text)
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import backref, relationship
@@ -55,7 +54,7 @@ class Claim(NeedsApprove, HasUploader, PkModel):
 
     __table_args__ = (
         ForeignKeyConstraint(['uploader_iss', 'uploader_sub'],
-                            ['user.iss', 'user.sub']),
+                             ['user.iss', 'user.sub']),
     )
 
     def __init__(self, **properties):
