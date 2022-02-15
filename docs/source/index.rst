@@ -13,7 +13,6 @@ Welcome to eosc-perf's documentation!
    intro
    tutorials
    instructions
-   eosc_perf
 
 
 Indices and tables
