@@ -12,7 +12,7 @@ Welcome to eosc-perf's documentation!
 
    intro
    tutorials
-   instructions
+   providers
 
 
 Indices and tables
