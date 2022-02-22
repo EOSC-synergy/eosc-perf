@@ -11,8 +11,8 @@ by the community.
 
 OpenAPI specification
 =========================
-In order to improve usability, the API provides and OpenAPI v3
-specification which can be accessed at the path `/api-spec.json`.
+In order to improve usability, the API provides an **OpenAPI v3**
+specification which can be accessed at the path ``/api-spec.json``.
 Additionally the root path provides a Graphical User Interface (GUI) build
 with `Swagger UI <swagger_ui_>`_ that users can use to test,
 interface and learn about the multiple methods offered by this API.
@@ -40,7 +40,7 @@ OIDC Tokens
 =========================
 Although most of the GET reports are open to any request from any user,
 some are restricted to identified users and administrators. In order to
-identify into the service, the technology used is OpenID Connect.
+identify into the service, the technology used is **OpenID Connect**.
 
 More information about OpenID Connect can be found at their home page
 `openid.net <oidc_home_>`_.
@@ -69,7 +69,7 @@ need to confirm that they have read and accepted our terms and conditions:
 .. _privacy_policy: https://performance.services.fedcloud.eu/privacy_policy
 
 Once the terms are understood and you decide to continue with the
-registration process, you can register using the method `POST /users/self`
+registration process, you can register using the method ``POST /users/self``
 with an OIDC token as authorization bearer. For example:
 
 .. code-block:: bash
@@ -87,12 +87,4 @@ The response will return your stored information:
         'http://localhost:5000/users/self' \
         -H "accept: application/json" \
         -H "Authorization: Bearer $OIDC_TOKEN"
-
-
-
-
-
-
-
-
 
