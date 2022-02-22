@@ -17,7 +17,7 @@ from multiple providers or how to submit yours.
 
 * **First steps**:
   :doc:`Getting started </getting-started/introduction>` |
-  :doc:`First example </getting-started/first-example>`
+  :doc:`First example </getting-started/first_example>`
 
 * **Overview of core features**:
   :doc:`benchmarks </features/benchmarks>` |
@@ -36,7 +36,7 @@ from multiple providers or how to submit yours.
     :caption: Getting started
 
     /getting-started/introduction
-    /getting-started/first-example
+    /getting-started/first_example
 
     /features/benchmarks
     /features/reports
