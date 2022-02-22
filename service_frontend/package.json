@@ -20,7 +20,7 @@
     "echarts-stat": "^1.2.0",
     "next": "^12.0.7",
     "next-transpile-modules": "^9.0.0",
-    "prismjs": "^1.25.0",
+    "prismjs": "^1.27.0",
     "qs": "^6.10.2",
     "react": "^17.0.2",
     "react-bootstrap": "^2.0.3",
