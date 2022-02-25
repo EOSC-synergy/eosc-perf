@@ -26,9 +26,10 @@ from multiple providers or how to submit yours.
   :doc:`sites </features/sites>` |
   :doc:`tags </features/tags>`
 
-* **Troubleshooting**:
-  :doc:`/troubleshooting/support` |
-  :doc:`Frequently asked questions </troubleshooting/faq>`
+..
+  * **Troubleshooting**:
+    :doc:`/troubleshooting/support` |
+    :doc:`Frequently asked questions </troubleshooting/faq>`
 
 .. toctree::
     :maxdepth: 1
@@ -44,6 +45,7 @@ from multiple providers or how to submit yours.
     /features/sites
     /features/tags
 
+..
     /troubleshooting/support
     /troubleshooting/faq
 
