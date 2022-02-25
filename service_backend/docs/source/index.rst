@@ -59,7 +59,10 @@ out of your application when using our endpoints.
 
 * **Advanced search and result filtering**:
   :doc:`Using advanced search </advanced/generic-search>` |
-  :doc:`Filter results by json values </advanced/json-filters>`
+  :doc:`Filter results by json values </advanced/json-filters>` |
+
+* **Pagination and sorting of responses**:
+  :doc:`How to use sorting and pagination </advanced/pagination-sorting>`
 
 .. toctree::
     :maxdepth: 2
@@ -69,6 +72,7 @@ out of your application when using our endpoints.
 
     /advanced/generic-search
     /advanced/json-filters
+    /advanced/pagination-sorting
 
 
 Extending EOSC Performance
