@@ -48,6 +48,10 @@ export function UserContextWrapper({ children }: { children: ReactNode }) {
                           registered: amIRegistered.isSuccess,
                           admin: amIAdmin.isSuccess,
                           loggedIn: true,
+                          loading:
+                              authentication.isLoading ||
+                              amIRegistered.isLoading ||
+                              amIAdmin.isLoading,
                           ...callbacks,
                       }
                     : { ...emptyUser, ...callbacks }

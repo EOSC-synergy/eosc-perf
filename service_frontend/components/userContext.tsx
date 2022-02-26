@@ -27,6 +27,11 @@ export type UserInfo = {
     loggedIn: boolean;
 
     /**
+     * Whether any component is still loading. Useful to prevent premature warnings or redirects.
+     */
+    loading: boolean;
+
+    /**
      * Callbacks to log the user in or out
      */
     login: () => void;
@@ -42,6 +47,7 @@ export const emptyUser: UserInfo = {
     admin: false,
     registered: false,
     loggedIn: false,
+    loading: false,
     login: () => {},
     logout: () => {},
 };
