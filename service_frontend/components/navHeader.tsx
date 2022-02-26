@@ -18,8 +18,8 @@ export function NavHeader(): ReactElement {
     return (
         <header>
             <Navbar bg="dark" expand="lg" variant="dark">
-                <Navbar.Brand href="/" className="ms-2">
-                    <Image src={logo} height="40" alt="EOSC-Performance" />
+                <Navbar.Brand href="/" className="ms-4">
+                    <Image src={logo} height={36} width={66} alt="EOSC-Performance" />
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
