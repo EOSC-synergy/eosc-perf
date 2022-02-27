@@ -93,48 +93,18 @@ export function ActionColumn({
                 Report {!auth.loggedIn && ' (login required)'}
             </Dropdown.Item>
             {auth.loggedIn && auth.admin && (
-                <ResultDeleter result={result} onDelete={callbacks.reload} />
+                <>
+                    <ResultDeleter result={result} onDelete={callbacks.reload} />
+                    <Dropdown.Item
+                        as="button"
+                        onClick={() => {
+                            callbacks.edit(result);
+                        }}
+                    >
+                        Edit
+                    </Dropdown.Item>
+                </>
             )}
         </SplitButton>
     );
-    /*<Dropdown as={ButtonGroup}>
-            <Button
-                variant="primary"
-                onClick={() => {
-                    callbacks.display(result);
-                }}
-            >
-                <Hash /> View
-            </Button>
-
-            <Dropdown.Toggle split variant="secondary" />
-            <Dropdown.Menu>
-
-            </Dropdown.Menu>
-        </Dropdown>*/
-    /*<ButtonGroup size="sm">
-            <Button
-                variant="primary"
-                onClick={() => {
-                    callbacks.display(result);
-                }}
-            >
-                <Hash />
-            </Button>
-            {auth.token !== undefined && (
-                <Button
-                    variant="warning"
-                    onClick={() => {
-                        callbacks.report(result);
-                    }}
-                >
-                    <Exclamation />
-                </Button>
-            )}
-            {auth.admin && (
-                <>
-                    <ResultDeleter result={result} onDelete={callbacks.reload} />
-                </>
-            )}
-        </ButtonGroup>*/
 }

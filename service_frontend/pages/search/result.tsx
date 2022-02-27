@@ -11,6 +11,7 @@ import { Benchmark, Flavor, Result, Results, Site } from 'model';
 import { Paginator } from 'components/pagination';
 import { DiagramCard } from 'components/resultSearch/diagramCard';
 import { ResultReportModal } from 'components/resultReportModal';
+import { ResultEditModal } from 'components/resultEditModal';
 import { v4 as uuidv4 } from 'uuid';
 import { Filter } from 'components/resultSearch/filter';
 import { FilterEdit } from 'components/resultSearch/filterEdit';
@@ -87,11 +88,13 @@ function ResultSearch(): ReactElement {
     const [showJSONPreview, setShowJSONPreview] = useState(false);
 
     const [showReportModal, setShowReportModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
 
     const [selectedResults, setSelectedResults] = useState<Ordered<Result>[]>([]);
 
     const [previewResult, setPreviewResult] = useState<Result | null>(null);
     const [reportedResult, setReportedResult] = useState<Result | null>(null);
+    const [editedResult, setEditedResult] = useState<Result | null>(null);
 
     //
     const [customColumns, setCustomColumns] = useState<string[]>([]);
@@ -141,6 +144,10 @@ function ResultSearch(): ReactElement {
         report: function (result: Result) {
             setReportedResult(result);
             setShowReportModal(true);
+        },
+        edit: function (result: Result) {
+            setEditedResult(result);
+            setShowEditModal(true);
         },
     };
 
@@ -424,6 +431,16 @@ function ResultSearch(): ReactElement {
                         setShowReportModal(false);
                     }}
                     result={reportedResult}
+                />
+            )}
+            {editedResult && (
+                <ResultEditModal
+                    show={showEditModal}
+                    closeModal={() => {
+                        results.refetch();
+                        setShowEditModal(false);
+                    }}
+                    result={editedResult}
                 />
             )}
         </>
