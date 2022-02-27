@@ -11,7 +11,7 @@ export function InlineCloseButton(props: { onClose: () => void }): ReactElement 
     return (
         <div
             onClick={() => props.onClose()}
-            className={'d-inline-block' + actionable.actionable}
+            className={'d-inline-block ' + actionable.actionable}
             role="button"
         >
             <X />

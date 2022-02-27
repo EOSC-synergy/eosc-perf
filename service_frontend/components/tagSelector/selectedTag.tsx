@@ -11,7 +11,7 @@ import React from 'react';
  */
 export function SelectedTag(props: { tag: Tag; unselect: (tag: Tag) => void }) {
     return (
-        <div className={style.tagBadge + 'p-1'}>
+        <div className={style.tagBadge + ' p-1'}>
             {props.tag.name}
             <InlineCloseButton onClose={() => props.unselect(props.tag)} />
         </div>
