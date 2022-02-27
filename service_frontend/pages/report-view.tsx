@@ -123,7 +123,7 @@ function ReportsView(): ReactElement {
         },
         {
             enabled: !!auth.token,
-            refetchOnWindowFocus: fals, // do not spam queries
+            refetchOnWindowFocus: false, // do not spam queries
         }
     );
 
@@ -174,7 +174,7 @@ function ReportsView(): ReactElement {
                     {claims.isError && <>Failed to fetch claims!</>}
                 </ListGroup>
                 {claims.isSuccess && claims.data && claims.data.data.pages > 0 && (
-                    <div className'"mt-'">
+                    <div className="mt-2">
                         <Paginator
                             pagination={claims.data.data}
                             navigateTo={(p) => setClaimsPage(p)}
@@ -193,7 +193,7 @@ function ReportsView(): ReactElement {
             <Container>
                 {auth.admin && (
                     <>
-                        <Row className'"my-'">
+                        <Row className="my-3">
                             <Col>
                                 <h1>Submits</h1>
                                 <SubmitsList />
@@ -202,7 +202,7 @@ function ReportsView(): ReactElement {
                                 <h1>Claims</h1>
                                 <ClaimsList />
                             </Col>
-                        </Row>{' '}
+                        </Row>
                     </>
                 )}
             </Container>
