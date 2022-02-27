@@ -146,7 +146,7 @@ function ReportsView(): ReactElement {
                     {submits.isError && <>Failed to fetch submits!</>}
                 </ListGroup>
                 {submits.isSuccess && submits.data && submits.data.data.pages > 0 && (
-                    <div className'"mt-'">
+                    <div className="mt-2">
                         <Paginator
                             pagination={submits.data.data}
                             navigateTo={(p) => setSubmitsPage(p)}
