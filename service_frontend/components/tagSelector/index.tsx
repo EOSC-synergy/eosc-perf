@@ -51,6 +51,7 @@ function Index(props: { selected: Tag[]; setSelected: (tags: Tag[]) => void }): 
                 </Form.Group>
                 <Card className="mb-1">
                     <Card.Body>
+                        <small className="text-muted">Selected</small>
                         <div className="d-flex">
                             {props.selected.map((tag) => (
                                 <SelectedTag tag={tag} unselect={unselect} key={tag.id} />
@@ -62,6 +63,7 @@ function Index(props: { selected: Tag[]; setSelected: (tags: Tag[]) => void }): 
                             </div>
                         )}
                         <hr />
+                        <small className="text-muted">Available</small>
                         {tags.isPreviousData && tags.data && (
                             <>
                                 <div className="d-flex">
