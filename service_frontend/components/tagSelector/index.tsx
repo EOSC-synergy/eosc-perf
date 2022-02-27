@@ -94,7 +94,12 @@ function Index(props: { selected: Tag[]; setSelected: (tags: Tag[]) => void }): 
                                             <UnselectedTag tag={tag} select={select} key={tag.id} />
                                         ))}
                                 </div>
-                                {tags.data.data.total === 0 && (
+                                {tags.data.data.total === 0 && searchString.length > 0 && (
+                                    <div className="text-muted" style={{ display: 'inline' }}>
+                                        No tags match the keywords
+                                    </div>
+                                )}
+                                {tags.data.data.total === 0 && searchString.length === 0 && (
                                     <div className="text-muted" style={{ display: 'inline' }}>
                                         No tags available
                                     </div>
