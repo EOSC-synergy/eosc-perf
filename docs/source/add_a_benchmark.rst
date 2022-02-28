@@ -3,10 +3,13 @@ Adding a new benchmark
 **********************
 
 Requirements for benchmark
-##########################
+###########################
+1. The Benchmark is publicly available from the `Docker Hub <https://hub.docker.com/>`__
+2. It produces `JSON <https://en.wikipedia.org/wiki/JSON>`__ output file
+3. (optional but recommended) `JSON schema <https://json-schema.org/>`__ for the output file is available
 
-Uploading a result via the benchmark
-####################################
+Adding a benchmark via the website
+###################################
 
 To submit a new benchmark, first navigate to the Benchmark Submission Page:
 
@@ -23,5 +26,5 @@ On the benchmark submission page:
 5. Submit your result
 
 
-Uploading a benchmark via the API
-#################################
+Adding a benchmark via the API
+###############################

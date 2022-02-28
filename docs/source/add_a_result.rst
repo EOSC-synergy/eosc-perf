@@ -4,6 +4,10 @@ Adding a new result
 
 Requirements for results
 ########################
+1. You are able to authenticate via EGI Check-In
+2. Results are in the JSON format
+3. Results belong to one of the already registered benchmarks (if not, please, see :doc:`Adding a new benchmark <add_a_benchmark>`)
+4. The Site, Flavor, and time for the benchmark run is known.
 
 Uploading a result via the website
 ##################################
