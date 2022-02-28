@@ -18,26 +18,26 @@ digraph "twoDegreesRelationshipsDiagram" {
   edge [
     arrowsize="0.8"
   ];
-  "benchmark":"elipses":w -> "report_association":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "benchmark":"elipses":w -> "submit":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "benchmark":"elipses":w -> "user":"iss":e [arrowhead=none dir=back arrowtail=crowodot];
   "benchmark":"elipses":w -> "user":"sub":e [arrowhead=none dir=back arrowtail=crowodot];
-  "flavor":"_report_association_id":w -> "report_association":"id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "flavor":"creator_iss":w -> "user":"iss":e [arrowhead=none dir=back arrowtail=crowodot];
-  "flavor":"creator_sub":w -> "user":"sub":e [arrowhead=none dir=back arrowtail=crowodot];
+  "claim":"elipses":w -> "submit":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "claim":"elipses":w -> "user":"iss":e [arrowhead=none dir=back arrowtail=crowodot];
+  "claim":"elipses":w -> "user":"sub":e [arrowhead=none dir=back arrowtail=crowodot];
+  "flavor":"_submit_report_id":w -> "submit":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "flavor":"site_id":w -> "site":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
-  "report":"elipses":w -> "report_association":"id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "report":"elipses":w -> "user":"iss":e [arrowhead=none dir=back arrowtail=crowodot];
-  "report":"elipses":w -> "user":"sub":e [arrowhead=none dir=back arrowtail=crowodot];
-  "result":"_benchmark_id":w -> "benchmark":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
-  "result":"_flavor_id":w -> "flavor":"id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "result":"_report_association_id":w -> "report_association":"id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "result":"_site_id":w -> "site":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
-  "result":"creator_iss":w -> "user":"iss":e [arrowhead=none dir=back arrowtail=crowodot];
-  "result":"creator_sub":w -> "user":"sub":e [arrowhead=none dir=back arrowtail=crowodot];
+  "flavor":"uploader_iss":w -> "user":"iss":e [arrowhead=none dir=back arrowtail=crowodot];
+  "flavor":"uploader_sub":w -> "user":"sub":e [arrowhead=none dir=back arrowtail=crowodot];
+  "result":"_claim_report_id":w -> "claim":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "result":"benchmark_id":w -> "benchmark":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "result":"flavor_id":w -> "flavor":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "result":"site_id":w -> "site":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "result":"uploader_iss":w -> "user":"iss":e [arrowhead=none dir=back arrowtail=crowodot];
+  "result":"uploader_sub":w -> "user":"sub":e [arrowhead=none dir=back arrowtail=crowodot];
   "result_tags":"elipses":w -> "result":"id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "site":"_report_association_id":w -> "report_association":"id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "site":"creator_iss":w -> "user":"iss":e [arrowhead=none dir=back arrowtail=crowodot];
-  "site":"creator_sub":w -> "user":"sub":e [arrowhead=none dir=back arrowtail=crowodot];
+  "site":"_submit_report_id":w -> "submit":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "site":"uploader_iss":w -> "user":"iss":e [arrowhead=none dir=back arrowtail=crowodot];
+  "site":"uploader_sub":w -> "user":"sub":e [arrowhead=none dir=back arrowtail=crowodot];
   "benchmark" [
    label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
@@ -49,6 +49,17 @@ digraph "twoDegreesRelationshipsDiagram" {
     target="_top"
     tooltip="benchmark"
   ];
+  "claim" [
+   label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3"  BGCOLOR="#f5f5f5"><TABLE BORDER="0" CELLSPACING="0"><TR><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="32" HEIGHT="16"><B>claim</B></TD><TD ALIGN="RIGHT">[table]</TD></TR></TABLE></TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#ffffff">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#ffffff">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#ffffff">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="claim.html"
+    target="_top"
+    tooltip="claim"
+  ];
   "flavor" [
    label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
@@ -59,28 +70,6 @@ digraph "twoDegreesRelationshipsDiagram" {
     URL="flavor.html"
     target="_top"
     tooltip="flavor"
-  ];
-  "report" [
-   label=<
-    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3"  BGCOLOR="#f5f5f5"><TABLE BORDER="0" CELLSPACING="0"><TR><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="38" HEIGHT="16"><B>report</B></TD><TD ALIGN="RIGHT">[table]</TD></TR></TABLE></TD></TR>
-      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#ffffff">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#ffffff">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#ffffff">  </TD></TR>
-    </TABLE>>
-    URL="report.html"
-    target="_top"
-    tooltip="report"
-  ];
-  "report_association" [
-   label=<
-    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3"  BGCOLOR="#f5f5f5"><TABLE BORDER="0" CELLSPACING="0"><TR><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="111" HEIGHT="16"><B>report_association</B></TD><TD ALIGN="RIGHT">[table]</TD></TR></TABLE></TD></TR>
-      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#ffffff">  </TD><TD ALIGN="RIGHT" BGCOLOR="#ffffff">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#ffffff">5 &gt;</TD></TR>
-    </TABLE>>
-    URL="report_association.html"
-    target="_top"
-    tooltip="report_association"
   ];
   "result" [
    label=<
@@ -108,26 +97,38 @@ digraph "twoDegreesRelationshipsDiagram" {
    label=<
     <TABLE BORDER="2" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="4"  BGCOLOR="#f5f5f5"><TABLE BORDER="0" CELLSPACING="0"><TR><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="21" HEIGHT="16"><B>site</B></TD><TD ALIGN="RIGHT">[table]</TD></TR></TABLE></TD></TR>
-      <TR><TD PORT="upload_datetime" COLSPAN="2" ALIGN="LEFT"><TABLE BORDER="0" CELLSPACING="0" ALIGN="LEFT"><TR ALIGN="LEFT"><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="15" HEIGHT="16"></TD><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="132" HEIGHT="16">upload_datetime</TD></TR></TABLE></TD><TD PORT="upload_datetime.type" ALIGN="LEFT">timestamp[29,6]</TD></TR>
-      <TR><TD PORT="id" COLSPAN="2" ALIGN="LEFT"><TABLE BORDER="0" CELLSPACING="0" ALIGN="LEFT"><TR ALIGN="LEFT"><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="15" HEIGHT="16"><IMG SRC="../../images/primaryKeys.png"/></TD><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="132" HEIGHT="16">id</TD></TR></TABLE></TD><TD PORT="id.type" ALIGN="LEFT">uuid[2147483647]</TD></TR>
-      <TR><TD PORT="creator_sub" COLSPAN="2" ALIGN="LEFT"><TABLE BORDER="0" CELLSPACING="0" ALIGN="LEFT"><TR ALIGN="LEFT"><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="15" HEIGHT="16"><IMG SRC="../../images/foreignKeys.png"/></TD><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="132" HEIGHT="16">creator_sub</TD></TR></TABLE></TD><TD PORT="creator_sub.type" ALIGN="LEFT">text[2147483647]</TD></TR>
-      <TR><TD PORT="creator_iss" COLSPAN="2" ALIGN="LEFT"><TABLE BORDER="0" CELLSPACING="0" ALIGN="LEFT"><TR ALIGN="LEFT"><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="15" HEIGHT="16"><IMG SRC="../../images/foreignKeys.png"/></TD><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="132" HEIGHT="16">creator_iss</TD></TR></TABLE></TD><TD PORT="creator_iss.type" ALIGN="LEFT">text[2147483647]</TD></TR>
-      <TR><TD PORT="name" COLSPAN="2" BGCOLOR="#ffffff" ALIGN="LEFT"><TABLE BORDER="0" CELLSPACING="0" ALIGN="LEFT"><TR ALIGN="LEFT"><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="15" HEIGHT="16"></TD><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="132" HEIGHT="16">name</TD></TR></TABLE></TD><TD PORT="name.type" ALIGN="LEFT">text[2147483647]</TD></TR>
-      <TR><TD PORT="address" COLSPAN="2" ALIGN="LEFT"><TABLE BORDER="0" CELLSPACING="0" ALIGN="LEFT"><TR ALIGN="LEFT"><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="15" HEIGHT="16"></TD><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="132" HEIGHT="16">address</TD></TR></TABLE></TD><TD PORT="address.type" ALIGN="LEFT">text[2147483647]</TD></TR>
-      <TR><TD PORT="description" COLSPAN="2" ALIGN="LEFT"><TABLE BORDER="0" CELLSPACING="0" ALIGN="LEFT"><TR ALIGN="LEFT"><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="15" HEIGHT="16"></TD><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="132" HEIGHT="16">description</TD></TR></TABLE></TD><TD PORT="description.type" ALIGN="LEFT">text[2147483647]</TD></TR>
-      <TR><TD PORT="_report_association_id" COLSPAN="2" ALIGN="LEFT"><TABLE BORDER="0" CELLSPACING="0" ALIGN="LEFT"><TR ALIGN="LEFT"><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="15" HEIGHT="16"><IMG SRC="../../images/foreignKeys.png"/></TD><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="132" HEIGHT="16">_report_association_id</TD></TR></TABLE></TD><TD PORT="_report_association_id.type" ALIGN="LEFT">uuid[2147483647]</TD></TR>
+      <TR><TD PORT="id" COLSPAN="2" ALIGN="LEFT"><TABLE BORDER="0" CELLSPACING="0" ALIGN="LEFT"><TR ALIGN="LEFT"><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="15" HEIGHT="16"><IMG SRC="../../images/primaryKeys.png"/></TD><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="106" HEIGHT="16">id</TD></TR></TABLE></TD><TD PORT="id.type" ALIGN="LEFT">uuid[2147483647]</TD></TR>
+      <TR><TD PORT="uploader_sub" COLSPAN="2" ALIGN="LEFT"><TABLE BORDER="0" CELLSPACING="0" ALIGN="LEFT"><TR ALIGN="LEFT"><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="15" HEIGHT="16"><IMG SRC="../../images/foreignKeys.png"/></TD><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="106" HEIGHT="16">uploader_sub</TD></TR></TABLE></TD><TD PORT="uploader_sub.type" ALIGN="LEFT">text[2147483647]</TD></TR>
+      <TR><TD PORT="uploader_iss" COLSPAN="2" ALIGN="LEFT"><TABLE BORDER="0" CELLSPACING="0" ALIGN="LEFT"><TR ALIGN="LEFT"><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="15" HEIGHT="16"><IMG SRC="../../images/foreignKeys.png"/></TD><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="106" HEIGHT="16">uploader_iss</TD></TR></TABLE></TD><TD PORT="uploader_iss.type" ALIGN="LEFT">text[2147483647]</TD></TR>
+      <TR><TD PORT="upload_datetime" COLSPAN="2" ALIGN="LEFT"><TABLE BORDER="0" CELLSPACING="0" ALIGN="LEFT"><TR ALIGN="LEFT"><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="15" HEIGHT="16"></TD><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="106" HEIGHT="16">upload_datetime</TD></TR></TABLE></TD><TD PORT="upload_datetime.type" ALIGN="LEFT">timestamp[29,6]</TD></TR>
+      <TR><TD PORT="status" COLSPAN="2" ALIGN="LEFT"><TABLE BORDER="0" CELLSPACING="0" ALIGN="LEFT"><TR ALIGN="LEFT"><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="15" HEIGHT="16"></TD><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="106" HEIGHT="16">status</TD></TR></TABLE></TD><TD PORT="status.type" ALIGN="LEFT">resourcestatus[2147483647]</TD></TR>
+      <TR><TD PORT="name" COLSPAN="2" BGCOLOR="#ffffff" ALIGN="LEFT"><TABLE BORDER="0" CELLSPACING="0" ALIGN="LEFT"><TR ALIGN="LEFT"><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="15" HEIGHT="16"></TD><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="106" HEIGHT="16">name</TD></TR></TABLE></TD><TD PORT="name.type" ALIGN="LEFT">text[2147483647]</TD></TR>
+      <TR><TD PORT="address" COLSPAN="2" ALIGN="LEFT"><TABLE BORDER="0" CELLSPACING="0" ALIGN="LEFT"><TR ALIGN="LEFT"><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="15" HEIGHT="16"></TD><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="106" HEIGHT="16">address</TD></TR></TABLE></TD><TD PORT="address.type" ALIGN="LEFT">text[2147483647]</TD></TR>
+      <TR><TD PORT="description" COLSPAN="2" ALIGN="LEFT"><TABLE BORDER="0" CELLSPACING="0" ALIGN="LEFT"><TR ALIGN="LEFT"><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="15" HEIGHT="16"></TD><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="106" HEIGHT="16">description</TD></TR></TABLE></TD><TD PORT="description.type" ALIGN="LEFT">text[2147483647]</TD></TR>
+      <TR><TD PORT="_submit_report_id" COLSPAN="2" ALIGN="LEFT"><TABLE BORDER="0" CELLSPACING="0" ALIGN="LEFT"><TR ALIGN="LEFT"><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="15" HEIGHT="16"><IMG SRC="../../images/foreignKeys.png"/></TD><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="106" HEIGHT="16">_submit_report_id</TD></TR></TABLE></TD><TD PORT="_submit_report_id.type" ALIGN="LEFT">uuid[2147483647]</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#ffffff">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#ffffff">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#ffffff">2 &gt;</TD></TR>
     </TABLE>>
     URL="site.html"
     target="_top"
     tooltip="site"
   ];
+  "submit" [
+   label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3"  BGCOLOR="#f5f5f5"><TABLE BORDER="0" CELLSPACING="0"><TR><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="42" HEIGHT="16"><B>submit</B></TD><TD ALIGN="RIGHT">[table]</TD></TR></TABLE></TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#ffffff">  </TD><TD ALIGN="RIGHT" BGCOLOR="#ffffff">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#ffffff">4 &gt;</TD></TR>
+    </TABLE>>
+    URL="submit.html"
+    target="_top"
+    tooltip="submit"
+  ];
   "user" [
    label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3"  BGCOLOR="#f5f5f5"><TABLE BORDER="0" CELLSPACING="0"><TR><TD ALIGN="LEFT" FIXEDSIZE="TRUE" WIDTH="26" HEIGHT="16"><B>user</B></TD><TD ALIGN="RIGHT">[table]</TD></TR></TABLE></TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#ffffff">  </TD><TD ALIGN="RIGHT" BGCOLOR="#ffffff">1 row</TD><TD ALIGN="RIGHT" BGCOLOR="#ffffff">10 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#ffffff">  </TD><TD ALIGN="RIGHT" BGCOLOR="#ffffff">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#ffffff">10 &gt;</TD></TR>
     </TABLE>>
     URL="user.html"
     target="_top"

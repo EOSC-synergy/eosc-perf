@@ -98,14 +98,32 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>site_creator_iss_creator_sub_fkey</td>
+                                        <td>site__submit_report_id_fkey</td>
                                         <td>
                                             <table border='0' cellspacing='0' cellpadding='0'>
                                                 <tr>
-                                                    <td><a href='tables/site.html'>site</a><span>.creator_iss</span></td>
+                                                    <td><a href='tables/site.html'>site</a><span>._submit_report_id</span></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td>
+                                            <table border='0' cellspacing='0' cellpadding='0'>
+                                                <tr>
+                                                    <td><a href='tables/submit.html'>submit</a><span>.id</span></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>Restrict delete</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>site_uploader_iss_uploader_sub_fkey</td>
+                                        <td>
+                                            <table border='0' cellspacing='0' cellpadding='0'>
+                                                <tr>
+                                                    <td><a href='tables/site.html'>site</a><span>.uploader_iss</span></td>
                                                 </tr>
                                                 <tr>
-                                                    <td><a href='tables/site.html'>site</a><span>.creator_sub</span></td>
+                                                    <td><a href='tables/site.html'>site</a><span>.uploader_sub</span></td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -122,32 +140,14 @@
                                         <td><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>Restrict delete</span></td>
                                     </tr>
                                     <tr>
-                                        <td>site__report_association_id_fkey</td>
+                                        <td>benchmark_uploader_iss_uploader_sub_fkey</td>
                                         <td>
                                             <table border='0' cellspacing='0' cellpadding='0'>
                                                 <tr>
-                                                    <td><a href='tables/site.html'>site</a><span>._report_association_id</span></td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td>
-                                            <table border='0' cellspacing='0' cellpadding='0'>
-                                                <tr>
-                                                    <td><a href='tables/report_association.html'>report_association</a><span>.id</span></td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>Restrict delete</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>benchmark_creator_iss_creator_sub_fkey</td>
-                                        <td>
-                                            <table border='0' cellspacing='0' cellpadding='0'>
-                                                <tr>
-                                                    <td><a href='tables/benchmark.html'>benchmark</a><span>.creator_iss</span></td>
+                                                    <td><a href='tables/benchmark.html'>benchmark</a><span>.uploader_iss</span></td>
                                                 </tr>
                                                 <tr>
-                                                    <td><a href='tables/benchmark.html'>benchmark</a><span>.creator_sub</span></td>
+                                                    <td><a href='tables/benchmark.html'>benchmark</a><span>.uploader_sub</span></td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -164,18 +164,18 @@
                                         <td><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>Restrict delete</span></td>
                                     </tr>
                                     <tr>
-                                        <td>benchmark__report_association_id_fkey</td>
+                                        <td>benchmark__submit_report_id_fkey</td>
                                         <td>
                                             <table border='0' cellspacing='0' cellpadding='0'>
                                                 <tr>
-                                                    <td><a href='tables/benchmark.html'>benchmark</a><span>._report_association_id</span></td>
+                                                    <td><a href='tables/benchmark.html'>benchmark</a><span>._submit_report_id</span></td>
                                                 </tr>
                                             </table>
                                         </td>
                                         <td>
                                             <table border='0' cellspacing='0' cellpadding='0'>
                                                 <tr>
-                                                    <td><a href='tables/report_association.html'>report_association</a><span>.id</span></td>
+                                                    <td><a href='tables/submit.html'>submit</a><span>.id</span></td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -218,71 +218,11 @@
                                         <td><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>Restrict delete</span></td>
                                     </tr>
                                     <tr>
-                                        <td>report__association_id_fkey</td>
+                                        <td>result_site_id_fkey</td>
                                         <td>
                                             <table border='0' cellspacing='0' cellpadding='0'>
                                                 <tr>
-                                                    <td><a href='tables/report.html'>report</a><span>._association_id</span></td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td>
-                                            <table border='0' cellspacing='0' cellpadding='0'>
-                                                <tr>
-                                                    <td><a href='tables/report_association.html'>report_association</a><span>.id</span></td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>Restrict delete</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>report_creator_iss_creator_sub_fkey</td>
-                                        <td>
-                                            <table border='0' cellspacing='0' cellpadding='0'>
-                                                <tr>
-                                                    <td><a href='tables/report.html'>report</a><span>.creator_iss</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href='tables/report.html'>report</a><span>.creator_sub</span></td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td>
-                                            <table border='0' cellspacing='0' cellpadding='0'>
-                                                <tr>
-                                                    <td><a href='tables/user.html'>user</a><span>.iss</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href='tables/user.html'>user</a><span>.sub</span></td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>Restrict delete</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>result__benchmark_id_fkey</td>
-                                        <td>
-                                            <table border='0' cellspacing='0' cellpadding='0'>
-                                                <tr>
-                                                    <td><a href='tables/result.html'>result</a><span>._benchmark_id</span></td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td>
-                                            <table border='0' cellspacing='0' cellpadding='0'>
-                                                <tr>
-                                                    <td><a href='tables/benchmark.html'>benchmark</a><span>.id</span></td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>Restrict delete</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>result__site_id_fkey</td>
-                                        <td>
-                                            <table border='0' cellspacing='0' cellpadding='0'>
-                                                <tr>
-                                                    <td><a href='tables/result.html'>result</a><span>._site_id</span></td>
+                                                    <td><a href='tables/result.html'>result</a><span>.site_id</span></td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -296,11 +236,11 @@
                                         <td><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>Restrict delete</span></td>
                                     </tr>
                                     <tr>
-                                        <td>result__flavor_id_fkey</td>
+                                        <td>result_flavor_id_fkey</td>
                                         <td>
                                             <table border='0' cellspacing='0' cellpadding='0'>
                                                 <tr>
-                                                    <td><a href='tables/result.html'>result</a><span>._flavor_id</span></td>
+                                                    <td><a href='tables/result.html'>result</a><span>.flavor_id</span></td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -314,32 +254,14 @@
                                         <td><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>Restrict delete</span></td>
                                     </tr>
                                     <tr>
-                                        <td>result__report_association_id_fkey</td>
+                                        <td>result_uploader_iss_uploader_sub_fkey</td>
                                         <td>
                                             <table border='0' cellspacing='0' cellpadding='0'>
                                                 <tr>
-                                                    <td><a href='tables/result.html'>result</a><span>._report_association_id</span></td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td>
-                                            <table border='0' cellspacing='0' cellpadding='0'>
-                                                <tr>
-                                                    <td><a href='tables/report_association.html'>report_association</a><span>.id</span></td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>Restrict delete</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>result_creator_iss_creator_sub_fkey</td>
-                                        <td>
-                                            <table border='0' cellspacing='0' cellpadding='0'>
-                                                <tr>
-                                                    <td><a href='tables/result.html'>result</a><span>.creator_iss</span></td>
+                                                    <td><a href='tables/result.html'>result</a><span>.uploader_iss</span></td>
                                                 </tr>
                                                 <tr>
-                                                    <td><a href='tables/result.html'>result</a><span>.creator_sub</span></td>
+                                                    <td><a href='tables/result.html'>result</a><span>.uploader_sub</span></td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -350,6 +272,84 @@
                                                 </tr>
                                                 <tr>
                                                     <td><a href='tables/user.html'>user</a><span>.sub</span></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>Restrict delete</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>result_benchmark_id_fkey</td>
+                                        <td>
+                                            <table border='0' cellspacing='0' cellpadding='0'>
+                                                <tr>
+                                                    <td><a href='tables/result.html'>result</a><span>.benchmark_id</span></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td>
+                                            <table border='0' cellspacing='0' cellpadding='0'>
+                                                <tr>
+                                                    <td><a href='tables/benchmark.html'>benchmark</a><span>.id</span></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>Restrict delete</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>result__claim_report_id_fkey</td>
+                                        <td>
+                                            <table border='0' cellspacing='0' cellpadding='0'>
+                                                <tr>
+                                                    <td><a href='tables/result.html'>result</a><span>._claim_report_id</span></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td>
+                                            <table border='0' cellspacing='0' cellpadding='0'>
+                                                <tr>
+                                                    <td><a href='tables/claim.html'>claim</a><span>.id</span></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>Restrict delete</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>flavor_uploader_iss_uploader_sub_fkey</td>
+                                        <td>
+                                            <table border='0' cellspacing='0' cellpadding='0'>
+                                                <tr>
+                                                    <td><a href='tables/flavor.html'>flavor</a><span>.uploader_iss</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><a href='tables/flavor.html'>flavor</a><span>.uploader_sub</span></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td>
+                                            <table border='0' cellspacing='0' cellpadding='0'>
+                                                <tr>
+                                                    <td><a href='tables/user.html'>user</a><span>.iss</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><a href='tables/user.html'>user</a><span>.sub</span></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>Restrict delete</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>flavor__submit_report_id_fkey</td>
+                                        <td>
+                                            <table border='0' cellspacing='0' cellpadding='0'>
+                                                <tr>
+                                                    <td><a href='tables/flavor.html'>flavor</a><span>._submit_report_id</span></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td>
+                                            <table border='0' cellspacing='0' cellpadding='0'>
+                                                <tr>
+                                                    <td><a href='tables/submit.html'>submit</a><span>.id</span></td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -374,14 +374,32 @@
                                         <td><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>Restrict delete</span></td>
                                     </tr>
                                     <tr>
-                                        <td>flavor_creator_iss_creator_sub_fkey</td>
+                                        <td>claim__submit_report_id_fkey</td>
                                         <td>
                                             <table border='0' cellspacing='0' cellpadding='0'>
                                                 <tr>
-                                                    <td><a href='tables/flavor.html'>flavor</a><span>.creator_iss</span></td>
+                                                    <td><a href='tables/claim.html'>claim</a><span>._submit_report_id</span></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td>
+                                            <table border='0' cellspacing='0' cellpadding='0'>
+                                                <tr>
+                                                    <td><a href='tables/submit.html'>submit</a><span>.id</span></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>Restrict delete</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>claim_uploader_iss_uploader_sub_fkey</td>
+                                        <td>
+                                            <table border='0' cellspacing='0' cellpadding='0'>
+                                                <tr>
+                                                    <td><a href='tables/claim.html'>claim</a><span>.uploader_iss</span></td>
                                                 </tr>
                                                 <tr>
-                                                    <td><a href='tables/flavor.html'>flavor</a><span>.creator_sub</span></td>
+                                                    <td><a href='tables/claim.html'>claim</a><span>.uploader_sub</span></td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -392,24 +410,6 @@
                                                 </tr>
                                                 <tr>
                                                     <td><a href='tables/user.html'>user</a><span>.sub</span></td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>Restrict delete</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>flavor__report_association_id_fkey</td>
-                                        <td>
-                                            <table border='0' cellspacing='0' cellpadding='0'>
-                                                <tr>
-                                                    <td><a href='tables/flavor.html'>flavor</a><span>._report_association_id</span></td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td>
-                                            <table border='0' cellspacing='0' cellpadding='0'>
-                                                <tr>
-                                                    <td><a href='tables/report_association.html'>report_association</a><span>.id</span></td>
                                                 </tr>
                                             </table>
                                         </td>

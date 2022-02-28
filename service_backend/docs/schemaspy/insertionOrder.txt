@@ -1,10 +1,10 @@
 user
-report_association
+submit
 tag
 site
 benchmark
+claim
 flavor
 result
 result_tags
-report
 alembic_version

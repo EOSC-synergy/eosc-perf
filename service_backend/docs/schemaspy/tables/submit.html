@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>report_association - eosc_perf Database</title>
+        <title>submit - eosc_perf Database</title>
         <!-- Tell the browser to be responsive to screen width -->
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
         <link rel="icon" type="image/png" sizes="16x16" href="../favicon.png">
@@ -73,7 +73,7 @@
             <div class="content-wrapper">
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
-                    <h1>report_association</h1><p><span id="recordNumber">0</span> rows</p><br />
+                    <h1>submit</h1><p><span id="recordNumber">0</span> rows</p><br />
                 </section>
                 <!-- Main content -->
                 <section class="content">
@@ -112,24 +112,20 @@
                                     <td>
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                             <tr>
-                                                <td title="benchmark._report_association_id references report_association.id via benchmark__report_association_id_fkey"><a href='benchmark.html'>benchmark</a><span class='relatedKey'>._report_association_id</span></td>
-                                                <td class="constraint detail">benchmark__report_association_id_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="benchmark._submit_report_id references submit.id via benchmark__submit_report_id_fkey"><a href='benchmark.html'>benchmark</a><span class='relatedKey'>._submit_report_id</span></td>
+                                                <td class="constraint detail">benchmark__submit_report_id_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                             <tr>
-                                                <td title="flavor._report_association_id references report_association.id via flavor__report_association_id_fkey"><a href='flavor.html'>flavor</a><span class='relatedKey'>._report_association_id</span></td>
-                                                <td class="constraint detail">flavor__report_association_id_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="claim._submit_report_id references submit.id via claim__submit_report_id_fkey"><a href='claim.html'>claim</a><span class='relatedKey'>._submit_report_id</span></td>
+                                                <td class="constraint detail">claim__submit_report_id_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                             <tr>
-                                                <td title="report._association_id references report_association.id via report__association_id_fkey"><a href='report.html'>report</a><span class='relatedKey'>._association_id</span></td>
-                                                <td class="constraint detail">report__association_id_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="flavor._submit_report_id references submit.id via flavor__submit_report_id_fkey"><a href='flavor.html'>flavor</a><span class='relatedKey'>._submit_report_id</span></td>
+                                                <td class="constraint detail">flavor__submit_report_id_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                             <tr>
-                                                <td title="result._report_association_id references report_association.id via result__report_association_id_fkey"><a href='result.html'>result</a><span class='relatedKey'>._report_association_id</span></td>
-                                                <td class="constraint detail">result__report_association_id_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td title="site._report_association_id references report_association.id via site__report_association_id_fkey"><a href='site.html'>site</a><span class='relatedKey'>._report_association_id</span></td>
-                                                <td class="constraint detail">site__report_association_id_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="site._submit_report_id references submit.id via site__submit_report_id_fkey"><a href='site.html'>site</a><span class='relatedKey'>._submit_report_id</span></td>
+                                                <td class="constraint detail">site__submit_report_id_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                         </table>
                                     </td>
@@ -140,10 +136,27 @@
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td><span id="discriminator">discriminator</span></td>
+                                    <td><span id="resource_type">resource_type</span></td>
                                     <td>varchar</td>
                                     <td>2147483647</td>
-                                    <td title='nullable'>√</td>
+                                    <td title=''></td>
+                                    <td title=''></td>
+                                    <td>null</td>
+                                    <td>
+                                        <table border='0' cellspacing='0' cellpadding='0'>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <table border='0' cellspacing='0' cellpadding='0'>
+                                        </table>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td><span id="upload_datetime">upload_datetime</span></td>
+                                    <td>timestamp</td>
+                                    <td>29,6</td>
+                                    <td title=''></td>
                                     <td title=''></td>
                                     <td>null</td>
                                     <td>
@@ -181,7 +194,7 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey'></i> report_association_pkey</td>
+                                    <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey'></i> submit_pkey</td>
                                     <td>Primary key</td>
                                     <td><span title='Ascending'>Asc</span></td>
                                     <td>id</td>
@@ -209,27 +222,25 @@
                                 <div class="tab-content no-padding">
                                     <div class="chart tab-pane active" id="oneDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="oneDegreeRelationshipsDiagram" name="oneDegreeRelationshipsDiagram">
-<area shape="rect" id="node1" href="benchmark.html" target="_top" title="benchmark" alt="" coords="683,5,908,269">
-<area shape="rect" id="node2" href="report_association.html" target="_top" title="report_association" alt="" coords="5,496,369,624">
-<area shape="rect" id="node3" href="flavor.html" target="_top" title="flavor" alt="" coords="683,323,908,587">
-<area shape="rect" id="node4" href="site.html" target="_top" title="site" alt="" coords="413,287,639,521">
-<area shape="rect" id="node5" href="report.html" target="_top" title="report" alt="" coords="434,640,618,845">
-<area shape="rect" id="node6" href="result.html" target="_top" title="result" alt="" coords="952,153,1177,447">
+<area shape="rect" id="node1" href="benchmark.html" target="_top" title="benchmark" alt="" coords="400,5,591,269">
+<area shape="rect" id="node2" href="submit.html" target="_top" title="submit" alt="" coords="5,499,356,656">
+<area shape="rect" id="node3" href="claim.html" target="_top" title="claim" alt="" coords="400,287,591,492">
+<area shape="rect" id="node4" href="flavor.html" target="_top" title="flavor" alt="" coords="635,484,825,748">
+<area shape="rect" id="node5" href="site.html" target="_top" title="site" alt="" coords="400,509,591,744">
 </map>
-                                        <a name='diagram'><img id="oneDegreeImg" src="../diagrams/tables/report_association.1degree.png" usemap="#oneDegreeRelationshipsDiagram" class="diagram" border="0" align="left"></a>
+                                        <a name='diagram'><img id="oneDegreeImg" src="../diagrams/tables/submit.1degree.png" usemap="#oneDegreeRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>
                                     <div class="chart tab-pane " id="twodegreesDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="twoDegreesRelationshipsDiagram" name="twoDegreesRelationshipsDiagram">
-<area shape="rect" id="node1" href="benchmark.html" target="_top" title="benchmark" alt="" coords="641,277,812,365">
-<area shape="rect" id="node2" href="report_association.html" target="_top" title="report_association" alt="" coords="5,13,369,141">
-<area shape="rect" id="node3" href="user.html" target="_top" title="user" alt="" coords="123,363,251,451">
-<area shape="rect" id="node4" href="flavor.html" target="_top" title="flavor" alt="" coords="657,418,796,506">
-<area shape="rect" id="node5" href="site.html" target="_top" title="site" alt="" coords="436,366,575,454">
-<area shape="rect" id="node6" href="report.html" target="_top" title="report" alt="" coords="413,91,597,297">
-<area shape="rect" id="node7" href="result.html" target="_top" title="result" alt="" coords="856,383,995,471">
-<area shape="rect" id="node8" href="result_tags.html" target="_top" title="result_tags" alt="" coords="1039,381,1205,469">
+<area shape="rect" id="node1" href="benchmark.html" target="_top" title="benchmark" alt="" coords="635,142,825,406">
+<area shape="rect" id="node2" href="submit.html" target="_top" title="submit" alt="" coords="5,425,356,582">
+<area shape="rect" id="node3" href="user.html" target="_top" title="user" alt="" coords="113,97,248,185">
+<area shape="rect" id="node4" href="claim.html" target="_top" title="claim" alt="" coords="400,293,591,498">
+<area shape="rect" id="node5" href="flavor.html" target="_top" title="flavor" alt="" coords="661,37,799,125">
+<area shape="rect" id="node6" href="site.html" target="_top" title="site" alt="" coords="426,188,565,276">
+<area shape="rect" id="node7" href="result.html" target="_top" title="result" alt="" coords="869,90,1008,178">
 </map>
-                                        <a name='diagram'><img id="twodegreesDegreeImg" src="../diagrams/tables/report_association.2degrees.png" usemap="#twoDegreesRelationshipsDiagram" class="diagram" border="0" align="left"></a>
+                                        <a name='diagram'><img id="twodegreesDegreeImg" src="../diagrams/tables/submit.2degrees.png" usemap="#twoDegreesRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>
                                 </div>
                             </div>

@@ -103,9 +103,9 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td><span id="upload_datetime">upload_datetime</span></td>
-                                    <td>timestamp</td>
-                                    <td>29,6</td>
+                                    <td><span id="deleted">deleted</span></td>
+                                    <td>bool</td>
+                                    <td>1</td>
                                     <td title=''></td>
                                     <td title=''></td>
                                     <td>null</td>
@@ -141,7 +141,7 @@
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="creator_sub">creator_sub</span></td>
+                                    <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="uploader_sub">uploader_sub</span></td>
                                     <td>text</td>
                                     <td>2147483647</td>
                                     <td title=''></td>
@@ -154,15 +154,15 @@
                                     <td>
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                             <tr>
-                                                <td title="result.[creator_iss, creator_sub] references user.[iss, sub] via result_creator_iss_creator_sub_fkey"><a href='user.html'>user</a><span class='relatedKey'>.sub</span></td>
-                                                <td class="constraint detail">result_creator_iss_creator_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="result.[uploader_iss, uploader_sub] references user.[iss, sub] via result_uploader_iss_uploader_sub_fkey"><a href='user.html'>user</a><span class='relatedKey'>.sub</span></td>
+                                                <td class="constraint detail">result_uploader_iss_uploader_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                         </table>
                                     </td>
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="creator_iss">creator_iss</span></td>
+                                    <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="uploader_iss">uploader_iss</span></td>
                                     <td>text</td>
                                     <td>2147483647</td>
                                     <td title=''></td>
@@ -175,9 +175,26 @@
                                     <td>
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                             <tr>
-                                                <td title="result.[creator_iss, creator_sub] references user.[iss, sub] via result_creator_iss_creator_sub_fkey"><a href='user.html'>user</a><span class='relatedKey'>.iss</span></td>
-                                                <td class="constraint detail">result_creator_iss_creator_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="result.[uploader_iss, uploader_sub] references user.[iss, sub] via result_uploader_iss_uploader_sub_fkey"><a href='user.html'>user</a><span class='relatedKey'>.iss</span></td>
+                                                <td class="constraint detail">result_uploader_iss_uploader_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
+                                        </table>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td><span id="upload_datetime">upload_datetime</span></td>
+                                    <td>timestamp</td>
+                                    <td>29,6</td>
+                                    <td title=''></td>
+                                    <td title=''></td>
+                                    <td>null</td>
+                                    <td>
+                                        <table border='0' cellspacing='0' cellpadding='0'>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <table border='0' cellspacing='0' cellpadding='0'>
                                         </table>
                                     </td>
                                     <td></td>
@@ -217,7 +234,7 @@
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="_benchmark_id">_benchmark_id</span></td>
+                                    <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="benchmark_id">benchmark_id</span></td>
                                     <td>uuid</td>
                                     <td>2147483647</td>
                                     <td title=''></td>
@@ -230,15 +247,15 @@
                                     <td>
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                             <tr>
-                                                <td title="result._benchmark_id references benchmark.id via result__benchmark_id_fkey"><a href='benchmark.html'>benchmark</a><span class='relatedKey'>.id</span></td>
-                                                <td class="constraint detail">result__benchmark_id_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="result.benchmark_id references benchmark.id via result_benchmark_id_fkey"><a href='benchmark.html'>benchmark</a><span class='relatedKey'>.id</span></td>
+                                                <td class="constraint detail">result_benchmark_id_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                         </table>
                                     </td>
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="_site_id">_site_id</span></td>
+                                    <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="flavor_id">flavor_id</span></td>
                                     <td>uuid</td>
                                     <td>2147483647</td>
                                     <td title=''></td>
@@ -251,15 +268,15 @@
                                     <td>
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                             <tr>
-                                                <td title="result._site_id references site.id via result__site_id_fkey"><a href='site.html'>site</a><span class='relatedKey'>.id</span></td>
-                                                <td class="constraint detail">result__site_id_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="result.flavor_id references flavor.id via result_flavor_id_fkey"><a href='flavor.html'>flavor</a><span class='relatedKey'>.id</span></td>
+                                                <td class="constraint detail">result_flavor_id_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                         </table>
                                     </td>
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="_flavor_id">_flavor_id</span></td>
+                                    <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="site_id">site_id</span></td>
                                     <td>uuid</td>
                                     <td>2147483647</td>
                                     <td title=''></td>
@@ -272,18 +289,18 @@
                                     <td>
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                             <tr>
-                                                <td title="result._flavor_id references flavor.id via result__flavor_id_fkey"><a href='flavor.html'>flavor</a><span class='relatedKey'>.id</span></td>
-                                                <td class="constraint detail">result__flavor_id_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="result.site_id references site.id via result_site_id_fkey"><a href='site.html'>site</a><span class='relatedKey'>.id</span></td>
+                                                <td class="constraint detail">result_site_id_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                         </table>
                                     </td>
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="_report_association_id">_report_association_id</span></td>
+                                    <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="_claim_report_id">_claim_report_id</span></td>
                                     <td>uuid</td>
                                     <td>2147483647</td>
-                                    <td title=''></td>
+                                    <td title='nullable'>√</td>
                                     <td title=''></td>
                                     <td>null</td>
                                     <td>
@@ -293,8 +310,8 @@
                                     <td>
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                             <tr>
-                                                <td title="result._report_association_id references report_association.id via result__report_association_id_fkey"><a href='report_association.html'>report_association</a><span class='relatedKey'>.id</span></td>
-                                                <td class="constraint detail">result__report_association_id_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="result._claim_report_id references claim.id via result__claim_report_id_fkey"><a href='claim.html'>claim</a><span class='relatedKey'>.id</span></td>
+                                                <td class="constraint detail">result__claim_report_id_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                         </table>
                                     </td>
@@ -353,27 +370,27 @@
                                 <div class="tab-content no-padding">
                                     <div class="chart tab-pane active" id="oneDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="oneDegreeRelationshipsDiagram" name="oneDegreeRelationshipsDiagram">
-<area shape="rect" id="node1" href="benchmark.html" target="_top" title="benchmark" alt="" coords="547,67,772,331">
-<area shape="rect" id="node2" href="report_association.html" target="_top" title="report_association" alt="" coords="5,491,233,608">
-<area shape="rect" id="node3" href="user.html" target="_top" title="user" alt="" coords="27,141,211,317">
-<area shape="rect" id="node4" href="flavor.html" target="_top" title="flavor" alt="" coords="547,348,772,612">
-<area shape="rect" id="node5" href="site.html" target="_top" title="site" alt="" coords="277,325,503,560">
-<area shape="rect" id="node6" href="result.html" target="_top" title="result" alt="" coords="816,5,1193,368">
-<area shape="rect" id="node7" href="result_tags.html" target="_top" title="result_tags" alt="" coords="1237,37,1404,160">
+<area shape="rect" id="node1" href="benchmark.html" target="_top" title="benchmark" alt="" coords="507,67,697,331">
+<area shape="rect" id="node2" href="user.html" target="_top" title="user" alt="" coords="5,251,228,397">
+<area shape="rect" id="node3" href="claim.html" target="_top" title="claim" alt="" coords="272,625,463,831">
+<area shape="rect" id="node4" href="flavor.html" target="_top" title="flavor" alt="" coords="507,348,697,612">
+<area shape="rect" id="node5" href="site.html" target="_top" title="site" alt="" coords="272,373,463,608">
+<area shape="rect" id="node6" href="result.html" target="_top" title="result" alt="" coords="741,5,1101,397">
+<area shape="rect" id="node7" href="result_tags.html" target="_top" title="result_tags" alt="" coords="1145,37,1312,160">
 </map>
                                         <a name='diagram'><img id="oneDegreeImg" src="../diagrams/tables/result.1degree.png" usemap="#oneDegreeRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>
                                     <div class="chart tab-pane " id="twodegreesDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="twoDegreesRelationshipsDiagram" name="twoDegreesRelationshipsDiagram">
-<area shape="rect" id="node1" href="benchmark.html" target="_top" title="benchmark" alt="" coords="460,160,631,248">
-<area shape="rect" id="node2" href="report_association.html" target="_top" title="report_association" alt="" coords="5,405,233,493">
-<area shape="rect" id="node3" href="user.html" target="_top" title="user" alt="" coords="55,185,183,273">
-<area shape="rect" id="node4" href="flavor.html" target="_top" title="flavor" alt="" coords="476,301,615,389">
-<area shape="rect" id="node5" href="site.html" target="_top" title="site" alt="" coords="277,405,416,493">
-<area shape="rect" id="node6" href="report.html" target="_top" title="report" alt="" coords="281,264,412,352">
-<area shape="rect" id="node7" href="result.html" target="_top" title="result" alt="" coords="675,5,1052,368">
-<area shape="rect" id="node8" href="result_tags.html" target="_top" title="result_tags" alt="" coords="1096,196,1263,319">
-<area shape="rect" id="node9" href="tag.html" target="_top" title="tag" alt="" coords="801,385,926,473">
+<area shape="rect" id="node1" href="benchmark.html" target="_top" title="benchmark" alt="" coords="368,157,539,245">
+<area shape="rect" id="node2" href="submit.html" target="_top" title="submit" alt="" coords="5,403,141,491">
+<area shape="rect" id="node3" href="user.html" target="_top" title="user" alt="" coords="6,185,141,273">
+<area shape="rect" id="node4" href="claim.html" target="_top" title="claim" alt="" coords="185,369,324,457">
+<area shape="rect" id="node5" href="flavor.html" target="_top" title="flavor" alt="" coords="384,263,523,351">
+<area shape="rect" id="node6" href="site.html" target="_top" title="site" alt="" coords="185,264,324,352">
+<area shape="rect" id="node7" href="result.html" target="_top" title="result" alt="" coords="583,5,943,397">
+<area shape="rect" id="node8" href="result_tags.html" target="_top" title="result_tags" alt="" coords="987,211,1153,333">
+<area shape="rect" id="node9" href="tag.html" target="_top" title="tag" alt="" coords="700,415,825,503">
 </map>
                                         <a name='diagram'><img id="twodegreesDegreeImg" src="../diagrams/tables/result.2degrees.png" usemap="#twoDegreesRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>
