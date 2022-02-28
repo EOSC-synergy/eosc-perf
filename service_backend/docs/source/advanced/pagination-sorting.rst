@@ -4,7 +4,7 @@ Sorting and Pagination
 
 EOSC Performance database expects to include hundreds of results
 from multiple providers. Therefore, every query into the database has
-to be optimised to what it is really required by the user.
+to be optimized to what it is really required by the user.
 
 In addition, multiple list methods are public and available to the
 internet. Therefore, it is required for security reasons and performance
@@ -15,7 +15,7 @@ Pagination response
 ======================
 API responses for list methods (called by `GET`) are limited by default
 to a maximum of **100** items per page. In order to provide the user with
-enoguh information about the omited intems (if any) on the search, a paginated
+enough information about the omitted items (if any) on the search, a paginated
 body has always the following fields:
 
  - **has_next**: True if a next page exists.
@@ -34,7 +34,7 @@ on the request query:
  - **per_page**: The number of items to be displayed on a page.
  - **page**: The page index to return.
 
-Default quiery argument values (when not included) are ``per_page=100``
+Default query argument values (when not included) are ``per_page=100``
 and ``page=1``. The maximum value for ``per_page`` is 100.
 
 .. note::
@@ -48,7 +48,7 @@ Sorting response items
 ======================
 It is possible to sort the response items including sorting fields into the
 the ``sort_by`` argument. This argument is available on every list method for
-the main endpoints (``/benchmark``, ``/resutls``, ``/sites`` and ``/flavors``).
+the main endpoints (``/benchmark``, ``/results``, ``/sites`` and ``/flavors``).
 
 All sorting fields are composed by a **sorting operator** which defines
 the order of the sorting and a **field id** which indicates the field to
@@ -69,13 +69,13 @@ Note the following available sorting operators and equivalent order:
 
 
 In the case of results, you might be interested into sorting by an
-specific result field inside the json attribute. This behaviour is
+specific result field inside the json attribute. This behavior is
 similar to the already explained into :doc:`</advanced/json-filters>`.
 
 When sorting by a json field use a `path separated by dots` to indicate
-where to find the value you desire to use to sort. In addtion, remember 
+where to find the value you desire to use to sort. In addition, remember 
 that in general it is a good idea to apply take a look into the benchmark
 schema related to the search you want to perform in order to ensure your
-filter applys. Sorting fields that are not available on the result are 
+filter applies. Sorting fields that are not available on the result are 
 ignored.
 

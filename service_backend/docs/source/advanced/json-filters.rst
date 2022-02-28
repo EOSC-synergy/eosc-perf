@@ -9,9 +9,9 @@ However, the flexibility provided to the ``json`` field to store
 results information impedes the design of specific requests,
 the amount of options available are just infinite.
 
-As the usage of conventional quieries is not suittable to limit the
+As the usage of conventional queries is not suitable to limit the
 results of the search inside json fields, EOSC Performance proposes
-a customisable filter argument which can be configured to filter the
+a customizable filter argument which can be configured to filter the
 results directly into the database following some rules.
 
 Filters are composed by 3 arguments separated by spaces ('%20' on 
@@ -34,7 +34,7 @@ there are five filter operators:
     most libraries do it automatically.
 
 When designing your query using filters, remember that in general it is a
-good idea to apply in adition a ``benchmark_id`` argument to limit the search
+good idea to apply in addition a ``benchmark_id`` argument to limit the search
 on results that share the same json structure. Take a look on the required 
-fields inside the benchmark schema to ensure that your filter applys. 
+fields inside the benchmark schema to ensure that your filter applies. 
 Filtering fields that are not available on the result are ignored.
