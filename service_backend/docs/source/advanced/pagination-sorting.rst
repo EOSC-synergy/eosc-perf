@@ -70,7 +70,7 @@ Note the following available sorting operators and equivalent order:
 
 In the case of results, you might be interested into sorting by an
 specific result field inside the json attribute. This behavior is
-similar to the already explained into :doc:`</advanced/json-filters>`.
+similar to the already explained into :doc:`/advanced/json-filters`.
 
 When sorting by a json field use a `path separated by dots` to indicate
 where to find the value you desire to use to sort. In addition, remember 

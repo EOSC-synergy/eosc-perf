@@ -40,17 +40,18 @@ Production vs development
 You can control the environment as production or development configuring
 the environmental variable `FLASK_ENV`. This variable can take the following
 values and behaviors:
+
  - `production`: Backend service runs enforcing security requirements and
- performance processing. You should always run the application as production
- except for specific short executions for development. Testing should run
- as well in production to ensure the correct behavior of components.
+   performance processing. You should always run the application as production
+   except for specific short executions for development. Testing should run
+   as well in production to ensure the correct behavior of components.
 
  - `development`: Backend service runs with minimum security requirements and
- with additional loads for debugging. When running in development the number
- open queries might be limited to the specific used extension. Therefore it is
- not suitable for long running operations. In addition, some variables
- required for production might be optional, see :doc:`configuration settings</_backend/settings>`
- for more details about defaults when running on development mode.
+   with additional loads for debugging. When running in development the number
+   open queries might be limited to the specific used extension. Therefore it is
+   not suitable for long running operations. In addition, some variables
+   required for production might be optional, see :doc:`configuration settings</_backend/settings>`
+   for more details about defaults when running on development mode.
 
 
 Settings

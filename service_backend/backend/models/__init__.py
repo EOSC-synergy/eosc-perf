@@ -9,9 +9,9 @@ properties. For example association_proxies or column_properties which
 are simple mirroring or calculations between self and relationships
 properties.
 
-All exported models are based on :class:`backend.models.core.BaseModel`:
+All exported models are based on :class:`backend.models.core.BaseCRUD`:
 
-.. autoclass:: backend.models.core.BaseModel
+.. autoclass:: backend.models.core.BaseCRUD
    :members:
    :member-order: bysource
    :undoc-members:

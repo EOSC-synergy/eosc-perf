@@ -19,12 +19,7 @@ Benchmark schemas
    :member-order: bysource
    :show-inheritance:
 
-.. autoclass:: backend.schemas.schemas.BenchmarkCreate
-   :members:
-   :member-order: bysource
-   :show-inheritance:
-
-.. autoclass:: backend.schemas.schemas.BenchmarkEdit
+.. autoclass:: backend.schemas.schemas.CreateBenchmark
    :members:
    :member-order: bysource
    :show-inheritance:
@@ -33,6 +28,11 @@ Benchmark arguments
 -------------------
 
 .. autoclass:: backend.schemas.args.BenchmarkFilter
+   :members:
+   :member-order: bysource
+   :show-inheritance:
+
+.. autoclass:: backend.schemas.args.BenchmarkSearch
    :members:
    :member-order: bysource
    :show-inheritance:
@@ -50,12 +50,7 @@ Flavor schemas
    :member-order: bysource
    :show-inheritance:
 
-.. autoclass:: backend.schemas.schemas.FlavorCreate
-   :members:
-   :member-order: bysource
-   :show-inheritance:
-
-.. autoclass:: backend.schemas.schemas.FlavorEdit
+.. autoclass:: backend.schemas.schemas.CreateFlavor
    :members:
    :member-order: bysource
    :show-inheritance:
@@ -68,20 +63,35 @@ Flavor arguments
    :member-order: bysource
    :show-inheritance:
 
+.. autoclass:: backend.schemas.args.FlavorSearch
+   :members:
+   :member-order: bysource
+   :show-inheritance:
+
 Report schemas
 -----------------
 
-.. autoclass:: backend.schemas.schemas.Report
+.. autoclass:: backend.schemas.schemas.Submit
    :members:
    :member-order: bysource
    :show-inheritance:
 
-.. autoclass:: backend.schemas.schemas.Reports
+.. autoclass:: backend.schemas.schemas.Submits
    :members:
    :member-order: bysource
    :show-inheritance:
 
-.. autoclass:: backend.schemas.schemas.ReportCreate
+.. autoclass:: backend.schemas.schemas.CreateClaim
+   :members:
+   :member-order: bysource
+   :show-inheritance:
+
+.. autoclass:: backend.schemas.schemas.Claim
+   :members:
+   :member-order: bysource
+   :show-inheritance:
+
+.. autoclass:: backend.schemas.schemas.Claims
    :members:
    :member-order: bysource
    :show-inheritance:
@@ -89,7 +99,12 @@ Report schemas
 Report arguments
 -------------------
 
-.. autoclass:: backend.schemas.args.ReportFilter
+.. autoclass:: backend.schemas.args.SubmitFilter
+   :members:
+   :member-order: bysource
+   :show-inheritance:
+
+.. autoclass:: backend.schemas.args.ClaimFilter
    :members:
    :member-order: bysource
    :show-inheritance:
@@ -125,6 +140,11 @@ Result arguments
    :member-order: bysource
    :show-inheritance:
 
+.. autoclass:: backend.schemas.args.ResultSearch
+   :members:
+   :member-order: bysource
+   :show-inheritance:
+
 Site schemas
 -----------------
 
@@ -138,12 +158,7 @@ Site schemas
    :member-order: bysource
    :show-inheritance:
 
-.. autoclass:: backend.schemas.schemas.SiteCreate
-   :members:
-   :member-order: bysource
-   :show-inheritance:
-
-.. autoclass:: backend.schemas.schemas.SiteEdit
+.. autoclass:: backend.schemas.schemas.CreateSite
    :members:
    :member-order: bysource
    :show-inheritance:
@@ -152,6 +167,11 @@ Site arguments
 -------------------
 
 .. autoclass:: backend.schemas.args.SiteFilter
+   :members:
+   :member-order: bysource
+   :show-inheritance:
+
+.. autoclass:: backend.schemas.args.SiteSearch
    :members:
    :member-order: bysource
    :show-inheritance:
@@ -174,20 +194,21 @@ Tag schemas
    :member-order: bysource
    :show-inheritance:
 
-.. autoclass:: backend.schemas.schemas.TagCreate
+.. autoclass:: backend.schemas.schemas.CreateTag
    :members:
    :member-order: bysource
    :show-inheritance:
 
-.. autoclass:: backend.schemas.schemas.TagEdit
-   :members:
-   :member-order: bysource
-   :show-inheritance:
 
 Tag arguments
 -------------------
 
 .. autoclass:: backend.schemas.args.TagFilter
+   :members:
+   :member-order: bysource
+   :show-inheritance:
+
+.. autoclass:: backend.schemas.args.TagSearch
    :members:
    :member-order: bysource
    :show-inheritance:
@@ -218,10 +239,7 @@ User arguments
    :member-order: bysource
    :show-inheritance:
 
-Other
--------------------
-
-.. autoclass:: backend.schemas.args.Search
+.. autoclass:: backend.schemas.args.UserSearch
    :members:
    :member-order: bysource
    :show-inheritance:
