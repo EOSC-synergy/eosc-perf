@@ -51,6 +51,7 @@ function Index(props: { selected: Tag[]; setSelected: (tags: Tag[]) => void }): 
                 </Form.Group>
                 <Card className="mb-1">
                     <Card.Body>
+                        <small className="text-muted">Selected</small>
                         <div className="d-flex">
                             {props.selected.map((tag) => (
                                 <SelectedTag tag={tag} unselect={unselect} key={tag.id} />
@@ -62,6 +63,7 @@ function Index(props: { selected: Tag[]; setSelected: (tags: Tag[]) => void }): 
                             </div>
                         )}
                         <hr />
+                        <small className="text-muted">Available</small>
                         {tags.isPreviousData && tags.data && (
                             <>
                                 <div className="d-flex">
@@ -92,7 +94,12 @@ function Index(props: { selected: Tag[]; setSelected: (tags: Tag[]) => void }): 
                                             <UnselectedTag tag={tag} select={select} key={tag.id} />
                                         ))}
                                 </div>
-                                {tags.data.data.total === 0 && (
+                                {tags.data.data.total === 0 && searchString.length > 0 && (
+                                    <div className="text-muted" style={{ display: 'inline' }}>
+                                        No tags match the keywords
+                                    </div>
+                                )}
+                                {tags.data.data.total === 0 && searchString.length === 0 && (
                                     <div className="text-muted" style={{ display: 'inline' }}>
                                         No tags available
                                     </div>

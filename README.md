@@ -10,48 +10,37 @@
 EOSC-Perf is a webapp made to host, search, compare and analyze benchmark results from many very diverse university
 server clusters.
 
-You can build it up by running
-
 ## Instructions
 
-To deploy the application:
+#### If you do not have an up-to-date version of docker-compose (e.g. Ubuntu)
+
+1. Create a python venv `python -m venv venv`
+2. Activate it `. ./venv/bin/activate`
+3. Install docker-compose `python -m pip install docker-compose`
+4. Whenever you need to use docker-compose, run `./venv/bin/docker-compose` instead
+
+#### To deploy the application:
 
 1. Set up a `.env` file: `cp .env-example .env`, configure it following the comments
-1. Set up a `.env.local` file for frontend-js: `cp .env .env.local` and fill in the blanks
-1. Configure your EGI-AAI OIDC client secret `oidc_secret.txt`
-1. Configure flask cookie encryption key `cookie_secret.txt`
-1. Configure NGINX API credentials `nginx_api_credentials.txt`:
+2. Set up a `service_frontend/.env.local` file containing `NEXT_PUBLIC_OIDC_REDIRECT_HOST=<your server host>`
+3. Configure your EGI-AAI OIDC client secret in `oidc_secret.txt`
+4. Configure flask cookie encryption key in `cookie_secret.txt`
+5. Configure NGINX API credentials in `nginx_api_credentials.txt` in the following format:
 
 ```
 USERNAME
 PASSWORD
 ```
 
-5. Set up a `upload_license.txt`: `cp upload_license.txt.placeholder upload_license.txt`, write content
-6. To generate HTTPS certs & nginx configuration: #TODO
-    * If you want to deploy to production: Run `bash init-lentsencrypt.sh`
-    * If you want to develop locally (on `localhost`): Run `bash init-dev-certs.sh`
 7. Run `docker-compose build`
 8. Run backend build steps in a venv
 9. Run `docker-compose up`
 
-To set up a development environment:
+#### To reset your database
 
-1. Set up a virtual environment: `python -m venv venv`
-1. Enable the virtual environment: `. ./venv/bin/activate`
-1. Install requirements: `pip install -r requirements.txt`
-    * The requirements will only be installed within the virtual environment.
+Run `./scripts/reset-database.sh` (Linux) or `./scripts/reset-database.ps1` (Windows)
 
-To build the backend:
-
-```bash
-docker-compose build  # Build services (including backend)
-docker-compose up  # Brings up the services (including backend)
-docker-compose run flask db migrate  # Creates a migration for the db from code
-docker-compose run flask db upgrade  # Upgrades/Creates tables on the db (using port)
-```
-
-To restore a database backup:
+#### To restore a database backup:
 
 1. Uncomment `- ./backups:/backups` in docker-compose.yaml
 1. Reset the database: `bash help_scripts/reset-database.sh`

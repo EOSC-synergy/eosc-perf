@@ -189,7 +189,7 @@ def add_demo(token: str, host: str, no_approve: bool):
             "benchmark_id": benchmark["id"],
             # "site_id": result_info['site']["id"],
             "flavor_id": result_info['flavor']["id"],
-            "execution_datetime": datetime.datetime.now().isoformat(),
+            "execution_datetime": datetime.datetime.now(datetime.timezone.utc).isoformat(),
             "tags_ids": []
         }, data=data_raw)
 

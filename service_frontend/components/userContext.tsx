@@ -25,6 +25,17 @@ export type UserInfo = {
      * Shorthand to check if the user is logged in
      */
     loggedIn: boolean;
+
+    /**
+     * Whether any component is still loading. Useful to prevent premature warnings or redirects.
+     */
+    loading: boolean;
+
+    /**
+     * Callbacks to log the user in or out
+     */
+    login: () => void;
+    logout: () => void;
 };
 
 /**
@@ -36,6 +47,9 @@ export const emptyUser: UserInfo = {
     admin: false,
     registered: false,
     loggedIn: false,
+    loading: false,
+    login: () => {},
+    logout: () => {},
 };
 
 export const UserContext = React.createContext(emptyUser);

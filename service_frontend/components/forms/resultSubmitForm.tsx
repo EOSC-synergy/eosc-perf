@@ -1,7 +1,6 @@
 import React, { ReactElement, ReactNode, useContext, useState } from 'react';
 import { JsonSelection } from 'components/jsonSelection';
 import { Alert, Button, Col, Form, Row } from 'react-bootstrap';
-import { TermsOfServiceCheck } from 'components/termsOfServiceCheck';
 import { UserContext } from 'components/userContext';
 import { useMutation } from 'react-query';
 import { Benchmark, Flavor, Result, Site, Tag } from 'model';
@@ -27,7 +26,7 @@ export function ResultSubmitForm(props: {
     const [site, setSite] = useState<Site | undefined>(undefined);
     const [flavor, setFlavor] = useState<Flavor | undefined>(undefined);
     const [tags, setTags] = useState<Tag[]>([]);
-    const [termsOfServiceAccepted, setTermsOfServiceAccepted] = useState(false);
+
     const [fileContents, setFileContents] = useState<string | undefined>(undefined);
 
     const [execDate, setExecDate] = useState<Date | null>(new Date());
@@ -55,14 +54,7 @@ export function ResultSubmitForm(props: {
     );
 
     function isFormValid() {
-        return (
-            benchmark &&
-            site &&
-            flavor &&
-            termsOfServiceAccepted &&
-            fileContents &&
-            auth.token !== undefined
-        );
+        return benchmark && site && flavor && fileContents && auth.token !== undefined;
     }
 
     function submit() {
@@ -140,12 +132,7 @@ export function ResultSubmitForm(props: {
                 </Row>
 
                 <Row className="align-items-center">
-                    <Col>
-                        <TermsOfServiceCheck
-                            accepted={termsOfServiceAccepted}
-                            setAccepted={setTermsOfServiceAccepted}
-                        />
-                    </Col>
+                    <Col />
                     <Col md="auto">
                         <Button variant="success" disabled={!isFormValid()} onClick={submit}>
                             Submit

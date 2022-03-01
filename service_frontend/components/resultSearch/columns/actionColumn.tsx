@@ -1,8 +1,7 @@
 import React, { ReactElement, useContext, useState } from 'react';
 import { Result } from 'model';
-import { Button, ButtonGroup, Modal } from 'react-bootstrap';
+import { Button, Dropdown, Modal, SplitButton } from 'react-bootstrap';
 import { ResultCallbacks } from 'components/resultSearch/resultCallbacks';
-import { Envelope, Exclamation, Hash, Trash } from 'react-bootstrap-icons';
 import { UserContext } from 'components/userContext';
 import { Ordered } from 'components/ordered';
 import { useMutation } from 'react-query';
@@ -22,9 +21,9 @@ function ResultDeleter({ result, onDelete }: { result: Result; onDelete: () => v
 
     return (
         <>
-            <Button variant="danger" onClick={() => setShowModal(true)}>
-                <Trash />
-            </Button>
+            <Dropdown.Item as="button" onClick={() => setShowModal(true)}>
+                Delete
+            </Dropdown.Item>
             <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Delete result</Modal.Title>
@@ -75,37 +74,37 @@ export function ActionColumn({
     const auth = useContext(UserContext);
 
     return (
-        <ButtonGroup size="sm">
-            <Button
-                variant="primary"
+        <SplitButton
+            variant="secondary"
+            title="View"
+            size="sm"
+            onClick={() => callbacks.display(result)}
+        >
+            <Dropdown.Item
+                as="button"
                 onClick={() => {
-                    callbacks.display(result);
+                    if (auth.loggedIn) {
+                        callbacks.report(result);
+                    } else {
+                        auth.login();
+                    }
                 }}
             >
-                <Hash />
-            </Button>
-            {auth.token !== undefined && (
-                <Button
-                    variant="warning"
-                    onClick={() => {
-                        callbacks.report(result);
-                    }}
-                >
-                    <Exclamation />
-                </Button>
-            )}
-            {auth.admin && (
+                Report {!auth.loggedIn && ' (login required)'}
+            </Dropdown.Item>
+            {auth.loggedIn && auth.admin && (
                 <>
                     <ResultDeleter result={result} onDelete={callbacks.reload} />
-                    <Button
-                        variant="secondary"
-                        onClick={() => undefined /* TODO: mail button */}
-                        disabled
+                    <Dropdown.Item
+                        as="button"
+                        onClick={() => {
+                            callbacks.edit(result);
+                        }}
                     >
-                        <Envelope />
-                    </Button>
+                        Edit
+                    </Dropdown.Item>
                 </>
             )}
-        </ButtonGroup>
+        </SplitButton>
     );
 }

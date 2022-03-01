@@ -13,4 +13,5 @@ export interface ResultCallbacks {
     // show pop up with result info & json
     display: (result: Result) => void;
     report: (result: Result) => void;
+    edit: (result: Result) => void;
 }

@@ -8,52 +8,77 @@ pipeline {
     agent any
 
     environment {
-        sqa_config_backend = ".sqa-backend/config.yml"
-        dockerhub_cicd_backend = "eoscperf/cicd-images:backend-1.0.1"
         dockerhub_credentials = "o3as-dockerhub-vykozlov"
     }
 
     stages {
-        stage('Build Docker image with tools for CI/CD (backend)') {
-            when {
-                anyOf {
-                   changeset 'service_backend/Dockerfile.cicd'
-                   changeset 'Jenkinsfile'
-                }
+        stage('SQA baseline dynamic stages') {
+            environment {
+                // get jenkins user id and group
+                jenkins_user_id = sh (returnStdout: true, script: 'id -u').trim()
+                jenkins_user_group = sh (returnStdout: true, script: 'id -g').trim()
             }
-            steps{
-                checkout scm
-                dir('service_backend/') {
-                    script {
-                        docker.withRegistry('', env.dockerhub_credentials) {
-                            def dockerfile = 'Dockerfile.cicd'
-                            def cicd_image_backend = docker.build(env.dockerhub_cicd_backend, 
-                                                                  "-f ${dockerfile} .")
-                            cicd_image_backend.push()
-                            cicd_image_backend.push('latest')
-                            // logout
-                            sh "docker logout"
-                        }
-                    }
-                    
-                }
-            }
-        }
-
-        stage('SQA baseline dynamic stages (backend)') {
-            // may execute this action, only when "service_backend" is changed
-            //when { changeset 'service_backend/*'}
             steps {
+                // execute 'backend'+'frontend' pipeline
                 script {
-                    projectConfig = pipelineConfig(configFile: env.sqa_config_backend)
+                    projectConfig = pipelineConfig()
                     buildStages(projectConfig)
                 }
             }
             post {
+                always {
+                    // BE: publish stylecheck (flake8) report:
+                    recordIssues(
+                        enabledForFailure: true, aggregatingResults: true,
+                        tool: pyLint(pattern: 'service_backend/tmp/flake8.log',
+                                     reportEncoding:'UTF-8',
+                                     name: 'BE - CheckStyle')
+                    )
+
+                    // BE: publish coverage report (only BE, works??):
+                    cobertura(
+                        coberturaReportFile: 'service_backend/tmp/be-coverage.xml',
+                        enableNewApi: true,
+                        failUnhealthy: false, failUnstable: false, onlyStable: false
+                    )
+
+                    // BE: publish bandit report:
+                    // according to https://vdwaa.nl/openstack-bandit-jenkins-integration.html
+                    // XML output of bandit can be parsed as JUnit
+                    recordIssues(
+                        enabledForFailure: true, aggregatingResults: true,
+                        tool: junitParser(pattern: 'service_backend/tmp/bandit.xml',
+                                           reportEncoding:'UTF-8',
+                                           name: 'BE - Bandit')
+                    )
+                    // FE: publish codestyle:
+                    // replace path in the docker container with relative path
+                    sh "sed -i 's/\\/perf-testing/./gi' service_frontend/eslint-codestyle.xml"
+                    recordIssues(
+                        enabledForFailure: true, aggregatingResults: true,
+                        tool: checkStyle(pattern: 'service_frontend/eslint-codestyle.xml',
+                                         reportEncoding:'UTF-8',
+                                         name: 'FE - CheckStyle')
+                    )
+
+                    // publish BE+FE coverage reports:
+                    // service_backend/tmp/be-coverage.xml +
+                    // service_frontend/coverage/fe-cobertura-coverage.xml:
+                    sh "cd service_frontend/coverage && mv cobertura-coverage.xml fe-cobertura-coverage.xml && cd -"
+                    publishCoverage(adapters: [coberturaAdapter(path: '**/*-coverage.xml')],
+                                    tag: 'Coverage', 
+                                    failUnhealthy: false, failUnstable: false
+                    )
+                    // FE: publish the output of npm audit:
+                    recordIssues(
+                        enabledForFailure: true, aggregatingResults: true,
+                        tool: issues(name: 'FE - NPM Audit', pattern:'service_frontend/npm-audit.json'),
+                    )
+                }
                 cleanup {
                     cleanWs()
                 }
             }
-        }  
+        }
     }
 }

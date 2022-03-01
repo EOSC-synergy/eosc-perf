@@ -18,8 +18,8 @@ export function NavHeader(): ReactElement {
     return (
         <header>
             <Navbar bg="dark" expand="lg" variant="dark">
-                <Navbar.Brand href="/" className="ms-2">
-                    <Image src={logo} height="40" alt="EOSC-Performance" />
+                <Navbar.Brand href="/" className="ms-4">
+                    <Image src={logo} height={36} width={66} alt="EOSC-Performance" />
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
@@ -43,6 +43,12 @@ export function NavHeader(): ReactElement {
                                 <NavDropdown.Item>Code guidelines</NavDropdown.Item>
                             </Link>
                         </NavDropdown>
+                        <Link
+                            href="https://appsgrycap.i3m.upv.es:31443/im-dashboard/login"
+                            passHref
+                        >
+                            <Nav.Link>Infrastructure Manager</Nav.Link>
+                        </Link>
                         {auth.admin && (
                             <NavDropdown title="Admin" id="base-admin-dropdown">
                                 <Link href="/report-view" passHref>
@@ -53,12 +59,6 @@ export function NavHeader(): ReactElement {
                                 </Link>
                             </NavDropdown>
                         )}
-                        <Link
-                            href="https://appsgrycap.i3m.upv.es:31443/im-dashboard/login"
-                            passHref
-                        >
-                            <Nav.Link>Infrastructure Manager</Nav.Link>
-                        </Link>
                     </Nav>
                     <Nav>
                         <NavDropdown

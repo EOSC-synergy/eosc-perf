@@ -11,14 +11,14 @@ export function Footer() {
             <div className="text-center">
                 <ul className="list-unstyled list-inline my-0">
                     <li className="list-inline-item mx-5">
-                        <div className="text-muted">
-                            <Link href="/terms-of-service">Terms of service</Link>
-                        </div>
+                        <Link href="/terms-of-service" passHref>
+                            <a className="text-muted">Terms of service</a>
+                        </Link>
                     </li>
                     <li className="list-inline-item mx-5">
-                        <div className="text-muted">
-                            <Link href="/privacy-policy">Privacy policy</Link>
-                        </div>
+                        <Link href="/privacy-policy" passHref>
+                            <a className="text-muted">Privacy policy</a>
+                        </Link>
                     </li>
                     <li className="list-inline-item mx-5">
                         <a href="mailto:perf-support@lists.kit.edu" className="text-muted">

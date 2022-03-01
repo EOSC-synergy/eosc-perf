@@ -1,5 +1,5 @@
-import React, { ReactElement, useState } from 'react';
-import { Button, Card, Col, Container, ListGroup, Row } from 'react-bootstrap';
+import React, { ReactElement, useEffect, useState } from 'react';
+import { Button, Card, Col, Container, Row, Stack } from 'react-bootstrap';
 import { LoadingOverlay } from 'components/loadingOverlay';
 import { useQuery } from 'react-query';
 import { JsonPreviewModal } from 'components/jsonPreviewModal';
@@ -11,18 +11,20 @@ import { Benchmark, Flavor, Result, Results, Site } from 'model';
 import { Paginator } from 'components/pagination';
 import { DiagramCard } from 'components/resultSearch/diagramCard';
 import { ResultReportModal } from 'components/resultReportModal';
+import { ResultEditModal } from 'components/resultEditModal';
 import { v4 as uuidv4 } from 'uuid';
 import { Filter } from 'components/resultSearch/filter';
 import { FilterEdit } from 'components/resultSearch/filterEdit';
 
 import { Ordered, orderedComparator } from 'components/ordered';
 import { parseSuggestions } from 'components/resultSearch/jsonSchema';
-import Flex from 'components/flex';
 import { SiteSearchPopover } from 'components/searchSelectors/siteSearchPopover';
 import { BenchmarkSearchSelect } from 'components/searchSelectors/benchmarkSearchSelect';
 import { FlavorSearchSelect } from 'components/searchSelectors/flavorSearchSelect';
 import { Sorting, SortMode } from 'components/resultSearch/sorting';
 import { useRouter } from 'next/router';
+import { Funnel, Save2 } from 'react-bootstrap-icons';
+import { fetchSubkey } from '../../components/resultSearch/jsonKeyHelpers';
 
 /**
  * Search page for ran benchmarks
@@ -37,6 +39,12 @@ function ResultSearch(): ReactElement {
     const [flavor, setFlavor] = useState<Flavor | undefined>(undefined);
 
     const [filters, setFilters] = useState<Map<string, Filter>>(new Map());
+
+    const [browserLoaded, setBrowserLoaded] = useState<boolean>(false);
+
+    useEffect(() => {
+        setBrowserLoaded(true);
+    }, []);
 
     const [sorting, setSorting] = useState<Sorting>({
         mode: SortMode.Disabled,
@@ -80,11 +88,13 @@ function ResultSearch(): ReactElement {
     const [showJSONPreview, setShowJSONPreview] = useState(false);
 
     const [showReportModal, setShowReportModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
 
     const [selectedResults, setSelectedResults] = useState<Ordered<Result>[]>([]);
 
     const [previewResult, setPreviewResult] = useState<Result | null>(null);
     const [reportedResult, setReportedResult] = useState<Result | null>(null);
+    const [editedResult, setEditedResult] = useState<Result | null>(null);
 
     //
     const [customColumns, setCustomColumns] = useState<string[]>([]);
@@ -135,6 +145,10 @@ function ResultSearch(): ReactElement {
             setReportedResult(result);
             setShowReportModal(true);
         },
+        edit: function (result: Result) {
+            setEditedResult(result);
+            setShowEditModal(true);
+        },
     };
 
     // hash used for queryKey to not have to add a dozen strings
@@ -159,21 +173,17 @@ function ResultSearch(): ReactElement {
                 benchmark_id: benchmark?.id,
                 site_id: site?.id,
                 flavor_id: site !== undefined ? flavor?.id : undefined,
-                filters: [...filters.keys()]
-                    .map((k) => {
-                        const filter = filters.get(k);
-                        if (
-                            filter === undefined ||
-                            filter.key.length === 0 ||
-                            filter.value.length === 0
-                        ) {
-                            return undefined;
-                        }
-                        return filter.key + ' ' + filter.mode + ' ' + filter.value;
-                    })
-                    .filter((v?: string) => {
-                        return v !== undefined;
-                    }),
+                filters: [...filters.keys()].flatMap((k) => {
+                    const filter = filters.get(k);
+                    if (
+                        filter === undefined ||
+                        filter.key.length === 0 ||
+                        filter.value.length === 0
+                    ) {
+                        return [];
+                    }
+                    return [filter.key + ' ' + filter.mode + ' ' + filter.value];
+                }),
                 sort_by:
                     sorting.mode === SortMode.Ascending
                         ? '+' + sorting.key
@@ -232,127 +242,178 @@ function ResultSearch(): ReactElement {
         refreshLocation(benchmark, site, flavor);
     }
 
+    function exportResults() {
+        let lines = [];
+        // TODO: include other ids? they can be retrieved using result id
+        // let header = 'id,site_id,flavor_id,benchmark_id';
+        // let header = 'id';
+        let header = 'id,site,flavor,benchmark';
+        if (customColumns.length !== 0) {
+            header = header.concat(',', customColumns.join(','));
+        }
+        lines.push(header);
+        for (const result of selectedResults) {
+            // let entry = `${result.id},${result.site.id},${result.flavor.id},${result.benchmark.id}`;
+            // let entry = `${result.id}`;
+            let entry = `${result.id},${result.site.name},${result.flavor.name},${
+                result.benchmark.docker_image + ':' + result.benchmark.docker_tag
+            }`;
+            for (const column of customColumns) {
+                // .map.join?
+                entry = entry.concat(',' + fetchSubkey(result.json, column));
+            }
+            lines.push(entry);
+        }
+
+        // TODO: more elemgant way to save stuff?
+        const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+        let a = document.createElement('a'),
+            url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download = 'export.csv';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 0);
+    }
+
     return (
         <>
             <Head>
                 <title>Search</title>
             </Head>
             <Container fluid="xl">
-                <Row>
-                    <Col md={true} className="mb-2">
-                        <Card>
-                            <Card.Header>Filters</Card.Header>
-                            <Card.Body>
-                                {router.isReady && (
-                                    <>
-                                        <BenchmarkSearchSelect
-                                            benchmark={benchmark}
-                                            initBenchmark={(b) => setBenchmark(b)}
-                                            setBenchmark={updateBenchmark}
-                                            initialBenchmarkId={
-                                                router.query.benchmarkId as string | undefined
-                                            }
-                                        />
-                                        <SiteSearchPopover
-                                            site={site}
-                                            initSite={(s) => setSite(s)}
-                                            setSite={updateSite}
-                                            initialSiteId={
-                                                router.query.siteId as string | undefined
-                                            }
-                                        />
-                                        <FlavorSearchSelect
-                                            site={site}
-                                            flavor={flavor}
-                                            initFlavor={(f) => setFlavor(f)}
-                                            setFlavor={updateFlavor}
-                                            initialFlavorId={
-                                                router.query.flavorId as string | undefined
-                                            }
-                                        />
-                                    </>
-                                )}
-                                <hr />
-                                <ListGroup variant="flush">
-                                    {[...filters.keys()].flatMap((key) => {
+                <Stack gap={2}>
+                    <DiagramCard
+                        results={selectedResults}
+                        benchmark={benchmark}
+                        suggestions={suggestedFields}
+                    />
+                    <Card>
+                        <Card.Body>
+                            {browserLoaded && router.isReady && (
+                                <Stack gap={2}>
+                                    <BenchmarkSearchSelect
+                                        benchmark={benchmark}
+                                        initBenchmark={(b) => setBenchmark(b)}
+                                        setBenchmark={updateBenchmark}
+                                        initialBenchmarkId={
+                                            router.query.benchmarkId as string | undefined
+                                        }
+                                    />
+                                    <SiteSearchPopover
+                                        site={site}
+                                        initSite={(s) => setSite(s)}
+                                        setSite={updateSite}
+                                        initialSiteId={router.query.siteId as string | undefined}
+                                    />
+                                    <FlavorSearchSelect
+                                        site={site}
+                                        flavor={flavor}
+                                        initFlavor={(f) => setFlavor(f)}
+                                        setFlavor={updateFlavor}
+                                        initialFlavorId={
+                                            router.query.flavorId as string | undefined
+                                        }
+                                    />
+                                </Stack>
+                            )}
+                            <hr />
+                            <Stack gap={2}>
+                                <Stack gap={1}>
+                                    {[...filters.keys()].flatMap((key, index) => {
                                         const filter = filters.get(key);
                                         if (filter === undefined) {
                                             return [];
                                         }
 
                                         return [
-                                            <ListGroup.Item key={key}>
-                                                <FilterEdit
-                                                    filter={filter}
-                                                    setFilter={setFilter}
-                                                    deleteFilter={deleteFilter}
-                                                    suggestions={suggestedFields}
-                                                />
-                                            </ListGroup.Item>,
+                                            <FilterEdit
+                                                key={index}
+                                                filter={filter}
+                                                setFilter={setFilter}
+                                                deleteFilter={deleteFilter}
+                                                suggestions={suggestedFields}
+                                            />,
                                         ];
                                     })}
-                                </ListGroup>
-                                <Flex>
-                                    <Flex.FloatLeft>
-                                        <Button variant="success" onClick={addFilter}>
-                                            Add filter
-                                        </Button>
-                                    </Flex.FloatLeft>
-                                    <Flex.FloatRight className="d-flex">
-                                        <Button onClick={() => results.refetch()}>
-                                            Apply filters
-                                        </Button>
-                                    </Flex.FloatRight>
-                                </Flex>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                    <Col className="mb-2">
-                        <DiagramCard
-                            results={selectedResults}
-                            benchmark={benchmark}
-                            suggestions={suggestedFields}
-                        />
-                    </Col>
-                </Row>
-                <Card>
-                    <div style={{ overflowX: 'auto' }}>
-                        {results.isSuccess && results.data && results.data.data.total > 0 && (
-                            <ResultTable
-                                results={results.data.data.items}
-                                pageOffset={results.data.data.per_page * results.data.data.page}
-                                ops={resultOps}
-                                suggestions={suggestedFields}
-                                sorting={sorting}
-                                setSorting={(sort) => {
-                                    setSorting(sort);
-                                }}
-                                customColumns={customColumns}
-                                setCustomColumns={setCustomColumns}
-                            />
-                        )}
-                        {results.isSuccess && results.data.data.total === 0 && (
-                            <div className="text-muted m-2">No results found! :(</div>
-                        )}
-                        {results.isError && 'Error while loading results'}
-                        {results.isLoading && <LoadingOverlay />}
-                    </div>
-                    {/* fuck flexbox & CSS spacing */}
-                    {results.isSuccess && (
-                        <Row className="mt-2 mx-2">
-                            <Col xs={true} sm={7} md={5} xl={4} xxl={3} className="mb-2">
-                                <ResultsPerPageSelection
-                                    onChange={setResultsPerPage}
-                                    currentSelection={resultsPerPage}
-                                />
-                            </Col>
-                            <Col />
-                            <Col sm={true} md="auto" className="mb-2">
-                                <Paginator pagination={results.data.data} navigateTo={setPage} />
-                            </Col>
-                        </Row>
-                    )}
-                </Card>
+                                </Stack>
+                                <Row>
+                                    <Col />
+                                    <Col md="auto">
+                                        <Stack direction="horizontal" gap={2}>
+                                            <Button
+                                                variant="secondary"
+                                                disabled={selectedResults.length === 0}
+                                                onClick={exportResults}
+                                            >
+                                                <Save2 /> Export
+                                            </Button>
+                                            <Button variant="success" onClick={addFilter}>
+                                                + Add filter
+                                            </Button>
+                                            <Button
+                                                variant="warning"
+                                                onClick={() => results.refetch()}
+                                            >
+                                                <Funnel /> Apply Filters
+                                            </Button>
+                                        </Stack>
+                                    </Col>
+                                </Row>
+                                <Stack gap={2}>
+                                    <div style={{ overflowX: 'auto' }}>
+                                        {results.isSuccess &&
+                                            results.data &&
+                                            results.data.data.total > 0 && (
+                                                <ResultTable
+                                                    results={results.data.data.items}
+                                                    pageOffset={
+                                                        results.data.data.per_page *
+                                                        results.data.data.page
+                                                    }
+                                                    ops={resultOps}
+                                                    suggestions={suggestedFields}
+                                                    sorting={sorting}
+                                                    setSorting={(sort) => {
+                                                        setSorting(sort);
+                                                    }}
+                                                    customColumns={customColumns}
+                                                    setCustomColumns={setCustomColumns}
+                                                />
+                                            )}
+                                        {results.isSuccess && results.data.data.total === 0 && (
+                                            <div className="text-muted m-2">
+                                                No results found! :(
+                                            </div>
+                                        )}
+                                        {results.isError && 'Error while loading results'}
+                                        {results.isLoading && <LoadingOverlay />}
+                                    </div>
+                                    {results.isSuccess && (
+                                        <Row className="mx-2">
+                                            <Col xs={true} sm={7} md={5} xl={4} xxl={3}>
+                                                <ResultsPerPageSelection
+                                                    onChange={setResultsPerPage}
+                                                    currentSelection={resultsPerPage}
+                                                />
+                                            </Col>
+                                            <Col />
+                                            <Col sm={true} md="auto">
+                                                <Paginator
+                                                    pagination={results.data.data}
+                                                    navigateTo={setPage}
+                                                />
+                                            </Col>
+                                        </Row>
+                                    )}
+                                </Stack>
+                            </Stack>
+                        </Card.Body>
+                    </Card>
+                </Stack>
             </Container>
             {previewResult && (
                 <JsonPreviewModal
@@ -370,6 +431,16 @@ function ResultSearch(): ReactElement {
                         setShowReportModal(false);
                     }}
                     result={reportedResult}
+                />
+            )}
+            {editedResult && (
+                <ResultEditModal
+                    show={showEditModal}
+                    closeModal={() => {
+                        results.refetch();
+                        setShowEditModal(false);
+                    }}
+                    result={editedResult}
                 />
             )}
         </>
