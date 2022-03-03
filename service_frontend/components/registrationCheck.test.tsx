@@ -9,6 +9,7 @@ const legalUser: UserInfo = {
     registered: true,
     admin: true,
     loggedIn: true,
+    loading: false,
 };
 
 describe('registration check', () => {

@@ -15,6 +15,8 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { RegistrationCheck } from 'components/registrationCheck';
 import TagSelector from 'components/tagSelector';
+import { LoginCheck } from '../loginCheck';
+import { LoadingWrapper } from '../loadingOverlay';
 
 export function ResultSubmitForm(props: {
     onSuccess: () => void;
@@ -71,11 +73,9 @@ export function ResultSubmitForm(props: {
     }
 
     return (
-        <>
-            {auth.token === undefined && (
-                <Alert variant="danger">You must be logged in to submit new results!</Alert>
-            )}
+        <LoadingWrapper isLoading={auth.loading}>
             {errorMessage !== undefined && <Alert variant="danger">Error: {errorMessage}</Alert>}
+            <LoginCheck message={'You must be logged in to submit new results!'} />
             <RegistrationCheck />
             <Form>
                 <Row>
@@ -140,6 +140,6 @@ export function ResultSubmitForm(props: {
                     </Col>
                 </Row>
             </Form>
-        </>
+        </LoadingWrapper>
     );
 }

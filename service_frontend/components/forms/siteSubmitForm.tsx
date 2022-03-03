@@ -7,6 +7,8 @@ import { postHelper } from 'components/api-helpers';
 import { AxiosError } from 'axios';
 import { getErrorMessage } from 'components/forms/getErrorMessage';
 import { RegistrationCheck } from 'components/registrationCheck';
+import { LoadingWrapper } from '../loadingOverlay';
+import { LoginCheck } from '../loginCheck';
 
 // TODO: do not show invalid on first load
 //       use default state valid?
@@ -64,11 +66,9 @@ export function SiteSubmitForm(props: {
     }
 
     return (
-        <>
-            {auth.token === undefined && (
-                <Alert variant="danger">You must be logged in to submit new sites!</Alert>
-            )}
+        <LoadingWrapper isLoading={auth.loading}>
             {errorMessage !== undefined && <Alert variant="danger">Error: {errorMessage}</Alert>}
+            <LoginCheck message="You must be logged in to submit new sites!" />
             <RegistrationCheck />
             <Form>
                 <Form.Group>
@@ -107,6 +107,6 @@ export function SiteSubmitForm(props: {
                     Submit
                 </Button>
             </Form>
-        </>
+        </LoadingWrapper>
     );
 }

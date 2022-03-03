@@ -9,6 +9,8 @@ import { getErrorMessage } from 'components/forms/getErrorMessage';
 import benchmarkJsonSchema from 'components/benchmarkJsonSchemaExample.json';
 import { RegistrationCheck } from 'components/registrationCheck';
 import Link from 'next/link';
+import { LoadingWrapper } from '../loadingOverlay';
+import { LoginCheck } from '../loginCheck';
 
 // TODO: do not show invalid on first load
 //       use default state valid?
@@ -66,12 +68,7 @@ export function BenchmarkSubmitForm(props: {
     }
 
     function isFormValid() {
-        return (
-            isDockerNameValid() &&
-            isDockerTagValid() &&
-            isTemplateValid() &&
-            auth.token !== undefined
-        );
+        return isDockerNameValid() && isDockerTagValid() && isTemplateValid() && auth.loggedIn;
     }
 
     function onSubmit() {
@@ -89,11 +86,9 @@ export function BenchmarkSubmitForm(props: {
     }
 
     return (
-        <>
-            {auth.token === undefined && (
-                <Alert variant="danger">You must be logged in to submit new benchmarks!</Alert>
-            )}
+        <LoadingWrapper isLoading={auth.loading}>
             {errorMessage !== undefined && <Alert variant="danger">Error: {errorMessage}</Alert>}
+            <LoginCheck message="You must be logged in to submit new benchmarks!" />
             <RegistrationCheck />
             <Form>
                 <Form.Group className="mb-3" controlId="benchmark">
@@ -148,6 +143,6 @@ export function BenchmarkSubmitForm(props: {
                     Submit
                 </Button>
             </Form>
-        </>
+        </LoadingWrapper>
     );
 }
