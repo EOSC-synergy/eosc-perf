@@ -29,18 +29,17 @@ user-created tags which may be used for annotation or search filtering.
 
 Users can search through all results and filter results by sites, benchmarks, tags, uploaders, and even specific JSON
 data-points that are part of the result data.
-Users can then select multiple results and generate various types of comparison pages, like speedup graphs.
+Users can then select multiple results and generate various types of comparison pages, such as speedup graphs.
 
 If results are inaccurate, users may report them to administrators.
 
-It supports submitting new benchmark types by packing them in Docker images and submitting their names here. After this,
+It supports submitting new benchmark types by running them in Docker images and submitting their names here. After this,
 you may submit new benchmark results associated to this kind of benchmark.
 The benchmark software has to generate a JSON output in order to be integrated in the service.
 
-Users may authenticate themselves through `EGI AAI Check-In <https://wiki.egi.eu/wiki/AAI>`_, which lets them connect
-using their university account of choice.
+Users may authenticate themselves through `EGI AAI Check-In <https://wiki.egi.eu/wiki/AAI>`_, which allows them to use single-sign-on with their university.
 
-The service also provides the full-featured `API <https://performance.services.fedcloud.eu/api/v1/>`__ allowing to communicate
+The service also provides a fully-featured `API <https://performance.services.fedcloud.eu/api/v1/>`__ allowing to communicate
 with the service from external applications, e.g to add new results by automated scripts.
 
 Please, check our :doc:`Tutorials <tutorials>` for more details on how to use the service.
