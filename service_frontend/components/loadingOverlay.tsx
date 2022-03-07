@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 
 import style from 'styles/loadingOverlay.module.css';
 
@@ -17,4 +17,17 @@ export function LoadingOverlay(): ReactElement {
             </div>
         </div>
     );
+}
+
+export function LoadingWrapper({
+    isLoading,
+    children,
+}: {
+    isLoading: boolean;
+    children: ReactNode;
+}) {
+    if (isLoading) {
+        return <LoadingOverlay />;
+    }
+    return <>{children}</>;
 }

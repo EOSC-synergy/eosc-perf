@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react';
 import Head from 'next/head';
+import { Container } from 'react-bootstrap';
 
 /**
  * Dummy page for oidc-redirect route.
@@ -15,7 +16,7 @@ function OidcRedirect(): ReactElement {
             <Head>
                 <title>Redirecting</title>
             </Head>
-            Logging you in...
+            <Container>Logging you in...</Container>
         </>
     );
 }

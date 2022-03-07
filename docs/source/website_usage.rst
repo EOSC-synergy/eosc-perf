@@ -1,12 +1,14 @@
-****************
-Search & compare
-****************
+****************************************
+Searching through results on the website
+****************************************
+
+When you first load the website, you will be redirected to the `result search page <https://performance.services.fedcloud.eu/search/results>`__.
+By default, it will display up the 20 most recently uploaded results.
+Not every data is useful to everyone, so the user is provided with some tools to filter out irrelevant data.
 
 Filtering
 #########
 
-Overview
-********
 The application offers filtering the results by various criteria, including the benchmark that was ran [1], the site it was ran on [2], and the configuration of virtual machine (‘flavor’) that was used [3].
 Additionally, users may filter by any amount of data points, specifically specific fields from the results’ JSON data. Users may refer [4]  to a field in the json structure by chaining together the names of the keys with periods, and compare it against given values [6].
 For example, ::
@@ -38,9 +40,6 @@ JSON Filter:
 Compare in table
 ################
 
-Overview
-********
-
 Results matching the search criteria are displayed in a table. This table can be used to interact with specific results (selecting [2], viewing or reporting[5]), and can also be configured to display columns containing specific data fields [4], using the json structure notation explained in the Search overview.
 
 Detail
@@ -60,8 +59,6 @@ Detail
 Compare on the plot
 ###################
 
-Overview
-********
 You may generate a plot using the values you have selected. The range of features may vary by which diagram engine you have selected, but the most common one, Apache ECharts, allows you to select one JSON value for each axis and configuring the plot scaling. The diagram will then display all selected results as a 2D graph.
 
 Detail

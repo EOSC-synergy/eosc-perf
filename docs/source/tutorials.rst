@@ -1,6 +1,8 @@
 Tutorials
 ==========
 
+Below are a few tutorials to demonstrate how to interact with the service.
+
 .. toctree::
    :maxdepth: 1
 

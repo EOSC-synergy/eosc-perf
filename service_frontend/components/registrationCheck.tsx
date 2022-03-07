@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { UserContext } from 'components/userContext';
-import { Alert } from 'react-bootstrap';
+import { Alert, Button, Col, Row } from 'react-bootstrap';
 import Link from 'next/link';
 
 /**
@@ -12,10 +12,19 @@ export function RegistrationCheck() {
 
     return (
         <>
-            {auth.token && !auth.registered && (
+            {!auth.loading && auth.loggedIn && !auth.registered && (
                 <Alert variant="warning">
-                    You must register before submitting data to the services on this website! Have a
-                    look at the <Link href="/registration">registration page</Link>.
+                    <Row className="align-items-center">
+                        <Col>
+                            You must register before submitting data to the services on this
+                            website!
+                        </Col>
+                        <Col md="auto">
+                            <Link as={'a'} href="/registration" passHref>
+                                <Button variant="secondary">Register</Button>
+                            </Link>
+                        </Col>
+                    </Row>
                 </Alert>
             )}
         </>
