@@ -38,6 +38,7 @@ On the result submission page:
 5. Deselect / select nothing
 6. Submit a new entry
 
-
 Uploading a result via the API
 ##############################
+
+For a detailed example on how to use the API to submit a result, please have a look at the `Jupyter notebook <https://github.com/EOSC-synergy/eosc-perf/blob/master/service_backend/docs/source/features/results.ipynb>`__.
