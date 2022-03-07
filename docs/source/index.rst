@@ -11,8 +11,8 @@ Welcome to eosc-perf's documentation!
    :caption: Contents:
 
    intro
-   instructions
-   eosc_perf
+   tutorials
+   providers
 
 
 Indices and tables

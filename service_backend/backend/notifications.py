@@ -1,8 +1,8 @@
 """Module with notification definitions for users and admins."""
+from functools import wraps
+
 from flask import current_app
 from flask_mailman import EmailMessage
-from functools import wraps
-from flask import current_app
 
 
 def warning_if_fail(notification):
@@ -13,6 +13,7 @@ def warning_if_fail(notification):
         except Exception as err:
             current_app.logger.warning(f"{err}")
             return err
+
     return decorated
 
 
@@ -34,8 +35,8 @@ def user_welcome(user):
     return EmailMessage(
         subject="Thank you for registering",
         body=user_welcome_body,
-        from_email=current_app.config['MAIL_FROM'],
-        to=[user.email]
+        from_email=current_app.config["MAIL_FROM"],
+        to=[user.email],
     ).send()
 
 
@@ -57,8 +58,8 @@ def email_updated(user):
     return EmailMessage(
         subject="Your user information was updated",
         body=email_update_body,
-        from_email=current_app.config['MAIL_FROM'],
-        to=[user.email]
+        from_email=current_app.config["MAIL_FROM"],
+        to=[user.email],
     ).send()
 
 
@@ -67,7 +68,7 @@ def email_updated(user):
 resource_submitted_body = """
 Dear user,
 
-Your '{resource.__class__.__name__}' was successfully submitted, 
+Your '{resource.__class__.__name__}' was successfully submitted,
 our administrators now will review the data to accept it into our system.
 Resource: {resource.id}
 
@@ -84,10 +85,10 @@ def resource_submitted(resource):
     return EmailMessage(
         subject=f"New {resource_type} resource submitted: {resource.id}",
         body=resource_submitted_body.format(resource=resource),
-        headers={'Resource-ID': f"{resource.id}"},
-        from_email=current_app.config['MAIL_FROM'],
+        headers={"Resource-ID": f"{resource.id}"},
+        from_email=current_app.config["MAIL_FROM"],
         to=[resource.uploader.email],
-        cc=[current_app.config['MAIL_SUPPORT']],
+        cc=[current_app.config["MAIL_SUPPORT"]],
     ).send()
 
 
@@ -111,10 +112,10 @@ def resource_approved(resource):
     return EmailMessage(
         subject=f"Resource approved: {resource.id}",
         body=resource_approved_body.format(resource=resource),
-        headers={'Resource-ID': f"{resource.id}"},
-        from_email=current_app.config['MAIL_FROM'],
+        headers={"Resource-ID": f"{resource.id}"},
+        from_email=current_app.config["MAIL_FROM"],
         to=[resource.uploader.email],
-        cc=[current_app.config['MAIL_SUPPORT']],
+        cc=[current_app.config["MAIL_SUPPORT"]],
     ).send()
 
 
@@ -123,7 +124,7 @@ def resource_approved(resource):
 resource_rejected_body = """
 Dear user,
 
-Unfortunately your '{resource.__class__.__name__}' has been rejected 
+Unfortunately your '{resource.__class__.__name__}' has been rejected
 by our administrators.
 Please check the submitted information and do not hesitate to contact
 resource: {resource.id}
@@ -140,10 +141,10 @@ def resource_rejected(uploader, resource):
     return EmailMessage(
         subject=f"Resource rejected: {resource.id}",
         body=resource_rejected_body.format(resource=resource),
-        headers={'Resource-ID': f"{resource.id}"},
-        from_email=current_app.config['MAIL_FROM'],
+        headers={"Resource-ID": f"{resource.id}"},
+        from_email=current_app.config["MAIL_FROM"],
         to=[uploader.email],
-        cc=[current_app.config['MAIL_SUPPORT']],
+        cc=[current_app.config["MAIL_SUPPORT"]],
     ).send()
 
 
@@ -171,10 +172,10 @@ def result_claimed(result, claim):
     return EmailMessage(
         subject=f"Claim submitted on result: {result.id}",
         body=result_claimed_body.format(result=result, claim=claim),
-        headers={'Result-ID': f"{result.id}", 'Claim-ID': f"{claim.id}"},
-        from_email=current_app.config['MAIL_FROM'],
+        headers={"Result-ID": f"{result.id}", "Claim-ID": f"{claim.id}"},
+        from_email=current_app.config["MAIL_FROM"],
         to=[result.uploader.email],
-        cc=[current_app.config['MAIL_SUPPORT']],
+        cc=[current_app.config["MAIL_SUPPORT"]],
     ).send()
 
 
@@ -199,8 +200,8 @@ def result_restored(result):
     return EmailMessage(
         subject=f"Result restored: {result.id}",
         body=result_restored_body.format(result=result),
-        headers={'Result-ID': result.id},
-        from_email=current_app.config['MAIL_FROM'],
+        headers={"Result-ID": result.id},
+        from_email=current_app.config["MAIL_FROM"],
         to=[result.uploader.email],
-        cc=[current_app.config['MAIL_SUPPORT']],
+        cc=[current_app.config["MAIL_SUPPORT"]],
     ).send()

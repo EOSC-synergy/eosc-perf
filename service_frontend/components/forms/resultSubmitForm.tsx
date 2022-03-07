@@ -1,7 +1,6 @@
 import React, { ReactElement, ReactNode, useContext, useState } from 'react';
 import { JsonSelection } from 'components/jsonSelection';
 import { Alert, Button, Col, Form, Row } from 'react-bootstrap';
-import { TermsOfServiceCheck } from 'components/termsOfServiceCheck';
 import { UserContext } from 'components/userContext';
 import { useMutation } from 'react-query';
 import { Benchmark, Flavor, Result, Site, Tag } from 'model';
@@ -16,6 +15,8 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { RegistrationCheck } from 'components/registrationCheck';
 import TagSelector from 'components/tagSelector';
+import { LoginCheck } from '../loginCheck';
+import { LoadingWrapper } from '../loadingOverlay';
 
 export function ResultSubmitForm(props: {
     onSuccess: () => void;
@@ -27,7 +28,7 @@ export function ResultSubmitForm(props: {
     const [site, setSite] = useState<Site | undefined>(undefined);
     const [flavor, setFlavor] = useState<Flavor | undefined>(undefined);
     const [tags, setTags] = useState<Tag[]>([]);
-    const [termsOfServiceAccepted, setTermsOfServiceAccepted] = useState(false);
+
     const [fileContents, setFileContents] = useState<string | undefined>(undefined);
 
     const [execDate, setExecDate] = useState<Date | null>(new Date());
@@ -55,14 +56,7 @@ export function ResultSubmitForm(props: {
     );
 
     function isFormValid() {
-        return (
-            benchmark &&
-            site &&
-            flavor &&
-            termsOfServiceAccepted &&
-            fileContents &&
-            auth.token !== undefined
-        );
+        return benchmark && site && flavor && fileContents && auth.token !== undefined;
     }
 
     function submit() {
@@ -79,11 +73,9 @@ export function ResultSubmitForm(props: {
     }
 
     return (
-        <>
-            {auth.token === undefined && (
-                <Alert variant="danger">You must be logged in to submit new results!</Alert>
-            )}
+        <LoadingWrapper isLoading={auth.loading}>
             {errorMessage !== undefined && <Alert variant="danger">Error: {errorMessage}</Alert>}
+            <LoginCheck message={'You must be logged in to submit new results!'} />
             <RegistrationCheck />
             <Form>
                 <Row>
@@ -140,12 +132,7 @@ export function ResultSubmitForm(props: {
                 </Row>
 
                 <Row className="align-items-center">
-                    <Col>
-                        <TermsOfServiceCheck
-                            accepted={termsOfServiceAccepted}
-                            setAccepted={setTermsOfServiceAccepted}
-                        />
-                    </Col>
+                    <Col />
                     <Col md="auto">
                         <Button variant="success" disabled={!isFormValid()} onClick={submit}>
                             Submit
@@ -153,6 +140,6 @@ export function ResultSubmitForm(props: {
                     </Col>
                 </Row>
             </Form>
-        </>
+        </LoadingWrapper>
     );
 }

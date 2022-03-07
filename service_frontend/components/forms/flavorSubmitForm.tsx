@@ -7,6 +7,8 @@ import { AxiosError } from 'axios';
 import { Alert, Button, Form } from 'react-bootstrap';
 import { getErrorMessage } from 'components/forms/getErrorMessage';
 import { RegistrationCheck } from 'components/registrationCheck';
+import { LoadingWrapper } from '../loadingOverlay';
+import { LoginCheck } from '../loginCheck';
 
 // TODO: do not show invalid on first load
 //       use default state valid?
@@ -61,11 +63,9 @@ export function FlavorSubmitForm(props: {
     }
 
     return (
-        <>
-            {auth.token === undefined && (
-                <Alert variant="danger">You must be logged in to submit new site flavors!</Alert>
-            )}
+        <LoadingWrapper isLoading={auth.loading}>
             {errorMessage !== undefined && <Alert variant="danger">Error: {errorMessage}</Alert>}
+            <LoginCheck message="You must be logged in to submit new site flavors!" />
             <RegistrationCheck />
             <Form>
                 <Form.Group className="mb-3">
@@ -95,6 +95,6 @@ export function FlavorSubmitForm(props: {
                     Submit
                 </Button>
             </Form>
-        </>
+        </LoadingWrapper>
     );
 }

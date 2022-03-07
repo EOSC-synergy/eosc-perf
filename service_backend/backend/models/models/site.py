@@ -1,5 +1,5 @@
 """Sites module."""
-from sqlalchemy import Column, ForeignKeyConstraint, Text, UniqueConstraint
+from sqlalchemy import Column, ForeignKeyConstraint, Text
 from sqlalchemy.orm import relationship
 
 from ..core import PkModel

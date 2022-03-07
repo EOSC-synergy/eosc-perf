@@ -7,9 +7,9 @@ from marshmallow.validate import OneOf
 from . import BaseSchema as Schema
 from . import Id, Pagination, UploadDatetime, fields
 
+
 # ---------------------------------------------------------------------
 # Definition of User schemas
-
 
 class User(Schema):
 
@@ -68,6 +68,13 @@ class Submit(UploadDatetime, Schema):
     resource_id = fields.UUID(
         description="UUID resource unique identification",
         example=str(uuid.uuid4()), required=True
+    )
+
+    #: (User, required):
+    #: Resource uploader/creator
+    uploader = fields.Nested(
+        User, attribute="resource.uploader",
+        required=True, dump_only=True,
     )
 
     @post_dump

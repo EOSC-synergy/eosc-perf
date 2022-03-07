@@ -17,6 +17,7 @@ export function SearchingSelector<Item extends Identifiable>(props: {
     display: (item?: Item) => ReactNode;
     displayRow: (item: Item) => ReactNode;
     submitNew?: () => void;
+    disabled?: boolean;
 }): ReactElement {
     //const [resultsPerPage, setResultsPerPage] = useState(10);
     const [page, setPage] = useState(0);
@@ -34,6 +35,7 @@ export function SearchingSelector<Item extends Identifiable>(props: {
             });
         },
         {
+            enabled: !props.disabled,
             refetchOnWindowFocus: false, // do not spam queries
         }
     );
@@ -103,24 +105,22 @@ export function SearchingSelector<Item extends Identifiable>(props: {
     );
 
     return (
-        <div className="my-1">
-            <Row>
-                <Col>{props.display(props.item)} </Col>
-                <Col md="auto">
-                    <OverlayTrigger
-                        trigger="click"
-                        placement="bottom"
-                        overlay={popover}
-                        rootClose
-                        show={show}
-                        onToggle={onToggle}
-                    >
-                        <Button variant="success" size="sm">
-                            Select
-                        </Button>
-                    </OverlayTrigger>
-                </Col>
-            </Row>
-        </div>
+        <Row>
+            <Col>{props.display(props.item)} </Col>
+            <Col md="auto">
+                <OverlayTrigger
+                    trigger="click"
+                    placement="bottom"
+                    overlay={popover}
+                    rootClose
+                    show={show}
+                    onToggle={onToggle}
+                >
+                    <Button variant="success" size="sm" disabled={props.disabled}>
+                        Select
+                    </Button>
+                </OverlayTrigger>
+            </Col>
+        </Row>
     );
 }

@@ -1,6 +1,9 @@
 """Results URL routes. Collection of controller methods to create and
 operate existing benchmark results on the database.
 """
+import datetime as dt
+
+import pytz
 from flask_smorest import Blueprint, abort
 from sqlalchemy import and_, or_
 from sqlalchemy.exc import IntegrityError
@@ -8,7 +11,7 @@ from sqlalchemy.exc import IntegrityError
 from .. import models, notifications
 from ..extensions import auth, db
 from ..schemas import args, schemas
-from ..utils import queries, filters
+from ..utils import filters, queries
 
 blp = Blueprint(
     'results', __name__, description='Operations on results'
@@ -124,8 +127,11 @@ def create(*args, **kwargs):
     be accessed by the application users. The method returns the complete
     created result (if succeeds).
 
-    Note: The uploaded result must pass the benchmark JSON Schema to be
+    The uploaded result must pass the benchmark JSON Schema to be
     accepted, otherwise 422 UnprocessableEntity is produced.
+    In addition, an execution_datetime must be provided in order to indicate
+    the time when the benchmark was executed. It should be in ISO8601
+    format and include the timezone.
     """
     return __create(*args, **kwargs)
 
@@ -145,6 +151,13 @@ def __create(query_args, body_args):
     :return: The result created into the database.
     :rtype: :class:`models.Result`
     """
+    if query_args['execution_datetime'].tzinfo is None:
+        error_msg = "Execution date must include timezone"
+        abort(422, messages={'error': error_msg})
+    if query_args['execution_datetime'] > dt.datetime.now(pytz.utc):
+        error_msg = "Execution date cannot be in future"
+        abort(422, messages={'error': error_msg})
+
     def get(model, id):
         item = model.read(id)
         if item is None:

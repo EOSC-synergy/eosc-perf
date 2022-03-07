@@ -4,6 +4,7 @@ import { FlavorSubmissionModal } from 'components/submissionModals/flavorSubmiss
 import { SearchingSelector } from 'components/searchSelectors/index';
 import { useQuery } from 'react-query';
 import { getHelper } from 'components/api-helpers';
+import { truthyOrNoneTag } from '../utility';
 
 export function FlavorSearchSelect(props: {
     site?: Site;
@@ -34,12 +35,9 @@ export function FlavorSearchSelect(props: {
         return (
             <>
                 Flavor:{' '}
-                {flavor ? (
-                    <>{flavor.name}</>
-                ) : (
-                    <div className="text-muted" style={{ display: 'inline-block' }}>
-                        None
-                    </div>
+                {truthyOrNoneTag(
+                    flavor?.name,
+                    props.site === undefined ? 'Select a site first!' : 'None'
                 )}
             </>
         );
@@ -61,26 +59,23 @@ export function FlavorSearchSelect(props: {
 
     return (
         <>
-            {props.site ? (
-                <>
-                    <SearchingSelector<Flavor>
-                        queryKeyPrefix={'flavor-for-' + props.site.id}
-                        tableName="Flavor"
-                        endpoint={'/sites/' + props.site.id + '/flavors:search'}
-                        item={props.flavor}
-                        setItem={props.setFlavor}
-                        display={display}
-                        displayRow={displayRow}
-                        submitNew={() => setShowSubmitModal(true)}
-                    />
-                    <FlavorSubmissionModal
-                        show={showSubmitModal}
-                        onHide={() => setShowSubmitModal(false)}
-                        site={props.site}
-                    />
-                </>
-            ) : (
-                <></>
+            <SearchingSelector<Flavor>
+                queryKeyPrefix={'flavor-for-' + props.site?.id}
+                tableName="Flavor"
+                endpoint={'/sites/' + props.site?.id + '/flavors:search'}
+                item={props.flavor}
+                setItem={props.setFlavor}
+                display={display}
+                displayRow={displayRow}
+                submitNew={() => setShowSubmitModal(true)}
+                disabled={props.site === undefined}
+            />
+            {props.site !== undefined && (
+                <FlavorSubmissionModal
+                    show={showSubmitModal}
+                    onHide={() => setShowSubmitModal(false)}
+                    site={props.site}
+                />
             )}
         </>
     );
