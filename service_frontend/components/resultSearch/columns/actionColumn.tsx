@@ -86,7 +86,9 @@ export function ActionColumn({
                     if (auth.loggedIn) {
                         callbacks.report(result);
                     } else {
-                        auth.login();
+                        if (auth.login) {
+                            auth.login();
+                        }
                     }
                 }}
             >
