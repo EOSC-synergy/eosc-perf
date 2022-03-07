@@ -73,7 +73,7 @@
             <div class="content-wrapper">
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
-                    <h1>user</h1><p><span id="recordNumber">1</span> rows</p><br />
+                    <h1>user</h1><p><span id="recordNumber">0</span> rows</p><br />
                 </section>
                 <!-- Main content -->
                 <section class="content">
@@ -103,23 +103,6 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td><span id="upload_datetime">upload_datetime</span></td>
-                                    <td>timestamp</td>
-                                    <td>29,6</td>
-                                    <td title=''></td>
-                                    <td title=''></td>
-                                    <td>null</td>
-                                    <td>
-                                        <table border='0' cellspacing='0' cellpadding='0'>
-                                        </table>
-                                    </td>
-                                    <td>
-                                        <table border='0' cellspacing='0' cellpadding='0'>
-                                        </table>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                <tr>
                                     <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="sub">sub</span></td>
                                     <td>text</td>
                                     <td>2147483647</td>
@@ -129,24 +112,24 @@
                                     <td>
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                             <tr>
-                                                <td title="benchmark.[creator_iss, creator_sub] references user.[iss, sub] via benchmark_creator_iss_creator_sub_fkey"><a href='benchmark.html'>benchmark</a><span class='relatedKey'>.creator_sub</span></td>
-                                                <td class="constraint detail">benchmark_creator_iss_creator_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="benchmark.[uploader_iss, uploader_sub] references user.[iss, sub] via benchmark_uploader_iss_uploader_sub_fkey"><a href='benchmark.html'>benchmark</a><span class='relatedKey'>.uploader_sub</span></td>
+                                                <td class="constraint detail">benchmark_uploader_iss_uploader_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                             <tr>
-                                                <td title="flavor.[creator_iss, creator_sub] references user.[iss, sub] via flavor_creator_iss_creator_sub_fkey"><a href='flavor.html'>flavor</a><span class='relatedKey'>.creator_sub</span></td>
-                                                <td class="constraint detail">flavor_creator_iss_creator_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="claim.[uploader_iss, uploader_sub] references user.[iss, sub] via claim_uploader_iss_uploader_sub_fkey"><a href='claim.html'>claim</a><span class='relatedKey'>.uploader_sub</span></td>
+                                                <td class="constraint detail">claim_uploader_iss_uploader_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                             <tr>
-                                                <td title="report.[creator_iss, creator_sub] references user.[iss, sub] via report_creator_iss_creator_sub_fkey"><a href='report.html'>report</a><span class='relatedKey'>.creator_sub</span></td>
-                                                <td class="constraint detail">report_creator_iss_creator_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="flavor.[uploader_iss, uploader_sub] references user.[iss, sub] via flavor_uploader_iss_uploader_sub_fkey"><a href='flavor.html'>flavor</a><span class='relatedKey'>.uploader_sub</span></td>
+                                                <td class="constraint detail">flavor_uploader_iss_uploader_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                             <tr>
-                                                <td title="result.[creator_iss, creator_sub] references user.[iss, sub] via result_creator_iss_creator_sub_fkey"><a href='result.html'>result</a><span class='relatedKey'>.creator_sub</span></td>
-                                                <td class="constraint detail">result_creator_iss_creator_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="result.[uploader_iss, uploader_sub] references user.[iss, sub] via result_uploader_iss_uploader_sub_fkey"><a href='result.html'>result</a><span class='relatedKey'>.uploader_sub</span></td>
+                                                <td class="constraint detail">result_uploader_iss_uploader_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                             <tr>
-                                                <td title="site.[creator_iss, creator_sub] references user.[iss, sub] via site_creator_iss_creator_sub_fkey"><a href='site.html'>site</a><span class='relatedKey'>.creator_sub</span></td>
-                                                <td class="constraint detail">site_creator_iss_creator_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="site.[uploader_iss, uploader_sub] references user.[iss, sub] via site_uploader_iss_uploader_sub_fkey"><a href='site.html'>site</a><span class='relatedKey'>.uploader_sub</span></td>
+                                                <td class="constraint detail">site_uploader_iss_uploader_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                         </table>
                                     </td>
@@ -166,24 +149,24 @@
                                     <td>
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                             <tr>
-                                                <td title="benchmark.[creator_iss, creator_sub] references user.[iss, sub] via benchmark_creator_iss_creator_sub_fkey"><a href='benchmark.html'>benchmark</a><span class='relatedKey'>.creator_iss</span></td>
-                                                <td class="constraint detail">benchmark_creator_iss_creator_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="benchmark.[uploader_iss, uploader_sub] references user.[iss, sub] via benchmark_uploader_iss_uploader_sub_fkey"><a href='benchmark.html'>benchmark</a><span class='relatedKey'>.uploader_iss</span></td>
+                                                <td class="constraint detail">benchmark_uploader_iss_uploader_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                             <tr>
-                                                <td title="flavor.[creator_iss, creator_sub] references user.[iss, sub] via flavor_creator_iss_creator_sub_fkey"><a href='flavor.html'>flavor</a><span class='relatedKey'>.creator_iss</span></td>
-                                                <td class="constraint detail">flavor_creator_iss_creator_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="claim.[uploader_iss, uploader_sub] references user.[iss, sub] via claim_uploader_iss_uploader_sub_fkey"><a href='claim.html'>claim</a><span class='relatedKey'>.uploader_iss</span></td>
+                                                <td class="constraint detail">claim_uploader_iss_uploader_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                             <tr>
-                                                <td title="report.[creator_iss, creator_sub] references user.[iss, sub] via report_creator_iss_creator_sub_fkey"><a href='report.html'>report</a><span class='relatedKey'>.creator_iss</span></td>
-                                                <td class="constraint detail">report_creator_iss_creator_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="flavor.[uploader_iss, uploader_sub] references user.[iss, sub] via flavor_uploader_iss_uploader_sub_fkey"><a href='flavor.html'>flavor</a><span class='relatedKey'>.uploader_iss</span></td>
+                                                <td class="constraint detail">flavor_uploader_iss_uploader_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                             <tr>
-                                                <td title="result.[creator_iss, creator_sub] references user.[iss, sub] via result_creator_iss_creator_sub_fkey"><a href='result.html'>result</a><span class='relatedKey'>.creator_iss</span></td>
-                                                <td class="constraint detail">result_creator_iss_creator_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="result.[uploader_iss, uploader_sub] references user.[iss, sub] via result_uploader_iss_uploader_sub_fkey"><a href='result.html'>result</a><span class='relatedKey'>.uploader_iss</span></td>
+                                                <td class="constraint detail">result_uploader_iss_uploader_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                             <tr>
-                                                <td title="site.[creator_iss, creator_sub] references user.[iss, sub] via site_creator_iss_creator_sub_fkey"><a href='site.html'>site</a><span class='relatedKey'>.creator_iss</span></td>
-                                                <td class="constraint detail">site_creator_iss_creator_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="site.[uploader_iss, uploader_sub] references user.[iss, sub] via site_uploader_iss_uploader_sub_fkey"><a href='site.html'>site</a><span class='relatedKey'>.uploader_iss</span></td>
+                                                <td class="constraint detail">site_uploader_iss_uploader_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                         </table>
                                     </td>
@@ -194,9 +177,26 @@
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i><span id="email">email</span></td>
+                                    <td><span id="email">email</span></td>
                                     <td>text</td>
                                     <td>2147483647</td>
+                                    <td title=''></td>
+                                    <td title=''></td>
+                                    <td>null</td>
+                                    <td>
+                                        <table border='0' cellspacing='0' cellpadding='0'>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <table border='0' cellspacing='0' cellpadding='0'>
+                                        </table>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td><span id="registration_datetime">registration_datetime</span></td>
+                                    <td>timestamp</td>
+                                    <td>29,6</td>
                                     <td title=''></td>
                                     <td title=''></td>
                                     <td>null</td>
@@ -240,12 +240,6 @@
                                     <td><span title='Ascending'>Asc</span>/<span title='Ascending'>Asc</span></td>
                                     <td>sub + iss</td>
                                 </tr>
-                                <tr>
-                                    <td class='uniqueKey' title='Unique Key'><i class='icon ion-key iconkey'></i> user_email_key</td>
-                                    <td>Must be unique</td>
-                                    <td><span title='Ascending'>Asc</span></td>
-                                    <td>email</td>
-                                </tr>
                                 </tbody>
                             </table>
                         </div><!-- /.box-body -->
@@ -269,25 +263,25 @@
                                 <div class="tab-content no-padding">
                                     <div class="chart tab-pane active" id="oneDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="oneDegreeRelationshipsDiagram" name="oneDegreeRelationshipsDiagram">
-<area shape="rect" id="node1" href="benchmark.html" target="_top" title="benchmark" alt="" coords="643,66,868,330">
-<area shape="rect" id="node2" href="user.html" target="_top" title="user" alt="" coords="5,187,329,374">
-<area shape="rect" id="node3" href="flavor.html" target="_top" title="flavor" alt="" coords="643,383,868,647">
-<area shape="rect" id="node4" href="site.html" target="_top" title="site" alt="" coords="373,386,599,621">
-<area shape="rect" id="node5" href="report.html" target="_top" title="report" alt="" coords="394,127,578,333">
-<area shape="rect" id="node6" href="result.html" target="_top" title="result" alt="" coords="912,190,1137,483">
+<area shape="rect" id="node1" href="benchmark.html" target="_top" title="benchmark" alt="" coords="647,67,837,331">
+<area shape="rect" id="node2" href="user.html" target="_top" title="user" alt="" coords="5,249,368,435">
+<area shape="rect" id="node3" href="claim.html" target="_top" title="claim" alt="" coords="412,626,603,831">
+<area shape="rect" id="node4" href="flavor.html" target="_top" title="flavor" alt="" coords="647,349,837,613">
+<area shape="rect" id="node5" href="site.html" target="_top" title="site" alt="" coords="412,374,603,609">
+<area shape="rect" id="node6" href="result.html" target="_top" title="result" alt="" coords="881,106,1089,399">
 </map>
                                         <a name='diagram'><img id="oneDegreeImg" src="../diagrams/tables/user.1degree.png" usemap="#oneDegreeRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>
                                     <div class="chart tab-pane " id="twodegreesDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="twoDegreesRelationshipsDiagram" name="twoDegreesRelationshipsDiagram">
-<area shape="rect" id="node1" href="benchmark.html" target="_top" title="benchmark" alt="" coords="601,259,772,347">
-<area shape="rect" id="node2" href="report_association.html" target="_top" title="report_association" alt="" coords="53,468,281,556">
-<area shape="rect" id="node3" href="user.html" target="_top" title="user" alt="" coords="5,166,329,352">
-<area shape="rect" id="node4" href="flavor.html" target="_top" title="flavor" alt="" coords="617,436,756,524">
-<area shape="rect" id="node5" href="site.html" target="_top" title="site" alt="" coords="396,400,535,488">
-<area shape="rect" id="node6" href="report.html" target="_top" title="report" alt="" coords="373,106,557,311">
-<area shape="rect" id="node7" href="result.html" target="_top" title="result" alt="" coords="816,348,955,436">
-<area shape="rect" id="node8" href="result_tags.html" target="_top" title="result_tags" alt="" coords="999,346,1165,434">
+<area shape="rect" id="node1" href="benchmark.html" target="_top" title="benchmark" alt="" coords="595,80,765,168">
+<area shape="rect" id="node2" href="submit.html" target="_top" title="submit" alt="" coords="119,363,255,451">
+<area shape="rect" id="node3" href="user.html" target="_top" title="user" alt="" coords="5,99,368,285">
+<area shape="rect" id="node4" href="claim.html" target="_top" title="claim" alt="" coords="412,329,551,417">
+<area shape="rect" id="node5" href="flavor.html" target="_top" title="flavor" alt="" coords="611,185,749,273">
+<area shape="rect" id="node6" href="site.html" target="_top" title="site" alt="" coords="412,224,551,312">
+<area shape="rect" id="node7" href="result.html" target="_top" title="result" alt="" coords="809,133,948,221">
+<area shape="rect" id="node8" href="result_tags.html" target="_top" title="result_tags" alt="" coords="992,131,1159,219">
 </map>
                                         <a name='diagram'><img id="twodegreesDegreeImg" src="../diagrams/tables/user.2degrees.png" usemap="#twoDegreesRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>

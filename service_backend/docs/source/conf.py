@@ -34,7 +34,8 @@ release = '0.0.1'
 extensions = [
     'sphinx.ext.autosectionlabel',
     'sphinx.ext.graphviz',
-    'sphinx.ext.autodoc'
+    'sphinx.ext.autodoc',
+    'nbsphinx',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -49,6 +50,12 @@ exclude_patterns = []
 # unit titles (such as .. function::).
 add_module_names = False
 
+# Set and override environment variables to avoid warnings and do not
+# display secrets in case of forgetting remove them before 
+os.environ["OIDC_CLIENT_SECRET"] = "NONE"
+os.environ["SECRET_KEY"] = "NONE"
+os.environ["DB_HOST"] = "NONE"
+os.environ["DB_PORT"] = "NONE"
 
 # -- Options for HTML output -------------------------------------------------
 

@@ -25,7 +25,7 @@ On the benchmark submission page:
 4. Add the JSON schema the results of this benchmark must conform to
 5. Submit your result
 
-Uploading a benchmark using the API
+Adding a benchmark using the API
 ################################
 
 For a detailed example on how to use the API to submit a benchmark, please have a look at the `Jupyter notebook <https://github.com/EOSC-synergy/eosc-perf/blob/master/service_backend/docs/source/features/benchmarks.ipynb>`__.

@@ -63,7 +63,7 @@ services:
   database:
     container_name: database
     restart: unless-stopped
-    image: postgres
+    image: postgres:13
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}

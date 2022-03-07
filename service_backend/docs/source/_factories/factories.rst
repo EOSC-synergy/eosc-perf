@@ -30,15 +30,6 @@ Flavor factory
    :undoc-members:
    :show-inheritance:
 
-Report factory
---------------------
-
-.. autoclass:: factories.DBReport
-   :members:
-   :member-order: bysource
-   :undoc-members:
-   :show-inheritance:
-
 Result factory
 --------------------
 

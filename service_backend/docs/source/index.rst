@@ -17,7 +17,7 @@ from multiple providers or how to submit yours.
 
 * **First steps**:
   :doc:`Getting started </getting-started/introduction>` |
-  :doc:`First example </getting-started/first-example>`
+  :doc:`First example </getting-started/first_example>`
 
 * **Overview of core features**:
   :doc:`benchmarks </features/benchmarks>` |
@@ -26,26 +26,19 @@ from multiple providers or how to submit yours.
   :doc:`sites </features/sites>` |
   :doc:`tags </features/tags>`
 
-* **Troubleshooting**:
-  :doc:`/troubleshooting/support` |
-  :doc:`Frequently asked questions </troubleshooting/faq>`
-
 .. toctree::
     :maxdepth: 1
     :hidden:
     :caption: Getting started
 
     /getting-started/introduction
-    /getting-started/first-example
+    /getting-started/first_example
 
     /features/benchmarks
     /features/reports
     /features/results
     /features/sites
     /features/tags
-
-    /troubleshooting/support
-    /troubleshooting/faq
 
 
 Advanced features of EOSC Performance API
@@ -57,7 +50,10 @@ out of your application when using our endpoints.
 
 * **Advanced search and result filtering**:
   :doc:`Using advanced search </advanced/generic-search>` |
-  :doc:`Filter results by json values </advanced/json-filters>`
+  :doc:`Filter results by json values </advanced/json-filters>` |
+
+* **Pagination and sorting of responses**:
+  :doc:`How to use sorting and pagination </advanced/pagination-sorting>`
 
 .. toctree::
     :maxdepth: 2
@@ -67,6 +63,7 @@ out of your application when using our endpoints.
 
     /advanced/generic-search
     /advanced/json-filters
+    /advanced/pagination-sorting
 
 
 Extending EOSC Performance

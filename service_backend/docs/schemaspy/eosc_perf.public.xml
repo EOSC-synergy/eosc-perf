@@ -8,22 +8,23 @@
          </index>
       </table>
       <table name="benchmark" numRows="0" remarks="" schema="public" type="TABLE">
-         <column autoUpdated="false" defaultValue="null" digits="6" id="0" name="upload_datetime" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
-            <child column="_benchmark_id" foreignKey="result__benchmark_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="result"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <child column="benchmark_id" foreignKey="result_benchmark_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="result"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="creator_sub" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
-            <parent column="sub" foreignKey="benchmark_creator_iss_creator_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="user"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="uploader_sub" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
+            <parent column="sub" foreignKey="benchmark_uploader_iss_uploader_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="user"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="creator_iss" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
-            <parent column="iss" foreignKey="benchmark_creator_iss_creator_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="user"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="uploader_iss" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
+            <parent column="iss" foreignKey="benchmark_uploader_iss_uploader_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="user"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="docker_image" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="docker_tag" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="json_schema" nullable="false" remarks="" size="2147483647" type="json" typeCode="1111"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="description" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="_report_association_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
-            <parent column="id" foreignKey="benchmark__report_association_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="report_association"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="3" name="upload_datetime" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="status" nullable="true" remarks="" size="2147483647" type="resourcestatus" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="docker_image" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="docker_tag" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="json_schema" nullable="false" remarks="" size="2147483647" type="json" typeCode="1111"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="description" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="_submit_report_id" nullable="true" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="benchmark__submit_report_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="submit"/>
          </column>
          <primaryKey column="id" sequenceNumberInPK="1"/>
          <index name="benchmark_pkey" unique="true">
@@ -34,24 +35,47 @@
             <column ascending="true" name="docker_tag"/>
          </index>
       </table>
+      <table name="claim" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <child column="_claim_report_id" foreignKey="result__claim_report_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="result"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="uploader_sub" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
+            <parent column="sub" foreignKey="claim_uploader_iss_uploader_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="user"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="uploader_iss" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
+            <parent column="iss" foreignKey="claim_uploader_iss_uploader_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="user"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="status" nullable="true" remarks="" size="2147483647" type="resourcestatus" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="message" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="resource_type" nullable="false" remarks="" size="2147483647" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="6" name="upload_datetime" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="_submit_report_id" nullable="true" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="claim__submit_report_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="submit"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="claim_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
       <table name="flavor" numRows="0" remarks="" schema="public" type="TABLE">
-         <column autoUpdated="false" defaultValue="null" digits="6" id="0" name="upload_datetime" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
-            <child column="_flavor_id" foreignKey="result__flavor_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="result"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <child column="flavor_id" foreignKey="result_flavor_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="result"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="creator_sub" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
-            <parent column="sub" foreignKey="flavor_creator_iss_creator_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="user"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="uploader_sub" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
+            <parent column="sub" foreignKey="flavor_uploader_iss_uploader_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="user"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="creator_iss" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
-            <parent column="iss" foreignKey="flavor_creator_iss_creator_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="user"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="uploader_iss" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
+            <parent column="iss" foreignKey="flavor_uploader_iss_uploader_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="user"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="name" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="description" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="site_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+         <column autoUpdated="false" defaultValue="null" digits="6" id="3" name="upload_datetime" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="status" nullable="true" remarks="" size="2147483647" type="resourcestatus" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="name" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="description" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="site_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
             <parent column="id" foreignKey="flavor_site_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="site"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="_report_association_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
-            <parent column="id" foreignKey="flavor__report_association_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="report_association"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="_submit_report_id" nullable="true" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="flavor__submit_report_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="submit"/>
          </column>
          <primaryKey column="id" sequenceNumberInPK="1"/>
          <index name="flavor_pkey" unique="true">
@@ -62,63 +86,31 @@
             <column ascending="true" name="name"/>
          </index>
       </table>
-      <table name="report" numRows="0" remarks="" schema="public" type="TABLE">
-         <column autoUpdated="false" defaultValue="null" digits="6" id="0" name="upload_datetime" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="creator_sub" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
-            <parent column="sub" foreignKey="report_creator_iss_creator_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="user"/>
-         </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="creator_iss" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
-            <parent column="iss" foreignKey="report_creator_iss_creator_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="user"/>
-         </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="verdict" nullable="true" remarks="" size="1" type="bool" typeCode="-7"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="message" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="_association_id" nullable="true" remarks="" size="2147483647" type="uuid" typeCode="1111">
-            <parent column="id" foreignKey="report__association_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="report_association"/>
-         </column>
-         <primaryKey column="id" sequenceNumberInPK="1"/>
-         <index name="report_pkey" unique="true">
-            <column ascending="true" name="id"/>
-         </index>
-      </table>
-      <table name="report_association" numRows="0" remarks="" schema="public" type="TABLE">
-         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
-            <child column="_report_association_id" foreignKey="benchmark__report_association_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="benchmark"/>
-            <child column="_report_association_id" foreignKey="flavor__report_association_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="flavor"/>
-            <child column="_association_id" foreignKey="report__association_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="report"/>
-            <child column="_report_association_id" foreignKey="result__report_association_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="result"/>
-            <child column="_report_association_id" foreignKey="site__report_association_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="site"/>
-         </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="discriminator" nullable="true" remarks="" size="2147483647" type="varchar" typeCode="12"/>
-         <primaryKey column="id" sequenceNumberInPK="1"/>
-         <index name="report_association_pkey" unique="true">
-            <column ascending="true" name="id"/>
-         </index>
-      </table>
       <table name="result" numRows="0" remarks="" schema="public" type="TABLE">
-         <column autoUpdated="false" defaultValue="null" digits="6" id="0" name="upload_datetime" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="deleted" nullable="false" remarks="" size="1" type="bool" typeCode="-7"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
             <child column="result_id" foreignKey="result_tags_result_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="result_tags"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="creator_sub" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
-            <parent column="sub" foreignKey="result_creator_iss_creator_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="user"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="uploader_sub" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
+            <parent column="sub" foreignKey="result_uploader_iss_uploader_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="user"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="creator_iss" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
-            <parent column="iss" foreignKey="result_creator_iss_creator_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="user"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="uploader_iss" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
+            <parent column="iss" foreignKey="result_uploader_iss_uploader_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="user"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="json" nullable="false" remarks="" size="2147483647" type="jsonb" typeCode="1111"/>
-         <column autoUpdated="false" defaultValue="null" digits="6" id="5" name="execution_datetime" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="_benchmark_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
-            <parent column="id" foreignKey="result__benchmark_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="benchmark"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="4" name="upload_datetime" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="json" nullable="false" remarks="" size="2147483647" type="jsonb" typeCode="1111"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="6" name="execution_datetime" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="benchmark_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="result_benchmark_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="benchmark"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="_site_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
-            <parent column="id" foreignKey="result__site_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="site"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="flavor_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="result_flavor_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="flavor"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="_flavor_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
-            <parent column="id" foreignKey="result__flavor_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="flavor"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="site_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="result_site_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="site"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="_report_association_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
-            <parent column="id" foreignKey="result__report_association_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="report_association"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="_claim_report_id" nullable="true" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="result__claim_report_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="claim"/>
          </column>
          <primaryKey column="id" sequenceNumberInPK="1"/>
          <index name="result_pkey" unique="true">
@@ -140,22 +132,23 @@
          </index>
       </table>
       <table name="site" numRows="0" remarks="" schema="public" type="TABLE">
-         <column autoUpdated="false" defaultValue="null" digits="6" id="0" name="upload_datetime" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
             <child column="site_id" foreignKey="flavor_site_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="flavor"/>
-            <child column="_site_id" foreignKey="result__site_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="result"/>
+            <child column="site_id" foreignKey="result_site_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="result"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="creator_sub" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
-            <parent column="sub" foreignKey="site_creator_iss_creator_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="user"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="uploader_sub" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
+            <parent column="sub" foreignKey="site_uploader_iss_uploader_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="user"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="creator_iss" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
-            <parent column="iss" foreignKey="site_creator_iss_creator_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="user"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="uploader_iss" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
+            <parent column="iss" foreignKey="site_uploader_iss_uploader_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="user"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="name" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="address" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="description" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="_report_association_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
-            <parent column="id" foreignKey="site__report_association_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="report_association"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="3" name="upload_datetime" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="status" nullable="true" remarks="" size="2147483647" type="resourcestatus" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="name" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="address" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="description" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="_submit_report_id" nullable="true" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="site__submit_report_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="submit"/>
          </column>
          <primaryKey column="id" sequenceNumberInPK="1"/>
          <index name="site_pkey" unique="true">
@@ -165,12 +158,26 @@
             <column ascending="true" name="name"/>
          </index>
       </table>
+      <table name="submit" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <child column="_submit_report_id" foreignKey="benchmark__submit_report_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="benchmark"/>
+            <child column="_submit_report_id" foreignKey="claim__submit_report_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="claim"/>
+            <child column="_submit_report_id" foreignKey="flavor__submit_report_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="flavor"/>
+            <child column="_submit_report_id" foreignKey="site__submit_report_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="site"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="resource_type" nullable="false" remarks="" size="2147483647" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="2" name="upload_datetime" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="submit_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
       <table name="tag" numRows="0" remarks="" schema="public" type="TABLE">
          <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
             <child column="tag_id" foreignKey="result_tags_tag_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="result_tags"/>
          </column>
          <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="name" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="description" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="description" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
          <primaryKey column="id" sequenceNumberInPK="1"/>
          <index name="tag_pkey" unique="true">
             <column ascending="true" name="id"/>
@@ -179,31 +186,28 @@
             <column ascending="true" name="name"/>
          </index>
       </table>
-      <table name="user" numRows="1" remarks="" schema="public" type="TABLE">
-         <column autoUpdated="false" defaultValue="null" digits="6" id="0" name="upload_datetime" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="sub" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
-            <child column="creator_sub" foreignKey="benchmark_creator_iss_creator_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="benchmark"/>
-            <child column="creator_sub" foreignKey="flavor_creator_iss_creator_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="flavor"/>
-            <child column="creator_sub" foreignKey="report_creator_iss_creator_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="report"/>
-            <child column="creator_sub" foreignKey="result_creator_iss_creator_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="result"/>
-            <child column="creator_sub" foreignKey="site_creator_iss_creator_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="site"/>
+      <table name="user" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="sub" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
+            <child column="uploader_sub" foreignKey="benchmark_uploader_iss_uploader_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="benchmark"/>
+            <child column="uploader_sub" foreignKey="claim_uploader_iss_uploader_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="claim"/>
+            <child column="uploader_sub" foreignKey="flavor_uploader_iss_uploader_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="flavor"/>
+            <child column="uploader_sub" foreignKey="result_uploader_iss_uploader_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="result"/>
+            <child column="uploader_sub" foreignKey="site_uploader_iss_uploader_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="site"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="iss" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
-            <child column="creator_iss" foreignKey="benchmark_creator_iss_creator_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="benchmark"/>
-            <child column="creator_iss" foreignKey="flavor_creator_iss_creator_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="flavor"/>
-            <child column="creator_iss" foreignKey="report_creator_iss_creator_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="report"/>
-            <child column="creator_iss" foreignKey="result_creator_iss_creator_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="result"/>
-            <child column="creator_iss" foreignKey="site_creator_iss_creator_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="site"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="iss" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
+            <child column="uploader_iss" foreignKey="benchmark_uploader_iss_uploader_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="benchmark"/>
+            <child column="uploader_iss" foreignKey="claim_uploader_iss_uploader_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="claim"/>
+            <child column="uploader_iss" foreignKey="flavor_uploader_iss_uploader_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="flavor"/>
+            <child column="uploader_iss" foreignKey="result_uploader_iss_uploader_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="result"/>
+            <child column="uploader_iss" foreignKey="site_uploader_iss_uploader_sub_fkey" implied="false" onDeleteCascade="false" schema="public" table="site"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="email" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="email" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="3" name="registration_datetime" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
          <primaryKey column="sub" sequenceNumberInPK="1"/>
          <primaryKey column="iss" sequenceNumberInPK="2"/>
          <index name="user_pkey" unique="true">
             <column ascending="true" name="sub"/>
             <column ascending="true" name="iss"/>
-         </index>
-         <index name="user_email_key" unique="true">
-            <column ascending="true" name="email"/>
          </index>
       </table>
    </tables>

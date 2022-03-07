@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>report - eosc_perf Database</title>
+        <title>claim - eosc_perf Database</title>
         <!-- Tell the browser to be responsive to screen width -->
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
         <link rel="icon" type="image/png" sizes="16x16" href="../favicon.png">
@@ -73,7 +73,7 @@
             <div class="content-wrapper">
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
-                    <h1>report</h1><p><span id="recordNumber">0</span> rows</p><br />
+                    <h1>claim</h1><p><span id="recordNumber">0</span> rows</p><br />
                 </section>
                 <!-- Main content -->
                 <section class="content">
@@ -103,23 +103,6 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td><span id="upload_datetime">upload_datetime</span></td>
-                                    <td>timestamp</td>
-                                    <td>29,6</td>
-                                    <td title=''></td>
-                                    <td title=''></td>
-                                    <td>null</td>
-                                    <td>
-                                        <table border='0' cellspacing='0' cellpadding='0'>
-                                        </table>
-                                    </td>
-                                    <td>
-                                        <table border='0' cellspacing='0' cellpadding='0'>
-                                        </table>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                <tr>
                                     <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="id">id</span></td>
                                     <td>uuid</td>
                                     <td>2147483647</td>
@@ -128,6 +111,10 @@
                                     <td>null</td>
                                     <td>
                                         <table border='0' cellspacing='0' cellpadding='0'>
+                                            <tr>
+                                                <td title="result._claim_report_id references claim.id via result__claim_report_id_fkey"><a href='result.html'>result</a><span class='relatedKey'>._claim_report_id</span></td>
+                                                <td class="constraint detail">result__claim_report_id_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                            </tr>
                                         </table>
                                     </td>
                                     <td>
@@ -137,7 +124,7 @@
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="creator_sub">creator_sub</span></td>
+                                    <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="uploader_sub">uploader_sub</span></td>
                                     <td>text</td>
                                     <td>2147483647</td>
                                     <td title=''></td>
@@ -150,15 +137,15 @@
                                     <td>
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                             <tr>
-                                                <td title="report.[creator_iss, creator_sub] references user.[iss, sub] via report_creator_iss_creator_sub_fkey"><a href='user.html'>user</a><span class='relatedKey'>.sub</span></td>
-                                                <td class="constraint detail">report_creator_iss_creator_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="claim.[uploader_iss, uploader_sub] references user.[iss, sub] via claim_uploader_iss_uploader_sub_fkey"><a href='user.html'>user</a><span class='relatedKey'>.sub</span></td>
+                                                <td class="constraint detail">claim_uploader_iss_uploader_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                         </table>
                                     </td>
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="creator_iss">creator_iss</span></td>
+                                    <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="uploader_iss">uploader_iss</span></td>
                                     <td>text</td>
                                     <td>2147483647</td>
                                     <td title=''></td>
@@ -171,17 +158,17 @@
                                     <td>
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                             <tr>
-                                                <td title="report.[creator_iss, creator_sub] references user.[iss, sub] via report_creator_iss_creator_sub_fkey"><a href='user.html'>user</a><span class='relatedKey'>.iss</span></td>
-                                                <td class="constraint detail">report_creator_iss_creator_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="claim.[uploader_iss, uploader_sub] references user.[iss, sub] via claim_uploader_iss_uploader_sub_fkey"><a href='user.html'>user</a><span class='relatedKey'>.iss</span></td>
+                                                <td class="constraint detail">claim_uploader_iss_uploader_sub_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                         </table>
                                     </td>
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td><span id="verdict">verdict</span></td>
-                                    <td>bool</td>
-                                    <td>1</td>
+                                    <td><span id="status">status</span></td>
+                                    <td>resourcestatus</td>
+                                    <td>2147483647</td>
                                     <td title='nullable'>√</td>
                                     <td title=''></td>
                                     <td>null</td>
@@ -199,7 +186,7 @@
                                     <td><span id="message">message</span></td>
                                     <td>text</td>
                                     <td>2147483647</td>
-                                    <td title='nullable'>√</td>
+                                    <td title=''></td>
                                     <td title=''></td>
                                     <td>null</td>
                                     <td>
@@ -213,7 +200,41 @@
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="_association_id">_association_id</span></td>
+                                    <td><span id="resource_type">resource_type</span></td>
+                                    <td>varchar</td>
+                                    <td>2147483647</td>
+                                    <td title=''></td>
+                                    <td title=''></td>
+                                    <td>null</td>
+                                    <td>
+                                        <table border='0' cellspacing='0' cellpadding='0'>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <table border='0' cellspacing='0' cellpadding='0'>
+                                        </table>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td><span id="upload_datetime">upload_datetime</span></td>
+                                    <td>timestamp</td>
+                                    <td>29,6</td>
+                                    <td title=''></td>
+                                    <td title=''></td>
+                                    <td>null</td>
+                                    <td>
+                                        <table border='0' cellspacing='0' cellpadding='0'>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <table border='0' cellspacing='0' cellpadding='0'>
+                                        </table>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="_submit_report_id">_submit_report_id</span></td>
                                     <td>uuid</td>
                                     <td>2147483647</td>
                                     <td title='nullable'>√</td>
@@ -226,8 +247,8 @@
                                     <td>
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                             <tr>
-                                                <td title="report._association_id references report_association.id via report__association_id_fkey"><a href='report_association.html'>report_association</a><span class='relatedKey'>.id</span></td>
-                                                <td class="constraint detail">report__association_id_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td title="claim._submit_report_id references submit.id via claim__submit_report_id_fkey"><a href='submit.html'>submit</a><span class='relatedKey'>.id</span></td>
+                                                <td class="constraint detail">claim__submit_report_id_fkey<span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                         </table>
                                     </td>
@@ -258,7 +279,7 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey'></i> report_pkey</td>
+                                    <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey'></i> claim_pkey</td>
                                     <td>Primary key</td>
                                     <td><span title='Ascending'>Asc</span></td>
                                     <td>id</td>
@@ -286,23 +307,25 @@
                                 <div class="tab-content no-padding">
                                     <div class="chart tab-pane active" id="oneDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="oneDegreeRelationshipsDiagram" name="oneDegreeRelationshipsDiagram">
-<area shape="rect" id="node1" href="report.html" target="_top" title="report" alt="" coords="277,5,607,280">
-<area shape="rect" id="node2" href="report_association.html" target="_top" title="report_association" alt="" coords="5,260,233,377">
-<area shape="rect" id="node3" href="user.html" target="_top" title="user" alt="" coords="27,67,211,243">
+<area shape="rect" id="node1" href="claim.html" target="_top" title="claim" alt="" coords="272,147,677,451">
+<area shape="rect" id="node2" href="submit.html" target="_top" title="submit" alt="" coords="25,355,209,472">
+<area shape="rect" id="node3" href="user.html" target="_top" title="user" alt="" coords="5,109,228,256">
+<area shape="rect" id="node4" href="result.html" target="_top" title="result" alt="" coords="721,5,929,299">
 </map>
-                                        <a name='diagram'><img id="oneDegreeImg" src="../diagrams/tables/report.1degree.png" usemap="#oneDegreeRelationshipsDiagram" class="diagram" border="0" align="left"></a>
+                                        <a name='diagram'><img id="oneDegreeImg" src="../diagrams/tables/claim.1degree.png" usemap="#oneDegreeRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>
                                     <div class="chart tab-pane " id="twodegreesDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="twoDegreesRelationshipsDiagram" name="twoDegreesRelationshipsDiagram">
-<area shape="rect" id="node1" href="benchmark.html" target="_top" title="benchmark" alt="" coords="651,391,821,479">
-<area shape="rect" id="node2" href="report_association.html" target="_top" title="report_association" alt="" coords="5,568,233,686">
-<area shape="rect" id="node3" href="user.html" target="_top" title="user" alt="" coords="27,107,211,283">
-<area shape="rect" id="node4" href="flavor.html" target="_top" title="flavor" alt="" coords="667,107,805,195">
-<area shape="rect" id="node5" href="site.html" target="_top" title="site" alt="" coords="373,175,511,263">
-<area shape="rect" id="node6" href="report.html" target="_top" title="report" alt="" coords="277,280,607,555">
-<area shape="rect" id="node7" href="result.html" target="_top" title="result" alt="" coords="865,142,1004,230">
+<area shape="rect" id="node1" href="benchmark.html" target="_top" title="benchmark" alt="" coords="683,171,853,259">
+<area shape="rect" id="node2" href="submit.html" target="_top" title="submit" alt="" coords="5,521,189,638">
+<area shape="rect" id="node3" href="user.html" target="_top" title="user" alt="" coords="30,91,165,179">
+<area shape="rect" id="node4" href="claim.html" target="_top" title="claim" alt="" coords="233,275,639,579">
+<area shape="rect" id="node5" href="flavor.html" target="_top" title="flavor" alt="" coords="699,66,837,154">
+<area shape="rect" id="node6" href="site.html" target="_top" title="site" alt="" coords="367,170,505,258">
+<area shape="rect" id="node7" href="result.html" target="_top" title="result" alt="" coords="897,122,1036,210">
+<area shape="rect" id="node8" href="result_tags.html" target="_top" title="result_tags" alt="" coords="1080,119,1247,207">
 </map>
-                                        <a name='diagram'><img id="twodegreesDegreeImg" src="../diagrams/tables/report.2degrees.png" usemap="#twoDegreesRelationshipsDiagram" class="diagram" border="0" align="left"></a>
+                                        <a name='diagram'><img id="twodegreesDegreeImg" src="../diagrams/tables/claim.2degrees.png" usemap="#twoDegreesRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>
                                 </div>
                             </div>

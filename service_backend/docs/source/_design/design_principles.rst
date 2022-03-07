@@ -7,14 +7,8 @@ be deployed with container technologies such as Docker and Kubernetes.
 
 You should be able to access the backend from the frontend network.
 in production it is recommended to run a reverse proxy container which
-provides HTTPS layer althoug for development it can be enough just to
+provides HTTPS layer although for development it can be enough just to
 export the port 5000 where Flask normally runs.
-
-
-Container network
-===================
-
-
 
 
 Data storage
@@ -36,15 +30,28 @@ can access the required ports.
 
 In case the database has to be managed outside the container network, it
 is generally a good idea to export the port where postgresql listens the
-incomming connections. By default it is the 5432, althoug for security
+incoming connections. By default it is the 5432, although for security
 reasons is always recommended to use a different port and always keep the
 container running with the last security updates.
 
 
-
 Production vs development
 =========================
+You can control the environment as production or development configuring
+the environmental variable `FLASK_ENV`. This variable can take the following
+values and behaviors:
 
+ - `production`: Backend service runs enforcing security requirements and
+   performance processing. You should always run the application as production
+   except for specific short executions for development. Testing should run
+   as well in production to ensure the correct behavior of components.
+
+ - `development`: Backend service runs with minimum security requirements and
+   with additional loads for debugging. When running in development the number
+   open queries might be limited to the specific used extension. Therefore it is
+   not suitable for long running operations. In addition, some variables
+   required for production might be optional, see :doc:`configuration settings</_backend/settings>`
+   for more details about defaults when running on development mode.
 
 
 Settings
