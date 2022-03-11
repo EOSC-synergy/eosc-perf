@@ -37,6 +37,7 @@ export function FlavorInfo(props: { id: string }): ReactElement {
                     <br />
                     Description: {truthyOrNoneTag(flavor.data.data.description)}
                     <br />
+                    Submitted on: {new Date(flavor.data.data.upload_datetime).toLocaleString()}
                     <hr />
                     Site:
                     <br />

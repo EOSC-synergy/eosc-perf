@@ -27,7 +27,7 @@ export function SiteInfo(props: { id: string }): ReactElement {
                     <br />
                     Description: {truthyOrNoneTag(site.data.data.description)}
                     <br />
-                    {/* Uploader: {{ uploader_name }} ({{ uploader_mail }})<br/> */}
+                    Submitted on: {new Date(site.data.data.upload_datetime).toLocaleString()}
                 </>
             )}
         </>

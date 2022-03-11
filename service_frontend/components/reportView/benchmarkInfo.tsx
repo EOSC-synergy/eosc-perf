@@ -25,6 +25,7 @@ export function BenchmarkInfo(props: { id: string }): ReactElement {
                     <br />
                     Description: {truthyOrNoneTag(benchmark.data.data.description)}
                     <br />
+                    Submitted on: {new Date(benchmark.data.data.upload_datetime).toLocaleString()}
                 </>
             )}
         </>

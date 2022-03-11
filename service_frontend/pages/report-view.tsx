@@ -31,13 +31,11 @@ function SubmitView(props: { submit: Submit; refetch: () => void }) {
                     <h5 className="mb-1">{props.submit.resource_type}</h5>
                     <small>{props.submit.upload_datetime}</small>
                 </div>
-                <p className="mb-1">{/*props.submit.message*/}</p>
-                <small className="text-muted">For {props.submit.resource_id}</small>
+                <small className="text-muted">Submitted by {props.submit.uploader.email}</small>
             </div>
             {opened && (
                 <>
                     <hr />
-                    {/* TODO: submitter? */}
                     {props.submit.resource_type === 'site' && (
                         <SiteInfo id={props.submit.resource_id} />
                     )}
@@ -47,9 +45,9 @@ function SubmitView(props: { submit: Submit; refetch: () => void }) {
                     {props.submit.resource_type === 'benchmark' && (
                         <BenchmarkInfo id={props.submit.resource_id} />
                     )}
-                    {props.submit.resource_type === 'claim' && (
+                    {/*props.submit.resource_type === 'claim' && (
                         <ClaimInfo id={props.submit.resource_id} />
-                    )}
+                    )*/}
                     <SubmitInteraction submit={props.submit} refetch={props.refetch} />
                 </>
             )}
