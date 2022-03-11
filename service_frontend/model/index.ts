@@ -1,28 +1,29 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type { Benchmark } from 'model/models/Benchmark';
-export type { Benchmarks } from 'model/models/Benchmarks';
-export { Claim } from 'model/models/Claim';
-export type { Claims } from 'model/models/Claims';
-export type { CreateBenchmark } from 'model/models/CreateBenchmark';
-export type { CreateClaim } from 'model/models/CreateClaim';
-export type { CreateFlavor } from 'model/models/CreateFlavor';
-export type { CreateSite } from 'model/models/CreateSite';
-export type { CreateTag } from 'model/models/CreateTag';
-export type { Error } from 'model/models/Error';
-export type { Flavor } from 'model/models/Flavor';
-export type { Flavors } from 'model/models/Flavors';
-export type { Json } from 'model/models/Json';
-export type { PaginationMetadata } from 'model/models/PaginationMetadata';
-export type { Result } from 'model/models/Result';
-export type { Results } from 'model/models/Results';
-export type { Site } from 'model/models/Site';
-export type { Sites } from 'model/models/Sites';
-export { Submit } from 'model/models/Submit';
-export type { Submits } from 'model/models/Submits';
-export type { Tag } from 'model/models/Tag';
-export type { Tags } from 'model/models/Tags';
-export type { TagsIds } from 'model/models/TagsIds';
-export type { User } from 'model/models/User';
-export type { Users } from 'model/models/Users';
+
+export type { Benchmark } from './models/Benchmark';
+export type { Benchmarks } from './models/Benchmarks';
+export { Claim } from './models/Claim';
+export type { Claims } from './models/Claims';
+export type { CreateBenchmark } from './models/CreateBenchmark';
+export type { CreateClaim } from './models/CreateClaim';
+export type { CreateFlavor } from './models/CreateFlavor';
+export type { CreateSite } from './models/CreateSite';
+export type { CreateTag } from './models/CreateTag';
+export type { Error } from './models/Error';
+export type { Flavor } from './models/Flavor';
+export type { Flavors } from './models/Flavors';
+export type { Json } from './models/Json';
+export type { PaginationMetadata } from './models/PaginationMetadata';
+export type { Result } from './models/Result';
+export type { Results } from './models/Results';
+export type { Site } from './models/Site';
+export type { Sites } from './models/Sites';
+export { Submit } from './models/Submit';
+export type { Submits } from './models/Submits';
+export type { Tag } from './models/Tag';
+export type { Tags } from './models/Tags';
+export type { TagsIds } from './models/TagsIds';
+export type { User } from './models/User';
+export type { Users } from './models/Users';

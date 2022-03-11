@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Result } from 'model/models/Result';
+import type { Result } from './Result';
 
 export type Results = {
     /**

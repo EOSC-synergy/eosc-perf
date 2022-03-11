@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Benchmark } from 'model/models/Benchmark';
+import type { Benchmark } from './Benchmark';
 
 export type Benchmarks = {
     /**

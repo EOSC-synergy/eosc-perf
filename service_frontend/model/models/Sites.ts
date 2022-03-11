@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Site } from 'model/models/Site';
+import type { Site } from './Site';
 
 export type Sites = {
     /**

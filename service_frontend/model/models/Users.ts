@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { User } from 'model/models/User';
+import type { User } from './User';
 
 export type Users = {
     /**

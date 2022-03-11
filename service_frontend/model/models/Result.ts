@@ -2,10 +2,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Benchmark } from 'model/models/Benchmark';
-import type { Flavor } from 'model/models/Flavor';
-import type { Site } from 'model/models/Site';
-import type { Tag } from 'model/models/Tag';
+import type { Benchmark } from './Benchmark';
+import type { Flavor } from './Flavor';
+import type { Site } from './Site';
+import type { Tag } from './Tag';
 
 export type Result = {
     /**

@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Submit } from 'model/models/Submit';
+import type { Submit } from './Submit';
 
 export type Submits = {
     /**

@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Tag } from 'model/models/Tag';
+import type { Tag } from './Tag';
 
 export type Tags = {
     /**

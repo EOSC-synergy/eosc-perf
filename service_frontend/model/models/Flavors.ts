@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Flavor } from 'model/models/Flavor';
+import type { Flavor } from './Flavor';
 
 export type Flavors = {
     /**

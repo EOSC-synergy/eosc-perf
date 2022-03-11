@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Claim } from 'model/models/Claim';
+import type { Claim } from './Claim';
 
 export type Claims = {
     /**

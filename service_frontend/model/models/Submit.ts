@@ -2,6 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { User } from './User';
+
 export type Submit = {
     /**
      * Upload datetime of the referred resource
@@ -15,6 +17,7 @@ export type Submit = {
      * UUID resource unique identification
      */
     resource_id: string;
+    readonly uploader: User;
 };
 
 export namespace Submit {
