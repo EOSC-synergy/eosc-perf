@@ -26,6 +26,20 @@ import { useRouter } from 'next/router';
 import { Funnel, Save2 } from 'react-bootstrap-icons';
 import { fetchSubkey } from '../../components/resultSearch/jsonKeyHelpers';
 
+function saveFile(contents: string, filename: string = 'export.csv') {
+    const blob = new Blob([contents], { type: 'text/plain;charset=utf-8' });
+    let a = document.createElement('a'),
+        url = URL.createObjectURL(blob);
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }, 0);
+}
+
 /**
  * Search page for ran benchmarks
  * @returns {React.ReactElement}
@@ -244,9 +258,6 @@ function ResultSearch(): ReactElement {
 
     function exportResults() {
         let lines = [];
-        // TODO: include other ids? they can be retrieved using result id
-        // let header = 'id,site_id,flavor_id,benchmark_id';
-        // let header = 'id';
         let header = 'id,site,flavor,benchmark';
         if (customColumns.length !== 0) {
             header = header.concat(',', customColumns.join(','));
@@ -265,18 +276,7 @@ function ResultSearch(): ReactElement {
             lines.push(entry);
         }
 
-        // TODO: more elemgant way to save stuff?
-        const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
-        let a = document.createElement('a'),
-            url = URL.createObjectURL(blob);
-        a.href = url;
-        a.download = 'export.csv';
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(function () {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        }, 0);
+        saveFile(lines.join('\n'), 'export.csv');
     }
 
     return (
