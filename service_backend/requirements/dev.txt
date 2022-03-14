@@ -2,15 +2,15 @@
 -r prod.txt
 
 # Testing
-pytest~=6.2.2
+pytest~=6.2.5
 pytest-flask~=1.2.0
-pytest-xdist~=2.2.1
-pytest-postgresql~=3.1.1
+pytest-xdist~=2.5.0
+pytest-postgresql~=3.1.2
 pytest-cov~=2.11.1
 pytest-env~=0.6.2
-pytest-timeout~=1.4.2
+pytest-timeout~=2.1.0
 factory-boy~=3.2.0
-psycopg2-binary~=2.8.6
+psycopg2-binary~=2.9.3
 
 # Lint and code style
 autopep8~=1.5.7
@@ -20,7 +20,7 @@ flake8-blind-except~=0.2.0
 flake8-debugger~=4.0.0
 flake8-docstrings~=1.6.0
 flake8-isort~=4.0.0
-isort~=5.7.0
+isort~=5.10.1
 pep8-naming~=0.11.1
 
 debugpy
