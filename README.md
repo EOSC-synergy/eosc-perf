@@ -32,18 +32,19 @@ USERNAME
 PASSWORD
 ```
 
-7. Run `docker-compose build`
+7. Run `sudo docker-compose  -f docker-compose.yaml -f docker-compose.prod.yaml build`
 8. Run backend build steps in a venv
-9. Run `docker-compose up`
+9. Run `sudo docker-compose  -f docker-compose.yaml -f docker-compose.prod.yaml up`
 
 #### To reset your database
 
-Run `./scripts/reset-database.sh` (Linux) or `./scripts/reset-database.ps1` (Windows)
+1. Run `cd scripts` 
+2. Run `./reset-database.sh` (Linux) or `./reset-database.ps1` (Windows)
 
 #### To restore a database backup:
 
 1. Uncomment `- ./backups:/backups` in docker-compose.yaml
-1. Reset the database: `bash help_scripts/reset-database.sh`
-1. Start database container: `docker-compose up database`
-1. Connect to database container and run `pg_restore -d ${POSTGRES_DB} -F t <path to your backup tar> -c -U db_user`
+2. Reset the database: `bash help_scripts/reset-database.sh`
+3. Start database container: `docker-compose up database`
+4. Connect to database container and run `pg_restore -d ${POSTGRES_DB} -F t <path to your backup tar> -c -U ${POSTGRES_USER}`
 
