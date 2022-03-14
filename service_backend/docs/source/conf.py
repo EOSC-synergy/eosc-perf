@@ -51,7 +51,7 @@ exclude_patterns = []
 add_module_names = False
 
 # Set and override environment variables to avoid warnings and do not
-# display secrets in case of forgetting remove them before 
+# display secrets in case of forgetting remove them before
 os.environ["OIDC_CLIENT_SECRET"] = "NONE"
 os.environ["SECRET_KEY"] = "NONE"
 os.environ["DB_HOST"] = "NONE"
