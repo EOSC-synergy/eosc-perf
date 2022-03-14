@@ -16,17 +16,17 @@ marshmallow~=3.13.0
 jsonschema~=3.2.0
 
 # REST GUI
-flask-smorest~=0.34.0
+flask-smorest~=0.37.0
 
 # Deployment in production
-gevent~=21.1.2
+gevent~=21.12.0
 gunicorn~=20.1.0
 supervisor~=4.2.2
 
 # Auth
 flask-bcrypt~=0.7.1
-flaat~=0.14.5
-requests~=2.26.0
+flaat~=0.14.7
+requests~=2.27.1
 
 # Notifications
 flask-mailman~=0.3.0
