@@ -3,6 +3,9 @@
 # Pep8
 flake8.log
 
+# Bandit
+bandit.xml
+
 # C extensions
 *.so
 
