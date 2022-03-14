@@ -9,7 +9,7 @@ SQLAlchemy~=1.4.1
 psycopg2-binary~=2.9.3
 
 # Migrations
-flask-migrate~=3.0.0
+flask-migrate~=3.1.0
 
 # Schemas
 marshmallow~=3.13.0
