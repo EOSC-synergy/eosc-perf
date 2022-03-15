@@ -38,8 +38,7 @@ PASSWORD
 
 #### To reset your database
 
-1. Run `cd scripts` 
-2. Run `./reset-database.sh` (Linux) or `./reset-database.ps1` (Windows)
+1. Run `./reset-database.sh` (Linux) or `./reset-database.ps1` (Windows)
 
 #### To restore a database backup:
 
