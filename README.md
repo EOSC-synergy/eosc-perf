@@ -32,9 +32,9 @@ USERNAME
 PASSWORD
 ```
 
-7. Run `sudo docker-compose  -f docker-compose.yaml -f docker-compose.prod.yaml build`
+7. Run `docker-compose  -f docker-compose.yaml -f docker-compose.prod.yaml build`
 8. Run backend build steps in a venv
-9. Run `sudo docker-compose  -f docker-compose.yaml -f docker-compose.prod.yaml up`
+9. Run `docker-compose  -f docker-compose.yaml -f docker-compose.prod.yaml up`
 
 #### To reset your database
 
