@@ -149,7 +149,6 @@ class CreateTag(Schema):
     description = fields.String(
         description="String with an statement about the object",
         example="This is a simple description example",
-        load_default=None,
     )
 
 
@@ -235,7 +234,6 @@ class CreateBenchmark(Schema):
     description = fields.String(
         description="String with an statement about the object",
         example="This is a simple description example",
-        load_default=None,
     )
 
 
@@ -274,7 +272,6 @@ class CreateSite(Schema):
     description = fields.String(
         description="String with an statement about the object",
         example="This is a simple description example",
-        load_default=None,
     )
 
 
@@ -306,7 +303,6 @@ class CreateFlavor(Schema):
     description = fields.String(
         description="String with an statement about the object",
         example="This is a simple description example",
-        load_default=None,
     )
 
 
