@@ -38,7 +38,8 @@ PASSWORD
 
 #### To reset your database
 
-1. Run `./reset-database.sh` (Linux) or `./reset-database.ps1` (Windows)
+1. Run `./scripts/reset-database.sh` (Linux)
+    or `./scripts/reset-database.ps1` (Windows)
 
 #### To restore a database backup:
 
@@ -46,4 +47,3 @@ PASSWORD
 2. Reset the database: `bash help_scripts/reset-database.sh`
 3. Start database container: `docker-compose up database`
 4. Connect to database container and run `pg_restore -d ${POSTGRES_DB} -F t <path to your backup tar> -c -U ${POSTGRES_USER}`
-
