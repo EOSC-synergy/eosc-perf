@@ -41,7 +41,7 @@ class Authorization(Flaat):
 
         # Flaat timeout:
         timeout = app.config.get("FLAAT_TIMEOUT", 3)
-        self.set_timeout(timeout)
+        self.set_request_timeout(timeout)
 
         # verbosity:
         #     0: No output
