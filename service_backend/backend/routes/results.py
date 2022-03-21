@@ -113,7 +113,7 @@ def __list(query_args):
 
 @blp.route(collection_url, methods=["POST"])
 @blp.doc(operationId='CreateResult')
-@auth.login_required()
+@auth.inject_user()
 @blp.arguments(args.ResultContext, location='query')
 @blp.arguments(schemas.Json)
 @blp.response(201, schemas.Result)
@@ -283,7 +283,7 @@ def __delete(id):
 
 @blp.route(resource_url + ":claim", methods=["POST"])
 @blp.doc(operationId='ClaimReport')
-@auth.login_required()
+@auth.inject_user()
 @blp.arguments(schemas.CreateClaim)
 @blp.response(201, schemas.Claim)
 def claim(*args, **kwargs):

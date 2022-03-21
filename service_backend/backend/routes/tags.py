@@ -49,7 +49,7 @@ def __list(query_args):
 
 @blp.route(collection_url, methods=["POST"])
 @blp.doc(operationId='CreateTag')
-@auth.login_required()
+@auth.inject_user()
 @blp.arguments(schemas.CreateTag)
 @blp.response(201, schemas.Tag)
 def create(*args, **kwargs):
