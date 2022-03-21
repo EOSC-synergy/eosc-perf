@@ -113,7 +113,7 @@ def __list(query_args):
 
 @blp.route(collection_url, methods=["POST"])
 @blp.doc(operationId='CreateResult')
-@auth.inject_user()
+@auth.inject_object()
 @blp.arguments(args.ResultContext, location='query')
 @blp.arguments(schemas.Json)
 @blp.response(201, schemas.Result)
@@ -283,7 +283,7 @@ def __delete(id):
 
 @blp.route(resource_url + ":claim", methods=["POST"])
 @blp.doc(operationId='ClaimReport')
-@auth.inject_user()
+@auth.inject_object()
 @blp.arguments(schemas.CreateClaim)
 @blp.response(201, schemas.Claim)
 def claim(*args, **kwargs):
@@ -372,7 +372,7 @@ def __update_tags(body_args, id, is_admin=False):
 @blp.route(resource_url + "/claims", methods=["GET"])
 @blp.doc(operationId='ListResultClaims')
 @auth.inject_is_admin()
-@auth.inject_user()
+@auth.inject_object()
 @blp.arguments(args.ClaimFilter, location='query')
 @blp.response(200, schemas.Claims)
 @queries.to_pagination()
