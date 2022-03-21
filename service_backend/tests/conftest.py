@@ -9,7 +9,7 @@ from backend import create_app
 from backend.extensions import auth as authentication
 from backend.extensions import db as database
 from backend.utils import dockerhub
-from flaat import tokentools
+from flaat import access_tokens
 from pytest import fixture
 from pytest_postgresql.janitor import DatabaseJanitor
 
@@ -100,7 +100,7 @@ def token_iss(request):
 def mock_accesstoken(monkeypatch, token_sub, token_iss):
     """Patch fixture to test function with valid oidc token."""
     monkeypatch.setattr(
-        tokentools,
+        access_tokens,
         "get_accesstoken_info",
         lambda _: {
             'body': {'sub': token_sub, 'iss': token_iss},
@@ -108,7 +108,7 @@ def mock_accesstoken(monkeypatch, token_sub, token_iss):
         }
     )
     monkeypatch.setattr(
-        tokentools,
+        access_tokens,
         "get_access_token_from_request",
         lambda _: "mocktoken"
     )
