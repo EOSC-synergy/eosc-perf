@@ -227,7 +227,7 @@ def get(*args, **kwargs):
     return __get(*args, **kwargs)
 
 
-def __get(id) -> Result:
+def __get(id):
     """Returns the id matching result.
 
     If no result exists with the indicated id, then 404 NotFound
