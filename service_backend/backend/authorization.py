@@ -11,8 +11,7 @@ from flaat.user_infos import UserInfos
 from flask import Flask
 from flask_smorest import abort
 
-from .models.models.user import User
-
+from . import models
 
 class Authorization(Flaat):
     """Monkeypatch flaat to solve lazy configuration
@@ -74,14 +73,14 @@ class Authorization(Flaat):
         )
 
     def admin_required(self, on_failure=None):
-        """make view_func only avaiable for admin users"""
+        """make view_func only available for admin users"""
         # the requirement is loaded lazily, so we can set eduperson_entitlements at runtime
         return self.requires(self.get_admin_requirement, on_failure=on_failure)
 
     def inject_user(self):
         """ inject kwarg "user" with the current user into a view function"""
-        def _get_user(user_infos: UserInfos) -> User:
-            user = User.get_user(user_infos)
+        def _get_user(user_infos: UserInfos) -> models.User:
+            user = models.User.get_user(user_infos)
             if user is None:
                 error_msg = "User not registered"
                 abort(401, messages={'error': error_msg})
