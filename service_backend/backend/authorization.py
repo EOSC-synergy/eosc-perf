@@ -77,7 +77,7 @@ class Authorization(Flaat):
         # the requirement is loaded lazily, so we can set eduperson_entitlements at runtime
         return self.requires(self.get_admin_requirement, on_failure=on_failure)
 
-    def inject_user(self):
+    def inject_object(self):
         """ inject kwarg "user" with the current user into a view function"""
         def _get_user(user_infos: UserInfos) -> models.User:
             user = models.User.get_user(user_infos)
@@ -86,7 +86,7 @@ class Authorization(Flaat):
                 abort(401, messages={'error': error_msg})
             return user
 
-        return super().inject_user(infos_to_user=_get_user, key="user")
+        return super().inject_object(infos_to_user=_get_user, key="user")
 
     def inject_is_admin(self):
         """ inject boolean kwarg "is_admin" into a view function
@@ -95,4 +95,4 @@ class Authorization(Flaat):
         def _is_admin(user_infos: UserInfos):
             return self.get_admin_requirement().is_satisfied_by(user_infos)
 
-        return super().inject_user(infos_to_user=_is_admin, key="is_admin", strict=True)
+        return super().inject_object(infos_to_user=_is_admin, key="is_admin", strict=True)
