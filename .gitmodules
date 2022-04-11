@@ -1,0 +1,6 @@
+[submodule "service_backend"]
+	path = service_backend
+	url = https://github.com/EOSC-synergy/eosc-perf-backend
+[submodule "service_frontend"]
+	path = service_frontend
+	url = https://github.com/EOSC-synergy/eosc-perf-frontend
