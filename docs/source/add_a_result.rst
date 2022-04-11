@@ -41,4 +41,4 @@ On the result submission page:
 Uploading a result via the API
 ##############################
 
-For a detailed example on how to use the API to submit a result, please have a look at the `Jupyter notebook <https://github.com/EOSC-synergy/eosc-perf/blob/master/service_backend/docs/source/features/results.ipynb>`__.
+For a detailed example on how to use the API to submit a result, please have a look at the `Jupyter notebook <https://perf-api.readthedocs.io/en/latest/features/results.html>`__.

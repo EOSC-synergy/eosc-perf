@@ -28,4 +28,4 @@ On the benchmark submission page:
 Adding a benchmark using the API
 ################################
 
-For a detailed example on how to use the API to submit a benchmark, please have a look at the `Jupyter notebook <https://github.com/EOSC-synergy/eosc-perf/blob/master/service_backend/docs/source/features/benchmarks.ipynb>`__.
+For a detailed example on how to use the API to submit a benchmark, please have a look at the `Jupyter notebook <https://perf-api.readthedocs.io/en/latest/features/benchmarks.html>`__.
