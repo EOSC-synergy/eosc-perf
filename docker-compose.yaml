@@ -30,7 +30,7 @@ services:
       - database
     env_file: .env
     environment:
-      BACKEND_URL: /api/v1
+      BACKEND_ROUTE: /api/v1
       FLASK_APP: autoapp.py
       FLASK_ENV: development
       GUNICORN_WORKERS: 1
@@ -95,7 +95,7 @@ services:
     environment:
       DOMAINS: ${DOMAINS}
       CERT_KEY_SIZE: ${CERT_KEY_SIZE}
-      BACKEND_URL: /api
+      BACKEND_ROUTE: /api
     volumes:
       - ssl:/etc/letsencrypt
       - ssl:/var/www/certbot

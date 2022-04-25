@@ -13,7 +13,7 @@ services:
         USER_GROUP: ${jenkins_user_group}
     environment:
       FLASK_ENV: production
-      BACKEND_URL: /api/v1
+      BACKEND_ROUTE: /api/v1
       FLASK_APP: autoapp.py
     volumes:
      - type: bind
