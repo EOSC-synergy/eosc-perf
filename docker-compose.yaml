@@ -11,7 +11,7 @@ services:
     networks:
       - frontend-net
     #volumes:
-    #  - ./service_frontend/:/app
+    #  - ./service_frontend/:/app      
     volumes:
       - ./service_frontend/components:/app/components
       - ./service_frontend/pages:/app/pages
@@ -22,7 +22,7 @@ services:
     restart: unless-stopped
     image: backend
     build:
-      context: ./service_backend
+      context: service_backend
       target: development
       args:
         INSTALL_PYTHON_VERSION: 3.8
@@ -53,9 +53,6 @@ services:
       - frontend-net
       - backend-net
       - smtp-net
-    ports:
-      - 5000:5000
-      - 5678:5678
     secrets:
       - cookie_secret
       - oidc_secret
@@ -74,15 +71,13 @@ services:
       #- ./backups:/backups
     networks:
       - backend-net
-    ports:
-      - "5432:5432"
 
   reverse_proxy:
     container_name: reverse_proxy
     restart: unless-stopped
     image: reverse_proxy
     build:
-      context: ./service_rproxy
+      context: service_rproxy
       target: development
     healthcheck:
       test: [ "CMD", "curl", "--silent", "--fail", "http://localhost" ]
@@ -114,7 +109,7 @@ services:
     restart: unless-stopped
     image: certificate
     build:
-      context: ./service_certificate
+      context: service_certificate
     depends_on:
       reverse_proxy:
         condition: service_healthy
@@ -145,8 +140,6 @@ services:
     env_file: .env
     environment:
       DOMAINS: ${DOMAINS}
-    ports:
-      - "25:25"
     networks:
       - smtp-net
 
