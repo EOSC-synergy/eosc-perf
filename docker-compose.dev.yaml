@@ -1,0 +1,28 @@
+version: "3.5"
+
+services:
+  frontend-app:
+    build:
+      target: development
+
+  backend_v1:
+    build:
+      target: development
+    environment:
+      FLASK_ENV: development
+      GUNICORN_WORKERS: 1
+    ports:
+      - 5000:5000
+      - 5678:5678
+
+  database:
+    ports:
+      - "5432:5432"
+
+  reverse_proxy:
+    build:
+      target: development
+
+  postfix:
+    ports:
+      - "25:25"

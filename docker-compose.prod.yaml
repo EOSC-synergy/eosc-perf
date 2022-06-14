@@ -5,7 +5,6 @@ services:
     #profiles:
     #  - disabled
     build:
-      context: service_frontend
       target: production
 
   backend_v1:
@@ -13,6 +12,7 @@ services:
       target: production
     environment:
       FLASK_ENV: production
+      GUNICORN_WORKERS: 1
 
   reverse_proxy:
     build:
