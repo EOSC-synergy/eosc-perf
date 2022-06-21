@@ -2,10 +2,11 @@ version: "3.7"
 
 services:
   perf-testing:
-    image: "python3.8"
+    image: "python:3.8"
     container_name: "perf-testing"
     hostname: "perf-testing"
     volumes:
      - type: bind
        source: ./
        target: /perf-testing
+    command: ["tail","-f","/dev/null"]
