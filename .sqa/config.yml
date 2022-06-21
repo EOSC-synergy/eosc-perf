@@ -11,7 +11,7 @@ environment:
   LANG: C.UTF-8
 
 sqa_criteria:
-  qc_docs:
+  qc_doc:
     repos:
       eosc-perf:
         container: perf-testing
