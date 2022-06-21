@@ -1,0 +1,5 @@
+# Everything needed to build documentation
+sphinx ~= 4.1.1
+sphinx_rtd_theme ~= 0.5.2
+nbsphinx ~= 0.8.8
+sphinx-copybutton
