@@ -9,4 +9,5 @@ services:
      - type: bind
        source: ./
        target: /perf-testing
+    working_dir: /perf-testing
     command: ["tail","-f","/dev/null"]
