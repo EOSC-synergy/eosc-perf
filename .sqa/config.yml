@@ -11,49 +11,11 @@ environment:
   LANG: C.UTF-8
 
 sqa_criteria:
-  qc_style:
+  qc_doc:
     repos:
-      eosc-perf-backend:
-        container: perf-backend-testing
-        tox:
-          tox_file: /app/tox.ini
-          testenv:
-            - stylecheck
-      eosc-perf-frontend:
-        container: perf-frontend-testing
+      eosc-perf:
+        container: perf-testing
         commands: 
-        - bash -c "cd /perf-testing/service_frontend && npm ci --audit=false && ./node_modules/.bin/eslint ./ -f checkstyle -o eslint-codestyle.xml"
-
-  qc_functional:
-    repos:
-      eosc-perf-backend:
-        container: perf-backend-testing
-        tox:
-          tox_file: /app/tox.ini
-          testenv: 
-            - functional
-      eosc-perf-frontend:
-        container: perf-frontend-testing
-        commands:
-        - bash -c "cd /perf-testing/service_frontend && npm run test:coverage"
-
-  qc_security:
-    repos:
-      eosc-perf-backend:
-        container: perf-backend-testing
-        tox:
-          tox_file: /app/tox.ini
-          testenv:
-            - bandit
-      eosc-perf-frontend:
-        container: perf-frontend-testing
-        commands:
-          # (optional) pipefail: set the exit status $? to the exit code of the last program to exit non-zero
-          # npm audit --json : to produce json output
-          # transform-audit.js: parse the output for Warnings-NG plugin
-          # npm audit --audit-level=high: fail an audit if a vulnerability of a level 'high' or higher (may result in exit 1 + printout)
-        - bash -c "cd /perf-testing/service_frontend && npm config set production=true && 
-                   npm audit --json | node ../.sqa/transform-audit.js > npm-audit.json
-                   && npm audit --audit-level=high"
+        - bash -c "pip3 install -r ./requirements-docs.txt && cd docs/ && make html"
 
 timeout: 900
