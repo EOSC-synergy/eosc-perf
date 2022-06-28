@@ -37,15 +37,15 @@ server {
 
   include mime.types;
 
-  location ${BACKEND_ROUTE}/v1 {
-    if ($request_method = OPTIONS ) {
-      add_header 'Access-Control-Allow-Origin' *;
-      add_header "Access-Control-Allow-Methods" "GET, POST, PATCH, PUT, OPTIONS, HEAD";
-      add_header "Access-Control-Allow-Headers" "Authorization, Origin, X-Requested-With, Content-Type, Accept";
-      return 200;
-    }
-    add_header 'Access-Control-Allow-Origin' * always;
+  if ($request_method = OPTIONS ) {
+    add_header 'Access-Control-Allow-Origin' *;
+    add_header "Access-Control-Allow-Methods" "GET, POST, PATCH, PUT, OPTIONS, HEAD";
+    add_header "Access-Control-Allow-Headers" "Authorization, Origin, X-Requested-With, Content-Type, Accept";
+    return 200;
+  }
+  add_header 'Access-Control-Allow-Origin' * always;
 
+  location ${BACKEND_ROUTE}/v1 {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Scheme $scheme;
     proxy_set_header X-Script-Name ${BACKEND_ROUTE}/v1;
@@ -59,14 +59,6 @@ server {
   # it sees https:// and attempts wss://, but the dev server is running http:// (ws://), so
   # some special rules are required
   location /_next/webpack-hmr {
-    if ($request_method = OPTIONS ) {
-      add_header 'Access-Control-Allow-Origin' *;
-      add_header "Access-Control-Allow-Methods" "GET, POST, PATCH, PUT, OPTIONS, HEAD";
-      add_header "Access-Control-Allow-Headers" "Authorization, Origin, X-Requested-With, Content-Type, Accept";
-      return 200;
-    }
-    add_header 'Access-Control-Allow-Origin' * always;
-
     proxy_pass http://frontend-app:3000;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
@@ -76,14 +68,6 @@ server {
   }
 
   location / {
-    if ($request_method = OPTIONS ) {
-      add_header 'Access-Control-Allow-Origin' *;
-      add_header "Access-Control-Allow-Methods" "GET, POST, PATCH, PUT, OPTIONS, HEAD";
-      add_header "Access-Control-Allow-Headers" "Authorization, Origin, X-Requested-With, Content-Type, Accept";
-      return 200;
-    }
-    add_header 'Access-Control-Allow-Origin' * always;
-
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Scheme $scheme;
     proxy_set_header X-Script-Name /;
