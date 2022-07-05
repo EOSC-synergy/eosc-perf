@@ -35,6 +35,7 @@ services:
       FLASK_ENV: development
       GUNICORN_WORKERS: 1
       SECRET_KEY_FILE: /run/secrets/cookie_secret
+      TRUSTED_OP_LIST: ${EGI_OP}
       OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
       OIDC_CLIENT_SECRET_FILE: /run/secrets/oidc_secret
       ADMIN_ENTITLEMENTS: ${ADMIN_ENTITLEMENTS}
