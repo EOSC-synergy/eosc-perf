@@ -10,6 +10,8 @@ services:
       target: development
     networks:
       - frontend-net
+    environment:
+      NEXT_PUBLIC_OAUTH_AUTHORITY: ${EGI_OP}
     #volumes:
     #  - ./service_frontend/:/app      
     volumes:
