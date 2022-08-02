@@ -59,7 +59,6 @@ services:
       - smtp-net
     secrets:
       - cookie_secret
-      - oidc_secret
 
   database:
     container_name: database
