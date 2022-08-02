@@ -38,8 +38,6 @@ services:
       GUNICORN_WORKERS: 1
       SECRET_KEY_FILE: /run/secrets/cookie_secret
       TRUSTED_OP_LIST: ${EGI_OP}
-      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
-      OIDC_CLIENT_SECRET_FILE: /run/secrets/oidc_secret
       ADMIN_ENTITLEMENTS: ${ADMIN_ENTITLEMENTS}
       DB_HOST: database
       DB_PORT: 5432
@@ -178,7 +176,5 @@ volumes:
 secrets:
   cookie_secret:
     file: cookie_secret.txt
-  oidc_secret:
-    file: oidc_secret.txt
   nginx_api_credentials:
     file: nginx_api_credentials.txt
