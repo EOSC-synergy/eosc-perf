@@ -38,7 +38,7 @@ services:
       BACKEND_ROUTE: /api/v1
       FLASK_APP: autoapp.py
       FLASK_ENV: development
-      GUNICORN_WORKERS: 1
+      GUNICORN_WORKERS: 4
       SECRET_KEY_FILE: /run/secrets/cookie_secret
       TRUSTED_OP_LIST: ${EGI_OP}
       ADMIN_ENTITLEMENTS: ${ADMIN_ENTITLEMENTS}
