@@ -12,8 +12,8 @@ services:
       - frontend-net
     environment:
       NEXT_PUBLIC_OIDC_CLIENT_ID: eosc-performance
-      NEXT_PUBLIC_OIDC_REDIRECT_HOST: ${DOMAIN}
-      NEXT_PUBLIC_API_ROUTE: ${DOMAIN}/api/v1
+      NEXT_PUBLIC_OIDC_REDIRECT_HOST: https://${DOMAIN}
+      NEXT_PUBLIC_API_ROUTE: https://${DOMAIN}/api/v1
       NEXT_PUBLIC_OAUTH_AUTHORITY: ${EGI_OP}
     #volumes:
     #  - ./service_frontend/:/app      
