@@ -26,8 +26,8 @@ workspace.code-workspace
 *.db.*
 
 # Secret files
-oidc_secret.txt
 cookie_secret.txt
+database_secret.txt
 nginx_api_credentials.txt
 
 # Compiled documentation
