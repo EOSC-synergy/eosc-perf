@@ -21,18 +21,17 @@ server clusters.
 #### To deploy the application:
 
 1. Set up a `.env` file: `cp .env-example .env`, configure it following the comments
-2. Configure your EGI-AAI OIDC client secret in `oidc_secret.txt`
+2. Configure a database user password in `database_secret.txt`
 3. Configure flask cookie encryption key in `cookie_secret.txt`
 4. Configure NGINX API credentials in `nginx_api_credentials.txt` in the following format:
 
 ```
-USERNAME
-PASSWORD
+<USERNAME>
+<PASSWORD>
 ```
 
-5. Run `docker-compose build`
-6. Run backend build steps in a venv
-7. Run `docker-compose up`
+5. Run `docker-compose -f docker-compose.yaml -f docker-compose.prod.yaml build`
+6. Run `docker-compose -f docker-compose.yaml -f docker-compose.prod.yaml up`
 
 #### To reset your database
 
