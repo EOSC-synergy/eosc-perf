@@ -7,6 +7,7 @@ services:
     image: frontend-app
     build:
       context: service_frontend
+      network: host
       target: development
     networks:
       - frontend-net
@@ -28,6 +29,7 @@ services:
     image: backend
     build:
       context: service_backend
+      network: host
       target: development
       args:
         INSTALL_PYTHON_VERSION: 3.8
@@ -84,6 +86,7 @@ services:
     image: reverse_proxy
     build:
       context: service_rproxy
+      network: host
       target: development
     healthcheck:
       test: [ "CMD", "curl", "--silent", "--fail", "http://localhost" ]
@@ -116,6 +119,7 @@ services:
     image: certificate
     build:
       context: service_certificate
+      network: host
     depends_on:
       reverse_proxy:
         condition: service_healthy
@@ -140,6 +144,7 @@ services:
     container_name: postfix
     build:
       context: service_postfix
+      network: host
     volumes:
       - ./service_certificate/conf:/etc/letsencrypt
       - ./logs/postfix:/var/log
@@ -155,6 +160,7 @@ services:
     container_name: database_backup
     build:
       context: service_backup
+      network: host
     volumes:
       - ./backups:/workdir
     depends_on:
