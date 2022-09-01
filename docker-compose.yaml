@@ -146,8 +146,7 @@ services:
       context: service_postfix
       network: host
     volumes:
-      - ./service_certificate/conf:/etc/letsencrypt
-      - ./logs/postfix:/var/log
+      - ssl:/etc/letsencrypt
     env_file: .env
     environment:
       DOMAINS: ${DOMAIN}

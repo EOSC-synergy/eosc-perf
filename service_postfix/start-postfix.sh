@@ -46,7 +46,7 @@ postconf -e maillog_file="/dev/stdout"
 # set myhostname and mynetworks
 postconf -e myhostname="$PERF_HOSTNAME"
 postconf -e mydestination="\$myhostname, localhost"
-postconf -e mynetworks="127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 172.16.0.0/12 172.17.0.0/16 10.0.0.0/8"
+postconf -e mynetworks="127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 172.0.0.0/8 192.168.0.0/16 10.0.0.0/8"
 
 # TLS parameters
 postconf -e smtpd_use_tls=yes
