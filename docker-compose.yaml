@@ -120,9 +120,6 @@ services:
     build:
       context: service_certificate
       network: host
-    depends_on:
-      reverse_proxy:
-        condition: service_healthy
     env_file: .env
     networks:
       - certbot-net

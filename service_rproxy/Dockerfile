@@ -1,4 +1,4 @@
-FROM nginx:1.19-alpine as base
+FROM nginx:mainline-alpine as base
 
 RUN set -x \
 &&  apk add --no-cache apache2-utils curl bash netcat-openbsd openssl \

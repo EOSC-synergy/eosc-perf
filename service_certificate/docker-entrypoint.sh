@@ -26,7 +26,11 @@ if (( ${#domains[@]} )); then
   trap exit TERM
 
   echo "### Let nginx bootstrap"
-  sleep 10s
+  while ! curl --fail --silent --max-time 3 http://reverse_proxy
+  do
+    echo "nginx not up yet..."
+    sleep 3
+  done
 
   # Select appropriate email arg
   case "$LETSENCRYPT_EMAIL" in
@@ -74,6 +78,7 @@ if (( ${#domains[@]} )); then
     sleep 12h & wait ${!}
   done
 else
+  echo "No domains provided, doing nothing."
   while :; do
     sleep 24h
   done
