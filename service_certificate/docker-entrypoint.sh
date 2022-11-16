@@ -38,7 +38,10 @@ if (( ${#domains[@]} )); then
     *) email_arg="--email $LETSENCRYPT_EMAIL" ;;
   esac
 
-  if [ ! -f "$path/privkey.pem" ]; then
+  if [ -f "$path/is-selfsigned" ]; then
+    echo "### Deleting self-signed cert..."
+    rm -r "$path"
+
     echo "### Requesting Let's Encrypt certificate for $domains ..."
 
     # join $domains to -d args

@@ -37,8 +37,8 @@ wait_certbot(){
 
     [ "${retries}" -ne 0 ] || (echo "### certbot service did not get up"; exit 1)
 
-    echo "### Removing self-signed SSL from $path"
-    rm -rf "$path"
+    #echo "### Removing self-signed SSL from $path"
+    #rm -rf "$path"
   ) &
 }
 
@@ -52,6 +52,8 @@ if [ ! -f "$path/privkey.pem" ]; then
     -keyout "$path/privkey.pem" \
     -out "$path/fullchain.pem" \
     -subj '/CN=localhost'
+
+  touch "$path/is-selfsigned"
 
   if (( ${#domains[@]} )); then
     wait_certbot
