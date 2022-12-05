@@ -8,7 +8,7 @@ RUN set -x \
 &&  chown -R nginx /etc/nginx/letsencrypt \
 &&  rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 
-RUN curl -s https://raw.githubusercontent.com/nginxinc/docker-nginx/master/mainline/alpine/docker-entrypoint.sh > "/nginx-entrypoint.sh" \
+RUN curl -s https://raw.githubusercontent.com/nginxinc/docker-nginx/master/entrypoint/docker-entrypoint.sh > "/nginx-entrypoint.sh" \
 &&  chmod +x /nginx-entrypoint.sh
 COPY docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
