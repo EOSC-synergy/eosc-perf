@@ -1,0 +1,17 @@
+{
+    "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+    "@type": "SoftwareSourceCode",
+    "license": "https://spdx.org/licenses/MIT",
+    "codeRepository": "git+https://github.com/EOSC-synergy/eosc-perf.git",
+    "issueTracker": "https://github.com/EOSC-synergy/eosc-perf/issues",
+    "name": "eosc-perf",
+    "description": "EOSC Performance service, a web service to compare computing resources",
+    "programmingLanguage": [
+        "python",
+        "REACT",
+        "Dockerfile"
+    ],
+    "relatedLink": [
+        "https://performance.services.fedcloud.eu/"
+    ]
+}
