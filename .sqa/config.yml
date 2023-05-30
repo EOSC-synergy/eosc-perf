@@ -1,0 +1,24 @@
+config:
+  credentials: []
+  project_repos:
+    github.com/EOSC-synergy/sqaaas-tooling:
+      branch: release/1.7.11
+      repo: https://github.com/EOSC-synergy/sqaaas-tooling
+environment:
+  JPL_DOCKERFORCEBUILD: enabled
+  JPL_KEEPGOING: enable
+sqa_criteria:
+  QC.Sec:
+    repos:
+      this_repo:
+        commands:
+        - bandit -f json --quiet  --confidence-level high --severity-level high --recursive
+          eosc_perf
+        container: qc.sec_beady-asparagus-lemur
+  QC.Sty:
+    repos:
+      this_repo:
+        commands:
+        - flake8 eosc_perf
+        container: qc.sty_jumpy-cobalt-yak
+timeout: 5400
